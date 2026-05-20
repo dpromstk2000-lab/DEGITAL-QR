@@ -34,13 +34,11 @@
         .card-container {
             width: 90%;
             max-width: 350px;
-            /* 垂直方向の見切れ防止のため、比率を少し短めに調整(1.58 -> 1.5) */
             aspect-ratio: 1 / 1.5; 
             background: var(--card-gradient);
             border-radius: 24px;
             box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
             position: relative;
-            /* パディングを28pxから18pxに削減してスペースを稼ぐ */
             padding: 18px 22px; 
             display: flex;
             flex-direction: column;
@@ -92,14 +90,13 @@
 
         .user-section { z-index: 2; margin-bottom: 8px; }
         .label-small { font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1px; }
-        /* 文字サイズを1.8remから1.5remに縮小 */
         .user-name { font-size: 1.5rem; font-weight: 700; margin: 0; color: #fff; }
 
         .appointment-box {
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 10px 14px; /* パディングを削減 */
+            padding: 10px 14px;
             z-index: 2;
             margin-bottom: 12px;
         }
@@ -115,7 +112,6 @@
             justify-content: center;
             align-items: center;
             z-index: 2;
-            /* QRサイズを140pxから115pxに縮小 */
             width: 115px; 
             height: 115px;
             margin: 0 auto;
@@ -129,7 +125,7 @@
             z-index: 2;
             padding-top: 8px;
             border-top: 1px solid rgba(255,255,255,0.08);
-            margin-top: auto; /* これでフッターを一番下に固定 */
+            margin-top: auto;
         }
 
         .footer-row { display: flex; justify-content: space-between; align-items: center; }
@@ -195,7 +191,8 @@
 
         async function initializeLiff() {
             try {
-                await liff.init({ liffId: "2010112866-4pueBQPC" }); 
+                // 画像13枚目から読み取った最新の正しいLIFF IDに修正しました
+                await liff.init({ liffId: "2010131324-Cs3gdrah" }); 
                 if (!liff.isLoggedIn()) { liff.login(); } else {
                     const profile = await liff.getProfile();
                     document.getElementById('userName').innerText = profile.displayName + " 様";
@@ -217,4 +214,3 @@
     </script>
 </body>
 </html>
-
