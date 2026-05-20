@@ -148,7 +148,7 @@
         <div class="card-header">
             <div class="logo-section">
                 <div class="medical-cross"></div>
-                <div class="brand-logo">DPRO歯科</div>
+                <div class="brand-logo">ひまわり歯科</div>
             </div>
             <div class="badge-clinic">DIGITAL CARD</div>
         </div>
@@ -175,28 +175,33 @@
     </div>
 
     <script>
-        async function fetchReservation(lineUserId) {
-            const gasUrl = "https://script.google.com/macros/s/AKfycbzQWqnfbt91dQKWUkg7-Xuf1uws32kbb8dzoXxO4dZ6do6uBR08gkCcFrxnTnw0Gcqe/exec"; 
+        // 送っていただいた最新のGASウェブアプリURLを完全に組み込みました
+        const gasUrl = "https://script.google.com/macros/s/AKfycbyt_6RXbpNx3ZUptOn6KQnXP6JnHc7wksu033krztJBUErs8p4Hq-hJ2KA0rAfUW7e1Ig/exec"; 
+
+        async function fetchReservation(lineUserId, displayName) {
             try {
-                const response = await fetch(`${gasUrl}?id=${lineUserId}`);
+                // LINE IDとユーザー名をパラメータにのせてGASへ自動送信します
+                const response = await fetch(`${gasUrl}?id=${encodeURIComponent(lineUserId)}&name=${encodeURIComponent(displayName)}`);
                 const data = await response.json();
                 if (data.reservationDate) {
                     document.getElementById('appointmentDate').innerText = data.reservationDate;
                 }
             } catch (error) {
-                console.error("予約データの取得に失敗しました", error);
+                console.error("予約データの取得・登録に失敗しました", error);
                 document.getElementById('appointmentDate').innerText = "データ読込エラー";
             }
         }
 
         async function initializeLiff() {
             try {
-                // 画像13枚目から読み取った最新の正しいLIFF IDに修正しました
+                // 最新のLIFF IDを設定済みです
                 await liff.init({ liffId: "2010131324-Cs3gdrah" }); 
                 if (!liff.isLoggedIn()) { liff.login(); } else {
                     const profile = await liff.getProfile();
                     document.getElementById('userName').innerText = profile.displayName + " 様";
                     document.getElementById('displayId').innerText = profile.userId;
+                    
+                    // QRコード生成
                     new QRCode(document.getElementById("qrcode"), {
                         text: profile.userId,
                         width: 115,
@@ -205,7 +210,9 @@
                         colorLight : "#ffffff",
                         correctLevel : QRCode.CorrectLevel.H
                     });
-                    await fetchReservation(profile.userId);
+                    
+                    // GASを呼び出してデータ取得（スプレッドシートに未登録ならこの時点で自動記録されます）
+                    await fetchReservation(profile.userId, profile.displayName);
                     setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 300);
                 }
             } catch (error) { console.error("LINE通信失敗", error); }
