@@ -213,11 +213,18 @@
     </div>
 
     <script>
-        // --- ⚙️ Supabase 設定項目（取得したキーを組み込み済み） ---
+        // --- ⚙️ Supabase 設定項目 ---
         const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // グローバル変数supabaseの初期化エラー対策
+        let supabaseClient;
+        try {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch(e) {
+            console.error("Supabase初期化失敗", e);
+        }
+
         let familyData = [];
         let qrcodeInstance = null;
 
@@ -254,88 +261,4 @@
                 const tab = document.createElement('div');
                 tab.className = `family-tab ${member.is_primary ? 'active' : ''}`;
                 // 氏名から「DPRO」を除いた表示に対応
-                tab.innerText = member.patients.patient_name.replace('DPRO ', '');
-                
-                tab.onclick = () => {
-                    // 全タブのactiveを解除して、クリックされたタブに付与
-                    document.querySelectorAll('.family-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    // カード内のデータをクリックされた家族のものに書き換え
-                    updateCardDisplay(member.patients);
-                };
-                selector.appendChild(tab);
-            });
-        }
-
-        // SupabaseからLINE IDに紐づく家族データをまとめて取得する関数
-        async function fetchFamilyData(lineUserId) {
-            try {
-                const { data, error } = await supabase
-                    .from('user_patient_relations')
-                    .select(`
-                        is_primary,
-                        patients (
-                            id,
-                            patient_name,
-                            chart_no,
-                            appointment_date
-                        )
-                    `)
-                    .eq('line_user_id', lineUserId);
-
-                if (error) throw error;
-
-                if (data && data.length > 0) {
-                    // 本人が先頭、それ以外が後に来るようにソート
-                    familyData = data.sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0));
-                    
-                    // 初回表示用メンバーの決定
-                    const primaryMember = familyData.find(m => m.is_primary) || familyData[0];
-                    
-                    // UIとカードのレンダリング
-                    renderTabs();
-                    updateCardDisplay(primaryMember.patients);
-                } else {
-                    document.getElementById('userName').innerText = "未登録のユーザー";
-                    document.getElementById('appointmentDate').innerText = "受付へお申し出ください";
-                }
-            } catch (err) {
-                console.error("Supabaseからのデータ取得に失敗しました", err);
-                document.getElementById('appointmentDate').innerText = "読込エラー";
-            }
-        }
-
-        // LIFF初期化
-        async function initializeLiff() {
-            try {
-                await liff.init({ liffId: "2010131324-Cs3gdrah" }); 
-                if (!liff.isLoggedIn()) { 
-                    liff.login(); 
-                } else {
-                    const profile = await liff.getProfile();
-                    document.getElementById('displayId').innerText = profile.userId;
-
-                    let targetUserId = profile.userId;
-                    
-                    // 【デモ確認用】実際のLINE IDがSupabase未登録なら、デモIDにフォールバックさせて動きを確認
-                    const { data } = await supabase.from('users').select('line_user_id').eq('line_user_id', targetUserId);
-                    if (!data || data.length === 0) {
-                        targetUserId = 'U1234567890abcdef1234567890abcdef';
-                    }
-
-                    // データの取得と反映
-                    await fetchFamilyData(targetUserId);
-                    
-                    // ローディング画面を非表示に
-                    setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 300);
-                }
-            } catch (error) { 
-                console.error("LINE/LIFFの初期化に失敗しました", error); 
-            }
-        }
-        
-        initializeLiff();
-    </script>
-</body>
-</html>
+                tab.innerText =
