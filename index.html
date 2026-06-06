@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DPRO DENTAL CARD</title>
+    <!-- LINE SDK -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <!-- QRコード生成ライブラリ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- フォント -->
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700&family=Noto+Sans+JP:wght@300;700&display=swap" rel="stylesheet">
     
     <style>
@@ -188,7 +192,7 @@
         .meta-value-id { font-family: 'Urbanist', sans-serif; font-size: 0.65rem; font-weight: 700; color: var(--mint-cyan); word-break: break-all; }
         .meta-value { font-family: 'Urbanist', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--silver); }
 
-        /* 認証入力フォームオーバーレイ */
+        /* 3点認証入力フォームオーバーレイ */
         .form-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -244,6 +248,7 @@
     <div id="loading-screen"><div class="spinner"></div></div>
     
     <div class="card-container">
+        <!-- 3点認証フォーム画面 -->
         <div class="form-overlay" id="formOverlay">
             <div class="form-title" id="formTitle">デジタル診察券 本人確認</div>
             <div class="form-subtitle" id="formSubtitle">医院に登録されている情報を入力してください</div>
@@ -405,7 +410,7 @@
             document.getElementById('loading-screen').style.display = 'flex';
 
             try {
-                // 【実務対応】自由な新規登録ではなく、まず該当の患者情報が実在するかチェック
+                // 入力情報が実在するかチェック
                 const { data: matchedPatients, error: searchError } = await supabaseClient
                     .from('patients')
                     .select('id')
@@ -424,7 +429,7 @@
 
                 const targetPatientId = matchedPatients[0].id;
 
-                // 既にこのLINE IDと該当患者の紐づけが存在するか確認（重複防止）
+                // 重複登録の防止確認
                 const { data: existingRelation } = await supabaseClient
                     .from('user_patient_relations')
                     .select('id')
@@ -437,19 +442,22 @@
                     return;
                 }
 
-                // 紐づけ情報を登録
+                // LINEのプロフィール名を取得して、紐づけ情報（line_name）と一緒に登録
                 const isPrimarySetting = !isAddingFamilyMode;
+                const profile = await liff.getProfile();
+                
                 const { error: rError } = await supabaseClient
                     .from('user_patient_relations')
                     .insert([{
                         line_user_id: currentLineUserId,
                         patient_id: targetPatientId,
-                        is_primary: isPrimarySetting
+                        is_primary: isPrimarySetting,
+                        line_name: profile.displayName // ★ここがLINE名自動取得のポイント
                     }]);
 
                 if (rError) throw rError;
 
-                // 最新情報を再取得して画面を診察券に戻す
+                // 画面更新
                 await fetchFamilyData(currentLineUserId);
                 
             } catch (err) {
@@ -478,7 +486,6 @@
                     currentLineUserId = profile.userId;
                     document.getElementById('displayId').innerText = currentLineUserId;
 
-                    // ユーザーテーブルが存在する場合はLINEユーザーを記録
                     try {
                         await supabaseClient.from('users').insert([{ line_user_id: currentLineUserId, display_name: profile.displayName }]);
                     } catch(e) {}
