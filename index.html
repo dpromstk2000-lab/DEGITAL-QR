@@ -6,6 +6,7 @@
     <title>DPRO DENTAL CARD</title>
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700&family=Noto+Sans+JP:wght@300;700&display=swap" rel="stylesheet">
     
     <style>
@@ -88,6 +89,36 @@
             color: var(--mint-cyan);
         }
 
+        /* 家族切り替えタブのスタイル */
+        .family-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            z-index: 2;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 4px;
+        }
+        .family-selector::-webkit-scrollbar { display: none; }
+        
+        .family-tab {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .family-tab.active {
+            background: rgba(0, 229, 255, 0.15);
+            border-color: var(--mint-cyan);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+            font-weight: 700;
+        }
+
         .user-section { z-index: 2; margin-bottom: 8px; }
         .label-small { font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1px; }
         .user-name { font-size: 1.5rem; font-weight: 700; margin: 0; color: #fff; }
@@ -144,6 +175,7 @@
 </head>
 <body>
     <div id="loading-screen"><div class="spinner"></div></div>
+    
     <div class="card-container">
         <div class="card-header">
             <div class="logo-section">
@@ -152,71 +184,157 @@
             </div>
             <div class="badge-clinic">DIGITAL CARD</div>
         </div>
+
+        <div class="family-selector" id="familySelector"></div>
+
         <div class="user-section">
             <p class="label-small">PATIENT NAME</p>
-            <h1 class="user-name" id="userName">Loading...</h1>
+            <h1 class="user-name" id="userName">データ取得中...</h1>
         </div>
+        
         <div class="appointment-box">
             <p class="appointment-title">NEXT APPOINTMENT（次回予約日時）</p>
-            <p class="appointment-date" id="appointmentDate">データ取得中...</p>
+            <p class="appointment-date" id="appointmentDate">---</p>
         </div>
+        
         <div class="qrcode-area" id="qrcode"></div>
         <p style="text-align:center; font-size: 0.55rem; color: rgba(255,255,255,0.3); margin-top: 6px; margin-bottom: 8px; z-index: 2;">受付のリーダーにかざしてください</p>
+        
         <div class="card-footer">
             <div class="meta-item">
                 <span class="meta-label">LINE USER ID</span>
                 <span class="meta-value-id" id="displayId">---</span>
             </div>
             <div class="footer-row">
-                <div class="meta-item"><span class="meta-label">CHART NO</span><span class="meta-value">No.1045</span></div>
+                <div class="meta-item"><span class="meta-label">CHART NO</span><span class="meta-value" id="chartNo">---</span></div>
                 <div class="meta-item" style="text-align: right;"><span class="meta-label">CLINIC TEL</span><span class="meta-value">092-XXX-XXXX</span></div>
             </div>
         </div>
     </div>
 
     <script>
-        // 送っていただいた最新のGASウェブアプリURLを完全に組み込みました
-        const gasUrl = "https://script.google.com/macros/s/AKfycbyt_6RXbpNx3ZUptOn6KQnXP6JnHc7wksu033krztJBUErs8p4Hq-hJ2KA0rAfUW7e1Ig/exec"; 
+        // --- ⚙️ Supabase 設定項目（取得したキーを組み込み済み） ---
+        const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let familyData = [];
+        let qrcodeInstance = null;
 
-        async function fetchReservation(lineUserId, displayName) {
+        // QRコードを再生成する関数
+        function generateQRCode(text) {
+            const qrContainer = document.getElementById("qrcode");
+            qrContainer.innerHTML = ""; // 一度クリア
+            qrcodeInstance = new QRCode(qrContainer, {
+                text: text,
+                width: 115,
+                height: 115,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        // 画面の表示データを書き換える関数
+        function updateCardDisplay(patient) {
+            document.getElementById('userName').innerText = patient.patient_name + " 様";
+            document.getElementById('appointmentDate').innerText = patient.appointment_date || "次回の予約はありません";
+            document.getElementById('chartNo').innerText = patient.chart_no;
+            
+            // QRコードの中身を「患者固有のUUID」に切り替え
+            generateQRCode(patient.id);
+        }
+
+        // タブのUIを生成・切り替え制御する関数
+        function renderTabs() {
+            const selector = document.getElementById('familySelector');
+            selector.innerHTML = '';
+
+            familyData.forEach((member) => {
+                const tab = document.createElement('div');
+                tab.className = `family-tab ${member.is_primary ? 'active' : ''}`;
+                // 氏名から「DPRO」を除いた表示に対応
+                tab.innerText = member.patients.patient_name.replace('DPRO ', '');
+                
+                tab.onclick = () => {
+                    // 全タブのactiveを解除して、クリックされたタブに付与
+                    document.querySelectorAll('.family-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // カード内のデータをクリックされた家族のものに書き換え
+                    updateCardDisplay(member.patients);
+                };
+                selector.appendChild(tab);
+            });
+        }
+
+        // SupabaseからLINE IDに紐づく家族データをまとめて取得する関数
+        async function fetchFamilyData(lineUserId) {
             try {
-                // LINE IDとユーザー名をパラメータにのせてGASへ自動送信します
-                const response = await fetch(`${gasUrl}?id=${encodeURIComponent(lineUserId)}&name=${encodeURIComponent(displayName)}`);
-                const data = await response.json();
-                if (data.reservationDate) {
-                    document.getElementById('appointmentDate').innerText = data.reservationDate;
+                const { data, error } = await supabase
+                    .from('user_patient_relations')
+                    .select(`
+                        is_primary,
+                        patients (
+                            id,
+                            patient_name,
+                            chart_no,
+                            appointment_date
+                        )
+                    `)
+                    .eq('line_user_id', lineUserId);
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    // 本人が先頭、それ以外が後に来るようにソート
+                    familyData = data.sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0));
+                    
+                    // 初回表示用メンバーの決定
+                    const primaryMember = familyData.find(m => m.is_primary) || familyData[0];
+                    
+                    // UIとカードのレンダリング
+                    renderTabs();
+                    updateCardDisplay(primaryMember.patients);
+                } else {
+                    document.getElementById('userName').innerText = "未登録のユーザー";
+                    document.getElementById('appointmentDate').innerText = "受付へお申し出ください";
                 }
-            } catch (error) {
-                console.error("予約データの取得・登録に失敗しました", error);
-                document.getElementById('appointmentDate').innerText = "データ読込エラー";
+            } catch (err) {
+                console.error("Supabaseからのデータ取得に失敗しました", err);
+                document.getElementById('appointmentDate').innerText = "読込エラー";
             }
         }
 
+        // LIFF初期化
         async function initializeLiff() {
             try {
-                // 最新のLIFF IDを設定済みです
                 await liff.init({ liffId: "2010131324-Cs3gdrah" }); 
-                if (!liff.isLoggedIn()) { liff.login(); } else {
+                if (!liff.isLoggedIn()) { 
+                    liff.login(); 
+                } else {
                     const profile = await liff.getProfile();
-                    document.getElementById('userName').innerText = profile.displayName + " 様";
                     document.getElementById('displayId').innerText = profile.userId;
+
+                    let targetUserId = profile.userId;
                     
-                    // QRコード生成
-                    new QRCode(document.getElementById("qrcode"), {
-                        text: profile.userId,
-                        width: 115,
-                        height: 115,
-                        colorDark : "#000000",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H
-                    });
+                    // 【デモ確認用】実際のLINE IDがSupabase未登録なら、デモIDにフォールバックさせて動きを確認
+                    const { data } = await supabase.from('users').select('line_user_id').eq('line_user_id', targetUserId);
+                    if (!data || data.length === 0) {
+                        targetUserId = 'U1234567890abcdef1234567890abcdef';
+                    }
+
+                    // データの取得と反映
+                    await fetchFamilyData(targetUserId);
                     
-                    // GASを呼び出してデータ取得（スプレッドシートに未登録ならこの時点で自動記録されます）
-                    await fetchReservation(profile.userId, profile.displayName);
+                    // ローディング画面を非表示に
                     setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 300);
                 }
-            } catch (error) { console.error("LINE通信失敗", error); }
+            } catch (error) { 
+                console.error("LINE/LIFFの初期化に失敗しました", error); 
+            }
         }
+        
         initializeLiff();
     </script>
 </body>
