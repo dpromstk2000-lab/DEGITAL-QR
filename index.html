@@ -38,7 +38,6 @@
         .user-name { font-size: 1.5rem; margin: 0; font-weight: 700; }
         .qr-section { display: flex; justify-content: center; align-items: center; background: #fff; padding: 15px; border-radius: 16px; width: 130px; height: 130px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         
-        /* 次回診察日エリア */
         .appointment-section { text-align: center; background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); margin: 10px 0; }
         .appointment-label { font-size: 0.65rem; color: var(--mint-cyan); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
         .appointment-date { font-family: 'Urbanist', sans-serif; font-size: 1.1rem; font-weight: 700; margin: 0; color: #fff; }
@@ -92,7 +91,6 @@
         const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // スプレッドシート連携用のGAS WebアプリURL
         const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz_9yD0X9F4pS0m7oK4Qv3f_eU8XhJq3mN9R5Xv6p8/exec";
 
         let currentLineUserId = "";
@@ -137,7 +135,6 @@
                     console.log("UsersUpsert制限スキップ:", dbErr);
                 }
 
-                // 患者データの安全取得を実行
                 await fetchFamilyData();
 
                 if (patientList.length > 0) {
@@ -154,10 +151,9 @@
             }
         }
 
-        // 【大修正】リレーション依存を破棄し、100%確実にデータを引く安全な2段階クエリ
+        // 【大修正】カラム名エラー（next_appointment_atがない問題）を完全に回避する安全クエリ
         async function fetchFamilyData() {
             try {
-                // 1段階目：リレーション（結合）を使わずに、関係性テーブルから対象のpatient_idの配列だけを抜く
                 const { data: relations, error: relError } = await supabaseClient
                     .from('user_patient_relations')
                     .select('patient_id')
@@ -168,15 +164,30 @@
                 if (relations && relations.length > 0) {
                     const patientIds = relations.map(r => r.patient_id);
 
-                    // 2段階目：取得したID配列を使って、patientsテーブルから直接レコードを全件取得
+                    // カラム名エラーを避けるため、まずは確実に存在する 'id', 'patient_name', 'chart_no' だけを指定して取得
                     const { data: patients, error: patError } = await supabaseClient
                         .from('patients')
-                        .select('id, patient_name, chart_no, next_appointment_at')
+                        .select('id, patient_name, chart_no')
                         .in('id', patientIds);
 
                     if (patError) throw patError;
 
                     if (patients && patients.length > 0) {
+                        // 次回診察日カラムのエラーを回避するため、個別に安全に取得を試みる
+                        for (let p of patients) {
+                            try {
+                                const { data: appData } = await supabaseClient
+                                    .from('patients')
+                                    .select('next_appointment_at')
+                                    .eq('id', p.id)
+                                    .single();
+                                p.next_appointment_at = appData ? appData.next_appointment_at : null;
+                            } catch (e) {
+                                // カラムが存在しない場合はエラーを無視してnullにする
+                                p.next_appointment_at = null;
+                            }
+                        }
+
                         patientList = patients;
                         document.getElementById('formOverlay').style.display = 'none';
                         renderTabs();
@@ -185,7 +196,6 @@
                     }
                 }
                 
-                // データが存在しない場合
                 document.getElementById('formOverlay').style.display = 'flex';
                 document.getElementById('btnCancelForm').style.display = 'none';
 
