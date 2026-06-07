@@ -129,16 +129,20 @@
                 currentLineUserId = profile.userId;
                 currentLineDisplayName = profile.displayName;
 
-                // 1. Supabaseのusersテーブルに同期
-                await supabaseClient.from('users').upsert({ 
-                    line_user_id: currentLineUserId, 
-                    display_name: currentLineDisplayName 
-                }, { onConflict: 'line_user_id' });
+                // 1. usersテーブルへの保存処理（エラーが出ても次の処理に進むよう try-catch で保護）
+                try {
+                    await supabaseClient.from('users').upsert({ 
+                        line_user_id: currentLineUserId, 
+                        display_name: currentLineDisplayName 
+                    }, { onConflict: 'line_user_id' });
+                } catch (dbErr) {
+                    console.log("Usersテーブル登録スキップ（既存ユーザーまたはカラム形式制限）:", dbErr);
+                }
 
                 // 2. 紐付いている患者（家族含む）を取得
                 await fetchFamilyData();
 
-                // 3. 【新設】すでに登録済みの患者がいる場合、自動でスプレッドシートへ再同期を投げる
+                // 3. すでに登録済みの患者がいる場合、自動でスプレッドシートへ再同期
                 if (patientList.length > 0) {
                     patientList.forEach(patient => {
                         sendToSpreadsheet(currentLineUserId, currentLineDisplayName, patient.chart_no, patient.patient_name);
@@ -149,25 +153,38 @@
                 console.error("初期化エラー:", err);
                 alert("初期化中にエラーが発生しました。");
             } finally {
+                // 何があっても必ずローディング画面は消す
                 document.getElementById('loading-screen').style.display = 'none';
             }
         }
 
         // 家族データの取得（次回診察日も含む）
         async function fetchFamilyData() {
-            const { data, error } = await supabaseClient
-                .from('user_patient_relations')
-                .select('is_primary, patients(patient_name, chart_no, id, next_appointment_at)')
-                .eq('line_user_id', currentLineUserId);
+            try {
+                const { data, error } = await supabaseClient
+                    .from('user_patient_relations')
+                    .select('is_primary, patients(patient_name, chart_no, id, next_appointment_at)')
+                    .eq('line_user_id', currentLineUserId);
 
-            if (data && data.length > 0) {
-                patientList = data.map(item => item.patients);
-                document.getElementById('formOverlay').style.display = 'none';
-                renderTabs();
-                displayCard(patientList[0]);
-            } else {
+                if (data && data.length > 0) {
+                    patientList = data.map(item => item.patients).filter(p => p !== null);
+                    
+                    if (patientList.length > 0) {
+                        document.getElementById('formOverlay').style.display = 'none';
+                        renderTabs();
+                        displayCard(patientList[0]);
+                        return;
+                    }
+                }
+                
+                // データがない場合は登録フォームを出す
                 document.getElementById('formOverlay').style.display = 'flex';
                 document.getElementById('btnCancelForm').style.display = 'none';
+
+            } catch (err) {
+                console.error("データ取得エラー:", err);
+                // エラー時でも強制的に登録用画面を出すか、ローディングを外す
+                document.getElementById('formOverlay').style.display = 'flex';
             }
         }
 
