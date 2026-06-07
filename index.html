@@ -20,12 +20,25 @@
             --form-bg: rgba(255, 255, 255, 0.07);
         }
         body { background-color: var(--bg-dark); margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #fff; overflow: hidden; }
-        .card-container { width: 90%; max-width: 350px; aspect-ratio: 1 / 1.5; background: var(--card-gradient); border-radius: 24px; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); position: relative; padding: 18px 22px; display: flex; flex-direction: column; border: 1px solid rgba(255, 255, 255, 0.12); overflow: hidden; }
+        .card-container { width: 90%; max-width: 350px; aspect-ratio: 1 / 1.5; background: var(--card-gradient); border-radius: 24px; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); position: relative; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(255, 255, 255, 0.12); box-sizing: border-box; }
+        
+        /* 登録フォームのオーバーレイ設定 */
         .form-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 12, 26, 0.98); z-index: 10; display: none; flex-direction: column; justify-content: center; padding: 24px; box-sizing: border-box; }
-        .form-input { background: var(--form-bg); border: 1px solid rgba(255,255,255,0.15); padding: 10px 14px; border-radius: 10px; color: #fff; font-size: 0.9rem; outline: none; margin-bottom: 12px; }
-        .form-submit-btn { background: var(--medical-blue); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .form-input { background: var(--form-bg); border: 1px solid rgba(255,255,255,0.15); padding: 12px 14px; border-radius: 10px; color: #fff; font-size: 0.9rem; outline: none; margin-bottom: 14px; }
+        .form-submit-btn { background: var(--medical-blue); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
+        
+        /* カード内部のデザイン定義 */
+        .card-header { text-align: center; margin-top: 10px; }
+        .card-title { font-size: 0.8rem; letter-spacing: 2px; color: var(--mint-cyan); margin: 0 0 8px 0; font-weight: 700; }
+        .user-name { font-size: 1.6rem; margin: 0; font-weight: 700; }
+        .qr-section { display: flex; justify-content: center; align-items: center; background: #fff; padding: 15px; border-radius: 16px; width: 150px; height: 150px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .card-footer { text-align: center; margin-bottom: 10px; }
+        .chart-no { font-family: 'Urbanist', sans-serif; font-size: 1.4rem; font-weight: 700; margin: 0; color: #fff; }
+        .chart-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+
+        /* ローディング画面 */
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 999; }
-        .spinner { width: 35px; height: 35px; border: 4px solid rgba(255,255,255,0.05); border-top-color: var(--medical-blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.05); border-top-color: var(--medical-blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
@@ -34,105 +47,131 @@
     
     <div class="card-container">
         <div class="form-overlay" id="formOverlay">
-            <div id="formTitle" style="text-align:center; margin-bottom:20px; font-weight:bold;">デジタル診察券 登録</div>
+            <div id="formTitle" style="text-align:center; margin-bottom:24px; font-size:1.2rem; font-weight:bold; color:var(--mint-cyan);">デジタル診察券 登録</div>
             <input type="text" class="form-input" id="inputChartNo" placeholder="カルテ番号">
             <input type="text" class="form-input" id="inputName" placeholder="患者氏名">
             <input type="text" class="form-input" id="inputBirth" placeholder="生年月日 (例: 19740206)">
             <button class="form-submit-btn" id="btnSubmitForm">認証して登録</button>
         </div>
 
-        <h1 id="userName" style="text-align:center; margin-top:20px;">読み込み中...</h1>
-        <div id="qrcode" style="margin: 20px auto; display: flex; justify-content: center;"></div>
-        <p id="chartNo" style="text-align:center; font-size: 1.2rem; font-weight: bold;"></p>
+        <div class="card-header">
+            <p class="card-title">DIGITAL MEMBER'S CARD</p>
+            <h1 id="userName" class="user-name">読み込み中...</h1>
+        </div>
+
+        <div class="qr-section">
+            <div id="qrcode"></div>
+        </div>
+
+        <div class="card-footer">
+            <div class="chart-label">Chart Number</div>
+            <p id="chartNo" class="chart-no">--</p>
+        </div>
     </div>
 
     <script>
+        // --- 設定情報と初期化設定 ---
         const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // 重複エラーを完全に潰すため、このファイル内の唯一の接続クライアントとして定義
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        let currentLineUserId = "";
+
+        // --- アプリ初期化処理 ---
         async function initializeLiff() {
             try {
                 await liff.init({ liffId: "2010131324-Cs3gdrah" });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
                 
                 const profile = await liff.getProfile();
-                const userId = profile.userId;
+                currentLineUserId = profile.userId;
 
-                // 1. ユーザーが存在しなければ確実に作成（upsert）
-                await supabase.from('users').upsert({ 
-                    line_user_id: userId, 
+                // 1. usersテーブルにLINEユーザーデータを安全に同期 (upsert)
+                await supabaseClient.from('users').upsert({ 
+                    line_user_id: currentLineUserId, 
                     display_name: profile.displayName 
                 }, { onConflict: 'line_user_id' });
 
-                // 2. 紐付けデータがあるか確認
-                const { data, error } = await supabase
+                // 2. すでに患者との紐付け(関係)が存在するかチェック
+                const { data, error } = await supabaseClient
                     .from('user_patient_relations')
                     .select('patients(patient_name, chart_no, id)')
-                    .eq('line_user_id', userId);
+                    .eq('line_user_id', currentLineUserId);
 
                 if (data && data.length > 0) {
+                    // データが存在する場合：診察券情報を画面に美しく描画
                     const p = data[0].patients;
                     document.getElementById('userName').innerText = p.patient_name + " 様";
-                    document.getElementById('chartNo').innerText = "No." + p.chart_no;
+                    document.getElementById('chartNo').innerText = "No. " + p.chart_no;
                     
-                    // QRコードの生成を中央に綺麗に配置
                     document.getElementById("qrcode").innerHTML = "";
                     new QRCode(document.getElementById("qrcode"), {
                         text: p.id,
-                        width: 150,
-                        height: 150
+                        width: 120,
+                        height: 120,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
                     });
                 } else {
+                    // データが存在しない場合：登録画面フォームをせり上げ表示
                     document.getElementById('formOverlay').style.display = 'flex';
                 }
             } catch (err) {
-                console.error(err);
-                alert("初期化エラーが発生しました。");
+                console.error("初期化エラー:", err);
+                alert("初期化中にエラーが発生しました。");
             } finally {
+                // ローディングアニメーションを終了
                 document.getElementById('loading-screen').style.display = 'none';
             }
         }
 
+        // --- フォーム送信ボタン（紐付け認証）処理 ---
         document.getElementById('btnSubmitForm').onclick = async () => {
             const chartNo = document.getElementById('inputChartNo').value.trim();
             const name = document.getElementById('inputName').value.trim();
             const birth = document.getElementById('inputBirth').value.trim();
 
             if (!chartNo || !name || !birth) {
-                alert("すべての項目を入力してください。");
+                alert("すべての項目を正しく入力してください。");
                 return;
             }
 
             document.getElementById('loading-screen').style.display = 'flex';
             
-            // 患者検索
-            const { data: pData, error: pError } = await supabase.from('patients')
-                .select('id').eq('chart_no', chartNo).eq('patient_name', name).eq('birth_date', birth);
+            // 1. 入力された情報と完全に合致する患者データを照合
+            const { data: pData, error: pError } = await supabaseClient.from('patients')
+                .select('id')
+                .eq('chart_no', chartNo)
+                .eq('patient_name', name)
+                .eq('birth_date', birth);
 
             if (!pData || pData.length === 0) {
-                alert("該当するカルテが見つかりません。入力内容を確認してください。");
+                alert("該当するカルテ情報が見つかりません。入力内容をご確認ください。");
                 document.getElementById('loading-screen').style.display = 'none';
                 return;
             }
 
-            // 紐付け登録
-            const profile = await liff.getProfile();
-            const { error: rError } = await supabase.from('user_patient_relations').insert({
-                line_user_id: profile.userId,
+            // 2. 認証成功時、関係性テーブルへインサートを走らせる
+            const { error: rError } = await supabaseClient.from('user_patient_relations').insert({
+                line_user_id: currentLineUserId,
                 patient_id: pData[0].id,
                 is_primary: true
             });
             
             if (rError) {
-                console.error(rError);
-                alert("登録に失敗しました。データベースの制約を確認してください。");
+                console.error("紐付け登録失敗:", rError);
+                alert("登録処理に失敗しました。管理設定を確認してください。");
                 document.getElementById('loading-screen').style.display = 'none';
             } else {
+                // 完了後、ページをリロードして診察券表示にスイッチ
                 location.reload();
             }
         };
 
+        // アプリ起動
         initializeLiff();
     </script>
 </body>
