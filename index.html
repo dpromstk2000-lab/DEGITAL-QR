@@ -27,7 +27,6 @@
         .form-submit-btn { background: var(--medical-blue); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         .form-cancel-btn { background: transparent; color: var(--text-muted); border: none; padding: 10px; margin-top: 10px; cursor: pointer; font-size: 0.9rem; }
         
-        /* スマホ対応：余白と文字サイズを詰めて1行にスッキリ収める */
         .family-tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 5px; max-height: 40px; -webkit-overflow-scrolling: touch; width: 100%; box-sizing: border-box; }
         .family-tabs::-webkit-scrollbar { display: none; }
         .tab-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 5px 8px; border-radius: 20px; font-size: 0.7rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
@@ -167,7 +166,7 @@
 
                     const { data: patients, error: patError } = await supabaseClient
                         .from('patients')
-                        .select('id, patient_name, chart_no, next_appointment_at')
+                        .select('id, patient_name, chart_no')
                         .in('id', patientIds);
 
                     if (patError) throw patError;
@@ -224,13 +223,8 @@
             document.getElementById('userName').innerText = patient.patient_name + " 様";
             document.getElementById('chartNo').innerText = "No. " + patient.chart_no;
 
-            if (patient.next_appointment_at) {
-                const dateObj = new Date(patient.next_appointment_at);
-                const formattedDate = `${dateObj.getFullYear()}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')} ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
-                document.getElementById('nextAppointment').innerText = formattedDate;
-            } else {
-                document.getElementById('nextAppointment').innerText = "予定なし";
-            }
+            // 予約日時は固定表記
+            document.getElementById('nextAppointment').innerText = "予定なし";
 
             const qrContainer = document.getElementById("qrcode");
             qrContainer.innerHTML = "";
@@ -274,7 +268,10 @@
                 });
 
                 alert("登録が完了しました！");
-                await fetchFamilyData();
+                
+                // 確実に画面を切り替えるため、フォームを閉じてリロードを実行
+                document.getElementById('formOverlay').style.display = 'none';
+                window.location.reload();
                 
             } catch (err) {
                 console.error("登録エラー:", err);
