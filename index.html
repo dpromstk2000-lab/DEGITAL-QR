@@ -22,26 +22,23 @@
         body { background-color: var(--bg-dark); margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #fff; overflow: hidden; }
         .card-container { width: 90%; max-width: 350px; aspect-ratio: 1 / 1.5; background: var(--card-gradient); border-radius: 24px; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); position: relative; padding: 20px 24px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(255, 255, 255, 0.12); box-sizing: border-box; }
         
-        /* 登録フォームのオーバーレイ */
         .form-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 12, 26, 0.98); z-index: 10; display: none; flex-direction: column; justify-content: center; padding: 24px; box-sizing: border-box; }
         .form-input { background: var(--form-bg); border: 1px solid rgba(255,255,255,0.15); padding: 12px 14px; border-radius: 10px; color: #fff; font-size: 0.9rem; outline: none; margin-bottom: 14px; }
         .form-submit-btn { background: var(--medical-blue); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         .form-cancel-btn { background: transparent; color: var(--text-muted); border: none; padding: 10px; margin-top: 10px; cursor: pointer; font-size: 0.9rem; }
         
-        /* 家族切り替えタブ */
         .family-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 5px; max-height: 40px; -webkit-overflow-scrolling: touch; }
         .family-tabs::-webkit-scrollbar { display: none; }
         .tab-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
         .tab-btn.active { background: #fff; color: var(--bg-dark); font-weight: bold; border-color: #fff; }
         .add-family-btn { background: transparent; border: 1px dashed var(--mint-cyan); color: var(--mint-cyan); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         
-        /* カード内部のデザイン */
         .card-header { text-align: center; margin-top: 5px; }
         .card-title { font-size: 0.75rem; letter-spacing: 2px; color: var(--mint-cyan); margin: 0 0 6px 0; font-weight: 700; text-transform: uppercase; }
         .user-name { font-size: 1.5rem; margin: 0; font-weight: 700; }
         .qr-section { display: flex; justify-content: center; align-items: center; background: #fff; padding: 15px; border-radius: 16px; width: 130px; height: 130px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         
-        /* 新設：次回診察日エリア */
+        /* 次回診察日エリア */
         .appointment-section { text-align: center; background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); margin: 10px 0; }
         .appointment-label { font-size: 0.65rem; color: var(--mint-cyan); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
         .appointment-date { font-family: 'Urbanist', sans-serif; font-size: 1.1rem; font-weight: 700; margin: 0; color: #fff; }
@@ -50,7 +47,6 @@
         .chart-no { font-family: 'Urbanist', sans-serif; font-size: 1.2rem; font-weight: 700; margin: 0; color: #fff; }
         .chart-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
 
-        /* ローディング画面 */
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 999; }
         .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.05); border-top-color: var(--medical-blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -103,6 +99,27 @@
         let currentLineDisplayName = "";
         let patientList = []; 
 
+        // スプレッドシートへ情報を直接送信する共通関数
+        async function sendToSpreadsheet(lineId, displayName, chartNo, patientName) {
+            try {
+                const formData = new URLSearchParams();
+                formData.append('line_user_id', lineId);
+                formData.append('display_name', displayName);
+                formData.append('chart_no', chartNo);
+                formData.append('patient_name', patientName);
+
+                await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+                console.log("スプレッドシートへの同期リクエスト成功:", patientName);
+            } catch (err) {
+                console.error("スプレッドシート連携エラー:", err);
+            }
+        }
+
         async function initializeLiff() {
             try {
                 await liff.init({ liffId: "2010131324-Cs3gdrah" });
@@ -121,6 +138,13 @@
                 // 2. 紐付いている患者（家族含む）を取得
                 await fetchFamilyData();
 
+                // 3. 【新設】すでに登録済みの患者がいる場合、自動でスプレッドシートへ再同期を投げる
+                if (patientList.length > 0) {
+                    patientList.forEach(patient => {
+                        sendToSpreadsheet(currentLineUserId, currentLineDisplayName, patient.chart_no, patient.patient_name);
+                    });
+                }
+
             } catch (err) {
                 console.error("初期化エラー:", err);
                 alert("初期化中にエラーが発生しました。");
@@ -129,7 +153,7 @@
             }
         }
 
-        // 家族データの取得（次回診察日 next_appointment_at も一緒に引っ張る）
+        // 家族データの取得（次回診察日も含む）
         async function fetchFamilyData() {
             const { data, error } = await supabaseClient
                 .from('user_patient_relations')
@@ -179,15 +203,13 @@
             tabsContainer.appendChild(addBtn);
         }
 
-        // 選択された患者の情報を描画（次回診察日も対応）
+        // カード情報の描画と次回診察日のフォーマット
         function displayCard(patient) {
             document.getElementById('userName').innerText = patient.patient_name + " 様";
             document.getElementById('chartNo').innerText = "No. " + patient.chart_no;
             
-            // 次回診察日のフォーマット整形と表示
             const nextAppElement = document.getElementById('nextAppointment');
             if (patient.next_appointment_at) {
-                // 日付オブジェクトに変換して「YYYY年MM月DD日 HH:mm」形式にする
                 const date = new Date(patient.next_appointment_at);
                 const yyyy = date.getFullYear();
                 const mm = String(date.getMonth() + 1).padStart(2, '0');
@@ -199,7 +221,6 @@
                 nextAppElement.innerText = "予定なし";
             }
             
-            // QRコード生成
             document.getElementById("qrcode").innerHTML = "";
             new QRCode(document.getElementById("qrcode"), {
                 text: patient.id,
@@ -215,7 +236,7 @@
             document.getElementById('formOverlay').style.display = 'none';
         };
 
-        // 登録ボタン処理（ここでスプレッドシートへの通知も行います）
+        // 新規登録ボタン処理
         document.getElementById('btnSubmitForm').onclick = async () => {
             const chartNo = document.getElementById('inputChartNo').value.trim();
             const name = document.getElementById('inputName').value.trim();
@@ -228,7 +249,6 @@
 
             document.getElementById('loading-screen').style.display = 'flex';
             
-            // 1. 患者マスタ照合
             const { data: pData } = await supabaseClient.from('patients')
                 .select('id, patient_name, chart_no')
                 .eq('chart_no', chartNo)
@@ -248,7 +268,6 @@
                 return;
             }
 
-            // 2. Supabaseへの関係性登録
             const isPrimary = patientList.length === 0;
             const { error: rError } = await supabaseClient.from('user_patient_relations').insert({
                 line_user_id: currentLineUserId,
@@ -262,29 +281,9 @@
                 return;
             }
 
-            // 3. 【重要】スプレッドシート（GAS）へLINEIDと情報を送信
-            try {
-                // GAS側が受け取れるように、フォームデータ形式で送信
-                const formData = new URLSearchParams();
-                formData.append('line_user_id', currentLineUserId);
-                formData.append('display_name', currentLineDisplayName);
-                formData.append('chart_no', chartNo);
-                formData.append('patient_name', name);
+            // 新規追加成功時にもスプレッドシートへ送信
+            await sendToSpreadsheet(currentLineUserId, currentLineDisplayName, chartNo, name);
 
-                // バックグラウンドで非同期送信（CORS対策のため no-cors モード）
-                await fetch(GAS_WEBAPP_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData
-                });
-                console.log("スプレッドシートへの送信リクエスト完了");
-            } catch (gasError) {
-                console.error("GAS連携エラー:", gasError);
-                // 画面登録自体はできているので、ユーザーにはエラーを出さずに進めます
-            }
-
-            // 画面の更新
             document.getElementById('inputChartNo').value = "";
             document.getElementById('inputName').value = "";
             document.getElementById('inputBirth').value = "";
