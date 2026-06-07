@@ -20,21 +20,29 @@
             --form-bg: rgba(255, 255, 255, 0.07);
         }
         body { background-color: var(--bg-dark); margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #fff; overflow: hidden; }
-        .card-container { width: 90%; max-width: 350px; aspect-ratio: 1 / 1.5; background: var(--card-gradient); border-radius: 24px; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); position: relative; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(255, 255, 255, 0.12); box-sizing: border-box; }
+        .card-container { width: 90%; max-width: 350px; aspect-ratio: 1 / 1.5; background: var(--card-gradient); border-radius: 24px; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); position: relative; padding: 20px 24px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(255, 255, 255, 0.12); box-sizing: border-box; }
         
-        /* 登録フォームのオーバーレイ設定 */
+        /* 登録フォームのオーバーレイ */
         .form-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 12, 26, 0.98); z-index: 10; display: none; flex-direction: column; justify-content: center; padding: 24px; box-sizing: border-box; }
         .form-input { background: var(--form-bg); border: 1px solid rgba(255,255,255,0.15); padding: 12px 14px; border-radius: 10px; color: #fff; font-size: 0.9rem; outline: none; margin-bottom: 14px; }
         .form-submit-btn { background: var(--medical-blue); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
+        .form-cancel-btn { background: transparent; color: var(--text-muted); border: none; padding: 10px; margin-top: 10px; cursor: pointer; font-size: 0.9rem; }
         
-        /* カード内部のデザイン定義 */
-        .card-header { text-align: center; margin-top: 10px; }
-        .card-title { font-size: 0.8rem; letter-spacing: 2px; color: var(--mint-cyan); margin: 0 0 8px 0; font-weight: 700; }
-        .user-name { font-size: 1.6rem; margin: 0; font-weight: 700; }
-        .qr-section { display: flex; justify-content: center; align-items: center; background: #fff; padding: 15px; border-radius: 16px; width: 150px; height: 150px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        .card-footer { text-align: center; margin-bottom: 10px; }
-        .chart-no { font-family: 'Urbanist', sans-serif; font-size: 1.4rem; font-weight: 700; margin: 0; color: #fff; }
-        .chart-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        /* 家族切り替えタブの設定 */
+        .family-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 5px; max-height: 40px; -webkit-overflow-scrolling: touch; }
+        .family-tabs::-webkit-scrollbar { display: none; }
+        .tab-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+        .tab-btn.active { background: #fff; color: var(--bg-dark); font-weight: bold; border-color: #fff; }
+        .add-family-btn { background: transparent; border: 1px dashed var(--mint-cyan); color: var(--mint-cyan); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
+        
+        /* カード内部のデザイン */
+        .card-header { text-align: center; margin-top: 5px; }
+        .card-title { font-size: 0.75rem; letter-spacing: 2px; color: var(--mint-cyan); margin: 0 0 6px 0; font-weight: 700; text-transform: uppercase; }
+        .user-name { font-size: 1.5rem; margin: 0; font-weight: 700; }
+        .qr-section { display: flex; justify-content: center; align-items: center; background: #fff; padding: 15px; border-radius: 16px; width: 140px; height: 140px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .card-footer { text-align: center; margin-bottom: 5px; }
+        .chart-no { font-family: 'Urbanist', sans-serif; font-size: 1.3rem; font-weight: 700; margin: 0; color: #fff; }
+        .chart-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
 
         /* ローディング画面 */
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 999; }
@@ -52,7 +60,11 @@
             <input type="text" class="form-input" id="inputName" placeholder="患者氏名">
             <input type="text" class="form-input" id="inputBirth" placeholder="生年月日 (例: 19740206)">
             <button class="form-submit-btn" id="btnSubmitForm">認証して登録</button>
+            <button class="form-cancel-btn" id="btnCancelForm" style="display:none;">キャンセル</button>
         </div>
+
+        <div class="family-tabs" id="familyTabs">
+            </div>
 
         <div class="card-header">
             <p class="card-title">DIGITAL MEMBER'S CARD</p>
@@ -70,16 +82,13 @@
     </div>
 
     <script>
-        // --- 設定情報と初期化設定 ---
         const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
-        
-        // 重複エラーを完全に潰すため、このファイル内の唯一の接続クライアントとして定義
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentLineUserId = "";
+        let patientList = []; // 紐付いている家族全員のリスト
 
-        // --- アプリ初期化処理 ---
         async function initializeLiff() {
             try {
                 await liff.init({ liffId: "2010131324-Cs3gdrah" });
@@ -88,47 +97,109 @@
                 const profile = await liff.getProfile();
                 currentLineUserId = profile.userId;
 
-                // 1. usersテーブルにLINEユーザーデータを安全に同期 (upsert)
+                // 1. ユーザー情報の同期
                 await supabaseClient.from('users').upsert({ 
                     line_user_id: currentLineUserId, 
                     display_name: profile.displayName 
                 }, { onConflict: 'line_user_id' });
 
-                // 2. すでに患者との紐付け(関係)が存在するかチェック
-                const { data, error } = await supabaseClient
-                    .from('user_patient_relations')
-                    .select('patients(patient_name, chart_no, id)')
-                    .eq('line_user_id', currentLineUserId);
+                // 2. 紐付いているすべての患者（家族含む）を取得
+                await fetchFamilyData();
 
-                if (data && data.length > 0) {
-                    // データが存在する場合：診察券情報を画面に美しく描画
-                    const p = data[0].patients;
-                    document.getElementById('userName').innerText = p.patient_name + " 様";
-                    document.getElementById('chartNo').innerText = "No. " + p.chart_no;
-                    
-                    document.getElementById("qrcode").innerHTML = "";
-                    new QRCode(document.getElementById("qrcode"), {
-                        text: p.id,
-                        width: 120,
-                        height: 120,
-                        colorDark : "#000000",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H
-                    });
-                } else {
-                    // データが存在しない場合：登録画面フォームをせり上げ表示
-                    document.getElementById('formOverlay').style.display = 'flex';
-                }
             } catch (err) {
                 console.error("初期化エラー:", err);
                 alert("初期化中にエラーが発生しました。");
             } finally {
-                // ローディングアニメーションを終了
                 document.getElementById('loading-screen').style.display = 'none';
             }
         }
 
-        // --- フォーム送信ボタン（紐付け認証）処理 ---
+        // データベースから家族一覧を取得してタブを生成する関数
+        async function fetchFamilyData() {
+            const { data, error } = await supabaseClient
+                .from('user_patient_relations')
+                .select('is_primary, patients(patient_name, chart_no, id)')
+                .eq('line_user_id', currentLineUserId);
+
+            if (data && data.length > 0) {
+                // データを扱いやすい配列に整理
+                patientList = data.map(item => item.patients);
+                
+                // 登録があるのでフォームを隠す
+                document.getElementById('formOverlay').style.display = 'none';
+                
+                // タブの生成
+                renderTabs();
+                
+                // 初期表示は1人目（主たる患者）
+                displayCard(patientList[0]);
+            } else {
+                // まだ誰も登録されていない場合は登録フォームを強制表示（キャンセル不可）
+                document.getElementById('formOverlay').style.display = 'flex';
+                document.getElementById('btnCancelForm').style.display = 'none';
+            }
+        }
+
+        // タブメニューを描画する関数
+        function renderTabs() {
+            const tabsContainer = document.getElementById('familyTabs');
+            tabsContainer.innerHTML = ""; // 一旦クリア
+
+            patientList.forEach((patient, index) => {
+                const btn = document.createElement('button');
+                btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
+                // 苗字が長い場合を考慮して、名前だけか最初の4文字程度を表示
+                btn.innerText = patient.patient_name.split(" ")[0] || patient.patient_name;
+                btn.onclick = () => {
+                    // アクティブなタブの切り替え
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    // カード情報の切り替え
+                    displayCard(patient);
+                };
+                tabsContainer.appendChild(btn);
+            });
+
+            // 「+ 家族追加」ボタンを末尾に追加
+            const addBtn = document.createElement('button');
+            addBtn.className = "add-family-btn";
+            addBtn.innerText = "+ 家族追加";
+            addBtn.onclick = () => {
+                document.getElementById('formTitle').innerText = "ご家族の診察券 登録";
+                // 入力欄をクリア
+                document.getElementById('inputChartNo').value = "";
+                document.getElementById('inputName').value = "";
+                document.getElementById('inputBirth').value = "";
+                
+                document.getElementById('formOverlay').style.display = 'flex';
+                document.getElementById('btnCancelForm').style.display = 'block'; // 家族追加時はキャンセル可能
+            };
+            tabsContainer.appendChild(addBtn);
+        }
+
+        // 選択された患者のカード情報を画面に描画する関数
+        function displayCard(patient) {
+            document.getElementById('userName').innerText = patient.patient_name + " 様";
+            document.getElementById('chartNo').innerText = "No. " + patient.chart_no;
+            
+            // QRコードの再生成
+            document.getElementById("qrcode").innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), {
+                text: patient.id,
+                width: 120,
+                height: 120,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        // フォームキャンセルボタン
+        document.getElementById('btnCancelForm').onclick = () => {
+            document.getElementById('formOverlay').style.display = 'none';
+        };
+
+        // 登録・認証ボタン処理
         document.getElementById('btnSubmitForm').onclick = async () => {
             const chartNo = document.getElementById('inputChartNo').value.trim();
             const name = document.getElementById('inputName').value.trim();
@@ -141,37 +212,48 @@
 
             document.getElementById('loading-screen').style.display = 'flex';
             
-            // 1. 入力された情報と完全に合致する患者データを照合
-            const { data: pData, error: pError } = await supabaseClient.from('patients')
+            // 1. 患者マスタ照合
+            const { data: pData } = await supabaseClient.from('patients')
                 .select('id')
                 .eq('chart_no', chartNo)
                 .eq('patient_name', name)
                 .eq('birth_date', birth);
 
             if (!pData || pData.length === 0) {
-                alert("該当するカルテ情報が見つかりません。入力内容をご確認ください。");
+                alert("該当するカルテ情報が見つかりません。");
                 document.getElementById('loading-screen').style.display = 'none';
                 return;
             }
 
-            // 2. 認証成功時、関係性テーブルへインサートを走らせる
+            // すでに登録済み（重複）でないかチェック
+            const isExist = patientList.some(p => p.id === pData[0].id);
+            if (isExist) {
+                alert("この診察券はすでに登録されています。");
+                document.getElementById('loading-screen').style.display = 'none';
+                return;
+            }
+
+            // 2. 紐付け登録（2人目以降なら is_primary は false にする）
+            const isPrimary = patientList.length === 0;
             const { error: rError } = await supabaseClient.from('user_patient_relations').insert({
                 line_user_id: currentLineUserId,
                 patient_id: pData[0].id,
-                is_primary: true
+                is_primary: isPrimary
             });
             
             if (rError) {
-                console.error("紐付け登録失敗:", rError);
-                alert("登録処理に失敗しました。管理設定を確認してください。");
+                alert("登録に失敗しました。");
                 document.getElementById('loading-screen').style.display = 'none';
             } else {
-                // 完了後、ページをリロードして診察券表示にスイッチ
-                location.reload();
+                // 再読み込みして最新の家族一覧を表示
+                document.getElementById('inputChartNo').value = "";
+                document.getElementById('inputName').value = "";
+                document.getElementById('inputBirth').value = "";
+                await fetchFamilyData();
+                document.getElementById('loading-screen').style.display = 'none';
             }
         };
 
-        // アプリ起動
         initializeLiff();
     </script>
 </body>
