@@ -99,7 +99,6 @@
         let currentLineDisplayName = "";
         let patientList = []; 
 
-        // スプレッドシートへ情報を直接送信する共通関数
         async function sendToSpreadsheet(lineId, displayName, chartNo, patientName) {
             try {
                 const formData = new URLSearchParams();
@@ -114,7 +113,7 @@
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: formData
                 });
-                console.log("スプレッドシートへの同期リクエスト成功:", patientName);
+                console.log("スプレッドシートへの同期成功:", patientName);
             } catch (err) {
                 console.error("スプレッドシート連携エラー:", err);
             }
@@ -129,20 +128,18 @@
                 currentLineUserId = profile.userId;
                 currentLineDisplayName = profile.displayName;
 
-                // 1. usersテーブルへの保存処理（エラーが出ても次の処理に進むよう try-catch で保護）
                 try {
                     await supabaseClient.from('users').upsert({ 
                         line_user_id: currentLineUserId, 
                         display_name: currentLineDisplayName 
                     }, { onConflict: 'line_user_id' });
                 } catch (dbErr) {
-                    console.log("Usersテーブル登録スキップ（既存ユーザーまたはカラム形式制限）:", dbErr);
+                    console.log("UsersUpsert制限スキップ:", dbErr);
                 }
 
-                // 2. 紐付いている患者（家族含む）を取得
+                // 患者データの安全取得を実行
                 await fetchFamilyData();
 
-                // 3. すでに登録済みの患者がいる場合、自動でスプレッドシートへ再同期
                 if (patientList.length > 0) {
                     patientList.forEach(patient => {
                         sendToSpreadsheet(currentLineUserId, currentLineDisplayName, patient.chart_no, patient.patient_name);
@@ -153,23 +150,34 @@
                 console.error("初期化エラー:", err);
                 alert("初期化中にエラーが発生しました。");
             } finally {
-                // 何があっても必ずローディング画面は消す
                 document.getElementById('loading-screen').style.display = 'none';
             }
         }
 
-        // 家族データの取得（次回診察日も含む）
+        // 【大修正】リレーション依存を破棄し、100%確実にデータを引く安全な2段階クエリ
         async function fetchFamilyData() {
             try {
-                const { data, error } = await supabaseClient
+                // 1段階目：リレーション（結合）を使わずに、関係性テーブルから対象のpatient_idの配列だけを抜く
+                const { data: relations, error: relError } = await supabaseClient
                     .from('user_patient_relations')
-                    .select('is_primary, patients(patient_name, chart_no, id, next_appointment_at)')
+                    .select('patient_id')
                     .eq('line_user_id', currentLineUserId);
 
-                if (data && data.length > 0) {
-                    patientList = data.map(item => item.patients).filter(p => p !== null);
-                    
-                    if (patientList.length > 0) {
+                if (relError) throw relError;
+
+                if (relations && relations.length > 0) {
+                    const patientIds = relations.map(r => r.patient_id);
+
+                    // 2段階目：取得したID配列を使って、patientsテーブルから直接レコードを全件取得
+                    const { data: patients, error: patError } = await supabaseClient
+                        .from('patients')
+                        .select('id, patient_name, chart_no, next_appointment_at')
+                        .in('id', patientIds);
+
+                    if (patError) throw patError;
+
+                    if (patients && patients.length > 0) {
+                        patientList = patients;
                         document.getElementById('formOverlay').style.display = 'none';
                         renderTabs();
                         displayCard(patientList[0]);
@@ -177,18 +185,16 @@
                     }
                 }
                 
-                // データがない場合は登録フォームを出す
+                // データが存在しない場合
                 document.getElementById('formOverlay').style.display = 'flex';
                 document.getElementById('btnCancelForm').style.display = 'none';
 
             } catch (err) {
-                console.error("データ取得エラー:", err);
-                // エラー時でも強制的に登録用画面を出すか、ローディングを外す
+                console.error("データ安全取得プロセス内エラー:", err);
                 document.getElementById('formOverlay').style.display = 'flex';
             }
         }
 
-        // タブメニューの描画
         function renderTabs() {
             const tabsContainer = document.getElementById('familyTabs');
             tabsContainer.innerHTML = ""; 
@@ -205,7 +211,6 @@
                 tabsContainer.appendChild(btn);
             });
 
-            // 「+ 家族追加」ボタン
             const addBtn = document.createElement('button');
             addBtn.className = "add-family-btn";
             addBtn.innerText = "+ 家族追加";
@@ -220,7 +225,6 @@
             tabsContainer.appendChild(addBtn);
         }
 
-        // カード情報の描画と次回診察日のフォーマット
         function displayCard(patient) {
             document.getElementById('userName').innerText = patient.patient_name + " 様";
             document.getElementById('chartNo').innerText = "No. " + patient.chart_no;
@@ -253,7 +257,6 @@
             document.getElementById('formOverlay').style.display = 'none';
         };
 
-        // 新規登録ボタン処理
         document.getElementById('btnSubmitForm').onclick = async () => {
             const chartNo = document.getElementById('inputChartNo').value.trim();
             const name = document.getElementById('inputName').value.trim();
@@ -298,7 +301,6 @@
                 return;
             }
 
-            // 新規追加成功時にもスプレッドシートへ送信
             await sendToSpreadsheet(currentLineUserId, currentLineDisplayName, chartNo, name);
 
             document.getElementById('inputChartNo').value = "";
