@@ -27,11 +27,12 @@
         .form-submit-btn { background: var(--medical-blue); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         .form-cancel-btn { background: transparent; color: var(--text-muted); border: none; padding: 10px; margin-top: 10px; cursor: pointer; font-size: 0.9rem; }
         
-        .family-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 5px; max-height: 40px; -webkit-overflow-scrolling: touch; }
+        /* スマホ対応：タブエリアがはみ出てもスクロールで確実に触れる・見合える設定に最適化 */
+        .family-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 5px; max-height: 40px; -webkit-overflow-scrolling: touch; width: 100%; box-sizing: border-box; }
         .family-tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+        .tab-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
         .tab-btn.active { background: #fff; color: var(--bg-dark); font-weight: bold; border-color: #fff; }
-        .add-family-btn { background: transparent; border: 1px dashed var(--mint-cyan); color: var(--mint-cyan); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
+        .add-family-btn { background: transparent; border: 1px dashed var(--mint-cyan); color: var(--mint-cyan); padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
         
         .card-header { text-align: center; margin-top: 5px; }
         .card-title { font-size: 0.75rem; letter-spacing: 2px; color: var(--mint-cyan); margin: 0 0 6px 0; font-weight: 700; text-transform: uppercase; }
@@ -151,7 +152,6 @@
             }
         }
 
-        // 【大修正】カラム名エラー（next_appointment_atがない問題）を完全に回避する安全クエリ
         async function fetchFamilyData() {
             try {
                 const { data: relations, error: relError } = await supabaseClient
@@ -164,7 +164,6 @@
                 if (relations && relations.length > 0) {
                     const patientIds = relations.map(r => r.patient_id);
 
-                    // カラム名エラーを避けるため、まずは確実に存在する 'id', 'patient_name', 'chart_no' だけを指定して取得
                     const { data: patients, error: patError } = await supabaseClient
                         .from('patients')
                         .select('id, patient_name, chart_no')
@@ -173,7 +172,6 @@
                     if (patError) throw patError;
 
                     if (patients && patients.length > 0) {
-                        // 次回診察日カラムのエラーを回避するため、個別に安全に取得を試みる
                         for (let p of patients) {
                             try {
                                 const { data: appData } = await supabaseClient
@@ -183,7 +181,6 @@
                                     .single();
                                 p.next_appointment_at = appData ? appData.next_appointment_at : null;
                             } catch (e) {
-                                // カラムが存在しない場合はエラーを無視してnullにする
                                 p.next_appointment_at = null;
                             }
                         }
@@ -236,91 +233,5 @@
         }
 
         function displayCard(patient) {
-            document.getElementById('userName').innerText = patient.patient_name + " 様";
-            document.getElementById('chartNo').innerText = "No. " + patient.chart_no;
-            
-            const nextAppElement = document.getElementById('nextAppointment');
-            if (patient.next_appointment_at) {
-                const date = new Date(patient.next_appointment_at);
-                const yyyy = date.getFullYear();
-                const mm = String(date.getMonth() + 1).padStart(2, '0');
-                const dd = String(date.getDate()).padStart(2, '0');
-                const hh = String(date.getHours()).padStart(2, '0');
-                const min = String(date.getMinutes()).padStart(2, '0');
-                nextAppElement.innerText = `${yyyy}年${mm}月${dd}日 ${hh}:${min}`;
-            } else {
-                nextAppElement.innerText = "予定なし";
-            }
-            
-            document.getElementById("qrcode").innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), {
-                text: patient.id,
-                width: 120,
-                height: 120,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-        }
-
-        document.getElementById('btnCancelForm').onclick = () => {
-            document.getElementById('formOverlay').style.display = 'none';
-        };
-
-        document.getElementById('btnSubmitForm').onclick = async () => {
-            const chartNo = document.getElementById('inputChartNo').value.trim();
-            const name = document.getElementById('inputName').value.trim();
-            const birth = document.getElementById('inputBirth').value.trim();
-
-            if (!chartNo || !name || !birth) {
-                alert("すべての項目を正しく入力してください。");
-                return;
-            }
-
-            document.getElementById('loading-screen').style.display = 'flex';
-            
-            const { data: pData } = await supabaseClient.from('patients')
-                .select('id, patient_name, chart_no')
-                .eq('chart_no', chartNo)
-                .eq('patient_name', name)
-                .eq('birth_date', birth);
-
-            if (!pData || pData.length === 0) {
-                alert("該当するカルテ情報が見つかりません。");
-                document.getElementById('loading-screen').style.display = 'none';
-                return;
-            }
-
-            const isExist = patientList.some(p => p.id === pData[0].id);
-            if (isExist) {
-                alert("この診察券はすでに登録されています。");
-                document.getElementById('loading-screen').style.display = 'none';
-                return;
-            }
-
-            const isPrimary = patientList.length === 0;
-            const { error: rError } = await supabaseClient.from('user_patient_relations').insert({
-                line_user_id: currentLineUserId,
-                patient_id: pData[0].id,
-                is_primary: isPrimary
-            });
-            
-            if (rError) {
-                alert("登録に失敗しました。");
-                document.getElementById('loading-screen').style.display = 'none';
-                return;
-            }
-
-            await sendToSpreadsheet(currentLineUserId, currentLineDisplayName, chartNo, name);
-
-            document.getElementById('inputChartNo').value = "";
-            document.getElementById('inputName').value = "";
-            document.getElementById('inputBirth').value = "";
-            await fetchFamilyData();
-            document.getElementById('loading-screen').style.display = 'none';
-        };
-
-        initializeLiff();
-    </script>
-</body>
-</html>
+            document.getElementById('userName').innerText = p
+[The rest of the response was omitted due to character limitations]
