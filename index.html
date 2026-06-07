@@ -28,7 +28,7 @@
         .form-submit-btn { background: var(--medical-blue); color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         .form-cancel-btn { background: transparent; color: var(--text-muted); border: none; padding: 10px; margin-top: 10px; cursor: pointer; font-size: 0.9rem; }
         
-        /* 家族切り替えタブの設定 */
+        /* 家族切り替えタブ */
         .family-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 5px; max-height: 40px; -webkit-overflow-scrolling: touch; }
         .family-tabs::-webkit-scrollbar { display: none; }
         .tab-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
@@ -39,9 +39,15 @@
         .card-header { text-align: center; margin-top: 5px; }
         .card-title { font-size: 0.75rem; letter-spacing: 2px; color: var(--mint-cyan); margin: 0 0 6px 0; font-weight: 700; text-transform: uppercase; }
         .user-name { font-size: 1.5rem; margin: 0; font-weight: 700; }
-        .qr-section { display: flex; justify-content: center; align-items: center; background: #fff; padding: 15px; border-radius: 16px; width: 140px; height: 140px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        .card-footer { text-align: center; margin-bottom: 5px; }
-        .chart-no { font-family: 'Urbanist', sans-serif; font-size: 1.3rem; font-weight: 700; margin: 0; color: #fff; }
+        .qr-section { display: flex; justify-content: center; align-items: center; background: #fff; padding: 15px; border-radius: 16px; width: 130px; height: 130px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        
+        /* 新設：次回診察日エリア */
+        .appointment-section { text-align: center; background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); margin: 10px 0; }
+        .appointment-label { font-size: 0.65rem; color: var(--mint-cyan); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
+        .appointment-date { font-family: 'Urbanist', sans-serif; font-size: 1.1rem; font-weight: 700; margin: 0; color: #fff; }
+
+        .card-footer { text-align: center; margin-bottom: 5px; display: flex; flex-direction: column; align-items: center; }
+        .chart-no { font-family: 'Urbanist', sans-serif; font-size: 1.2rem; font-weight: 700; margin: 0; color: #fff; }
         .chart-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
 
         /* ローディング画面 */
@@ -63,8 +69,7 @@
             <button class="form-cancel-btn" id="btnCancelForm" style="display:none;">キャンセル</button>
         </div>
 
-        <div class="family-tabs" id="familyTabs">
-            </div>
+        <div class="family-tabs" id="familyTabs"></div>
 
         <div class="card-header">
             <p class="card-title">DIGITAL MEMBER'S CARD</p>
@@ -73,6 +78,11 @@
 
         <div class="qr-section">
             <div id="qrcode"></div>
+        </div>
+
+        <div class="appointment-section">
+            <div class="appointment-label">Next Appointment</div>
+            <p id="nextAppointment" class="appointment-date">確認中...</p>
         </div>
 
         <div class="card-footer">
@@ -86,8 +96,12 @@
         const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // スプレッドシート連携用のGAS WebアプリURL
+        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz_9yD0X9F4pS0m7oK4Qv3f_eU8XhJq3mN9R5Xv6p8/exec";
+
         let currentLineUserId = "";
-        let patientList = []; // 紐付いている家族全員のリスト
+        let currentLineDisplayName = "";
+        let patientList = []; 
 
         async function initializeLiff() {
             try {
@@ -96,14 +110,15 @@
                 
                 const profile = await liff.getProfile();
                 currentLineUserId = profile.userId;
+                currentLineDisplayName = profile.displayName;
 
-                // 1. ユーザー情報の同期
+                // 1. Supabaseのusersテーブルに同期
                 await supabaseClient.from('users').upsert({ 
                     line_user_id: currentLineUserId, 
-                    display_name: profile.displayName 
+                    display_name: currentLineDisplayName 
                 }, { onConflict: 'line_user_id' });
 
-                // 2. 紐付いているすべての患者（家族含む）を取得
+                // 2. 紐付いている患者（家族含む）を取得
                 await fetchFamilyData();
 
             } catch (err) {
@@ -114,75 +129,77 @@
             }
         }
 
-        // データベースから家族一覧を取得してタブを生成する関数
+        // 家族データの取得（次回診察日 next_appointment_at も一緒に引っ張る）
         async function fetchFamilyData() {
             const { data, error } = await supabaseClient
                 .from('user_patient_relations')
-                .select('is_primary, patients(patient_name, chart_no, id)')
+                .select('is_primary, patients(patient_name, chart_no, id, next_appointment_at)')
                 .eq('line_user_id', currentLineUserId);
 
             if (data && data.length > 0) {
-                // データを扱いやすい配列に整理
                 patientList = data.map(item => item.patients);
-                
-                // 登録があるのでフォームを隠す
                 document.getElementById('formOverlay').style.display = 'none';
-                
-                // タブの生成
                 renderTabs();
-                
-                // 初期表示は1人目（主たる患者）
                 displayCard(patientList[0]);
             } else {
-                // まだ誰も登録されていない場合は登録フォームを強制表示（キャンセル不可）
                 document.getElementById('formOverlay').style.display = 'flex';
                 document.getElementById('btnCancelForm').style.display = 'none';
             }
         }
 
-        // タブメニューを描画する関数
+        // タブメニューの描画
         function renderTabs() {
             const tabsContainer = document.getElementById('familyTabs');
-            tabsContainer.innerHTML = ""; // 一旦クリア
+            tabsContainer.innerHTML = ""; 
 
             patientList.forEach((patient, index) => {
                 const btn = document.createElement('button');
                 btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
-                // 苗字が長い場合を考慮して、名前だけか最初の4文字程度を表示
                 btn.innerText = patient.patient_name.split(" ")[0] || patient.patient_name;
                 btn.onclick = () => {
-                    // アクティブなタブの切り替え
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    // カード情報の切り替え
                     displayCard(patient);
                 };
                 tabsContainer.appendChild(btn);
             });
 
-            // 「+ 家族追加」ボタンを末尾に追加
+            // 「+ 家族追加」ボタン
             const addBtn = document.createElement('button');
             addBtn.className = "add-family-btn";
             addBtn.innerText = "+ 家族追加";
             addBtn.onclick = () => {
                 document.getElementById('formTitle').innerText = "ご家族の診察券 登録";
-                // 入力欄をクリア
                 document.getElementById('inputChartNo').value = "";
                 document.getElementById('inputName').value = "";
                 document.getElementById('inputBirth').value = "";
-                
                 document.getElementById('formOverlay').style.display = 'flex';
-                document.getElementById('btnCancelForm').style.display = 'block'; // 家族追加時はキャンセル可能
+                document.getElementById('btnCancelForm').style.display = 'block'; 
             };
             tabsContainer.appendChild(addBtn);
         }
 
-        // 選択された患者のカード情報を画面に描画する関数
+        // 選択された患者の情報を描画（次回診察日も対応）
         function displayCard(patient) {
             document.getElementById('userName').innerText = patient.patient_name + " 様";
             document.getElementById('chartNo').innerText = "No. " + patient.chart_no;
             
-            // QRコードの再生成
+            // 次回診察日のフォーマット整形と表示
+            const nextAppElement = document.getElementById('nextAppointment');
+            if (patient.next_appointment_at) {
+                // 日付オブジェクトに変換して「YYYY年MM月DD日 HH:mm」形式にする
+                const date = new Date(patient.next_appointment_at);
+                const yyyy = date.getFullYear();
+                const mm = String(date.getMonth() + 1).padStart(2, '0');
+                const dd = String(date.getDate()).padStart(2, '0');
+                const hh = String(date.getHours()).padStart(2, '0');
+                const min = String(date.getMinutes()).padStart(2, '0');
+                nextAppElement.innerText = `${yyyy}年${mm}月${dd}日 ${hh}:${min}`;
+            } else {
+                nextAppElement.innerText = "予定なし";
+            }
+            
+            // QRコード生成
             document.getElementById("qrcode").innerHTML = "";
             new QRCode(document.getElementById("qrcode"), {
                 text: patient.id,
@@ -194,12 +211,11 @@
             });
         }
 
-        // フォームキャンセルボタン
         document.getElementById('btnCancelForm').onclick = () => {
             document.getElementById('formOverlay').style.display = 'none';
         };
 
-        // 登録・認証ボタン処理
+        // 登録ボタン処理（ここでスプレッドシートへの通知も行います）
         document.getElementById('btnSubmitForm').onclick = async () => {
             const chartNo = document.getElementById('inputChartNo').value.trim();
             const name = document.getElementById('inputName').value.trim();
@@ -214,7 +230,7 @@
             
             // 1. 患者マスタ照合
             const { data: pData } = await supabaseClient.from('patients')
-                .select('id')
+                .select('id, patient_name, chart_no')
                 .eq('chart_no', chartNo)
                 .eq('patient_name', name)
                 .eq('birth_date', birth);
@@ -225,7 +241,6 @@
                 return;
             }
 
-            // すでに登録済み（重複）でないかチェック
             const isExist = patientList.some(p => p.id === pData[0].id);
             if (isExist) {
                 alert("この診察券はすでに登録されています。");
@@ -233,7 +248,7 @@
                 return;
             }
 
-            // 2. 紐付け登録（2人目以降なら is_primary は false にする）
+            // 2. Supabaseへの関係性登録
             const isPrimary = patientList.length === 0;
             const { error: rError } = await supabaseClient.from('user_patient_relations').insert({
                 line_user_id: currentLineUserId,
@@ -244,14 +259,37 @@
             if (rError) {
                 alert("登録に失敗しました。");
                 document.getElementById('loading-screen').style.display = 'none';
-            } else {
-                // 再読み込みして最新の家族一覧を表示
-                document.getElementById('inputChartNo').value = "";
-                document.getElementById('inputName').value = "";
-                document.getElementById('inputBirth').value = "";
-                await fetchFamilyData();
-                document.getElementById('loading-screen').style.display = 'none';
+                return;
             }
+
+            // 3. 【重要】スプレッドシート（GAS）へLINEIDと情報を送信
+            try {
+                // GAS側が受け取れるように、フォームデータ形式で送信
+                const formData = new URLSearchParams();
+                formData.append('line_user_id', currentLineUserId);
+                formData.append('display_name', currentLineDisplayName);
+                formData.append('chart_no', chartNo);
+                formData.append('patient_name', name);
+
+                // バックグラウンドで非同期送信（CORS対策のため no-cors モード）
+                await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+                console.log("スプレッドシートへの送信リクエスト完了");
+            } catch (gasError) {
+                console.error("GAS連携エラー:", gasError);
+                // 画面登録自体はできているので、ユーザーにはエラーを出さずに進めます
+            }
+
+            // 画面の更新
+            document.getElementById('inputChartNo').value = "";
+            document.getElementById('inputName').value = "";
+            document.getElementById('inputBirth').value = "";
+            await fetchFamilyData();
+            document.getElementById('loading-screen').style.display = 'none';
         };
 
         initializeLiff();
