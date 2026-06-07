@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DPRO DENTAL CARD</title>
-    <!-- LINE SDK -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <!-- QRコード生成ライブラリ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- フォント -->
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700&family=Noto+Sans+JP:wght@300;700&display=swap" rel="stylesheet">
     
     <style>
@@ -23,223 +19,12 @@
             --card-gradient: linear-gradient(135deg, #0044cc 0%, #001133 100%);
             --form-bg: rgba(255, 255, 255, 0.07);
         }
-
-        body {
-            background-color: var(--bg-dark);
-            margin: 0;
-            padding: 0;
-            font-family: 'Noto Sans JP', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: #fff;
-            overflow: hidden;
-        }
-
-        .card-container {
-            width: 90%;
-            max-width: 350px;
-            aspect-ratio: 1 / 1.5; 
-            background: var(--card-gradient);
-            border-radius: 24px;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
-            position: relative;
-            padding: 18px 22px; 
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            overflow: hidden;
-        }
-
-        .card-container::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 16px 16px;
-            pointer-events: none;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            z-index: 2;
-            margin-bottom: 10px;
-        }
-
-        .logo-section { display: flex; align-items: center; gap: 8px; }
-        .medical-cross {
-            width: 12px; height: 12px;
-            background: var(--mint-cyan);
-            position: relative;
-        }
-        .medical-cross::before { content: ""; position: absolute; top: 4px; left: -4px; width: 20px; height: 4px; background: var(--mint-cyan); }
-        .medical-cross::after { content: ""; position: absolute; left: 4px; top: -4px; width: 4px; height: 20px; background: var(--mint-cyan); }
-
-        .brand-logo {
-            font-family: 'Urbanist', sans-serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #fff;
-            margin-left: 8px;
-        }
-
-        .badge-clinic {
-            border: 1px solid var(--mint-cyan);
-            padding: 3px 8px;
-            border-radius: 50px;
-            font-size: 0.55rem;
-            color: var(--mint-cyan);
-        }
-
-        .family-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 14px;
-            z-index: 2;
-        }
-
-        .family-selector {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            white-space: nowrap;
-            flex-grow: 1;
-        }
-        .family-selector::-webkit-scrollbar { display: none; }
-        
-        .family-tab {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .family-tab.active {
-            background: rgba(0, 229, 255, 0.15);
-            border-color: var(--mint-cyan);
-            color: #fff;
-            box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
-            font-weight: 700;
-        }
-
-        .add-family-btn {
-            background: rgba(0, 85, 255, 0.3);
-            border: 1px dashed var(--mint-cyan);
-            color: var(--mint-cyan);
-            width: 28px;
-            height: 28px;
-            min-width: 28px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.9rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .user-section { z-index: 2; margin-bottom: 8px; }
-        .label-small { font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1px; }
-        .user-name { font-size: 1.5rem; font-weight: 700; margin: 0; color: #fff; }
-
-        .appointment-box {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 10px 14px;
-            z-index: 2;
-            margin-bottom: 12px;
-        }
-
-        .appointment-title { font-size: 0.6rem; color: var(--mint-cyan); font-weight: 700; margin: 0 0 4px 0; }
-        .appointment-date { font-size: 1.15rem; font-weight: 700; color: #fff; margin: 0; }
-
-        .qrcode-area {
-            background: #fff;
-            padding: 12px;
-            border-radius: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2;
-            width: 115px; 
-            height: 115px;
-            margin: 0 auto;
-        }
-        .qrcode-area img { width: 115px !important; height: 115px !important; }
-
-        .card-footer {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            z-index: 2;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            margin-top: auto;
-        }
-
-        .footer-row { display: flex; justify-content: space-between; align-items: center; }
-        .meta-item { display: flex; flex-direction: column; }
-        .meta-label { font-size: 0.5rem; color: var(--text-muted); }
-        .meta-value-id { font-family: 'Urbanist', sans-serif; font-size: 0.65rem; font-weight: 700; color: var(--mint-cyan); word-break: break-all; }
-        .meta-value { font-family: 'Urbanist', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--silver); }
-
-        /* 3点認証入力フォームオーバーレイ */
-        .form-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 12, 26, 0.98);
-            z-index: 10;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            padding: 24px;
-            box-sizing: border-box;
-        }
-
-        .form-title { font-size: 1.1rem; font-weight: bold; color: var(--mint-cyan); margin-bottom: 4px; text-align: center; }
-        .form-subtitle { font-size: 0.65rem; color: var(--text-muted); margin-bottom: 15px; text-align: center; }
-        
-        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
-        .form-label { font-size: 0.6rem; color: var(--text-muted); font-weight: bold; }
-        .form-input {
-            background: var(--form-bg);
-            border: 1px solid rgba(255,255,255,0.15);
-            padding: 10px 14px;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 0.9rem;
-            outline: none;
-            transition: 0.2s;
-        }
-        .form-input:focus { border-color: var(--mint-cyan); background: rgba(255,255,255,0.12); }
-
-        .form-btn-group { display: flex; gap: 8px; margin-top: 15px; }
-        .form-submit-btn {
-            background: var(--medical-blue);
-            color: #fff; border: none; padding: 12px;
-            border-radius: 10px; font-weight: bold; font-size: 0.85rem;
-            cursor: pointer; flex-grow: 2;
-        }
-        .form-cancel-btn {
-            background: rgba(255,255,255,0.1);
-            color: #fff; border: none; padding: 12px;
-            border-radius: 10px; font-size: 0.85rem;
-            cursor: pointer; flex-grow: 1;
-        }
-
-        #loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 999;
-        }
+        body { background-color: var(--bg-dark); margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #fff; overflow: hidden; }
+        .card-container { width: 90%; max-width: 350px; aspect-ratio: 1 / 1.5; background: var(--card-gradient); border-radius: 24px; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); position: relative; padding: 18px 22px; display: flex; flex-direction: column; border: 1px solid rgba(255, 255, 255, 0.12); overflow: hidden; }
+        .form-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 12, 26, 0.98); z-index: 10; display: none; flex-direction: column; justify-content: center; padding: 24px; box-sizing: border-box; }
+        .form-input { background: var(--form-bg); border: 1px solid rgba(255,255,255,0.15); padding: 10px 14px; border-radius: 10px; color: #fff; font-size: 0.9rem; outline: none; margin-bottom: 12px; }
+        .form-submit-btn { background: var(--medical-blue); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 999; }
         .spinner { width: 35px; height: 35px; border: 4px solid rgba(255,255,255,0.05); border-top-color: var(--medical-blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
@@ -248,262 +33,88 @@
     <div id="loading-screen"><div class="spinner"></div></div>
     
     <div class="card-container">
-        <!-- 3点認証フォーム画面 -->
         <div class="form-overlay" id="formOverlay">
-            <div class="form-title" id="formTitle">デジタル診察券 本人確認</div>
-            <div class="form-subtitle" id="formSubtitle">医院に登録されている情報を入力してください</div>
-            
-            <div class="form-group">
-                <label class="form-label">カルテ番号 (CHART NO)</label>
-                <input type="text" class="form-input" id="inputChartNo" placeholder="例: 1001">
-            </div>
-            <div class="form-group">
-                <label class="form-label">患者氏名 (NAME)</label>
-                <input type="text" class="form-input" id="inputName" placeholder="例: 山田 太郎">
-            </div>
-            <div class="form-group">
-                <label class="form-label">生年月日 (BIRTH DATE)</label>
-                <input type="text" class="form-input" id="inputBirth" placeholder="例: 19740206 (数字8桁)">
-            </div>
-
-            <div class="form-btn-group">
-                <button class="form-cancel-btn" id="btnCancelForm" style="display:none;">戻る</button>
-                <button class="form-submit-btn" id="btnSubmitForm">認証して登録</button>
-            </div>
+            <div id="formTitle" style="text-align:center; margin-bottom:20px; font-weight:bold;">デジタル診察券 登録</div>
+            <input type="text" class="form-input" id="inputChartNo" placeholder="カルテ番号">
+            <input type="text" class="form-input" id="inputName" placeholder="患者氏名">
+            <input type="text" class="form-input" id="inputBirth" placeholder="生年月日 (例: 19740206)">
+            <button class="form-submit-btn" id="btnSubmitForm">認証して登録</button>
         </div>
 
-        <div class="card-header">
-            <div class="logo-section">
-                <div class="medical-cross"></div>
-                <div class="brand-logo">DPRO歯科</div>
-            </div>
-            <div class="badge-clinic">DIGITAL CARD</div>
-        </div>
-
-        <div class="family-wrapper">
-            <div class="family-selector" id="familySelector"></div>
-            <div class="add-family-btn" id="addFamilyBtn" title="家族を追加" style="display: none;">＋</div>
-        </div>
-
-        <div class="user-section">
-            <p class="label-small">PATIENT NAME</p>
-            <h1 class="user-name" id="userName">認証確認中...</h1>
-        </div>
-        
-        <div class="appointment-box">
-            <p class="appointment-title">NEXT APPOINTMENT（次回予約日時）</p>
-            <p class="appointment-date" id="appointmentDate">---</p>
-        </div>
-        
-        <div class="qrcode-area" id="qrcode"></div>
-        <p style="text-align:center; font-size: 0.55rem; color: rgba(255,255,255,0.3); margin-top: 6px; margin-bottom: 8px; z-index: 2;">受付のリーダーにかざしてください</p>
-        
-        <div class="card-footer">
-            <div class="meta-item">
-                <span class="meta-label">LINE USER ID</span>
-                <span class="meta-value-id" id="displayId">---</span>
-            </div>
-            <div class="footer-row">
-                <div class="meta-item"><span class="meta-label">CHART NO</span><span class="meta-value" id="chartNo">---</span></div>
-                <div class="meta-item" style="text-align: right;"><span class="meta-label">CLINIC TEL</span><span class="meta-value">092-XXX-XXXX</span></div>
-            </div>
-        </div>
+        <h1 id="userName">読み込み中...</h1>
+        <div id="qrcode" style="margin: 20px auto;"></div>
+        <p id="chartNo" style="text-align:center;"></p>
     </div>
 
     <script>
         const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
-        
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let currentLineUserId = "";
-        let familyData = [];
-        let isAddingFamilyMode = false;
-
-        function generateQRCode(text) {
-            const qrContainer = document.getElementById("qrcode");
-            qrContainer.innerHTML = ""; 
-            new QRCode(qrContainer, {
-                text: text, width: 115, height: 115,
-                colorDark : "#000000", colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-        }
-
-        function updateCardDisplay(patient) {
-            document.getElementById('userName').innerText = patient.patient_name + " 様";
-            document.getElementById('appointmentDate').innerText = patient.appointment_date || "次回の予約はありません";
-            document.getElementById('chartNo').innerText = patient.chart_no;
-            generateQRCode(patient.id);
-        }
-
-        function renderTabs() {
-            const selector = document.getElementById('familySelector');
-            selector.innerHTML = '';
-
-            familyData.forEach((member) => {
-                const tab = document.createElement('div');
-                tab.className = `family-tab ${member.is_primary ? 'active' : ''}`;
-                tab.innerText = member.patients.patient_name;
-                
-                tab.onclick = () => {
-                    document.querySelectorAll('.family-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    updateCardDisplay(member.patients);
-                };
-                selector.appendChild(tab);
-            });
-            document.getElementById('addFamilyBtn').style.display = 'flex';
-        }
-
-        async function fetchFamilyData(lineUserId) {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('user_patient_relations')
-                    .select('is_primary, patients(id, patient_name, chart_no, appointment_date)')
-                    .eq('line_user_id', lineUserId);
-
-                if (error) throw error;
-
-                if (data && data.length > 0) {
-                    document.getElementById('formOverlay').style.display = 'none';
-                    familyData = data.sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0));
-                    const primaryMember = familyData.find(m => m.is_primary) || familyData[0];
-                    renderTabs();
-                    updateCardDisplay(primaryMember.patients);
-                } else {
-                    showRegistrationForm(false);
-                }
-            } catch (err) {
-                console.error("データ取得エラー:", err);
-            }
-        }
-
-        function showRegistrationForm(isAddMode) {
-            isAddingFamilyMode = isAddMode;
-            document.getElementById('inputChartNo').value = "";
-            document.getElementById('inputName').value = "";
-            document.getElementById('inputBirth').value = "";
-
-            const cancelBtn = document.getElementById('btnCancelForm');
-            if (isAddMode) {
-                document.getElementById('formTitle').innerText = "家族メンバーの追加";
-                cancelBtn.style.display = 'block';
-            } else {
-                document.getElementById('formTitle').innerText = "デジタル診察券 初期登録";
-                cancelBtn.style.display = 'none';
-            }
-            document.getElementById('formOverlay').style.display = 'flex';
-        }
-
-        // 3点認証および紐づけ処理
-        document.getElementById('btnSubmitForm').onclick = async () => {
-            const chartNo = document.getElementById('inputChartNo').value.trim();
-            const patientName = document.getElementById('inputName').value.trim();
-            const birthDate = document.getElementById('inputBirth').value.trim();
-
-            if (!chartNo || !patientName || !birthDate) {
-                alert("すべての項目を正しく入力してください。");
-                return;
-            }
-
-            document.getElementById('loading-screen').style.display = 'flex';
-
-            try {
-                // 入力情報が実在するかチェック
-                const { data: matchedPatients, error: searchError } = await supabaseClient
-                    .from('patients')
-                    .select('id')
-                    .eq('chart_no', chartNo)
-                    .eq('patient_name', patientName)
-                    .eq('birth_date', birthDate);
-
-                if (searchError) throw searchError;
-
-                // 該当データが見つからなかった場合
-                if (!matchedPatients || matchedPatients.length === 0) {
-                    alert("入力された情報と一致するカルテが見つかりません。医院から案内されたカルテ番号・氏名・生年月日を再度ご確認ください。");
-                    document.getElementById('loading-screen').style.display = 'none';
-                    return;
-                }
-
-                const targetPatientId = matchedPatients[0].id;
-
-                // 重複登録の防止確認
-                const { data: existingRelation } = await supabaseClient
-                    .from('user_patient_relations')
-                    .select('id')
-                    .eq('line_user_id', currentLineUserId)
-                    .eq('patient_id', targetPatientId);
-
-                if (existingRelation && existingRelation.length > 0) {
-                    alert("このカルテは既に登録されています。");
-                    document.getElementById('loading-screen').style.display = 'none';
-                    return;
-                }
-
-                // LINEのプロフィール名を取得して、紐づけ情報（line_name）と一緒に登録
-                const isPrimarySetting = !isAddingFamilyMode;
-                const profile = await liff.getProfile();
-                
-                const { error: rError } = await supabaseClient
-                    .from('user_patient_relations')
-                    .insert([{
-                        line_user_id: currentLineUserId,
-                        patient_id: targetPatientId,
-                        is_primary: isPrimarySetting,
-                        line_name: profile.displayName // ★ここがLINE名自動取得のポイント
-                    }]);
-
-                if (rError) throw rError;
-
-                // 画面更新
-                await fetchFamilyData(currentLineUserId);
-                
-            } catch (err) {
-                console.error("認証・登録エラー:", err);
-                alert("システムエラーが発生しました。");
-            } finally {
-                document.getElementById('loading-screen').style.display = 'none';
-            }
-        };
-
-        document.getElementById('btnCancelForm').onclick = () => {
-            document.getElementById('formOverlay').style.display = 'none';
-        };
-
-        document.getElementById('addFamilyBtn').onclick = () => {
-            showRegistrationForm(true);
-        };
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function initializeLiff() {
             try {
-                await liff.init({ liffId: "2010131324-Cs3gdrah" }); 
-                if (!liff.isLoggedIn()) { 
-                    liff.login(); 
+                await liff.init({ liffId: "2010131324-Cs3gdrah" });
+                if (!liff.isLoggedIn()) { liff.login(); return; }
+                
+                const profile = await liff.getProfile();
+                const userId = profile.userId;
+
+                // 1. ユーザーを確実に作成（upsert）
+                await supabase.from('users').upsert({ 
+                    line_user_id: userId, 
+                    display_name: profile.displayName 
+                }, { onConflict: 'line_user_id' });
+
+                // 2. 紐付けデータがあるか確認
+                const { data, error } = await supabase
+                    .from('user_patient_relations')
+                    .select('patients(patient_name, chart_no, id)')
+                    .eq('line_user_id', userId);
+
+                if (data && data.length > 0) {
+                    const p = data[0].patients;
+                    document.getElementById('userName').innerText = p.patient_name + " 様";
+                    document.getElementById('chartNo').innerText = "No." + p.chart_no;
+                    new QRCode(document.getElementById("qrcode"), p.id);
                 } else {
-                    const profile = await liff.getProfile();
-                    currentLineUserId = profile.userId;
-                    document.getElementById('displayId').innerText = currentLineUserId;
-
-                    try {
-                        await supabaseClient.from('users').insert([{ line_user_id: currentLineUserId, display_name: profile.displayName }]);
-                    } catch(e) {}
-
-                    await fetchFamilyData(currentLineUserId);
-                    hideLoading();
+                    document.getElementById('formOverlay').style.display = 'flex';
                 }
-            } catch (error) { 
-                console.error("LINE初期化エラー:", error); 
-                hideLoading(); 
+            } catch (err) {
+                console.error(err);
+                alert("初期化エラーが発生しました。");
+            } finally {
+                document.getElementById('loading-screen').style.display = 'none';
             }
         }
 
-        function hideLoading() {
-            const loader = document.getElementById('loading-screen');
-            if(loader) loader.style.display = 'none'; 
-        }
-        
+        document.getElementById('btnSubmitForm').onclick = async () => {
+            const chartNo = document.getElementById('inputChartNo').value;
+            const name = document.getElementById('inputName').value;
+            const birth = document.getElementById('inputBirth').value;
+
+            document.getElementById('loading-screen').style.display = 'flex';
+            
+            // 患者検索
+            const { data: pData } = await supabase.from('patients')
+                .select('id').eq('chart_no', chartNo).eq('patient_name', name).eq('birth_date', birth);
+
+            if (!pData || pData.length === 0) {
+                alert("該当するカルテが見つかりません。");
+                location.reload();
+                return;
+            }
+
+            // 紐付け登録
+            const profile = await liff.getProfile();
+            await supabase.from('user_patient_relations').insert({
+                line_user_id: profile.userId,
+                patient_id: pData[0].id,
+                is_primary: true
+            });
+            
+            location.reload();
+        };
+
         initializeLiff();
     </script>
 </body>
