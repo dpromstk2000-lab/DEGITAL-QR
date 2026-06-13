@@ -3,245 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPRO DENTAL DASHBOARD</title>
+    <title>DPRO DENTAL - 受付ダッシュボード</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --medical-blue: #3b82f6;
-            --mint-cyan: #06b6d4;
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --border-color: #334155;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border: rgba(255, 255, 255, 0.1);
+            --accent-blue: #3b82f6;
+            --accent-hover: #2563eb;
+            --slot-empty: #0f172a;
+            --slot-hover: #1e293b;
+            --slot-lunch: #334155;
+            --status-scheduled: #3b82f6;
+            --status-waiting: #eab308;
+            --status-treatment: #22c55e;
+            --status-completed: #64748b;
         }
-        body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Noto Sans JP', sans-serif; margin: 0; padding: 24px; }
-        .dashboard-container { max-width: 1200px; margin: 0 auto; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
-        h1 { margin: 0; font-size: 1.8rem; color: var(--mint-cyan); }
-        
-        /* 簡易予約追加フォーム */
-        .test-panel { background: var(--card-bg); padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 1px solid var(--border); }
-        .test-panel h3 { margin-top: 0; margin-bottom: 12px; color: var(--medical-blue); }
-        .form-row { display: flex; gap: 12px; }
-        input, select, button { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px; color: #fff; outline: none; }
-        button { background: var(--medical-blue); cursor: pointer; font-weight: bold; border: none; }
-        button:hover { opacity: 0.9; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Noto Sans JP', sans-serif; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--panel-bg); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .header h1 { margin: 0; font-size: 1.2rem; color: var(--accent-blue); }
+        .date-controls { display: flex; align-items: center; gap: 15px; }
+        .date-controls button { background: var(--border-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 1rem; }
+        .date-controls button:hover { background: #475569; }
+        .date-controls h2 { margin: 0; font-size: 1.5rem; width: 180px; text-align: center; }
 
-        /* 本日の予約テーブル */
-        .table-container { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 16px; border-bottom: 1px solid var(--border); }
-        th { background: rgba(0,0,0,0.2); color: var(--text-muted); font-size: 0.9rem; }
-        
-        /* ステータスバッジ */
-        .badge { padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: inline-block; }
-        .status-scheduled { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-        .status-waiting { background: rgba(234, 179, 8, 0.2); color: #facc15; }
-        .status-in_treatment { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
-        .status-accounting { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
-        .status-completed { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+        /* タイムテーブル */
+        .timetable { background: var(--panel-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+        .time-row { display: flex; border-bottom: 1px solid var(--border-color); min-height: 50px; }
+        .time-row:last-child { border-bottom: none; }
+        .time-label { width: 80px; padding: 15px; background: #0b1120; font-weight: bold; text-align: center; border-right: 1px solid var(--border-color); color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+        .time-slot { flex-grow: 1; padding: 10px 15px; background: var(--slot-empty); cursor: pointer; display: flex; align-items: center; transition: 0.2s; position: relative; }
+        .time-slot:hover { background: var(--slot-hover); }
+        .time-slot.disabled { background: var(--slot-lunch); cursor: not-allowed; justify-content: center; color: var(--text-muted); font-size: 0.9rem; letter-spacing: 2px; }
 
-        .action-select { background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: #fff; padding: 6px; border-radius: 6px; cursor: pointer; }
+        /* 予約カード */
+        .appointment-card { background: var(--status-scheduled); width: 100%; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .app-info { display: flex; gap: 15px; align-items: center; }
+        .app-chart { font-size: 0.8rem; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
+        .app-name { font-weight: bold; font-size: 1.1rem; }
+        .app-treatment { font-size: 0.9rem; color: rgba(255,255,255,0.9); }
+        .status-select { background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; outline: none; cursor: pointer; }
+
+        /* モーダル */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; }
+        .modal { background: var(--panel-bg); padding: 25px; border-radius: 12px; width: 400px; border: 1px solid var(--border-color); }
+        .modal h3 { margin-top: 0; color: var(--accent-blue); margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: var(--text-muted); }
+        .form-group input, .form-group select { width: 100%; padding: 10px; background: #0b1120; border: 1px solid var(--border-color); color: white; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        .btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: var(--accent-blue); color: white; }
+        .btn-cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); }
+        .btn-search { background: #475569; color: white; margin-top: 5px; width: 100%; }
+
+        #holiday-msg { text-align: center; font-size: 1.5rem; color: var(--text-muted); padding: 50px; background: var(--panel-bg); border-radius: 12px; display: none; }
     </style>
 </head>
 <body>
 
-<div class="dashboard-container">
-    <header>
-        <h1>DPRO DENTAL オーナーダッシュボード</h1>
-        <div id="current-time"></div>
-    </header>
-
-    <div class="test-panel">
-        <h3>【開発用】テスト予約データの追加</h3>
-        <div class="form-row">
-            <input type="text" id="targetChartNo" placeholder="カルテ番号 (例: 1166)">
-            <input type="datetime-local" id="appointmentAt">
-            <input type="text" id="treatmentNotes" placeholder="処置内容（例：定期健診）">
-            <button onclick="createTestAppointment()">予約を追加する</button>
+    <div class="header">
+        <h1>DPRO DENTAL 受付台帳</h1>
+        <div class="date-controls">
+            <button onclick="changeDate(-1)">◀ 前日</button>
+            <h2 id="current-date-display">----/--/--</h2>
+            <button onclick="changeDate(1)">翌日 ▶</button>
+            <button onclick="changeDate(0)" style="background: var(--accent-blue);">今日</button>
         </div>
     </div>
 
-    <h2>本日の診療・受付ステータス</h2>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>予約日時</th>
-                    <th>カルテ番号</th>
-                    <th>患者氏名</th>
-                    <th>ステータス</th>
-                    <th>処置メモ</th>
-                    <th>ステータス変更アクション</th>
-                </tr>
-            </thead>
-            <tbody id="appointment-list">
-                <tr>
-                    <td colspan="6" style="text-align: center; color: var(--text-muted);">データを読み込み中...</td>
-                </tr>
-            </tbody>
-        </table>
+    <div id="holiday-msg">本日は休診日です</div>
+    <div class="timetable" id="timetable">
+        </div>
+
+    <div class="modal-overlay" id="booking-modal">
+        <div class="modal">
+            <h3 id="modal-time-title">--:-- の予約を追加</h3>
+            <input type="hidden" id="selected-time">
+            
+            <div class="form-group">
+                <label>カルテ番号 (入力して検索)</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="input-chart" placeholder="例: 1166">
+                    <button class="btn btn-search" style="width:auto; margin:0;" onclick="searchPatient()">患者検索</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>患者氏名 (変更・新規登録可能)</label>
+                <input type="text" id="input-name" placeholder="例: 岩口トモキ">
+            </div>
+            
+            <div class="form-group">
+                <label>生年月日 (新規登録時のみ必須)</label>
+                <input type="text" id="input-birth" placeholder="例: 19740206">
+            </div>
+
+            <div class="form-group">
+                <label>処置・予約内容</label>
+                <input type="text" id="input-treatment" placeholder="例: 定期健診、右上CR 等">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-cancel" onclick="closeModal()">キャンセル</button>
+                <button class="btn btn-primary" onclick="saveAppointment()">予約を確定する</button>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-    // 使用されているSupabaseのキーを設定してください
-    const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
-    const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v"; // 既存のキー
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <script>
+        const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // 画面起動時に本日の予約一覧をロード
-    window.onload = async function() {
-        // 日時入力のデフォルトに現在時刻をセット
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('appointmentAt').value = now.toISOString().slice(0, 16);
-        
-        await loadAppointments();
-    };
+        let currentDate = new Date();
+        let currentPatientId = null; // 検索した患者のIDを保持
 
-    // 予約一覧の取得
-    async function loadAppointments() {
-        try {
-            // 本日の始まりと終わりの時間を計算
-            const startOfDay = new Date();
-            startOfDay.setHours(0, 0, 0, 0);
-            const endOfDay = new Date();
-            endOfDay.setHours(23, 59, 59, 999);
+        // 15分刻みの時間枠を生成 (DEMO: 9:00~13:00, 14:30~18:30)
+        const generateTimeSlots = () => {
+            const slots = [];
+            for(let h=9; h<13; h++) {
+                for(let m=0; m<60; m+=15) slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+            }
+            slots.push("LUNCH"); // 昼休みマーカー
+            for(let h=14; h<19; h++) {
+                if(h===14) { slots.push("14:30", "14:45"); continue; }
+                if(h===18) { slots.push("18:00", "18:15", "18:30"); break; }
+                for(let m=0; m<60; m+=15) slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+            }
+            return slots;
+        };
+        const TIME_SLOTS = generateTimeSlots();
 
-            // appointmentsテーブルから、患者情報(patients)を結合(join)して取得
-            const { data, error } = await supabaseClient
+        window.onload = () => {
+            renderDate();
+            loadAppointments();
+        };
+
+        function renderDate() {
+            const yyyy = currentDate.getFullYear();
+            const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(currentDate.getDate()).padStart(2, '0');
+            const days = ['日', '月', '火', '水', '木', '金', '土'];
+            document.getElementById('current-date-display').innerText = `${yyyy}/${mm}/${dd} (${days[currentDate.getDay()]})`;
+        }
+
+        function changeDate(days) {
+            if(days === 0) currentDate = new Date();
+            else currentDate.setDate(currentDate.getDate() + days);
+            renderDate();
+            loadAppointments();
+        }
+
+        // タイムテーブルの描画とデータ取得
+        async function loadAppointments() {
+            const timetable = document.getElementById('timetable');
+            const holidayMsg = document.getElementById('holiday-msg');
+            timetable.innerHTML = "";
+
+            // 日曜日は休診日
+            if(currentDate.getDay() === 0) {
+                timetable.style.display = 'none';
+                holidayMsg.style.display = 'block';
+                return;
+            } else {
+                timetable.style.display = 'block';
+                holidayMsg.style.display = 'none';
+            }
+
+            // 指定日の00:00〜23:59の予約を取得
+            const startOfDay = new Date(currentDate); startOfDay.setHours(0,0,0,0);
+            const endOfDay = new Date(currentDate); endOfDay.setHours(23,59,59,999);
+
+            const { data: apps, error } = await supabase
                 .from('appointments')
-                .select(`
-                    id,
-                    appointment_at,
-                    status,
-                    treatment_notes,
-                    patients (
-                        chart_no,
-                        patient_name
-                    )
-                `)
+                .select(`id, appointment_at, status, notes, patients(id, chart_no, patient_name)`)
                 .gte('appointment_at', startOfDay.toISOString())
-                .lte('appointment_at', endOfDay.toISOString())
-                .order('appointment_at', { ascending: true });
+                .lte('appointment_at', endOfDay.toISOString());
 
-            if (error) throw error;
+            if(error) { console.error("取得エラー", error); return; }
 
-            const tbody = document.getElementById('appointment-list');
-            tbody.innerHTML = '';
+            // タイムテーブルUIの生成
+            TIME_SLOTS.forEach(slot => {
+                const row = document.createElement('div');
+                row.className = 'time-row';
 
-            if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">本日の予約・来院データはありません。上のフォームからテストデータを追加してください。</td></tr>`;
-                return;
-            }
+                if(slot === "LUNCH") {
+                    row.innerHTML = `<div class="time-label">13:00<br>|<br>14:30</div><div class="time-slot disabled">昼 休 み (LUNCH BREAK)</div>`;
+                    timetable.appendChild(row);
+                    return;
+                }
 
-            data.forEach(app => {
-                const appDate = new Date(app.appointment_at);
-                const timeStr = appDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-                
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${timeStr}</strong></td>
-                    <td>${app.patients?.chart_no || '--'}</td>
-                    <td>${app.patients?.patient_name || '不明な患者'}</td>
-                    <td><span class="badge status-${app.status}">${getStatusLabel(app.status)}</span></td>
-                    <td>${app.treatment_notes || ''}</td>
-                    <td>
-                        <select class="action-select" onchange="updateStatus('${app.id}', this.value)">
-                            <option value="scheduled" ${app.status === 'scheduled' ? 'selected' : ''}>予約中</option>
-                            <option value="waiting" ${app.status === 'waiting' ? 'selected' : ''}>待合室（受付済）</option>
-                            <option value="in_treatment" ${app.status === 'in_treatment' ? 'selected' : ''}>診察中</option>
-                            <option value="accounting" ${app.status === 'accounting' ? 'selected' : ''}>会計待ち</option>
-                            <option value="completed" ${app.status === 'completed' ? 'selected' : ''}>完了</option>
-                            <option value="canceled" ${app.status === 'canceled' ? 'selected' : ''}>キャンセル</option>
-                        </select>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-        } catch (err) {
-            console.error("データ取得エラー:", err);
-            alert("一覧の読み込みに失敗しました。");
-        }
-    }
-
-    // ステータス更新処理
-    async function updateStatus(appointmentId, newStatus) {
-        try {
-            const { error } = await supabaseClient
-                .from('appointments')
-                .update({ status: newStatus })
-                .eq('id', appointmentId);
-
-            if (error) throw error;
-            await loadAppointments(); // 画面を再読み込み
-        } catch (err) {
-            console.error("更新エラー:", err);
-            alert("ステータスの更新に失敗しました。");
-        }
-    }
-
-    // テスト用の予約データ作成（カルテ番号から患者IDを逆引きして紐付けます）
-    async function createTestAppointment() {
-        const chartNo = document.getElementById('targetChartNo').value.trim();
-        const appointmentAt = document.getElementById('appointmentAt').value;
-        const treatmentNotes = document.getElementById('treatmentNotes').value.trim();
-
-        if (!chartNo || !appointmentAt) {
-            alert("カルテ番号と日時を入力してください。");
-            return;
-        }
-
-        try {
-            // 1. カルテ番号から患者の UUID を特定する
-            const { data: patient, error: pError } = await supabaseClient
-                .from('patients')
-                .select('id')
-                .eq('chart_no', chartNo)
-                .single();
-
-            if (pError || !patient) {
-                alert(`カルテ番号: ${chartNo} に一致する患者が登録されていません。先にLIFF側などで患者登録を行ってください。`);
-                return;
-            }
-
-            // 2. appointmentsテーブルに挿入
-            const { error: insertError } = await supabaseClient
-                .from('appointments')
-                .insert({
-                    patient_id: patient.id,
-                    appointment_at: new Date(appointmentAt).toISOString(),
-                    treatment_notes: treatmentNotes,
-                    status: 'scheduled'
+                // その時間の予約を探す
+                const slotApp = apps.find(a => {
+                    const d = new Date(a.appointment_at);
+                    const hm = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+                    return hm === slot;
                 });
 
-            if (insertError) throw insertError;
+                let slotContent = "";
+                if(slotApp) {
+                    // 予約あり：カードを表示
+                    let bgColor = "var(--status-scheduled)";
+                    if(slotApp.status === 'waiting') bgColor = "var(--status-waiting)";
+                    if(slotApp.status === 'in_treatment') bgColor = "var(--status-treatment)";
+                    if(slotApp.status === 'completed') bgColor = "var(--status-completed)";
 
-            alert("テスト予約データを追加しました！");
-            await loadAppointments();
+                    slotContent = `
+                        <div class="appointment-card" style="background: ${bgColor};" onclick="event.stopPropagation()">
+                            <div class="app-info">
+                                <span class="app-chart">No.${slotApp.patients.chart_no}</span>
+                                <span class="app-name">${slotApp.patients.patient_name} 様</span>
+                                <span class="app-treatment">${slotApp.notes || '処置内容なし'}</span>
+                            </div>
+                            <select class="status-select" onchange="updateStatus('${slotApp.id}', this.value)">
+                                <option value="scheduled" ${slotApp.status==='scheduled'?'selected':''}>予約中</option>
+                                <option value="waiting" ${slotApp.status==='waiting'?'selected':''}>受付済(待合)</option>
+                                <option value="in_treatment" ${slotApp.status==='in_treatment'?'selected':''}>診療室ご案内</option>
+                                <option value="completed" ${slotApp.status==='completed'?'selected':''}>会計完了</option>
+                                <option value="cancelled" ${slotApp.status==='cancelled'?'selected':''}>キャンセル</option>
+                            </select>
+                        </div>
+                    `;
+                }
 
-        } catch (err) {
-            console.error("テストデータ作成エラー:", err);
-            alert("予約データの追加中にエラーが発生しました。");
+                row.innerHTML = `
+                    <div class="time-label">${slot}</div>
+                    <div class="time-slot" onclick="openModal('${slot}')">${slotContent}</div>
+                `;
+                timetable.appendChild(row);
+            });
         }
-    }
 
-    function getStatusLabel(status) {
-        const labels = {
-            'scheduled': '予約中',
-            'waiting': '待合室',
-            'in_treatment': '診察中',
-            'accounting': '会計待ち',
-            'completed': '完了',
-            'canceled': 'キャンセル'
-        };
-        return labels[status] || status;
-    }
-</script>
+        // 患者検索機能
+        async function searchPatient() {
+            const chartNo = document.getElementById('input-chart').value.trim();
+            if(!chartNo) return;
+
+            const { data, error } = await supabase.from('patients').select('*').eq('chart_no', chartNo).single();
+            
+            if(data) {
+                document.getElementById('input-name').value = data.patient_name;
+                document.getElementById('input-birth').value = data.birth_date;
+                currentPatientId = data.id;
+                alert(`既存の患者（${data.patient_name} 様）が見つかりました！`);
+            } else {
+                currentPatientId = null;
+                alert("該当する患者がいません。新しい名前と生年月日を入れて新規登録してください。");
+            }
+        }
+
+        // 予約の保存（患者の新規登録・名前更新を含む）
+        async function saveAppointment() {
+            const time = document.getElementById('selected-time').value;
+            const chartNo = document.getElementById('input-chart').value.trim();
+            const name = document.getElementById('input-name').value.trim();
+            const birth = document.getElementById('input-birth').value.trim();
+            const treatment = document.getElementById('input-treatment').value.trim();
+
+            if(!chartNo || !name) { alert("カルテ番号と患者氏名は必須です。"); return; }
+
+            // 1. 患者データのUpsert（新規追加 or 名前・生年月日の上書き更新）
+            const { data: patientData, error: patientError } = await supabase
+                .from('patients')
+                .upsert({ 
+                    id: currentPatientId, // nullなら新規、IDがあれば更新
+                    chart_no: chartNo, 
+                    patient_name: name, 
+                    birth_date: birth || null
+                }, { onConflict: 'chart_no' })
+                .select().single();
+
+            if(patientError) { console.error("患者登録エラー", patientError); return; }
+
+            // 2. 予約データの追加
+            const [h, m] = time.split(':');
+            const targetDate = new Date(currentDate);
+            targetDate.setHours(parseInt(h), parseInt(m), 0, 0);
+
+            const { error: appError } = await supabase.from('appointments').insert({
+                patient_id: patientData.id,
+                appointment_at: targetDate.toISOString(),
+                notes: treatment,
+                status: 'scheduled'
+            });
+
+            if(appError) { alert("予約の追加に失敗しました。"); return; }
+            
+            closeModal();
+            loadAppointments(); // 画面を更新
+        }
+
+        // ステータスの変更
+        async function updateStatus(appointmentId, newStatus) {
+            await supabase.from('appointments').update({ status: newStatus }).eq('id', appointmentId);
+            loadAppointments(); // 背景色を反映するため再読み込み
+        }
+
+        function openModal(time) {
+            document.getElementById('selected-time').value = time;
+            document.getElementById('modal-time-title').innerText = `${time} の予約を追加`;
+            document.getElementById('input-chart').value = "";
+            document.getElementById('input-name').value = "";
+            document.getElementById('input-birth').value = "";
+            document.getElementById('input-treatment').value = "";
+            currentPatientId = null;
+            document.getElementById('booking-modal').style.display = 'flex';
+        }
+        function closeModal() { document.getElementById('booking-modal').style.display = 'none'; }
+    </script>
 </body>
 </html>
