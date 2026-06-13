@@ -38,9 +38,9 @@
         .user-name { font-size: 1.5rem; margin: 0; font-weight: 700; }
         .qr-section { display: flex; justify-content: center; align-items: center; background: #fff; padding: 15px; border-radius: 16px; width: 130px; height: 130px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         
-        .appointment-section { text-align: center; background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); margin: 10px 0; }
+        .appointment-section { text-align: center; background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); margin: 10px 0; min-height: 50px; display: flex; flex-direction: column; justify-content: center; }
         .appointment-label { font-size: 0.65rem; color: var(--mint-cyan); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
-        .appointment-date { font-family: 'Urbanist', sans-serif; font-size: 1.1rem; font-weight: 700; margin: 0; color: #fff; }
+        .appointment-date { font-family: 'Urbanist', sans-serif; font-size: 1.1rem; font-weight: 700; margin: 0; color: #fff; line-height: 1.2; }
 
         .card-footer { text-align: center; margin-bottom: 5px; display: flex; flex-direction: column; align-items: center; }
         .chart-no { font-family: 'Urbanist', sans-serif; font-size: 1.2rem; font-weight: 700; margin: 0; color: #fff; }
@@ -77,7 +77,7 @@
 
         <div class="appointment-section">
             <div class="appointment-label">Next Appointment</div>
-            <p id="nextAppointment" class="appointment-date">確認中...</p>
+            <div id="nextAppointment" class="appointment-date">確認中...</div>
         </div>
 
         <div class="card-footer">
@@ -91,32 +91,10 @@
         const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz_9yD0X9F4pS0m7oK4Qv3f_eU8XhJq3mN9R5Xv6p8/exec";
-
         let currentLineUserId = "";
         let currentLineDisplayName = "";
         let patientList = []; 
         let qrCodeInstance = null;
-
-        async function sendToSpreadsheet(lineId, displayName, chartNo, patientName) {
-            try {
-                const formData = new URLSearchParams();
-                formData.append('line_user_id', lineId);
-                formData.append('display_name', displayName);
-                formData.append('chart_no', chartNo);
-                formData.append('patient_name', patientName);
-
-                await fetch(GAS_WEBAPP_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData
-                });
-                console.log("スプレッドシートへの同期成功:", patientName);
-            } catch (err) {
-                console.error("スプレッドシート連携エラー:", err);
-            }
-        }
 
         async function initializeLiff() {
             try {
@@ -137,12 +115,7 @@
                 }
 
                 await fetchFamilyData();
-
-                if (patientList.length > 0) {
-                    patientList.forEach(patient => {
-                        sendToSpreadsheet(currentLineUserId, currentLineDisplayName, patient.chart_no, patient.patient_name);
-                    });
-                }
+                // ※ ここにあった sendToSpreadsheet の処理は完全に削除しました。
 
             } catch (err) {
                 console.error("初期化エラー:", err);
@@ -175,6 +148,7 @@
                         patientList = patients;
                         document.getElementById('formOverlay').style.display = 'none';
                         renderTabs();
+                        // 非同期関数になった displayCard を呼び出す
                         displayCard(patientList[0]);
                         return;
                     }
@@ -184,7 +158,7 @@
                 document.getElementById('btnCancelForm').style.display = 'none';
 
             } catch (err) {
-                console.error("データ安全取得プロセス内エラー:", err);
+                console.error("データ取得エラー:", err);
                 document.getElementById('formOverlay').style.display = 'flex';
             }
         }
@@ -200,7 +174,7 @@
                 btn.onclick = () => {
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    displayCard(patient);
+                    displayCard(patient); // タブ切り替え時にもリアルタイムで予約を取得
                 };
                 tabsContainer.appendChild(btn);
             });
@@ -219,12 +193,13 @@
             tabsContainer.appendChild(addBtn);
         }
 
-        function displayCard(patient) {
+        // ▼【重要変更】async関数に変更し、Supabaseから予約を直接取得するようにしました
+        async function displayCard(patient) {
             document.getElementById('userName').innerText = patient.patient_name + " 様";
             document.getElementById('chartNo').innerText = "No. " + patient.chart_no;
-
-            // 予約日時は固定表記
-            document.getElementById('nextAppointment').innerText = "予定なし";
+            
+            // 一時的にロード中の文字を表示
+            document.getElementById('nextAppointment').innerHTML = '<span style="font-size:0.8rem; color:#94a3b8;">確認中...</span>';
 
             const qrContainer = document.getElementById("qrcode");
             qrContainer.innerHTML = "";
@@ -236,6 +211,44 @@
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
+
+            // Supabaseから「今日以降」の「有効な」最新予約を1件取得する
+            try {
+                // 現在の時間を取得（過去の予約は表示しないため）
+                const now = new Date().toISOString();
+                
+                const { data: apps, error } = await supabaseClient
+                    .from('appointments')
+                    .select('appointment_at, status')
+                    .eq('patient_id', patient.id)
+                    .in('status', ['scheduled', 'waiting', 'in_treatment']) // 完了・キャンセル以外
+                    .gte('appointment_at', now)
+                    .order('appointment_at', { ascending: true })
+                    .limit(1);
+
+                if (error) throw error;
+
+                if (apps && apps.length > 0) {
+                    const appointment = apps[0];
+                    const d = new Date(appointment.appointment_at);
+                    const formattedDate = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                    
+                    // ダッシュボードで受付（待合室）にしている場合は表示を変えるスマート機能
+                    if (appointment.status === 'waiting') {
+                        document.getElementById('nextAppointment').innerHTML = `<span style="font-size: 0.8rem; color: #facc15;">本日は受付済です</span><br>${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}〜`;
+                    } else if (appointment.status === 'in_treatment') {
+                        document.getElementById('nextAppointment').innerHTML = `<span style="font-size: 0.8rem; color: #4ade80;">診察室へご案内済です</span>`;
+                    } else {
+                        // 通常の予約中
+                        document.getElementById('nextAppointment').innerText = formattedDate;
+                    }
+                } else {
+                    document.getElementById('nextAppointment').innerText = "予定なし";
+                }
+            } catch (err) {
+                console.error("予約取得エラー:", err);
+                document.getElementById('nextAppointment').innerText = "取得エラー";
+            }
         }
 
         document.getElementById('btnSubmitForm').onclick = async () => {
@@ -269,7 +282,6 @@
 
                 alert("登録が完了しました！");
                 
-                // 確実に画面を切り替えるため、フォームを閉じてリロードを実行
                 document.getElementById('formOverlay').style.display = 'none';
                 window.location.reload();
                 
