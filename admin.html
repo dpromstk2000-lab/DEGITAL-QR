@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPRO DENTAL DASHBOARD</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --medical-blue: #3b82f6;
+            --mint-cyan: #06b6d4;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Noto Sans JP', sans-serif; margin: 0; padding: 24px; }
+        .dashboard-container { max-width: 1200px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+        h1 { margin: 0; font-size: 1.8rem; color: var(--mint-cyan); }
+        
+        /* 簡易予約追加フォーム */
+        .test-panel { background: var(--card-bg); padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 1px solid var(--border); }
+        .test-panel h3 { margin-top: 0; margin-bottom: 12px; color: var(--medical-blue); }
+        .form-row { display: flex; gap: 12px; }
+        input, select, button { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px; color: #fff; outline: none; }
+        button { background: var(--medical-blue); cursor: pointer; font-weight: bold; border: none; }
+        button:hover { opacity: 0.9; }
+
+        /* 本日の予約テーブル */
+        .table-container { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 16px; border-bottom: 1px solid var(--border); }
+        th { background: rgba(0,0,0,0.2); color: var(--text-muted); font-size: 0.9rem; }
+        
+        /* ステータスバッジ */
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: inline-block; }
+        .status-scheduled { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .status-waiting { background: rgba(234, 179, 8, 0.2); color: #facc15; }
+        .status-in_treatment { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .status-accounting { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+        .status-completed { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+
+        .action-select { background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: #fff; padding: 6px; border-radius: 6px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <header>
+        <h1>DPRO DENTAL オーナーダッシュボード</h1>
+        <div id="current-time"></div>
+    </header>
+
+    <div class="test-panel">
+        <h3>【開発用】テスト予約データの追加</h3>
+        <div class="form-row">
+            <input type="text" id="targetChartNo" placeholder="カルテ番号 (例: 1166)">
+            <input type="datetime-local" id="appointmentAt">
+            <input type="text" id="treatmentNotes" placeholder="処置内容（例：定期健診）">
+            <button onclick="createTestAppointment()">予約を追加する</button>
+        </div>
+    </div>
+
+    <h2>本日の診療・受付ステータス</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>予約日時</th>
+                    <th>カルテ番号</th>
+                    <th>患者氏名</th>
+                    <th>ステータス</th>
+                    <th>処置メモ</th>
+                    <th>ステータス変更アクション</th>
+                </tr>
+            </thead>
+            <tbody id="appointment-list">
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted);">データを読み込み中...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // 使用されているSupabaseのキーを設定してください
+    const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
+    const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v"; // 既存のキー
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // 画面起動時に本日の予約一覧をロード
+    window.onload = async function() {
+        // 日時入力のデフォルトに現在時刻をセット
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('appointmentAt').value = now.toISOString().slice(0, 16);
+        
+        await loadAppointments();
+    };
+
+    // 予約一覧の取得
+    async function loadAppointments() {
+        try {
+            // 本日の始まりと終わりの時間を計算
+            const startOfDay = new Date();
+            startOfDay.setHours(0, 0, 0, 0);
+            const endOfDay = new Date();
+            endOfDay.setHours(23, 59, 59, 999);
+
+            // appointmentsテーブルから、患者情報(patients)を結合(join)して取得
+            const { data, error } = await supabaseClient
+                .from('appointments')
+                .select(`
+                    id,
+                    appointment_at,
+                    status,
+                    treatment_notes,
+                    patients (
+                        chart_no,
+                        patient_name
+                    )
+                `)
+                .gte('appointment_at', startOfDay.toISOString())
+                .lte('appointment_at', endOfDay.toISOString())
+                .order('appointment_at', { ascending: true });
+
+            if (error) throw error;
+
+            const tbody = document.getElementById('appointment-list');
+            tbody.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">本日の予約・来院データはありません。上のフォームからテストデータを追加してください。</td></tr>`;
+                return;
+            }
+
+            data.forEach(app => {
+                const appDate = new Date(app.appointment_at);
+                const timeStr = appDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${timeStr}</strong></td>
+                    <td>${app.patients?.chart_no || '--'}</td>
+                    <td>${app.patients?.patient_name || '不明な患者'}</td>
+                    <td><span class="badge status-${app.status}">${getStatusLabel(app.status)}</span></td>
+                    <td>${app.treatment_notes || ''}</td>
+                    <td>
+                        <select class="action-select" onchange="updateStatus('${app.id}', this.value)">
+                            <option value="scheduled" ${app.status === 'scheduled' ? 'selected' : ''}>予約中</option>
+                            <option value="waiting" ${app.status === 'waiting' ? 'selected' : ''}>待合室（受付済）</option>
+                            <option value="in_treatment" ${app.status === 'in_treatment' ? 'selected' : ''}>診察中</option>
+                            <option value="accounting" ${app.status === 'accounting' ? 'selected' : ''}>会計待ち</option>
+                            <option value="completed" ${app.status === 'completed' ? 'selected' : ''}>完了</option>
+                            <option value="canceled" ${app.status === 'canceled' ? 'selected' : ''}>キャンセル</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+        } catch (err) {
+            console.error("データ取得エラー:", err);
+            alert("一覧の読み込みに失敗しました。");
+        }
+    }
+
+    // ステータス更新処理
+    async function updateStatus(appointmentId, newStatus) {
+        try {
+            const { error } = await supabaseClient
+                .from('appointments')
+                .update({ status: newStatus })
+                .eq('id', appointmentId);
+
+            if (error) throw error;
+            await loadAppointments(); // 画面を再読み込み
+        } catch (err) {
+            console.error("更新エラー:", err);
+            alert("ステータスの更新に失敗しました。");
+        }
+    }
+
+    // テスト用の予約データ作成（カルテ番号から患者IDを逆引きして紐付けます）
+    async function createTestAppointment() {
+        const chartNo = document.getElementById('targetChartNo').value.trim();
+        const appointmentAt = document.getElementById('appointmentAt').value;
+        const treatmentNotes = document.getElementById('treatmentNotes').value.trim();
+
+        if (!chartNo || !appointmentAt) {
+            alert("カルテ番号と日時を入力してください。");
+            return;
+        }
+
+        try {
+            // 1. カルテ番号から患者の UUID を特定する
+            const { data: patient, error: pError } = await supabaseClient
+                .from('patients')
+                .select('id')
+                .eq('chart_no', chartNo)
+                .single();
+
+            if (pError || !patient) {
+                alert(`カルテ番号: ${chartNo} に一致する患者が登録されていません。先にLIFF側などで患者登録を行ってください。`);
+                return;
+            }
+
+            // 2. appointmentsテーブルに挿入
+            const { error: insertError } = await supabaseClient
+                .from('appointments')
+                .insert({
+                    patient_id: patient.id,
+                    appointment_at: new Date(appointmentAt).toISOString(),
+                    treatment_notes: treatmentNotes,
+                    status: 'scheduled'
+                });
+
+            if (insertError) throw insertError;
+
+            alert("テスト予約データを追加しました！");
+            await loadAppointments();
+
+        } catch (err) {
+            console.error("テストデータ作成エラー:", err);
+            alert("予約データの追加中にエラーが発生しました。");
+        }
+    }
+
+    function getStatusLabel(status) {
+        const labels = {
+            'scheduled': '予約中',
+            'waiting': '待合室',
+            'in_treatment': '診察中',
+            'accounting': '会計待ち',
+            'completed': '完了',
+            'canceled': 'キャンセル'
+        };
+        return labels[status] || status;
+    }
+</script>
+</body>
+</html>
