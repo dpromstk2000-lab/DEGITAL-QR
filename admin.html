@@ -114,7 +114,8 @@
     <script>
         const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // 【修正完了】変数名を supabaseClient に変更して衝突を回避しました
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentDate = new Date();
         let currentPatientId = null;
@@ -172,8 +173,7 @@
             const endOfDay = new Date(currentDate); endOfDay.setHours(23,59,59,999);
 
             try {
-                // 【修正ポイント】 notes を treatment_notes に修正
-                const { data: apps, error } = await supabase
+                const { data: apps, error } = await supabaseClient
                     .from('appointments')
                     .select(`id, appointment_at, status, treatment_notes, patients(id, chart_no, patient_name)`)
                     .gte('appointment_at', startOfDay.toISOString())
@@ -207,7 +207,6 @@
                         const chartNo = slotApp.patients ? slotApp.patients.chart_no : '--';
                         const pName = slotApp.patients ? slotApp.patients.patient_name : 'データなし';
 
-                        // 【修正ポイント】 canceled に修正、treatment_notes に修正
                         slotContent = `
                             <div class="appointment-card" style="background: ${bgColor};" onclick="event.stopPropagation()">
                                 <div class="app-info">
@@ -243,7 +242,7 @@
             if(!chartNo) return;
 
             try {
-                const { data, error } = await supabase.from('patients').select('*').eq('chart_no', chartNo).single();
+                const { data, error } = await supabaseClient.from('patients').select('*').eq('chart_no', chartNo).single();
                 if(data) {
                     document.getElementById('input-name').value = data.patient_name || "";
                     document.getElementById('input-birth').value = data.birth_date || "";
@@ -269,7 +268,7 @@
             if(!chartNo || !name) { alert("カルテ番号と患者氏名は必須です。"); return; }
 
             try {
-                const { data: patientData, error: patientError } = await supabase
+                const { data: patientData, error: patientError } = await supabaseClient
                     .from('patients')
                     .upsert({ 
                         id: currentPatientId, 
@@ -285,8 +284,7 @@
                 const targetDate = new Date(currentDate);
                 targetDate.setHours(parseInt(h), parseInt(m), 0, 0);
 
-                // 【修正ポイント】 treatment_notes に修正
-                const { error: appError } = await supabase.from('appointments').insert({
+                const { error: appError } = await supabaseClient.from('appointments').insert({
                     patient_id: patientData.id,
                     appointment_at: targetDate.toISOString(),
                     treatment_notes: treatment,
@@ -305,7 +303,7 @@
 
         async function updateStatus(appointmentId, newStatus) {
             try {
-                const { error } = await supabase.from('appointments').update({ status: newStatus }).eq('id', appointmentId);
+                const { error } = await supabaseClient.from('appointments').update({ status: newStatus }).eq('id', appointmentId);
                 if (error) throw error;
                 loadAppointments(); 
             } catch (err) {
