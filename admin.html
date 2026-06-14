@@ -114,7 +114,6 @@
     <script>
         const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
-        // 【修正完了】変数名を supabaseClient に変更して衝突を回避しました
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentDate = new Date();
@@ -242,7 +241,12 @@
             if(!chartNo) return;
 
             try {
-                const { data, error } = await supabaseClient.from('patients').select('*').eq('chart_no', chartNo).single();
+                const { data, error } = await supabaseClient
+                    .from('patients')
+                    .select('*')
+                    .eq('chart_no', chartNo.toString())
+                    .maybeSingle();
+
                 if(data) {
                     document.getElementById('input-name').value = data.patient_name || "";
                     document.getElementById('input-birth').value = data.birth_date || "";
@@ -254,7 +258,7 @@
                 }
             } catch(e) {
                 currentPatientId = null;
-                alert("該当する患者がいません。新規登録してください。");
+                alert("検索エラーが発生しました。");
             }
         }
 
@@ -268,22 +272,31 @@
             if(!chartNo || !name) { alert("カルテ番号と患者氏名は必須です。"); return; }
 
             try {
+                // 患者データの設定（もし既存IDがあれば含める）
+                const patientPayload = { 
+                    chart_no: chartNo.toString(), 
+                    patient_name: name, 
+                    birth_date: birth || null 
+                };
+                if (currentPatientId) {
+                    patientPayload.id = currentPatientId;
+                }
+
+                // 患者の登録または更新
                 const { data: patientData, error: patientError } = await supabaseClient
                     .from('patients')
-                    .upsert({ 
-                        id: currentPatientId, 
-                        chart_no: chartNo, 
-                        patient_name: name, 
-                        birth_date: birth || null
-                    }, { onConflict: 'chart_no' })
-                    .select().single();
+                    .upsert(patientPayload, { onConflict: 'chart_no' })
+                    .select()
+                    .single();
 
                 if(patientError) throw patientError;
 
+                // 予約時間の計算
                 const [h, m] = time.split(':');
                 const targetDate = new Date(currentDate);
                 targetDate.setHours(parseInt(h), parseInt(m), 0, 0);
 
+                // 予約データの保存
                 const { error: appError } = await supabaseClient.from('appointments').insert({
                     patient_id: patientData.id,
                     appointment_at: targetDate.toISOString(),
@@ -297,7 +310,7 @@
                 loadAppointments(); 
             } catch (err) {
                 console.error("保存エラー:", err);
-                alert("保存に失敗しました: " + err.message);
+                alert("保存に失敗しました。詳細: " + err.message);
             }
         }
 
