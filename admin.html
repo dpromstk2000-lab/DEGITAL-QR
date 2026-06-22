@@ -3,339 +3,1306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPRO DENTAL - 受付ダッシュボード</title>
+    <title>DPRO DENTAL - オーナー管理画面</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --panel-bg: #1e293b;
-            --border-color: #334155;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-blue: #3b82f6;
-            --accent-hover: #2563eb;
-            --slot-empty: #0f172a;
-            --slot-hover: #1e293b;
-            --slot-lunch: #334155;
-            --status-scheduled: #3b82f6;
-            --status-waiting: #eab308;
-            --status-treatment: #22c55e;
-            --status-completed: #64748b;
+            --bg: #f4f7fb;
+            --panel: #ffffff;
+            --panel-soft: #f8fafc;
+            --line: #dfe7f1;
+            --line-strong: #cbd8e6;
+            --text: #102033;
+            --muted: #66758a;
+            --muted-2: #8a98aa;
+            --blue: #2563eb;
+            --blue-soft: #eff6ff;
+            --cyan: #06b6d4;
+            --green: #16a34a;
+            --green-soft: #ecfdf5;
+            --yellow: #d97706;
+            --yellow-soft: #fffbeb;
+            --orange: #ea580c;
+            --orange-soft: #fff7ed;
+            --red: #dc2626;
+            --red-soft: #fef2f2;
+            --gray: #64748b;
+            --gray-soft: #f1f5f9;
+            --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+            --radius: 22px;
         }
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Noto Sans JP', sans-serif; margin: 0; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--panel-bg); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border-color); }
-        .header h1 { margin: 0; font-size: 1.2rem; color: var(--accent-blue); }
-        .date-controls { display: flex; align-items: center; gap: 15px; }
-        .date-controls button { background: var(--border-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 1rem; }
-        .date-controls button:hover { background: #475569; }
-        .date-controls h2 { margin: 0; font-size: 1.5rem; width: 180px; text-align: center; }
 
-        .timetable { background: var(--panel-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
-        .time-row { display: flex; border-bottom: 1px solid var(--border-color); min-height: 50px; }
-        .time-row:last-child { border-bottom: none; }
-        .time-label { width: 80px; padding: 15px; background: #0b1120; font-weight: bold; text-align: center; border-right: 1px solid var(--border-color); color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
-        .time-slot { flex-grow: 1; padding: 10px 15px; background: var(--slot-empty); cursor: pointer; display: flex; align-items: center; transition: 0.2s; position: relative; }
-        .time-slot:hover { background: var(--slot-hover); }
-        .time-slot.disabled { background: var(--slot-lunch); cursor: not-allowed; justify-content: center; color: var(--text-muted); font-size: 0.9rem; letter-spacing: 2px; }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 32%),
+                radial-gradient(circle at 80% 0%, rgba(6, 182, 212, 0.08), transparent 28%),
+                var(--bg);
+            color: var(--text);
+            font-family: 'Noto Sans JP', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+        }
 
-        .appointment-card { background: var(--status-scheduled); width: 100%; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .app-info { display: flex; gap: 15px; align-items: center; }
-        .app-chart { font-size: 0.8rem; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
-        .app-name { font-weight: bold; font-size: 1.1rem; }
-        .app-treatment { font-size: 0.9rem; color: rgba(255,255,255,0.9); }
-        .status-select { background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; outline: none; cursor: pointer; }
+        button, input, select, textarea { font-family: inherit; }
+        button { cursor: pointer; }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; }
-        .modal { background: var(--panel-bg); padding: 25px; border-radius: 12px; width: 400px; border: 1px solid var(--border-color); }
-        .modal h3 { margin-top: 0; color: var(--accent-blue); margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: var(--text-muted); }
-        .form-group input, .form-group select { width: 100%; padding: 10px; background: #0b1120; border: 1px solid var(--border-color); color: white; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
-        .btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .btn-primary { background: var(--accent-blue); color: white; }
-        .btn-cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); }
-        .btn-search { background: #475569; color: white; margin-top: 5px; width: 100%; }
+        .app-shell {
+            width: min(1440px, 100%);
+            margin: 0 auto;
+            padding: 22px;
+        }
 
-        #holiday-msg { text-align: center; font-size: 1.5rem; color: var(--text-muted); padding: 50px; background: var(--panel-bg); border-radius: 12px; display: none; }
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr auto;
+            gap: 18px;
+            align-items: stretch;
+            margin-bottom: 18px;
+        }
+
+        .hero-main, .hero-side, .panel {
+            background: rgba(255,255,255,0.92);
+            border: 1px solid rgba(203, 216, 230, 0.8);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+        }
+
+        .hero-main {
+            padding: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .brand-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .11em;
+            color: var(--blue);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .brand-dot { width: 10px; height: 10px; border-radius: 999px; background: linear-gradient(135deg, var(--blue), var(--cyan)); }
+        h1 { margin: 0; font-size: clamp(24px, 3vw, 38px); letter-spacing: -.04em; line-height: 1.1; }
+        .hero-sub { margin: 10px 0 0; color: var(--muted); font-weight: 500; line-height: 1.7; }
+
+        .date-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .date-title {
+            min-width: 220px;
+            text-align: center;
+            background: var(--panel-soft);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 13px 16px;
+            font-weight: 900;
+            font-size: 20px;
+            color: var(--text);
+        }
+
+        .hero-side {
+            padding: 18px;
+            min-width: 300px;
+            display: grid;
+            gap: 10px;
+        }
+        .side-title { font-weight: 900; font-size: 14px; color: var(--muted); }
+        .side-note {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 999px;
+            padding: 11px 15px;
+            font-weight: 900;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+            white-space: nowrap;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-primary { background: linear-gradient(135deg, var(--blue), #1d4ed8); color: #fff; box-shadow: 0 12px 22px rgba(37,99,235,.22); }
+        .btn-soft { background: var(--panel-soft); color: var(--text); border: 1px solid var(--line); }
+        .btn-blue-soft { background: var(--blue-soft); color: var(--blue); border: 1px solid #bfdbfe; }
+        .btn-green { background: var(--green); color: #fff; }
+        .btn-yellow { background: #f59e0b; color: #fff; }
+        .btn-orange { background: var(--orange); color: #fff; }
+        .btn-red { background: var(--red); color: #fff; }
+        .btn-gray { background: var(--gray); color: #fff; }
+        .btn-mini { padding: 8px 10px; font-size: 12px; border-radius: 12px; }
+        .btn-full { width: 100%; }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .summary-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 0 10px 28px rgba(15,23,42,.05);
+        }
+        .summary-label { font-size: 12px; color: var(--muted); font-weight: 900; margin-bottom: 8px; }
+        .summary-number { font-size: 32px; font-weight: 900; letter-spacing: -.04em; line-height: 1; }
+        .summary-caption { margin-top: 8px; font-size: 12px; color: var(--muted-2); }
+        .summary-card.blue { background: var(--blue-soft); border-color: #bfdbfe; }
+        .summary-card.green { background: var(--green-soft); border-color: #bbf7d0; }
+        .summary-card.yellow { background: var(--yellow-soft); border-color: #fde68a; }
+        .summary-card.orange { background: var(--orange-soft); border-color: #fed7aa; }
+        .summary-card.red { background: var(--red-soft); border-color: #fecaca; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 330px minmax(0, 1fr) 360px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .panel { overflow: hidden; }
+        .panel-header {
+            padding: 18px 18px 14px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .panel-title { margin: 0; font-size: 18px; font-weight: 900; letter-spacing: -.02em; }
+        .panel-caption { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+        .panel-body { padding: 16px; }
+
+        .task-list { display: grid; gap: 10px; }
+        .task-card {
+            border: 1px solid var(--line);
+            background: var(--panel-soft);
+            border-radius: 18px;
+            padding: 12px;
+            display: grid;
+            gap: 9px;
+        }
+        .task-card.urgent { border-color: #fed7aa; background: var(--orange-soft); }
+        .task-card.follow { border-color: #bfdbfe; background: var(--blue-soft); }
+        .task-top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+        .task-name { font-weight: 900; font-size: 14px; }
+        .task-meta { color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 5px 9px;
+            font-size: 11px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+        .badge.scheduled { background: var(--blue-soft); color: var(--blue); border: 1px solid #bfdbfe; }
+        .badge.waiting { background: var(--yellow-soft); color: var(--yellow); border: 1px solid #fde68a; }
+        .badge.in_treatment { background: var(--green-soft); color: var(--green); border: 1px solid #bbf7d0; }
+        .badge.completed { background: var(--gray-soft); color: var(--gray); border: 1px solid #dbe3ed; }
+        .badge.canceled { background: var(--red-soft); color: var(--red); border: 1px solid #fecaca; }
+        .badge.line { background: #ecfeff; color: #0891b2; border: 1px solid #a5f3fc; }
+
+        .timeline-wrap { display: grid; gap: 8px; }
+        .time-row {
+            display: grid;
+            grid-template-columns: 72px minmax(0, 1fr);
+            gap: 10px;
+            align-items: stretch;
+        }
+        .time-label {
+            border: 1px solid var(--line);
+            background: var(--panel-soft);
+            border-radius: 16px;
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-weight: 900;
+            font-size: 13px;
+        }
+        .slot {
+            min-height: 64px;
+            border: 1px dashed var(--line-strong);
+            background: rgba(248,250,252,.72);
+            border-radius: 18px;
+            padding: 8px;
+            display: grid;
+            gap: 8px;
+            align-items: center;
+        }
+        .slot.empty:hover { border-color: var(--blue); background: var(--blue-soft); }
+        .slot-lunch {
+            min-height: 60px;
+            border: 1px solid var(--line);
+            background: #eef2f7;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-weight: 900;
+            letter-spacing: .08em;
+        }
+        .empty-add {
+            border: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 48px;
+            background: transparent;
+            color: var(--muted-2);
+            font-weight: 900;
+            border-radius: 14px;
+        }
+
+        .appointment-card {
+            position: relative;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            border-radius: 17px;
+            padding: 12px;
+            display: grid;
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(15,23,42,.05);
+        }
+        .appointment-card.selected { outline: 3px solid rgba(37,99,235,.18); border-color: #93c5fd; }
+        .appointment-card.scheduled { border-left: 7px solid var(--blue); }
+        .appointment-card.waiting { border-left: 7px solid #f59e0b; }
+        .appointment-card.in_treatment { border-left: 7px solid var(--green); }
+        .appointment-card.completed { border-left: 7px solid var(--gray); opacity: .9; }
+        .appointment-card.canceled { border-left: 7px solid var(--red); opacity: .65; }
+        .app-main { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .app-name { font-size: 17px; font-weight: 900; letter-spacing: -.02em; }
+        .app-note { color: var(--muted); font-size: 13px; margin-top: 4px; line-height: 1.5; }
+        .app-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+
+        .patient-box { display: grid; gap: 14px; }
+        .patient-empty {
+            border: 1px dashed var(--line-strong);
+            border-radius: 18px;
+            padding: 26px 18px;
+            text-align: center;
+            color: var(--muted);
+            background: var(--panel-soft);
+        }
+        .patient-name { font-size: 25px; font-weight: 900; letter-spacing: -.04em; margin: 0; }
+        .patient-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .meta-card { border: 1px solid var(--line); background: var(--panel-soft); border-radius: 16px; padding: 12px; }
+        .meta-label { color: var(--muted); font-size: 11px; font-weight: 900; margin-bottom: 5px; }
+        .meta-value { font-size: 14px; font-weight: 900; word-break: break-all; }
+        .memo-box {
+            width: 100%;
+            min-height: 92px;
+            border: 1px solid var(--line);
+            background: var(--panel-soft);
+            border-radius: 16px;
+            padding: 12px;
+            resize: vertical;
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .line-template-box {
+            border: 1px solid #a5f3fc;
+            background: #ecfeff;
+            border-radius: 18px;
+            padding: 14px;
+            display: grid;
+            gap: 10px;
+        }
+        .line-template-title { color: #0891b2; font-weight: 900; font-size: 13px; }
+        .line-text-preview {
+            white-space: pre-wrap;
+            background: #fff;
+            border: 1px solid #cffafe;
+            border-radius: 14px;
+            padding: 12px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text);
+            max-height: 170px;
+            overflow: auto;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(15, 23, 42, .42);
+            backdrop-filter: blur(9px);
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+        .modal {
+            width: min(560px, 100%);
+            max-height: 92vh;
+            overflow: auto;
+            background: var(--panel);
+            border-radius: 24px;
+            box-shadow: 0 35px 80px rgba(15,23,42,.24);
+            border: 1px solid var(--line);
+        }
+        .modal-header { padding: 20px 22px 14px; border-bottom: 1px solid var(--line); }
+        .modal-title { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -.03em; }
+        .modal-body { padding: 18px 22px 22px; display: grid; gap: 14px; }
+        .form-grid { display: grid; gap: 13px; }
+        .form-group { display: grid; gap: 7px; }
+        .form-group label { color: var(--muted); font-weight: 900; font-size: 12px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            border: 1px solid var(--line-strong);
+            background: var(--panel-soft);
+            color: var(--text);
+            border-radius: 14px;
+            padding: 13px 14px;
+            font-size: 16px;
+            outline: none;
+        }
+        .form-group textarea { min-height: 86px; resize: vertical; line-height: 1.7; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 9px; flex-wrap: wrap; margin-top: 4px; }
+        .search-result-list { display: grid; gap: 8px; }
+        .search-result {
+            border: 1px solid var(--line);
+            background: var(--panel-soft);
+            border-radius: 14px;
+            padding: 11px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 2000;
+            background: #0f172a;
+            color: #fff;
+            padding: 13px 16px;
+            border-radius: 999px;
+            box-shadow: 0 18px 42px rgba(15,23,42,.25);
+            display: none;
+            font-weight: 900;
+        }
+
+        .loading-line {
+            padding: 18px;
+            color: var(--muted);
+            font-weight: 900;
+            text-align: center;
+        }
+        .error-box {
+            background: var(--red-soft);
+            color: var(--red);
+            border: 1px solid #fecaca;
+            border-radius: 18px;
+            padding: 14px;
+            font-size: 13px;
+            line-height: 1.7;
+            display: none;
+            margin-bottom: 14px;
+        }
+        .holiday-msg {
+            display: none;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            border-radius: var(--radius);
+            padding: 38px 22px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            color: var(--muted);
+            font-weight: 900;
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 1180px) {
+            .dashboard-grid { grid-template-columns: 320px minmax(0, 1fr); }
+            .right-panel { grid-column: 1 / -1; }
+            .summary-grid { grid-template-columns: repeat(3, minmax(150px, 1fr)); }
+        }
+        @media (max-width: 820px) {
+            .app-shell { padding: 14px; }
+            .hero { grid-template-columns: 1fr; }
+            .hero-main { flex-direction: column; align-items: flex-start; }
+            .date-controls { justify-content: flex-start; }
+            .date-title { min-width: 190px; }
+            .hero-side { min-width: 0; }
+            .summary-grid { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .time-row { grid-template-columns: 62px minmax(0, 1fr); }
+            .app-main { flex-direction: column; }
+        }
+        @media (max-width: 520px) {
+            .summary-grid { grid-template-columns: 1fr; }
+            .patient-meta-grid { grid-template-columns: 1fr; }
+            .date-title { width: 100%; }
+        }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <h1>DPRO DENTAL 受付台帳</h1>
-        <div class="date-controls">
-            <button onclick="changeDate(-1)">◀ 前日</button>
-            <h2 id="current-date-display">----/--/--</h2>
-            <button onclick="changeDate(1)">翌日 ▶</button>
-            <button onclick="changeDate(0)" style="background: var(--accent-blue);">今日</button>
-        </div>
-    </div>
-
-    <div id="holiday-msg">本日は休診日です</div>
-    <div class="timetable" id="timetable"></div>
-
-    <div class="modal-overlay" id="booking-modal">
-        <div class="modal">
-            <h3 id="modal-time-title">--:-- の予約を追加</h3>
-            <input type="hidden" id="selected-time">
-            
-            <div class="form-group">
-                <label>カルテ番号 (入力して検索)</label>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="input-chart" placeholder="例: 1166">
-                    <button class="btn btn-search" style="width:auto; margin:0;" onclick="searchPatient()">患者検索</button>
+    <div class="app-shell">
+        <section class="hero">
+            <div class="hero-main">
+                <div>
+                    <div class="brand-kicker"><span class="brand-dot"></span>DPRO DENTAL / LINE公式連携デモ</div>
+                    <h1>今日やることが見える<br>オーナー管理画面</h1>
+                    <p class="hero-sub">予約・受付・診療状況・会計後フォローを一画面に集約。LINE公式で送る文面もワンタップでコピーできます。</p>
+                </div>
+                <div class="date-controls">
+                    <button class="btn btn-soft" onclick="changeDate(-1)">← 前日</button>
+                    <div class="date-title" id="current-date-display">----/--/--</div>
+                    <button class="btn btn-soft" onclick="changeDate(1)">翌日 →</button>
+                    <button class="btn btn-primary" onclick="changeDate(0)">今日</button>
                 </div>
             </div>
-
-            <div class="form-group">
-                <label>患者氏名 (変更・新規登録可能)</label>
-                <input type="text" id="input-name" placeholder="例: 岩口トモキ">
+            <div class="hero-side">
+                <div class="side-title">受付スタッフ向けの使い方</div>
+                <p class="side-note">①来院したら「受付済」 ②診療室へ案内 ③会計完了 ④次回予約が未設定ならLINE案内をコピー。毎日の流れが迷わない画面です。</p>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn btn-blue-soft" onclick="openBookingModal()">＋ 予約追加</button>
+                    <button class="btn btn-soft" onclick="openCheckInModal()">QR/カルテ受付</button>
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label>生年月日 (新規登録時のみ必須)</label>
-                <input type="text" id="input-birth" placeholder="例: 19740206">
-            </div>
+        </section>
 
-            <div class="form-group">
-                <label>処置・予約内容</label>
-                <input type="text" id="input-treatment" placeholder="例: 定期健診、右上CR 等">
-            </div>
+        <div class="error-box" id="errorBox"></div>
 
-            <div class="btn-group">
-                <button class="btn btn-cancel" onclick="closeModal()">キャンセル</button>
-                <button class="btn btn-primary" onclick="saveAppointment()">予約を確定</button>
+        <section class="summary-grid" id="summaryGrid"></section>
+
+        <div class="holiday-msg" id="holidayMsg">
+            本日は休診日です。必要な場合は、上部の「翌日」または「前日」で予約状況を確認してください。
+        </div>
+
+        <section class="dashboard-grid" id="dashboardGrid">
+            <aside class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">今日やること</h2>
+                        <p class="panel-caption">未受付・会計後フォロー・キャンセル対応を優先表示</p>
+                    </div>
+                    <span class="badge line" id="taskCountBadge">0件</span>
+                </div>
+                <div class="panel-body">
+                    <div class="task-list" id="taskList"><div class="loading-line">読み込み中...</div></div>
+                </div>
+            </aside>
+
+            <main class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">予約タイムライン</h2>
+                        <p class="panel-caption">空き枠を押すと予約追加。予約カードを押すと右側に詳細表示。</p>
+                    </div>
+                    <button class="btn btn-soft btn-mini" onclick="loadDashboard()">更新</button>
+                </div>
+                <div class="panel-body">
+                    <div class="timeline-wrap" id="timeline"><div class="loading-line">読み込み中...</div></div>
+                </div>
+            </main>
+
+            <aside class="panel right-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">患者詳細・LINE文面</h2>
+                        <p class="panel-caption">患者を選択すると、再来院につながる文面をすぐコピーできます</p>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="patient-box" id="patientPanel">
+                        <div class="patient-empty">予約カードを選択してください。<br>患者情報とLINE文面がここに表示されます。</div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </div>
+
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="bookingModalTitle">予約を追加</h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="selected-time">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>予約時間</label>
+                        <select id="input-time"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>カルテ番号</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="input-chart" placeholder="例：1166">
+                            <button class="btn btn-soft" style="border-radius:14px;" onclick="searchPatient()">検索</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>患者氏名</label>
+                        <input type="text" id="input-name" placeholder="例：山田 太郎">
+                    </div>
+                    <div class="form-group">
+                        <label>生年月日</label>
+                        <input type="text" id="input-birth" placeholder="例：19740206">
+                    </div>
+                    <div class="form-group">
+                        <label>処置・予約内容</label>
+                        <textarea id="input-treatment" placeholder="例：定期健診、クリーニング、右上CR など"></textarea>
+                    </div>
+                </div>
+                <div class="search-result-list" id="searchResults"></div>
+                <div class="modal-actions">
+                    <button class="btn btn-soft" onclick="closeBookingModal()">閉じる</button>
+                    <button class="btn btn-primary" onclick="saveAppointment()">予約を保存</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="modal-overlay" id="checkInModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">QR/カルテ番号で受付</h3>
+            </div>
+            <div class="modal-body">
+                <p class="side-note">実機QR読み取り前のデモ用です。診察券QRに入っているカルテ番号を入力すると、本日の予約を「受付済」にできます。</p>
+                <div class="form-group">
+                    <label>カルテ番号</label>
+                    <input type="text" id="checkin-chart" placeholder="例：1166">
+                </div>
+                <div id="checkInResult"></div>
+                <div class="modal-actions">
+                    <button class="btn btn-soft" onclick="closeCheckInModal()">閉じる</button>
+                    <button class="btn btn-primary" onclick="checkInByChartNo()">受付済にする</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">コピーしました</div>
+
     <script>
-        const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co"; 
+        const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let currentDate = new Date();
-        let currentPatientId = null;
-
-        const generateTimeSlots = () => {
-            const slots = [];
-            for(let h=9; h<13; h++) {
-                for(let m=0; m<60; m+=15) slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
-            }
-            slots.push("LUNCH"); 
-            for(let h=14; h<19; h++) {
-                if(h===14) { slots.push("14:30", "14:45"); continue; }
-                if(h===18) { slots.push("18:00", "18:15", "18:30"); break; }
-                for(let m=0; m<60; m+=15) slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
-            }
-            return slots;
+        const CLINIC_NAME = "ひまわり歯科";
+        const ACTIVE_STATUSES = ['scheduled', 'waiting', 'in_treatment'];
+        const STATUS = {
+            scheduled: { label: '予約中', badge: 'scheduled' },
+            waiting: { label: '受付済', badge: 'waiting' },
+            in_treatment: { label: '診療中', badge: 'in_treatment' },
+            completed: { label: '会計完了', badge: 'completed' },
+            canceled: { label: 'キャンセル', badge: 'canceled' }
         };
+
         const TIME_SLOTS = generateTimeSlots();
+        let currentDate = new Date();
+        let dayAppointments = [];
+        let selectedAppointmentId = null;
+        let currentPatientId = null;
+        let followNeededIds = new Set();
+        let lastPatientSearchResults = [];
 
         window.onload = () => {
-            renderDate();
-            loadAppointments();
+            fillTimeSelect();
+            loadDashboard();
         };
 
-        function renderDate() {
-            const yyyy = currentDate.getFullYear();
-            const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const dd = String(currentDate.getDate()).padStart(2, '0');
+        function generateTimeSlots() {
+            const slots = [];
+            for (let h = 9; h < 13; h++) {
+                for (let m = 0; m < 60; m += 15) slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+            }
+            slots.push('LUNCH');
+            slots.push('14:30', '14:45');
+            for (let h = 15; h < 18; h++) {
+                for (let m = 0; m < 60; m += 15) slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+            }
+            slots.push('18:00', '18:15', '18:30');
+            return slots;
+        }
+
+        function fillTimeSelect() {
+            const select = document.getElementById('input-time');
+            select.innerHTML = TIME_SLOTS
+                .filter(t => t !== 'LUNCH')
+                .map(t => `<option value="${t}">${t}</option>`)
+                .join('');
+        }
+
+        function getDayRange(date) {
+            const start = new Date(date);
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(date);
+            end.setHours(23, 59, 59, 999);
+            return { start, end };
+        }
+
+        function formatDateDisplay(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
             const days = ['日', '月', '火', '水', '木', '金', '土'];
-            document.getElementById('current-date-display').innerText = `${yyyy}/${mm}/${dd} (${days[currentDate.getDay()]})`;
+            return `${y}/${m}/${d} (${days[date.getDay()]})`;
+        }
+
+        function formatTime(iso) {
+            const d = new Date(iso);
+            return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        }
+
+        function formatDateTime(iso) {
+            if (!iso) return '--';
+            const d = new Date(iso);
+            return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function getPatient(app) {
+            if (!app) return null;
+            if (Array.isArray(app.patients)) return app.patients[0] || null;
+            return app.patients || null;
+        }
+
+        function statusLabel(status) {
+            return STATUS[status]?.label || status || '未設定';
+        }
+
+        function showError(message) {
+            const box = document.getElementById('errorBox');
+            box.textContent = message || '';
+            box.style.display = message ? 'block' : 'none';
+        }
+
+        function showToast(message = 'コピーしました') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            clearTimeout(window.__toastTimer);
+            window.__toastTimer = setTimeout(() => toast.style.display = 'none', 1800);
         }
 
         function changeDate(days) {
-            if(days === 0) currentDate = new Date();
+            if (days === 0) currentDate = new Date();
             else currentDate.setDate(currentDate.getDate() + days);
-            renderDate();
-            loadAppointments();
+            selectedAppointmentId = null;
+            loadDashboard();
         }
 
-        async function loadAppointments() {
-            const timetable = document.getElementById('timetable');
-            const holidayMsg = document.getElementById('holiday-msg');
-            timetable.innerHTML = "";
+        async function loadDashboard() {
+            showError('');
+            document.getElementById('current-date-display').textContent = formatDateDisplay(currentDate);
+            document.getElementById('timeline').innerHTML = '<div class="loading-line">予約を読み込み中...</div>';
+            document.getElementById('taskList').innerHTML = '<div class="loading-line">今日やることを整理中...</div>';
+            document.getElementById('patientPanel').innerHTML = '<div class="patient-empty">予約カードを選択してください。<br>患者情報とLINE文面がここに表示されます。</div>';
 
-            if(currentDate.getDay() === 0) {
-                timetable.style.display = 'none';
-                holidayMsg.style.display = 'block';
-                return;
-            } else {
-                timetable.style.display = 'block';
-                holidayMsg.style.display = 'none';
-            }
+            const isHoliday = currentDate.getDay() === 0;
+            document.getElementById('holidayMsg').style.display = isHoliday ? 'block' : 'none';
 
-            const startOfDay = new Date(currentDate); startOfDay.setHours(0,0,0,0);
-            const endOfDay = new Date(currentDate); endOfDay.setHours(23,59,59,999);
-
+            const { start, end } = getDayRange(currentDate);
             try {
-                const { data: apps, error } = await supabaseClient
+                const { data, error } = await supabaseClient
                     .from('appointments')
-                    .select(`id, appointment_at, status, treatment_notes, patients(id, chart_no, patient_name)`)
-                    .gte('appointment_at', startOfDay.toISOString())
-                    .lte('appointment_at', endOfDay.toISOString());
+                    .select(`id, patient_id, appointment_at, status, treatment_notes, patients(id, chart_no, patient_name, birth_date)`)
+                    .gte('appointment_at', start.toISOString())
+                    .lte('appointment_at', end.toISOString())
+                    .order('appointment_at', { ascending: true });
 
-                if(error) { throw error; }
+                if (error) throw error;
+                dayAppointments = (data || []).map(app => ({ ...app, status: app.status || 'scheduled' }));
+                await buildFollowNeededSet(end);
 
-                TIME_SLOTS.forEach(slot => {
-                    const row = document.createElement('div');
-                    row.className = 'time-row';
-
-                    if(slot === "LUNCH") {
-                        row.innerHTML = `<div class="time-label">13:00<br>|<br>14:30</div><div class="time-slot disabled">昼 休 み (LUNCH BREAK)</div>`;
-                        timetable.appendChild(row);
-                        return;
-                    }
-
-                    const slotApp = apps.find(a => {
-                        const d = new Date(a.appointment_at);
-                        const hm = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-                        return hm === slot;
-                    });
-
-                    let slotContent = "";
-                    if(slotApp) {
-                        let bgColor = "var(--status-scheduled)";
-                        if(slotApp.status === 'waiting') bgColor = "var(--status-waiting)";
-                        if(slotApp.status === 'in_treatment') bgColor = "var(--status-treatment)";
-                        if(slotApp.status === 'completed') bgColor = "var(--status-completed)";
-
-                        const chartNo = slotApp.patients ? slotApp.patients.chart_no : '--';
-                        const pName = slotApp.patients ? slotApp.patients.patient_name : 'データなし';
-
-                        slotContent = `
-                            <div class="appointment-card" style="background: ${bgColor};" onclick="event.stopPropagation()">
-                                <div class="app-info">
-                                    <span class="app-chart">No.${chartNo}</span>
-                                    <span class="app-name">${pName} 様</span>
-                                    <span class="app-treatment">${slotApp.treatment_notes || ''}</span>
-                                </div>
-                                <select class="status-select" onchange="updateStatus('${slotApp.id}', this.value)">
-                                    <option value="scheduled" ${slotApp.status==='scheduled'?'selected':''}>予約中</option>
-                                    <option value="waiting" ${slotApp.status==='waiting'?'selected':''}>受付済(待合)</option>
-                                    <option value="in_treatment" ${slotApp.status==='in_treatment'?'selected':''}>診療室ご案内</option>
-                                    <option value="completed" ${slotApp.status==='completed'?'selected':''}>会計完了</option>
-                                    <option value="canceled" ${slotApp.status==='canceled'?'selected':''}>キャンセル</option>
-                                </select>
-                            </div>
-                        `;
-                    }
-
-                    row.innerHTML = `
-                        <div class="time-label">${slot}</div>
-                        <div class="time-slot" onclick="openModal('${slot}')">${slotContent}</div>
-                    `;
-                    timetable.appendChild(row);
-                });
+                renderSummary();
+                renderTasks();
+                renderTimeline();
+                renderPatientPanel();
             } catch (err) {
-                console.error("データ取得エラー:", err);
-                alert("データの読み込みに失敗しました。詳細: " + err.message);
+                console.error(err);
+                showError('データの読み込みに失敗しました。Supabaseのテーブル名・RLS・APIキーを確認してください。詳細: ' + err.message);
+                document.getElementById('timeline').innerHTML = '<div class="loading-line">読み込みに失敗しました</div>';
+                document.getElementById('taskList').innerHTML = '<div class="loading-line">読み込みに失敗しました</div>';
             }
         }
 
-        async function searchPatient() {
-            const chartNo = document.getElementById('input-chart').value.trim();
-            if(!chartNo) return;
+        async function buildFollowNeededSet(endOfDay) {
+            followNeededIds = new Set();
+            const completedPatientIds = [...new Set(dayAppointments
+                .filter(a => a.status === 'completed' && a.patient_id)
+                .map(a => a.patient_id))];
+
+            if (completedPatientIds.length === 0) return;
 
             try {
                 const { data, error } = await supabaseClient
-                    .from('patients')
-                    .select('*')
-                    .eq('chart_no', chartNo.toString())
-                    .maybeSingle();
+                    .from('appointments')
+                    .select('patient_id')
+                    .in('patient_id', completedPatientIds)
+                    .in('status', ACTIVE_STATUSES)
+                    .gt('appointment_at', endOfDay.toISOString())
+                    .limit(500);
 
-                if(data) {
-                    document.getElementById('input-name').value = data.patient_name || "";
-                    document.getElementById('input-birth').value = data.birth_date || "";
-                    currentPatientId = data.id;
-                    alert(`既存の患者（${data.patient_name} 様）が見つかりました！`);
-                } else {
-                    currentPatientId = null;
-                    alert("該当する患者がいません。新しい名前と生年月日を入れて新規登録してください。");
-                }
-            } catch(e) {
-                currentPatientId = null;
-                alert("検索エラーが発生しました。");
+                if (error) throw error;
+                const hasFuture = new Set((data || []).map(a => a.patient_id));
+                completedPatientIds.forEach(id => {
+                    if (!hasFuture.has(id)) followNeededIds.add(id);
+                });
+            } catch (err) {
+                console.warn('未来予約確認をスキップ:', err.message);
             }
         }
 
-        async function saveAppointment() {
-            const time = document.getElementById('selected-time').value;
-            const chartNo = document.getElementById('input-chart').value.trim();
-            const name = document.getElementById('input-name').value.trim();
-            const birth = document.getElementById('input-birth').value.trim();
-            const treatment = document.getElementById('input-treatment').value.trim();
+        function renderSummary() {
+            const counts = {
+                total: dayAppointments.filter(a => a.status !== 'canceled').length,
+                scheduled: dayAppointments.filter(a => a.status === 'scheduled').length,
+                waiting: dayAppointments.filter(a => a.status === 'waiting').length,
+                in_treatment: dayAppointments.filter(a => a.status === 'in_treatment').length,
+                completed: dayAppointments.filter(a => a.status === 'completed').length,
+                follow: followNeededIds.size
+            };
 
-            if(!chartNo || !name) { alert("カルテ番号と患者氏名は必須です。"); return; }
+            document.getElementById('summaryGrid').innerHTML = `
+                <div class="summary-card blue">
+                    <div class="summary-label">本日の予約</div>
+                    <div class="summary-number">${counts.total}</div>
+                    <div class="summary-caption">キャンセル除く</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">未受付</div>
+                    <div class="summary-number">${counts.scheduled}</div>
+                    <div class="summary-caption">来院待ち</div>
+                </div>
+                <div class="summary-card yellow">
+                    <div class="summary-label">受付済</div>
+                    <div class="summary-number">${counts.waiting}</div>
+                    <div class="summary-caption">待合・案内待ち</div>
+                </div>
+                <div class="summary-card green">
+                    <div class="summary-label">診療中</div>
+                    <div class="summary-number">${counts.in_treatment}</div>
+                    <div class="summary-caption">診療室に案内済</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">会計完了</div>
+                    <div class="summary-number">${counts.completed}</div>
+                    <div class="summary-caption">本日の完了</div>
+                </div>
+                <div class="summary-card orange">
+                    <div class="summary-label">次回予約未設定</div>
+                    <div class="summary-number">${counts.follow}</div>
+                    <div class="summary-caption">LINE案内推奨</div>
+                </div>
+            `;
+        }
 
-            try {
-                // 患者データの設定（もし既存IDがあれば含める）
-                const patientPayload = { 
-                    chart_no: chartNo.toString(), 
-                    patient_name: name, 
-                    birth_date: birth || null 
-                };
-                if (currentPatientId) {
-                    patientPayload.id = currentPatientId;
-                }
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            const tasks = [];
 
-                // 患者の登録または更新
-                const { data: patientData, error: patientError } = await supabaseClient
-                    .from('patients')
-                    .upsert(patientPayload, { onConflict: 'chart_no' })
-                    .select()
-                    .single();
-
-                if(patientError) throw patientError;
-
-                // 予約時間の計算
-                const [h, m] = time.split(':');
-                const targetDate = new Date(currentDate);
-                targetDate.setHours(parseInt(h), parseInt(m), 0, 0);
-
-                // 予約データの保存
-                const { error: appError } = await supabaseClient.from('appointments').insert({
-                    patient_id: patientData.id,
-                    appointment_at: targetDate.toISOString(),
-                    treatment_notes: treatment,
-                    status: 'scheduled'
+            dayAppointments
+                .filter(a => ['scheduled', 'waiting', 'in_treatment'].includes(a.status))
+                .forEach(a => {
+                    const p = getPatient(a);
+                    tasks.push({
+                        type: a.status === 'scheduled' ? 'urgent' : '',
+                        title: p?.patient_name || '患者データなし',
+                        meta: `${formatTime(a.appointment_at)} / ${statusLabel(a.status)} / ${a.treatment_notes || '内容未入力'}`,
+                        app: a,
+                        badge: statusLabel(a.status)
+                    });
                 });
 
-                if(appError) throw appError;
-                
-                closeModal();
-                loadAppointments(); 
+            dayAppointments
+                .filter(a => a.status === 'completed' && followNeededIds.has(a.patient_id))
+                .forEach(a => {
+                    const p = getPatient(a);
+                    tasks.push({
+                        type: 'follow',
+                        title: p?.patient_name || '患者データなし',
+                        meta: `会計完了済 / 次回予約が未設定 / LINEで次回案内`,
+                        app: a,
+                        badge: '次回案内'
+                    });
+                });
+
+            dayAppointments
+                .filter(a => a.status === 'canceled')
+                .forEach(a => {
+                    const p = getPatient(a);
+                    tasks.push({
+                        type: 'urgent',
+                        title: p?.patient_name || '患者データなし',
+                        meta: `${formatTime(a.appointment_at)} キャンセル / 再予約案内がおすすめ`,
+                        app: a,
+                        badge: '再予約'
+                    });
+                });
+
+            document.getElementById('taskCountBadge').textContent = `${tasks.length}件`;
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = `<div class="patient-empty">今すぐ対応が必要な項目はありません。<br>予約タイムラインを確認してください。</div>`;
+                return;
+            }
+
+            taskList.innerHTML = tasks.map((task, index) => `
+                <div class="task-card ${task.type}">
+                    <div class="task-top">
+                        <div>
+                            <div class="task-name">${escapeHtml(task.title)} 様</div>
+                            <div class="task-meta">${escapeHtml(task.meta)}</div>
+                        </div>
+                        <span class="badge line">${escapeHtml(task.badge)}</span>
+                    </div>
+                    <div style="display:flex; gap:7px; flex-wrap:wrap;">
+                        <button class="btn btn-blue-soft btn-mini" onclick="selectAppointment('${task.app.id}')">詳細</button>
+                        ${task.app.status === 'scheduled' ? `<button class="btn btn-yellow btn-mini" onclick="updateStatus('${task.app.id}', 'waiting')">受付済</button>` : ''}
+                        ${task.app.status === 'waiting' ? `<button class="btn btn-green btn-mini" onclick="updateStatus('${task.app.id}', 'in_treatment')">診療へ</button>` : ''}
+                        ${task.app.status === 'in_treatment' ? `<button class="btn btn-gray btn-mini" onclick="updateStatus('${task.app.id}', 'completed')">会計完了</button>` : ''}
+                        ${task.app.status === 'completed' ? `<button class="btn btn-primary btn-mini" onclick="copyLineText('next', '${task.app.id}')">LINE文面コピー</button>` : ''}
+                        ${task.app.status === 'canceled' ? `<button class="btn btn-primary btn-mini" onclick="copyLineText('rebook', '${task.app.id}')">再予約文面</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTimeline() {
+            const timeline = document.getElementById('timeline');
+            const rows = TIME_SLOTS.map(slot => {
+                if (slot === 'LUNCH') {
+                    return `
+                        <div class="time-row">
+                            <div class="time-label">13:00</div>
+                            <div class="slot-lunch">昼休み / LUNCH BREAK</div>
+                        </div>
+                    `;
+                }
+
+                const apps = dayAppointments.filter(a => formatTime(a.appointment_at) === slot);
+                const content = apps.length
+                    ? apps.map(renderAppointmentCard).join('')
+                    : `<button class="empty-add" onclick="openBookingModal('${slot}')">＋ ${slot} に予約追加</button>`;
+
+                return `
+                    <div class="time-row">
+                        <div class="time-label">${slot}</div>
+                        <div class="slot ${apps.length ? '' : 'empty'}">${content}</div>
+                    </div>
+                `;
+            }).join('');
+
+            timeline.innerHTML = rows;
+        }
+
+        function renderAppointmentCard(app) {
+            const p = getPatient(app);
+            const status = app.status || 'scheduled';
+            const selectedClass = app.id === selectedAppointmentId ? 'selected' : '';
+            return `
+                <article class="appointment-card ${escapeHtml(status)} ${selectedClass}" onclick="selectAppointment('${app.id}')">
+                    <div class="app-main">
+                        <div>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:4px;">
+                                <span class="badge ${STATUS[status]?.badge || 'scheduled'}">${escapeHtml(statusLabel(status))}</span>
+                                <span class="badge line">No.${escapeHtml(p?.chart_no || '--')}</span>
+                            </div>
+                            <div class="app-name">${escapeHtml(p?.patient_name || '患者データなし')} 様</div>
+                            <div class="app-note">${escapeHtml(app.treatment_notes || '処置内容なし')}</div>
+                        </div>
+                        <div style="font-weight:900; color:var(--muted);">${formatTime(app.appointment_at)}</div>
+                    </div>
+                    <div class="app-actions" onclick="event.stopPropagation();">
+                        ${status === 'scheduled' ? `<button class="btn btn-yellow btn-mini" onclick="updateStatus('${app.id}', 'waiting')">受付済</button>` : ''}
+                        ${status === 'waiting' ? `<button class="btn btn-green btn-mini" onclick="updateStatus('${app.id}', 'in_treatment')">診療へ</button>` : ''}
+                        ${status === 'in_treatment' ? `<button class="btn btn-gray btn-mini" onclick="updateStatus('${app.id}', 'completed')">会計完了</button>` : ''}
+                        ${status !== 'canceled' && status !== 'completed' ? `<button class="btn btn-red btn-mini" onclick="updateStatus('${app.id}', 'canceled')">キャンセル</button>` : ''}
+                        <button class="btn btn-blue-soft btn-mini" onclick="copyLineText('${status === 'completed' ? 'next' : status === 'canceled' ? 'rebook' : 'reminder'}', '${app.id}')">LINE文面</button>
+                    </div>
+                </article>
+            `;
+        }
+
+        function selectAppointment(id) {
+            selectedAppointmentId = id;
+            renderTimeline();
+            renderPatientPanel();
+        }
+
+        function renderPatientPanel() {
+            const panel = document.getElementById('patientPanel');
+            const app = dayAppointments.find(a => a.id === selectedAppointmentId);
+            if (!app) {
+                panel.innerHTML = `<div class="patient-empty">予約カードを選択してください。<br>患者情報とLINE文面がここに表示されます。</div>`;
+                return;
+            }
+
+            const p = getPatient(app) || {};
+            const selectedLineType = app.status === 'completed' ? 'next' : app.status === 'canceled' ? 'rebook' : 'reminder';
+            const lineText = createLineText(selectedLineType, app);
+
+            panel.innerHTML = `
+                <div>
+                    <h3 class="patient-name">${escapeHtml(p.patient_name || '患者データなし')} 様</h3>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+                        <span class="badge ${STATUS[app.status]?.badge || 'scheduled'}">${escapeHtml(statusLabel(app.status))}</span>
+                        ${followNeededIds.has(app.patient_id) ? '<span class="badge line">次回予約未設定</span>' : ''}
+                    </div>
+                </div>
+
+                <div class="patient-meta-grid">
+                    <div class="meta-card">
+                        <div class="meta-label">カルテ番号</div>
+                        <div class="meta-value">No.${escapeHtml(p.chart_no || '--')}</div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-label">予約日時</div>
+                        <div class="meta-value">${escapeHtml(formatDateTime(app.appointment_at))}</div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-label">生年月日</div>
+                        <div class="meta-value">${escapeHtml(p.birth_date || '--')}</div>
+                    </div>
+                    <div class="meta-card">
+                        <div class="meta-label">予約内容</div>
+                        <div class="meta-value">${escapeHtml(app.treatment_notes || '未入力')}</div>
+                    </div>
+                </div>
+
+                <div style="display:grid; gap:8px;">
+                    <div class="meta-label">受付ステータスを変更</div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn btn-blue-soft btn-mini" onclick="updateStatus('${app.id}', 'scheduled')">予約中</button>
+                        <button class="btn btn-yellow btn-mini" onclick="updateStatus('${app.id}', 'waiting')">受付済</button>
+                        <button class="btn btn-green btn-mini" onclick="updateStatus('${app.id}', 'in_treatment')">診療中</button>
+                        <button class="btn btn-gray btn-mini" onclick="updateStatus('${app.id}', 'completed')">会計完了</button>
+                        <button class="btn btn-red btn-mini" onclick="updateStatus('${app.id}', 'canceled')">キャンセル</button>
+                    </div>
+                </div>
+
+                <div class="line-template-box">
+                    <div class="line-template-title">LINE公式で送る文面</div>
+                    <div style="display:flex; gap:7px; flex-wrap:wrap;">
+                        <button class="btn btn-soft btn-mini" onclick="previewLineText('reminder', '${app.id}')">予約確認</button>
+                        <button class="btn btn-soft btn-mini" onclick="previewLineText('next', '${app.id}')">次回予約案内</button>
+                        <button class="btn btn-soft btn-mini" onclick="previewLineText('rebook', '${app.id}')">再予約案内</button>
+                        <button class="btn btn-soft btn-mini" onclick="previewLineText('thanks', '${app.id}')">来院お礼</button>
+                    </div>
+                    <div class="line-text-preview" id="linePreview">${escapeHtml(lineText)}</div>
+                    <button class="btn btn-primary btn-full" onclick="copyPreviewLineText()">表示中のLINE文面をコピー</button>
+                </div>
+            `;
+        }
+
+        function previewLineText(type, appId) {
+            const app = dayAppointments.find(a => a.id === appId);
+            if (!app) return;
+            document.getElementById('linePreview').textContent = createLineText(type, app);
+        }
+
+        async function copyPreviewLineText() {
+            const text = document.getElementById('linePreview')?.textContent || '';
+            await copyToClipboard(text);
+        }
+
+        async function copyLineText(type, appId) {
+            const app = dayAppointments.find(a => a.id === appId);
+            if (!app) return;
+            await copyToClipboard(createLineText(type, app));
+        }
+
+        function createLineText(type, app) {
+            const p = getPatient(app) || {};
+            const name = p.patient_name || 'お客様';
+            const dateText = formatDateTime(app.appointment_at);
+
+            if (type === 'next') {
+                return `${name}様\n本日はご来院ありがとうございました。\n\n次回のご予約がまだの場合は、LINEにてご希望日時をお送りください。\n受付側で空き状況を確認してご案内いたします。\n\n${CLINIC_NAME}`;
+            }
+            if (type === 'rebook') {
+                return `${name}様\nご予約の変更・再予約についてご案内です。\n\nご都合の良い候補日を2〜3つ、このLINEにご返信ください。\n空き状況を確認してご案内いたします。\n\n${CLINIC_NAME}`;
+            }
+            if (type === 'thanks') {
+                return `${name}様\n本日はご来院ありがとうございました。\n\n気になることや次回のご相談がありましたら、このLINEからお気軽にご連絡ください。\n\n${CLINIC_NAME}`;
+            }
+            return `${name}様\nご予約の確認です。\n\n日時：${dateText}\n内容：${app.treatment_notes || 'ご予約'}\n\nご来院の際は、LINE診察券のQRコードをご提示ください。\n変更やキャンセルの場合は、このLINEへご返信ください。\n\n${CLINIC_NAME}`;
+        }
+
+        async function copyToClipboard(text) {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.left = '-9999px';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    document.execCommand('copy');
+                    textarea.remove();
+                }
+                showToast('LINE文面をコピーしました');
             } catch (err) {
-                console.error("保存エラー:", err);
-                alert("保存に失敗しました。詳細: " + err.message);
+                alert('コピーに失敗しました。手動で選択してコピーしてください。');
             }
         }
 
         async function updateStatus(appointmentId, newStatus) {
             try {
-                const { error } = await supabaseClient.from('appointments').update({ status: newStatus }).eq('id', appointmentId);
+                const { error } = await supabaseClient
+                    .from('appointments')
+                    .update({ status: newStatus })
+                    .eq('id', appointmentId);
                 if (error) throw error;
-                loadAppointments(); 
+                selectedAppointmentId = appointmentId;
+                await loadDashboard();
+                showToast('ステータスを更新しました');
             } catch (err) {
-                console.error("更新エラー", err);
-                alert("ステータス更新に失敗しました。");
+                console.error(err);
+                alert('ステータス更新に失敗しました。詳細: ' + err.message);
             }
         }
 
-        function openModal(time) {
-            document.getElementById('selected-time').value = time;
-            document.getElementById('modal-time-title').innerText = `${time} の予約を追加`;
-            document.getElementById('input-chart').value = "";
-            document.getElementById('input-name').value = "";
-            document.getElementById('input-birth').value = "";
-            document.getElementById('input-treatment').value = "";
+        function openBookingModal(slot = '') {
             currentPatientId = null;
-            document.getElementById('booking-modal').style.display = 'flex';
+            document.getElementById('bookingModalTitle').textContent = slot ? `${slot} の予約を追加` : '予約を追加';
+            document.getElementById('input-time').value = slot && slot !== 'LUNCH' ? slot : '09:00';
+            document.getElementById('selected-time').value = slot || document.getElementById('input-time').value;
+            document.getElementById('input-chart').value = '';
+            document.getElementById('input-name').value = '';
+            document.getElementById('input-birth').value = '';
+            document.getElementById('input-treatment').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('bookingModal').style.display = 'flex';
         }
-        function closeModal() { document.getElementById('booking-modal').style.display = 'none'; }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        async function searchPatient() {
+            const chartNo = document.getElementById('input-chart').value.trim();
+            const name = document.getElementById('input-name').value.trim();
+            const box = document.getElementById('searchResults');
+            box.innerHTML = '<div class="loading-line">患者を検索中...</div>';
+
+            if (!chartNo && !name) {
+                box.innerHTML = '<div class="patient-empty">カルテ番号、または患者氏名を入力してください。</div>';
+                return;
+            }
+
+            try {
+                let query = supabaseClient.from('patients').select('id, chart_no, patient_name, birth_date').limit(8);
+                if (chartNo) query = query.eq('chart_no', chartNo.toString());
+                else query = query.ilike('patient_name', `%${name}%`);
+                const { data, error } = await query;
+                if (error) throw error;
+
+                lastPatientSearchResults = data || [];
+
+                if (!lastPatientSearchResults.length) {
+                    currentPatientId = null;
+                    box.innerHTML = '<div class="patient-empty">該当患者が見つかりません。新規患者として登録できます。</div>';
+                    return;
+                }
+
+                box.innerHTML = lastPatientSearchResults.map((p, index) => `
+                    <div class="search-result">
+                        <div>
+                            <div style="font-weight:900;">${escapeHtml(p.patient_name)} 様</div>
+                            <div class="task-meta">No.${escapeHtml(p.chart_no)} / ${escapeHtml(p.birth_date || '--')}</div>
+                        </div>
+                        <button class="btn btn-blue-soft btn-mini" onclick="applyPatientFromSearch(${index})">選択</button>
+                    </div>
+                `).join('');
+
+                if (lastPatientSearchResults.length === 1) {
+                    const p = lastPatientSearchResults[0];
+                    applyPatient(p.id, p.chart_no, p.patient_name, p.birth_date || '');
+                }
+            } catch (err) {
+                console.error(err);
+                box.innerHTML = '<div class="patient-empty">検索に失敗しました。</div>';
+            }
+        }
+
+        function applyPatientFromSearch(index) {
+            const patient = lastPatientSearchResults[index];
+            if (!patient) return;
+            applyPatient(patient.id, patient.chart_no, patient.patient_name, patient.birth_date || '');
+        }
+
+        function applyPatient(id, chartNo, name, birth) {
+            currentPatientId = id;
+            document.getElementById('input-chart').value = chartNo || '';
+            document.getElementById('input-name').value = name || '';
+            document.getElementById('input-birth').value = birth || '';
+            showToast('患者を選択しました');
+        }
+
+        async function saveAppointment() {
+            const time = document.getElementById('input-time').value;
+            const chartNo = document.getElementById('input-chart').value.trim();
+            const name = document.getElementById('input-name').value.trim();
+            const birth = document.getElementById('input-birth').value.trim();
+            const treatment = document.getElementById('input-treatment').value.trim();
+
+            if (!time || !chartNo || !name) {
+                alert('予約時間・カルテ番号・患者氏名は必須です。');
+                return;
+            }
+
+            const [h, m] = time.split(':');
+            const targetDate = new Date(currentDate);
+            targetDate.setHours(Number(h), Number(m), 0, 0);
+
+            try {
+                const sameSlot = dayAppointments.find(a => formatTime(a.appointment_at) === time && a.status !== 'canceled');
+                if (sameSlot) {
+                    const ok = confirm(`${time} は既に予約があります。重複して登録しますか？`);
+                    if (!ok) return;
+                }
+
+                const patientPayload = {
+                    chart_no: chartNo.toString(),
+                    patient_name: name,
+                    birth_date: birth || null
+                };
+                if (currentPatientId) patientPayload.id = currentPatientId;
+
+                const { data: patientData, error: patientError } = await supabaseClient
+                    .from('patients')
+                    .upsert(patientPayload, { onConflict: 'chart_no' })
+                    .select()
+                    .single();
+                if (patientError) throw patientError;
+
+                const { error: appError } = await supabaseClient
+                    .from('appointments')
+                    .insert({
+                        patient_id: patientData.id,
+                        appointment_at: targetDate.toISOString(),
+                        treatment_notes: treatment || null,
+                        status: 'scheduled'
+                    });
+                if (appError) throw appError;
+
+                closeBookingModal();
+                await loadDashboard();
+                showToast('予約を保存しました');
+            } catch (err) {
+                console.error(err);
+                alert('保存に失敗しました。詳細: ' + err.message);
+            }
+        }
+
+        function openCheckInModal() {
+            document.getElementById('checkin-chart').value = '';
+            document.getElementById('checkInResult').innerHTML = '';
+            document.getElementById('checkInModal').style.display = 'flex';
+        }
+
+        function closeCheckInModal() {
+            document.getElementById('checkInModal').style.display = 'none';
+        }
+
+        async function checkInByChartNo() {
+            const chartNo = document.getElementById('checkin-chart').value.trim();
+            const result = document.getElementById('checkInResult');
+            if (!chartNo) {
+                result.innerHTML = '<div class="patient-empty">カルテ番号を入力してください。</div>';
+                return;
+            }
+
+            result.innerHTML = '<div class="loading-line">本日の予約を確認中...</div>';
+            const { start, end } = getDayRange(currentDate);
+
+            try {
+                const { data: patient, error: pError } = await supabaseClient
+                    .from('patients')
+                    .select('id, chart_no, patient_name')
+                    .eq('chart_no', chartNo.toString())
+                    .maybeSingle();
+                if (pError) throw pError;
+                if (!patient) {
+                    result.innerHTML = '<div class="patient-empty">該当する患者が見つかりません。</div>';
+                    return;
+                }
+
+                const { data: apps, error: aError } = await supabaseClient
+                    .from('appointments')
+                    .select('id, appointment_at, status, treatment_notes')
+                    .eq('patient_id', patient.id)
+                    .gte('appointment_at', start.toISOString())
+                    .lte('appointment_at', end.toISOString())
+                    .in('status', ACTIVE_STATUSES)
+                    .order('appointment_at', { ascending: true })
+                    .limit(1);
+                if (aError) throw aError;
+
+                if (!apps || apps.length === 0) {
+                    result.innerHTML = `<div class="patient-empty">${escapeHtml(patient.patient_name)} 様の本日の有効な予約がありません。</div>`;
+                    return;
+                }
+
+                const app = apps[0];
+                const { error: uError } = await supabaseClient
+                    .from('appointments')
+                    .update({ status: 'waiting' })
+                    .eq('id', app.id);
+                if (uError) throw uError;
+
+                selectedAppointmentId = app.id;
+                result.innerHTML = `<div class="task-card follow"><strong>${escapeHtml(patient.patient_name)} 様を受付済にしました。</strong><div class="task-meta">${formatTime(app.appointment_at)} / ${escapeHtml(app.treatment_notes || '')}</div></div>`;
+                await loadDashboard();
+                showToast('受付済にしました');
+            } catch (err) {
+                console.error(err);
+                result.innerHTML = `<div class="patient-empty">受付処理に失敗しました。${escapeHtml(err.message)}</div>`;
+            }
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeBookingModal();
+                closeCheckInModal();
+            }
+        });
     </script>
 </body>
 </html>
