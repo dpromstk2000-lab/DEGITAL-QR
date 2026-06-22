@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>オーナー管理画面</title>
+
+  <!-- 共通設定 -->
+  <script src="./config.js"></script>
+
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --accent: #facc15;
+      --accent-soft: #fff7d6;
+      --danger: #ef4444;
+      --danger-soft: #fef2f2;
+      --success: #16a34a;
+      --success-soft: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-soft: #fffbeb;
+      --dark: #0f172a;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.10), transparent 34%),
+        radial-gradient(circle at bottom left, rgba(250, 204, 21, 0.12), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 22px 14px 56px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      padding: 26px 22px;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 86% 10%, rgba(250, 204, 21, 0.28), transparent 32%),
+        linear-gradient(135deg, #07111f 0%, #0f172a 52%, #172554 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -70px;
+      bottom: -90px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: rgba(250, 204, 21, 0.16);
+      filter: blur(14px);
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .brand-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(250, 204, 21, 0.12);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 1.06;
+      letter-spacing: -0.055em;
+      font-weight: 950;
+    }
+
+    .hero p {
+      max-width: 780px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 15px;
+      font-weight: 750;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 7px 13px;
+      border: 1px solid rgba(250, 204, 21, 0.48);
+      border-radius: 999px;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.07);
+      font-size: 12px;
+      font-weight: 900;
+      backdrop-filter: blur(10px);
+    }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .metric {
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(219, 227, 239, 0.9);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+      backdrop-filter: blur(12px);
+    }
+
+    .metric small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 36px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.06em;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid rgba(219, 227, 239, 0.9);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(12px);
+    }
+
+    .toolbar-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .panel {
+      border: 1px solid rgba(219, 227, 239, 0.9);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .panel-title {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .icon {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      color: var(--dark);
+      background: var(--accent);
+      font-weight: 950;
+      flex: 0 0 auto;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.25;
+      letter-spacing: -0.04em;
+      font-weight: 950;
+    }
+
+    .panel-title small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-top: 16px;
+      padding: 2px 0 8px;
+    }
+
+    .tab {
+      flex: 0 0 auto;
+      min-height: 42px;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .tab.active {
+      border-color: var(--primary);
+      color: #ffffff;
+      background: var(--primary);
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.20);
+    }
+
+    .tab-panel {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .card-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .item {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+    }
+
+    .item-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .item-title {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+    }
+
+    .item-meta {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .item-text {
+      margin: 8px 0 0;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 750;
+      white-space: pre-wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .badge.pending {
+      color: #92400e;
+      background: var(--warning-soft);
+      border: 1px solid rgba(245, 158, 11, 0.22);
+    }
+
+    .badge.confirmed {
+      color: #1d4ed8;
+      background: var(--primary-soft);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+    }
+
+    .badge.completed,
+    .badge.done {
+      color: #166534;
+      background: var(--success-soft);
+      border: 1px solid rgba(22, 163, 74, 0.20);
+    }
+
+    .badge.cancelled,
+    .badge.skipped {
+      color: #991b1b;
+      background: var(--danger-soft);
+      border: 1px solid rgba(239, 68, 68, 0.20);
+    }
+
+    .badge.open {
+      color: #1e3a8a;
+      background: var(--primary-soft);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 9px 13px;
+      border: 0;
+      border-radius: 14px;
+      color: var(--text);
+      background: #eef2f7;
+      font-size: 13px;
+      font-weight: 950;
+      text-decoration: none;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      color: var(--dark);
+      background: linear-gradient(135deg, #fde047, #facc15);
+    }
+
+    .btn-blue {
+      color: #ffffff;
+      background: var(--primary);
+    }
+
+    .btn-green {
+      color: #ffffff;
+      background: var(--success);
+    }
+
+    .btn-red {
+      color: #ffffff;
+      background: var(--danger);
+    }
+
+    .btn-dark {
+      color: #ffffff;
+      background: var(--dark);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.52;
+    }
+
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--text);
+      background: #ffffff;
+      outline: none;
+      font-weight: 800;
+    }
+
+    .textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      border-color: rgba(37, 99, 235, 0.75);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: #334155;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .form-grid.two {
+      grid-template-columns: 1fr;
+    }
+
+    .form-grid.three {
+      grid-template-columns: 1fr;
+    }
+
+    .notice {
+      padding: 13px 14px;
+      border: 1px solid rgba(37, 99, 235, 0.16);
+      border-radius: 16px;
+      color: #1e3a8a;
+      background: var(--primary-soft);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .notice.yellow {
+      color: #7c2d12;
+      background: var(--accent-soft);
+      border-color: rgba(250, 204, 21, 0.48);
+    }
+
+    .notice.red {
+      color: #991b1b;
+      background: var(--danger-soft);
+      border-color: rgba(239, 68, 68, 0.22);
+    }
+
+    .notice.green {
+      color: #166534;
+      background: var(--success-soft);
+      border-color: rgba(22, 163, 74, 0.22);
+    }
+
+    .empty {
+      padding: 22px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      background: #f8fafc;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .copy-box {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #f8fafc;
+    }
+
+    .token-box {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      border: 1px solid rgba(250, 204, 21, 0.44);
+      border-radius: 20px;
+      background: var(--accent-soft);
+    }
+
+    .loading {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      place-items: center;
+      background: rgba(244, 247, 251, 0.72);
+      backdrop-filter: blur(8px);
+    }
+
+    .loading.active {
+      display: grid;
+    }
+
+    .loading-box {
+      width: min(92vw, 340px);
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #ffffff;
+      text-align: center;
+      box-shadow: var(--shadow);
+      font-weight: 950;
+    }
+
+    .spinner {
+      width: 34px;
+      height: 34px;
+      margin: 0 auto 12px;
+      border: 4px solid #dbeafe;
+      border-top-color: var(--primary);
+      border-radius: 999px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      z-index: 110;
+      transform: translateX(-50%) translateY(120px);
+      width: min(92vw, 520px);
+      padding: 14px 16px;
+      border-radius: 18px;
+      color: #ffffff;
+      background: var(--dark);
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      font-weight: 900;
+      opacity: 0;
+      transition: 0.2s ease;
+    }
+
+    .toast.active {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .footer {
+      margin-top: 24px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (min-width: 720px) {
+      .app {
+        padding: 30px 22px 64px;
+      }
+
+      .hero {
+        padding: 34px 34px 32px;
+      }
+
+      .top-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .toolbar-row {
+        grid-template-columns: 180px 1fr auto auto;
+        align-items: end;
+      }
+
+      .main-grid {
+        grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+      }
+
+      .form-grid.two {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .form-grid.three {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading" class="loading">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      読み込み中です...
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <main class="app">
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="brand">
+          <span class="brand-dot"></span>
+          <span id="providerName">DPRO SHOP</span>
+        </div>
+
+        <div>
+          <h1>オーナー管理画面</h1>
+          <p>
+            今日の予約、承認待ち、フォロー予定をまとめて確認できます。
+            まずは「今日やること」を見れば、次に何をすればよいか分かります。
+          </p>
+        </div>
+
+        <div class="hero-actions">
+          <a id="reservationPageLink" class="pill" href="./index.html" target="_blank" rel="noopener">予約画面を開く</a>
+          <span class="pill" id="shopNamePill">デモ店舗</span>
+          <span class="pill" id="shopCodePill">demo_shop_default</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div id="tokenBox" class="token-box">
+        <div class="notice yellow">
+          管理画面を使うために、Cloudflare Workerに登録した ADMIN_TOKEN を入力してください。
+          入力したトークンはこのブラウザ内だけに保存されます。
+        </div>
+
+        <div class="form-grid two">
+          <div class="field">
+            <label for="adminTokenInput">ADMIN_TOKEN</label>
+            <input id="adminTokenInput" class="input" type="password" placeholder="DPRO_LIFF_ADMIN_2026_..." />
+          </div>
+
+          <div class="field">
+            <label>&nbsp;</label>
+            <button id="saveTokenBtn" class="btn btn-primary" type="button">トークンを保存して読み込む</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar-row">
+        <div class="field">
+          <label for="dateInput">表示日</label>
+          <input id="dateInput" class="input" type="date" />
+        </div>
+
+        <div class="field">
+          <label for="searchInput">顧客検索</label>
+          <input id="searchInput" class="input" type="search" placeholder="名前・LINE名・電話番号で検索" />
+        </div>
+
+        <button id="reloadBtn" class="btn btn-blue" type="button">再読み込み</button>
+        <button id="demoResetBtn" class="btn btn-dark" type="button">デモ再作成</button>
+      </div>
+    </section>
+
+    <section class="top-grid">
+      <div class="metric">
+        <small>本日の予約</small>
+        <strong id="metricToday">0</strong>
+        <span>件</span>
+      </div>
+
+      <div class="metric">
+        <small>承認待ち</small>
+        <strong id="metricPending">0</strong>
+        <span>件</span>
+      </div>
+
+      <div class="metric">
+        <small>フォロー予定</small>
+        <strong id="metricFollowups">0</strong>
+        <span>件</span>
+      </div>
+
+      <div class="metric">
+        <small>今日やること</small>
+        <strong id="metricTasks">0</strong>
+        <span>件</span>
+      </div>
+    </section>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="today">今日やること</button>
+      <button class="tab" data-tab="reservations">予約一覧</button>
+      <button class="tab" data-tab="customers">顧客検索</button>
+      <button class="tab" data-tab="templates">LINE文面</button>
+      <button class="tab" data-tab="settings">休業日・営業時間</button>
+    </div>
+
+    <section id="tab-today" class="tab-panel active">
+      <div class="main-grid">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <div class="icon">✓</div>
+              <div>
+                <h2>今日やること</h2>
+                <small>対応漏れを防ぐためのリストです</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div id="tasksList" class="card-list"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <div class="icon">💬</div>
+              <div>
+                <h2>すぐ使うLINE文面</h2>
+                <small>コピーしてLINE公式で送れます</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div id="quickTemplatesList" class="card-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-reservations" class="tab-panel">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <div class="icon">📅</div>
+            <div>
+              <h2>予約一覧</h2>
+              <small>表示日の予約を確認できます</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <div id="reservationsList" class="card-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-customers" class="tab-panel">
+      <div class="main-grid">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <div class="icon">👤</div>
+              <div>
+                <h2>顧客検索</h2>
+                <small>名前・LINE名・電話番号で探せます</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div id="customersList" class="card-list"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <div class="icon">📋</div>
+              <div>
+                <h2>顧客詳細</h2>
+                <small>予約履歴・フォロー履歴を確認</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div id="customerDetailBox" class="empty">
+              左の一覧から顧客を選択してください。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-templates" class="tab-panel">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <div class="icon">💬</div>
+            <div>
+              <h2>LINE文面テンプレート</h2>
+              <small>文章を考える時間を減らします</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <div id="templatesList" class="card-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-settings" class="tab-panel">
+      <div class="main-grid">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <div class="icon">⏰</div>
+              <div>
+                <h2>営業時間</h2>
+                <small>曜日ごとの営業時間を設定できます</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div id="businessHoursBox" class="form-grid"></div>
+
+            <div class="actions">
+              <button id="saveBusinessHoursBtn" class="btn btn-primary" type="button">
+                営業時間を保存
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <div class="icon">休</div>
+              <div>
+                <h2>臨時休業・特別営業</h2>
+                <small>定休日以外の休みや特別営業時間を設定</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="specialDateInput">日付</label>
+                <input id="specialDateInput" class="input" type="date" />
+              </div>
+
+              <div class="field">
+                <label for="specialModeInput">設定</label>
+                <select id="specialModeInput" class="select">
+                  <option value="closed">臨時休業</option>
+                  <option value="special_hours">特別営業時間</option>
+                  <option value="fully_open">特別営業</option>
+                </select>
+              </div>
+
+              <div class="form-grid two">
+                <div class="field">
+                  <label for="specialOpenInput">開始時間</label>
+                  <input id="specialOpenInput" class="input" type="time" value="10:00" />
+                </div>
+
+                <div class="field">
+                  <label for="specialCloseInput">終了時間</label>
+                  <input id="specialCloseInput" class="input" type="time" value="18:00" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="specialMemoInput">メモ</label>
+                <input id="specialMemoInput" class="input" type="text" placeholder="例：研修のため休業" />
+              </div>
+
+              <button id="saveSpecialDayBtn" class="btn btn-primary" type="button">
+                臨時休業・特別営業を保存
+              </button>
+            </div>
+
+            <div style="height:14px;"></div>
+
+            <div id="specialDaysList" class="card-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Presented by DPRO SHOP
+    </div>
+  </main>
+
+  <script>
+    const DEFAULT_CONFIG = {
+      API_BASE_URL: 'https://dpro-liff-common-api.dpromstk2000.workers.dev',
+      SHOP_CODE: 'demo_shop_default',
+      PROVIDER_NAME: 'DPRO SHOP',
+      SHOP_NAME: 'デモ店舗',
+      SERVICE_NAME: '予約・顧客フォローLINEシステム'
+    };
+
+    const CONFIG = {
+      ...DEFAULT_CONFIG,
+      ...(window.DPRO_CONFIG || {})
+    };
+
+    const STORAGE_KEYS = {
+      adminToken: 'dpro_liff_admin_token'
+    };
+
+    const state = {
+      adminToken: '',
+      shop: null,
+      summary: null,
+      day: null,
+      tasks: [],
+      reservations: [],
+      followups: [],
+      customers: [],
+      templates: [],
+      businessHours: [],
+      specialDays: [],
+      selectedDate: getJstToday(),
+      selectedCustomer: null,
+      searchTimer: null
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    const els = {
+      loading: $('loading'),
+      toast: $('toast'),
+
+      providerName: $('providerName'),
+      shopNamePill: $('shopNamePill'),
+      shopCodePill: $('shopCodePill'),
+      reservationPageLink: $('reservationPageLink'),
+
+      tokenBox: $('tokenBox'),
+      adminTokenInput: $('adminTokenInput'),
+      saveTokenBtn: $('saveTokenBtn'),
+
+      dateInput: $('dateInput'),
+      searchInput: $('searchInput'),
+      reloadBtn: $('reloadBtn'),
+      demoResetBtn: $('demoResetBtn'),
+
+      metricToday: $('metricToday'),
+      metricPending: $('metricPending'),
+      metricFollowups: $('metricFollowups'),
+      metricTasks: $('metricTasks'),
+
+      tasksList: $('tasksList'),
+      quickTemplatesList: $('quickTemplatesList'),
+      reservationsList: $('reservationsList'),
+      customersList: $('customersList'),
+      customerDetailBox: $('customerDetailBox'),
+      templatesList: $('templatesList'),
+
+      businessHoursBox: $('businessHoursBox'),
+      saveBusinessHoursBtn: $('saveBusinessHoursBtn'),
+
+      specialDateInput: $('specialDateInput'),
+      specialModeInput: $('specialModeInput'),
+      specialOpenInput: $('specialOpenInput'),
+      specialCloseInput: $('specialCloseInput'),
+      specialMemoInput: $('specialMemoInput'),
+      saveSpecialDayBtn: $('saveSpecialDayBtn'),
+      specialDaysList: $('specialDaysList')
+    };
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    async function init() {
+      bindEvents();
+      applyStaticText();
+
+      state.adminToken = localStorage.getItem(STORAGE_KEYS.adminToken) || '';
+      els.adminTokenInput.value = state.adminToken;
+      els.dateInput.value = state.selectedDate;
+      els.specialDateInput.value = state.selectedDate;
+
+      if (state.adminToken) {
+        els.tokenBox.classList.add('hidden');
+        await loadAll();
+      } else {
+        renderEmptyInitial();
+      }
+    }
+
+    function bindEvents() {
+      document.querySelectorAll('.tab').forEach((tab) => {
+        tab.addEventListener('click', () => {
+          setActiveTab(tab.dataset.tab);
+        });
+      });
+
+      els.saveTokenBtn.addEventListener('click', async () => {
+        const token = els.adminTokenInput.value.trim();
+
+        if (!token) {
+          showToast('ADMIN_TOKENを入力してください。');
+          return;
+        }
+
+        state.adminToken = token;
+        localStorage.setItem(STORAGE_KEYS.adminToken, token);
+        els.tokenBox.classList.add('hidden');
+
+        await loadAll();
+      });
+
+      els.reloadBtn.addEventListener('click', loadAll);
+
+      els.dateInput.addEventListener('change', async () => {
+        state.selectedDate = els.dateInput.value || getJstToday();
+        await loadDayData();
+      });
+
+      els.searchInput.addEventListener('input', () => {
+        clearTimeout(state.searchTimer);
+        state.searchTimer = setTimeout(loadCustomers, 350);
+      });
+
+      els.demoResetBtn.addEventListener('click', async () => {
+        const ok = confirm('デモデータを再作成します。現在のデモ予約・顧客・タスクは削除されます。よろしいですか？');
+
+        if (!ok) return;
+
+        await demoReset();
+      });
+
+      els.saveBusinessHoursBtn.addEventListener('click', saveBusinessHours);
+      els.saveSpecialDayBtn.addEventListener('click', saveSpecialDay);
+    }
+
+    function applyStaticText() {
+      els.providerName.textContent = CONFIG.PROVIDER_NAME || 'DPRO SHOP';
+      els.shopNamePill.textContent = CONFIG.SHOP_NAME || 'デモ店舗';
+      els.shopCodePill.textContent = CONFIG.SHOP_CODE || 'demo_shop_default';
+      els.reservationPageLink.href = `./index.html?shop_code=${encodeURIComponent(getShopCode())}`;
+    }
+
+    function renderEmptyInitial() {
+      els.tasksList.innerHTML = emptyHtml('ADMIN_TOKENを保存すると、今日やることが表示されます。');
+      els.quickTemplatesList.innerHTML = emptyHtml('LINE文面テンプレートがここに表示されます。');
+      els.reservationsList.innerHTML = emptyHtml('予約一覧がここに表示されます。');
+      els.customersList.innerHTML = emptyHtml('顧客一覧がここに表示されます。');
+      els.templatesList.innerHTML = emptyHtml('文面テンプレートがここに表示されます。');
+      els.businessHoursBox.innerHTML = emptyHtml('営業時間設定がここに表示されます。');
+      els.specialDaysList.innerHTML = emptyHtml('臨時休業・特別営業日がここに表示されます。');
+    }
+
+    async function loadAll() {
+      showLoading();
+
+      try {
+        await Promise.all([
+          loadSummary(),
+          loadDayData(),
+          loadCustomers(),
+          loadTemplates(),
+          loadBusinessHours(),
+          loadSpecialDays()
+        ]);
+
+        showToast('読み込みました。');
+      } catch (error) {
+        handleApiError(error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function loadSummary() {
+      const data = await apiGet(`/api/admin/summary?shop_code=${encodeURIComponent(getShopCode())}`);
+
+      state.shop = data.shop;
+      state.summary = data.summary;
+
+      els.shopNamePill.textContent = state.shop?.shop_name || CONFIG.SHOP_NAME || '店舗';
+      els.shopCodePill.textContent = state.shop?.shop_code || getShopCode();
+
+      els.metricToday.textContent = state.summary?.today_reservations ?? 0;
+      els.metricPending.textContent = state.summary?.pending_reservations ?? 0;
+      els.metricFollowups.textContent = state.summary?.due_followups ?? 0;
+      els.metricTasks.textContent = state.summary?.open_tasks ?? 0;
+    }
+
+    async function loadDayData() {
+      showLoading();
+
+      try {
+        const data = await apiGet(
+          `/api/admin/day?shop_code=${encodeURIComponent(getShopCode())}&date=${encodeURIComponent(state.selectedDate)}`
+        );
+
+        state.day = data;
+        state.reservations = data.reservations || [];
+        state.followups = data.followups || [];
+        state.tasks = data.tasks || [];
+
+        renderTasks();
+        renderReservations();
+        await loadSummary();
+      } catch (error) {
+        handleApiError(error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function loadCustomers() {
+      const q = els.searchInput.value.trim();
+
+      try {
+        const data = await apiGet(
+          `/api/admin/customers?shop_code=${encodeURIComponent(getShopCode())}&q=${encodeURIComponent(q)}&limit=50`
+        );
+
+        state.customers = data.customers || [];
+        renderCustomers();
+      } catch (error) {
+        handleApiError(error);
+      }
+    }
+
+    async function loadTemplates() {
+      try {
+        const data = await apiGet(`/api/admin/templates?shop_code=${encodeURIComponent(getShopCode())}`);
+
+        state.templates = data.templates || [];
+        renderTemplates();
+        renderQuickTemplates();
+      } catch (error) {
+        handleApiError(error);
+      }
+    }
+
+    async function loadBusinessHours() {
+      try {
+        const data = await apiGet(`/api/admin/business-hours?shop_code=${encodeURIComponent(getShopCode())}`);
+
+        state.businessHours = data.business_hours || [];
+        renderBusinessHours();
+      } catch (error) {
+        handleApiError(error);
+      }
+    }
+
+    async function loadSpecialDays() {
+      try {
+        const from = getJstToday();
+        const to = addDays(from, 90);
+
+        const data = await apiGet(
+          `/api/admin/special-days?shop_code=${encodeURIComponent(getShopCode())}&from=${from}&to=${to}`
+        );
+
+        state.specialDays = data.special_days || [];
+        renderSpecialDays();
+      } catch (error) {
+        handleApiError(error);
+      }
+    }
+
+    function renderTasks() {
+      if (!state.tasks.length) {
+        els.tasksList.innerHTML = emptyHtml('今日やることはありません。');
+        return;
+      }
+
+      els.tasksList.innerHTML = state.tasks.map((task) => {
+        return `
+          <article class="item">
+            <div class="item-head">
+              <div>
+                <h3 class="item-title">${escapeHtml(task.title || 'タスク')}</h3>
+                <div class="item-meta">
+                  ${formatDate(task.due_date) || '期限なし'}
+                  ${task.due_time ? ' ' + String(task.due_time).slice(0, 5) : ''}
+                  / 優先度 ${task.priority || 3}
+                </div>
+              </div>
+              <span class="badge ${escapeHtml(task.status || 'open')}">${statusLabel(task.status)}</span>
+            </div>
+
+            <p class="item-text">${escapeHtml(task.detail || '')}</p>
+
+            <div class="actions">
+              ${task.action_label ? `<button class="btn btn-blue" type="button" onclick="copyTaskMessage('${task.id}')">${escapeHtml(task.action_label)}</button>` : ''}
+              <button class="btn btn-green" type="button" onclick="markTaskDone('${task.id}')">対応済み</button>
+              <button class="btn btn-outline" type="button" onclick="skipTask('${task.id}')">今回は不要</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderReservations() {
+      if (!state.reservations.length) {
+        els.reservationsList.innerHTML = emptyHtml('この日の予約はありません。');
+        return;
+      }
+
+      els.reservationsList.innerHTML = state.reservations.map((r) => {
+        return `
+          <article class="item">
+            <div class="item-head">
+              <div>
+                <h3 class="item-title">${escapeHtml(r.customer_name || 'お客様')}</h3>
+                <div class="item-meta">
+                  ${formatDate(r.reservation_date)} ${String(r.start_time || '').slice(0, 5)}
+                  / ${escapeHtml(r.menu_name || '')}
+                  ${r.phone ? ' / ' + escapeHtml(r.phone) : ''}
+                </div>
+              </div>
+              <span class="badge ${reservationBadgeClass(r.status)}">${reservationStatusLabel(r.status)}</span>
+            </div>
+
+            ${r.customer_note ? `<p class="item-text">${escapeHtml(r.customer_note)}</p>` : ''}
+
+            <div class="actions">
+              ${r.status === 'pending' ? `<button class="btn btn-blue" type="button" onclick="updateReservationStatus('${r.id}', 'confirmed')">予約確定</button>` : ''}
+              ${r.status !== 'completed' ? `<button class="btn btn-green" type="button" onclick="updateReservationStatus('${r.id}', 'completed')">来店完了</button>` : ''}
+              ${!String(r.status || '').startsWith('cancelled') ? `<button class="btn btn-red" type="button" onclick="updateReservationStatus('${r.id}', 'cancelled_by_owner')">キャンセル</button>` : ''}
+              <button class="btn btn-outline" type="button" onclick="copyReservationMessage('${r.id}')">LINE文面</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderCustomers() {
+      if (!state.customers.length) {
+        els.customersList.innerHTML = emptyHtml('該当する顧客が見つかりません。');
+        return;
+      }
+
+      els.customersList.innerHTML = state.customers.map((c) => {
+        const name = c.customer_name || c.line_display_name || 'お客様';
+        const sub = [
+          c.phone || '',
+          customerStatusLabel(c.status),
+          c.remaining_count !== null && c.remaining_count !== undefined ? `残り${c.remaining_count}回` : ''
+        ].filter(Boolean).join(' / ');
+
+        return `
+          <article class="item">
+            <div class="item-head">
+              <div>
+                <h3 class="item-title">${escapeHtml(name)}</h3>
+                <div class="item-meta">${escapeHtml(sub || '情報なし')}</div>
+              </div>
+              <span class="badge open">${escapeHtml(customerStatusLabel(c.status))}</span>
+            </div>
+
+            ${c.memo ? `<p class="item-text">${escapeHtml(c.memo)}</p>` : ''}
+
+            <div class="actions">
+              <button class="btn btn-blue" type="button" onclick="loadCustomerDetail('${c.id}')">詳細を見る</button>
+              <button class="btn btn-outline" type="button" onclick="copyText('${escapeAttr(name)}')">名前コピー</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    async function loadCustomerDetail(customerId) {
+      showLoading();
+
+      try {
+        const data = await apiGet(`/api/admin/customers/${customerId}`);
+
+        state.selectedCustomer = data.customer;
+
+        const c = data.customer;
+        const name = c.customer_name || c.line_display_name || 'お客様';
+
+        const reservationsHtml = (data.reservations || []).slice(0, 8).map((r) => {
+          return `
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3 class="item-title">${formatDate(r.reservation_date)} ${String(r.start_time || '').slice(0, 5)}</h3>
+                  <div class="item-meta">${escapeHtml(r.menu_name || '')} / ${reservationStatusLabel(r.status)}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const followupsHtml = (data.followups || []).slice(0, 8).map((f) => {
+          return `
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3 class="item-title">${escapeHtml(f.title || 'フォロー')}</h3>
+                  <div class="item-meta">${formatDate(f.due_date)} / ${statusLabel(f.status)}</div>
+                </div>
+              </div>
+              ${f.detail ? `<p class="item-text">${escapeHtml(f.detail)}</p>` : ''}
+            </div>
+          `;
+        }).join('');
+
+        els.customerDetailBox.className = '';
+        els.customerDetailBox.innerHTML = `
+          <div class="card-list">
+            <article class="item">
+              <div class="item-head">
+                <div>
+                  <h3 class="item-title">${escapeHtml(name)}</h3>
+                  <div class="item-meta">
+                    ${escapeHtml(c.phone || '電話番号なし')}
+                    ${c.line_display_name ? ' / LINE名：' + escapeHtml(c.line_display_name) : ''}
+                  </div>
+                </div>
+                <span class="badge open">${escapeHtml(customerStatusLabel(c.status))}</span>
+              </div>
+
+              ${c.memo ? `<p class="item-text">${escapeHtml(c.memo)}</p>` : ''}
+
+              <div class="actions">
+                <button class="btn btn-outline" type="button" onclick="copyText('${escapeAttr(name)}')">名前コピー</button>
+                ${c.phone ? `<button class="btn btn-outline" type="button" onclick="copyText('${escapeAttr(c.phone)}')">電話番号コピー</button>` : ''}
+              </div>
+            </article>
+
+            <div class="notice">予約履歴</div>
+            ${reservationsHtml || emptyHtml('予約履歴はありません。')}
+
+            <div class="notice">フォロー履歴</div>
+            ${followupsHtml || emptyHtml('フォロー履歴はありません。')}
+          </div>
+        `;
+      } catch (error) {
+        handleApiError(error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function renderTemplates() {
+      if (!state.templates.length) {
+        els.templatesList.innerHTML = emptyHtml('LINE文面テンプレートがありません。');
+        return;
+      }
+
+      els.templatesList.innerHTML = state.templates.map(templateCardHtml).join('');
+    }
+
+    function renderQuickTemplates() {
+      const list = state.templates.slice(0, 4);
+
+      if (!list.length) {
+        els.quickTemplatesList.innerHTML = emptyHtml('テンプレートがありません。');
+        return;
+      }
+
+      els.quickTemplatesList.innerHTML = list.map(templateCardHtml).join('');
+    }
+
+    function templateCardHtml(t) {
+      return `
+        <article class="item">
+          <div class="item-head">
+            <div>
+              <h3 class="item-title">${escapeHtml(t.title || 'テンプレート')}</h3>
+              <div class="item-meta">${escapeHtml(t.category || 'general')}</div>
+            </div>
+          </div>
+
+          <div class="copy-box">
+            <textarea class="textarea" id="template-${t.id}">${escapeHtml(t.body || '')}</textarea>
+            <div class="actions">
+              <button class="btn btn-blue" type="button" onclick="copyTemplate('${t.id}')">コピー</button>
+              <button class="btn btn-outline" type="button" onclick="logTemplateCopied('${t.id}')">コピー済みに記録</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderBusinessHours() {
+      const labels = ['日', '月', '火', '水', '木', '金', '土'];
+      const byWeekday = new Map();
+
+      for (const h of state.businessHours) {
+        byWeekday.set(Number(h.weekday), h);
+      }
+
+      els.businessHoursBox.innerHTML = '';
+
+      for (let i = 0; i <= 6; i++) {
+        const h = byWeekday.get(i) || {
+          weekday: i,
+          is_open: false,
+          open_time: '10:00:00',
+          close_time: '19:00:00',
+          last_start_time: '18:00:00'
+        };
+
+        const row = document.createElement('div');
+        row.className = 'item';
+        row.dataset.weekday = String(i);
+
+        row.innerHTML = `
+          <div class="form-grid three">
+            <div class="field">
+              <label>${labels[i]}曜日</label>
+              <select class="select bh-open">
+                <option value="true" ${h.is_open ? 'selected' : ''}>営業</option>
+                <option value="false" ${!h.is_open ? 'selected' : ''}>休み</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>開始</label>
+              <input class="input bh-open-time" type="time" value="${timeValue(h.open_time || '10:00:00')}" />
+            </div>
+
+            <div class="field">
+              <label>終了</label>
+              <input class="input bh-close-time" type="time" value="${timeValue(h.close_time || '19:00:00')}" />
+            </div>
+          </div>
+
+          <div class="form-grid two" style="margin-top:10px;">
+            <div class="field">
+              <label>最終受付</label>
+              <input class="input bh-last-time" type="time" value="${timeValue(h.last_start_time || '18:00:00')}" />
+            </div>
+
+            <div class="field">
+              <label>メモ</label>
+              <input class="input bh-memo" type="text" value="${escapeAttr(h.memo || '')}" />
+            </div>
+          </div>
+        `;
+
+        els.businessHoursBox.appendChild(row);
+      }
+    }
+
+    function renderSpecialDays() {
+      if (!state.specialDays.length) {
+        els.specialDaysList.innerHTML = emptyHtml('直近90日の臨時休業・特別営業はありません。');
+        return;
+      }
+
+      els.specialDaysList.innerHTML = state.specialDays.map((d) => {
+        const title =
+          d.mode === 'closed'
+            ? '臨時休業'
+            : d.mode === 'special_hours'
+              ? '特別営業時間'
+              : '特別営業';
+
+        const time =
+          d.mode === 'closed'
+            ? '終日休み'
+            : `${String(d.open_time || '').slice(0, 5)}〜${String(d.close_time || '').slice(0, 5)}`;
+
+        return `
+          <article class="item">
+            <div class="item-head">
+              <div>
+                <h3 class="item-title">${formatDate(d.special_date)}：${title}</h3>
+                <div class="item-meta">${time}</div>
+              </div>
+              <span class="badge ${d.mode === 'closed' ? 'cancelled' : 'confirmed'}">${title}</span>
+            </div>
+            ${d.memo ? `<p class="item-text">${escapeHtml(d.memo)}</p>` : ''}
+          </article>
+        `;
+      }).join('');
+    }
+
+    async function markTaskDone(taskId) {
+      showLoading();
+
+      try {
+        await apiPost(`/api/admin/tasks/${taskId}/done`, {});
+        showToast('対応済みにしました。');
+        await loadDayData();
+      } catch (error) {
+        handleApiError(error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function skipTask(taskId) {
+      const reason = prompt('スキップ理由を入力してください。空欄でもOKです。') || '';
+
+      showLoading();
+
+      try {
+        await apiPost(`/api/admin/tasks/${taskId}/skip`, { reason });
+        showToast('今回は不要にしました。');
+        await loadDayData();
+      } catch (error) {
+        handleApiError(error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function updateReservationStatus(reservationId, status) {
+      const label = reservationStatusLabel(status);
+      const ok = confirm(`この予約を「${label}」に変更しますか？`);
+
+      if (!ok) return;
+
+      showLoading();
+
+      try {
+        await apiPost(`/api/admin/reservations/${reservationId}/status`, { status });
+        showToast(`予約を「${label}」に変更しました。`);
+        await loadDayData();
+      } catch (error) {
+        handleApiError(error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function copyTaskMessage(taskId) {
+      const task = state.tasks.find((t) => t.id === taskId);
+
+      if (!task) return;
+
+      const customerName = findCustomerName(task.customer_id) || 'お客様';
+      const message = buildMessageForTask(task, customerName);
+
+      await copyText(message);
+
+      try {
+        await apiPost('/api/admin/message-log', {
+          shop_id: state.shop?.id,
+          customer_id: task.customer_id,
+          reservation_id: task.reservation_id,
+          followup_id: task.followup_id,
+          action: 'copied',
+          channel: 'line',
+          message_body: message
+        });
+      } catch (_) {
+        // コピー自体は成功しているため、記録エラーは無視
+      }
+    }
+
+    async function copyReservationMessage(reservationId) {
+      const r = state.reservations.find((x) => x.id === reservationId);
+
+      if (!r) return;
+
+      const message =
+`${r.customer_name || 'お客様'}
+
+ご予約ありがとうございます。
+下記の内容で確認いたしました。
+
+日時：${formatDate(r.reservation_date)} ${String(r.start_time || '').slice(0, 5)}
+内容：${r.menu_name || 'ご予約'}
+
+当日はお気をつけてお越しください。`;
+
+      await copyText(message);
+
+      try {
+        await apiPost('/api/admin/message-log', {
+          shop_id: state.shop?.id,
+          customer_id: r.customer_id,
+          reservation_id: r.id,
+          action: 'copied',
+          channel: 'line',
+          message_body: message
+        });
+      } catch (_) {
+        // 何もしない
+      }
+    }
+
+    function buildMessageForTask(task, customerName) {
+      if (task.task_type === 'reservation_approval') {
+        return `${customerName}様\n\nご予約ありがとうございます。\n内容を確認いたしました。\n確定後、改めてLINEでご案内します。`;
+      }
+
+      if (task.task_type === 'before_visit_message') {
+        return `${customerName}様\n\n明日のご来店をお待ちしております。\nご不明点がありましたら、お気軽にLINEでご連絡ください。`;
+      }
+
+      if (task.task_type === 'remaining_low_followup') {
+        return `${customerName}様\n\n残り回数が少なくなってきました。\n継続をご希望の場合は、次回ご来店時にご相談ください。`;
+      }
+
+      if (task.task_type === 'after_visit_followup') {
+        return `${customerName}様\n\n先日はありがとうございました。\n次回のご予約や継続について、ご不明点がありましたらお気軽にご相談ください。`;
+      }
+
+      return `${customerName}様\n\nいつもありがとうございます。\nご確認よろしくお願いいたします。`;
+    }
+
+    async function copyTemplate(templateId) {
+      const textarea = document.getElementById(`template-${templateId}`);
+
+      if (!textarea) return;
+
+      await copyText(textarea.value);
+    }
+
+    async function logTemplateCopied(templateId) {
+      const textarea = document.getElementById(`template-${templateId}`);
+
+      if (!textarea) return;
+
+      try {
+        await apiPost('/api/admin/message-log', {
+          shop_id: state.shop?.id,
+          template_id: templateId,
+          action: 'copied',
+          channel: 'line',
+          message_body: textarea.value
+        });
+
+        showToast('コピー済みとして記録しました。');
+      } catch (error) {
+        handleApiError(error);
+      }
+    }
+
+    async function saveBusinessHours() {
+      const rows = [...els.businessHoursBox.querySelectorAll('.item')];
+
+      const business_hours = rows.map((row) => {
+        const isOpen = row.querySelector('.bh-open').value === 'true';
+
+        return {
+          weekday: Number(row.dataset.weekday),
+          is_open: isOpen,
+          open_time: row.querySelector('.bh-open-time').value,
+          close_time: row.querySelector('.bh-close-time').value,
+          last_start_time: row.querySelector('.bh-last-time').value,
+          memo: row.querySelector('.bh-memo').value
+        };
+      });
+
+      showLoading();
+
+      try {
+        await apiPost('/api/admin/business-hours', {
+          shop_code: getShopCode(),
+          business_hours
+        });
+
+        showToast('営業時間を保存しました。');
+        await loadBusinessHours();
+      } catch (error) {
+        handleApiError(error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function saveSpecialDay() {
+      const specialDate = els.specialDateInput.value;
+
+      if (!specialDate) {
+        showToast('日付を選んでください。');
+        return;
+      }
+
+      showLoading();
+
+      try {
+        await apiPost('/api/admin/special-days', {
+          shop_code: getShopCode(),
+          special_date: specialDate,
+          mode: els.specialModeInput.value,
+          open_time: els.specialOpenInput.value,
+          close_time: els.specialCloseInput.value,
+          title: els.specialModeInput.value === 'closed' ? '臨時休業' : '特別営業',
+          memo: els.specialMemoInput.value
+        });
+
+        showToast('臨時休業・特別営業を保存しました。');
+        await loadSpecialDays();
+      } catch (error) {
+        handleApiError(error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function demoReset() {
+      showLoading();
+
+      try {
+        await apiPost('/api/admin/demo/reset', {
+          shop_code: getShopCode()
+        });
+
+        showToast('デモデータを再作成しました。');
+        await loadAll();
+      } catch (error) {
+        handleApiError(error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function apiGet(path) {
+      const res = await fetch(`${CONFIG.API_BASE_URL}${path}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-token': state.adminToken
+        }
+      });
+
+      return await parseApiResponse(res);
+    }
+
+    async function apiPost(path, payload) {
+      const res = await fetch(`${CONFIG.API_BASE_URL}${path}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-token': state.adminToken
+        },
+        body: JSON.stringify(payload || {})
+      });
+
+      return await parseApiResponse(res);
+    }
+
+    async function parseApiResponse(res) {
+      let data = null;
+
+      try {
+        data = await res.json();
+      } catch (_) {
+        data = null;
+      }
+
+      if (!res.ok || data?.ok === false) {
+        throw new Error(data?.error || data?.message || `APIエラー: ${res.status}`);
+      }
+
+      return data;
+    }
+
+    function handleApiError(error) {
+      const message = error?.message || String(error);
+
+      if (message.includes('admin token')) {
+        els.tokenBox.classList.remove('hidden');
+      }
+
+      showToast(message);
+      console.error(error);
+    }
+
+    function setActiveTab(tabName) {
+      document.querySelectorAll('.tab').forEach((tab) => {
+        tab.classList.toggle('active', tab.dataset.tab === tabName);
+      });
+
+      document.querySelectorAll('.tab-panel').forEach((panel) => {
+        panel.classList.remove('active');
+      });
+
+      const panel = document.getElementById(`tab-${tabName}`);
+
+      if (panel) {
+        panel.classList.add('active');
+      }
+    }
+
+    function findCustomerName(customerId) {
+      const c = state.customers.find((x) => x.id === customerId);
+
+      return c?.customer_name || c?.line_display_name || '';
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('コピーしました。');
+      } catch (_) {
+        const area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand('copy');
+        document.body.removeChild(area);
+        showToast('コピーしました。');
+      }
+    }
+
+    function showLoading() {
+      els.loading.classList.add('active');
+    }
+
+    function hideLoading() {
+      els.loading.classList.remove('active');
+    }
+
+    let toastTimer = null;
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      els.toast.textContent = message;
+      els.toast.classList.add('active');
+
+      toastTimer = setTimeout(() => {
+        els.toast.classList.remove('active');
+      }, 2800);
+    }
+
+    function getShopCode() {
+      const params = new URLSearchParams(location.search);
+      return params.get('shop_code') || CONFIG.SHOP_CODE || 'demo_shop_default';
+    }
+
+    function getJstToday() {
+      const now = new Date();
+      const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+      return jst.toISOString().slice(0, 10);
+    }
+
+    function addDays(dateString, days) {
+      const d = new Date(`${dateString}T00:00:00Z`);
+      d.setUTCDate(d.getUTCDate() + days);
+      return d.toISOString().slice(0, 10);
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return '';
+
+      const [year, month, day] = String(dateString).split('-');
+      const date = new Date(`${dateString}T00:00:00Z`);
+      const labels = ['日', '月', '火', '水', '木', '金', '土'];
+
+      return `${year}/${month}/${day}（${labels[date.getUTCDay()]}）`;
+    }
+
+    function timeValue(timeString) {
+      if (!timeString) return '';
+      return String(timeString).slice(0, 5);
+    }
+
+    function statusLabel(status) {
+      const map = {
+        open: '未対応',
+        done: '対応済み',
+        skipped: '不要',
+        cancelled: '取消',
+        scheduled: '予定'
+      };
+
+      return map[status] || status || '-';
+    }
+
+    function reservationStatusLabel(status) {
+      const map = {
+        pending: '承認待ち',
+        confirmed: '確定',
+        changed: '変更済み',
+        cancelled_by_customer: 'お客様キャンセル',
+        cancelled_by_owner: '店舗キャンセル',
+        completed: '完了',
+        no_show: '無断キャンセル',
+        archived: '保管'
+      };
+
+      return map[status] || status || '-';
+    }
+
+    function reservationBadgeClass(status) {
+      if (status === 'pending') return 'pending';
+      if (status === 'confirmed') return 'confirmed';
+      if (status === 'completed') return 'completed';
+      if (String(status || '').startsWith('cancelled')) return 'cancelled';
+      return 'open';
+    }
+
+    function customerStatusLabel(status) {
+      const map = {
+        new: '新規',
+        lead: '見込み',
+        trial_booked: '体験予約',
+        trial_done: '体験済み',
+        active: '継続中',
+        inactive: '休眠',
+        paused: '休会',
+        archived: '保管'
+      };
+
+      return map[status] || status || '-';
+    }
+
+    function emptyHtml(message) {
+      return `<div class="empty">${escapeHtml(message)}</div>`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replaceAll('\n', '&#10;');
+    }
+
+    window.markTaskDone = markTaskDone;
+    window.skipTask = skipTask;
+    window.updateReservationStatus = updateReservationStatus;
+    window.copyTaskMessage = copyTaskMessage;
+    window.copyReservationMessage = copyReservationMessage;
+    window.copyTemplate = copyTemplate;
+    window.logTemplateCopied = logTemplateCopied;
+    window.loadCustomerDetail = loadCustomerDetail;
+    window.copyText = copyText;
+  </script>
+</body>
+</html>
