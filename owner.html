@@ -620,6 +620,109 @@
       font-weight: 800;
     }
 
+    .family-context-box {
+      margin-top: 14px;
+      border-radius: 22px;
+      border: 1px solid #bfdbfe;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(37, 99, 235, 0.12), transparent 32%),
+        linear-gradient(135deg, #eff6ff, #f8fbff);
+      padding: 15px;
+    }
+
+    .family-context-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .family-context-title {
+      color: #1e3a8a;
+      font-size: 16px;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .family-context-subtitle {
+      margin-top: 4px;
+      color: #334155;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 750;
+    }
+
+    .family-context-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 8px 10px;
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      color: #1e3a8a;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .family-card-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .family-card-item {
+      display: grid;
+      grid-template-columns: 106px 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(191, 219, 254, 0.78);
+    }
+
+    .family-card-item.active {
+      background: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.13);
+    }
+
+    .family-card-label {
+      color: #1e3a8a;
+      font-size: 12px;
+      font-weight: 950;
+      line-height: 1.35;
+    }
+
+    .family-card-name {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 950;
+      line-height: 1.45;
+    }
+
+    .family-card-meta {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .line-official-note {
+      margin-top: 10px;
+      border-radius: 16px;
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      color: #064e3b;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 750;
+    }
+
     .info-list {
       display: grid;
       gap: 0;
@@ -1065,6 +1168,24 @@
               </div>
             </div>
 
+            <div id="familyContextBox" class="family-context-box hidden">
+              <div class="family-context-head">
+                <div>
+                  <div class="family-context-title" id="familyContextTitle">家族診察券</div>
+                  <div class="family-context-subtitle" id="familyContextSubtitle">
+                    保護者様のLINEに、家族の診察券がまとまっています。
+                  </div>
+                </div>
+                <div class="family-context-pill" id="familyContextCount">1枚</div>
+              </div>
+
+              <div id="familyCardList" class="family-card-list"></div>
+
+              <div class="line-official-note" id="lineOfficialNote">
+                LINE公式のリッチメニューから診察券を開くと、お母さん・保護者様のLINE内で子どもの診察券も切り替えできます。
+              </div>
+            </div>
+
             <div class="info-list">
               <div class="info-row">
                 <div class="info-key">電話</div>
@@ -1347,6 +1468,12 @@
         visitCount: $("visitCount"),
         patientPhone: $("patientPhone"),
         lineDisplayName: $("lineDisplayName"),
+        familyContextBox: $("familyContextBox"),
+        familyContextTitle: $("familyContextTitle"),
+        familyContextSubtitle: $("familyContextSubtitle"),
+        familyContextCount: $("familyContextCount"),
+        familyCardList: $("familyCardList"),
+        lineOfficialNote: $("lineOfficialNote"),
         lastVisit: $("lastVisit"),
         nextAppointment: $("nextAppointment"),
         patientMemo: $("patientMemo"),
@@ -1761,8 +1888,14 @@
           patient_name: patient.patient_name || patient.name || patient.patientName || "患者さま",
           patient_name_kana: patient.patient_name_kana || patient.kana || "",
           phone: patient.phone || "",
+          patient_kind: patient.patient_kind || "adult",
+          school_grade: patient.school_grade || "",
+          guardian_name: patient.guardian_name || "",
+          guardian_phone: patient.guardian_phone || "",
+          family_note: patient.family_note || "",
           line_user_id: patient.line_user_id || "",
           line_display_name: patient.line_display_name || "",
+          family_context: patient.family_context || null,
           status: patient.status || "active",
           card_enabled: patient.card_enabled !== false,
           last_visit_at: patient.last_visit_at || "",
@@ -2099,6 +2232,149 @@
         });
       }
 
+      async function loadFamilyContextForPatient(patient) {
+        if (!patient || !patient.id) {
+          return {
+            family: null,
+            cards: []
+          };
+        }
+
+        try {
+          const result = await apiFetch("/api/owner/families/detail", {
+            method: "GET",
+            params: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              patient_id: patient.id
+            }
+          });
+
+          return {
+            family: result.family || null,
+            cards: Array.isArray(result.cards) ? result.cards : []
+          };
+        } catch (error) {
+          console.warn("家族診察券情報を取得できませんでした。", error);
+          return {
+            family: null,
+            cards: []
+          };
+        }
+      }
+
+      function getFamilyCardLabel(card) {
+        if (card.display_label) return card.display_label;
+
+        if (card.relationship === "mother") return "お母さん";
+        if (card.relationship === "father") return "お父さん";
+        if (card.relationship === "guardian") return "保護者";
+        if (card.relationship === "child") {
+          if (card.school_grade) return `お子さん・${card.school_grade}`;
+          return "お子さん";
+        }
+
+        if (card.patient_kind === "child") return "お子さん";
+        return "本人";
+      }
+
+      function buildFamilyInfoText(patient, family, cards) {
+        const safeCards = Array.isArray(cards) ? cards : [];
+
+        if (!safeCards.length || safeCards.length <= 1) {
+          if (patient.patient_kind === "child") {
+            return [
+              "子どもの診察券",
+              patient.guardian_name ? `保護者：${patient.guardian_name}` : "",
+              patient.school_grade ? `学年：${patient.school_grade}` : ""
+            ].filter(Boolean).join("\n") || "子どもの診察券";
+          }
+
+          return "本人のみ";
+        }
+
+        const active = safeCards.find((card) =>
+          (card.patient_id && card.patient_id === patient.id) ||
+          (card.qr_token && card.qr_token === patient.qr_token) ||
+          (card.member_no && card.member_no === patient.member_no)
+        );
+
+        const guardianName =
+          family?.primary_guardian_name ||
+          safeCards[0]?.primary_guardian_name ||
+          patient.guardian_name ||
+          "";
+
+        return [
+          `${family?.family_name || active?.family_name || "家族"}の診察券`,
+          active ? `選択中：${getFamilyCardLabel(active)} / ${active.patient_name}` : "",
+          guardianName ? `保護者：${guardianName}` : "",
+          family?.line_display_name ? `LINE名：${family.line_display_name}` : "",
+          `登録診察券：${safeCards.length}枚`
+        ].filter(Boolean).join("\n");
+      }
+
+      function renderFamilyContext(patient) {
+        const context = patient.family_context || {};
+        const family = context.family || null;
+        const cards = Array.isArray(context.cards) ? context.cards : [];
+
+        if (!cards.length || cards.length <= 1) {
+          els.familyContextBox.classList.add("hidden");
+          els.familyCardList.innerHTML = "";
+          return;
+        }
+
+        els.familyContextBox.classList.remove("hidden");
+
+        const familyName = family?.family_name || cards[0]?.family_name || "家族";
+        const guardianName =
+          family?.primary_guardian_name ||
+          cards[0]?.primary_guardian_name ||
+          patient.guardian_name ||
+          "";
+
+        els.familyContextTitle.textContent = `${familyName}のデジタル診察券`;
+        els.familyContextSubtitle.textContent = guardianName
+          ? `保護者：${guardianName} 様のLINEに、家族の診察券がまとまっています。`
+          : "保護者様のLINEに、家族の診察券がまとまっています。";
+
+        els.familyContextCount.textContent = `${cards.length}枚`;
+
+        els.familyCardList.innerHTML = cards.map((card) => {
+          const isActive =
+            (card.patient_id && card.patient_id === patient.id) ||
+            (card.qr_token && card.qr_token === patient.qr_token) ||
+            (card.member_no && card.member_no === patient.member_no);
+
+          const label = getFamilyCardLabel(card);
+          const next = buildNextAppointmentText(
+            card.next_appointment_date,
+            card.next_appointment_time,
+            card.next_appointment_memo
+          );
+
+          return `
+            <div class="family-card-item ${isActive ? "active" : ""}">
+              <div class="family-card-label">${escapeHtml(isActive ? "選択中" : label)}</div>
+              <div>
+                <div class="family-card-name">${escapeHtml(card.patient_name || "患者さま")}</div>
+                <div class="family-card-meta">
+                  ${escapeHtml(label)} / 診察券番号：${escapeHtml(card.member_no || "---")}
+                </div>
+                <div class="family-card-meta">
+                  次回：${escapeHtml(next)}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        els.lineOfficialNote.textContent =
+          `${familyName}は、LINE公式のリッチメニューから家族分の診察券を切り替えできます。` +
+          "紙の診察券を家族分持ち歩かなくても、保護者様のLINEから受付できます。";
+      }
+
+
       async function loadPatientDetail(patientId) {
         if (!patientId) return;
 
@@ -2116,6 +2392,9 @@
           const patient = normalizePatient(result.patient || result.data?.patient || {});
           const visits = result.visits || result.data?.visits || [];
           const followups = result.followups || result.data?.followups || [];
+          const familyContext = await loadFamilyContextForPatient(patient);
+
+          patient.family_context = familyContext;
 
           renderPatientDetail(patient, visits, followups);
           showMessage(els.patientMessage, "success", "患者詳細を表示しました。");
@@ -2209,7 +2488,14 @@
         els.patientStatus.textContent = getStatusLabel(patient.status);
         els.visitCount.textContent = `来院 ${patient.visit_count || visits.length || 0}回`;
         els.patientPhone.textContent = patient.phone || "未登録";
-        els.lineDisplayName.textContent = patient.line_display_name || "未取得";
+        const familyContext = patient.family_context || {};
+        const family = familyContext.family || null;
+        const familyCards = Array.isArray(familyContext.cards) ? familyContext.cards : [];
+
+        els.lineDisplayName.textContent =
+          patient.line_display_name ||
+          family?.line_display_name ||
+          (family?.line_user_id ? "家族LINE連携済み" : "未取得");
         els.lastVisit.textContent = patient.last_visit_at
           ? `${formatDateTime(patient.last_visit_at)} / ${getVisitTypeLabel(patient.last_visit_type)}`
           : "来院履歴なし";
@@ -2402,10 +2688,15 @@
           id: "demo-patient-id",
           qr_token: "demo-dental-patient-001",
           member_no: "D260600001",
-          patient_name: "山田 太郎",
-          patient_name_kana: "ヤマダ タロウ",
+          patient_name: "山田 花子",
+          patient_name_kana: "ヤマダ ハナコ",
           phone: "090-0000-0000",
-          line_display_name: "Taro Yamada",
+          line_display_name: "山田花子（お母さん）",
+          patient_kind: "adult",
+          school_grade: "",
+          guardian_name: "",
+          guardian_phone: "",
+          family_note: "お母さん本人の診察券。子どもの診察券もこのLINEにまとめています。",
           status: "active",
           last_visit_at: new Date().toISOString(),
           last_visit_type: "cleaning",
@@ -2416,6 +2707,65 @@
           internal_memo: "受付でQR読取 → 来院履歴 → LINEフォローの説明用。",
           visit_count: 3
         });
+
+        patient.family_context = {
+          family: {
+            family_code: "FAM-DEMO-YAMADA",
+            family_name: "山田家",
+            primary_guardian_name: "山田 花子",
+            line_user_id: "demo-line-mother-yamada",
+            line_display_name: "山田花子（お母さん）"
+          },
+          cards: [
+            {
+              patient_id: "demo-patient-id",
+              qr_token: "demo-dental-patient-001",
+              member_no: "D260600001",
+              patient_name: "山田 花子",
+              patient_kind: "adult",
+              relationship: "mother",
+              display_label: "お母さん",
+              display_order: 1,
+              next_appointment_date: next,
+              next_appointment_time: "10:30",
+              next_appointment_memo: "定期検診・クリーニング予定",
+              family_name: "山田家",
+              primary_guardian_name: "山田 花子"
+            },
+            {
+              patient_id: "demo-child-taro",
+              qr_token: "demo-dental-child-taro",
+              member_no: "D260600002",
+              patient_name: "山田 太郎",
+              patient_kind: "child",
+              school_grade: "小学2年生",
+              relationship: "child",
+              display_label: "長男・太郎くん",
+              display_order: 2,
+              next_appointment_date: "",
+              next_appointment_time: "",
+              next_appointment_memo: "3か月定期検診の案内対象",
+              family_name: "山田家",
+              primary_guardian_name: "山田 花子"
+            },
+            {
+              patient_id: "demo-child-sakura",
+              qr_token: "demo-dental-child-sakura",
+              member_no: "D260600003",
+              patient_name: "山田 さくら",
+              patient_kind: "child",
+              school_grade: "年長",
+              relationship: "child",
+              display_label: "長女・さくらちゃん",
+              display_order: 3,
+              next_appointment_date: addDays(next, 7),
+              next_appointment_time: "15:00",
+              next_appointment_memo: "フッ素塗布・経過確認",
+              family_name: "山田家",
+              primary_guardian_name: "山田 花子"
+            }
+          ]
+        };
 
         const visits = [
           {
@@ -2542,6 +2892,12 @@
             const firstPatient = normalizePatient(patients[0]);
             const patientVisits = visits.filter((visit) => visit.patient_id === firstPatient.id);
             const patientFollowups = followups.filter((followup) => followup.patient_id === firstPatient.id);
+
+            firstPatient.family_context = {
+              family: result.family || null,
+              cards: Array.isArray(result.family_cards) ? result.family_cards : []
+            };
+
             renderPatientDetail(firstPatient, patientVisits, patientFollowups);
           }
 
