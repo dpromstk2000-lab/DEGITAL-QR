@@ -857,22 +857,22 @@
               <div class="three-grid">
                 <div class="field">
                   <label for="specialOpen1Input">午前 開始</label>
-                  <input id="specialOpen1Input" type="time" step="900" />
+                  <select id="specialOpen1Input"></select>
                 </div>
                 <div class="field">
                   <label for="specialClose1Input">午前 終了</label>
-                  <input id="specialClose1Input" type="time" step="900" />
+                  <select id="specialClose1Input"></select>
                 </div>
                 <div class="field">
                   <label for="specialOpen2Input">午後 開始</label>
-                  <input id="specialOpen2Input" type="time" step="900" />
+                  <select id="specialOpen2Input"></select>
                 </div>
               </div>
 
               <div class="mini-grid">
                 <div class="field">
                   <label for="specialClose2Input">午後 終了</label>
-                  <input id="specialClose2Input" type="time" step="900" />
+                  <select id="specialClose2Input"></select>
                 </div>
                 <div class="field">
                   <label>&nbsp;</label>
@@ -1511,6 +1511,42 @@
         return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
       }
 
+      function buildTimeOptions(stepMinutes) {
+        const step = Number(stepMinutes || state.settings.appointment_slot_minutes || 15);
+        const safeStep = [5, 10, 15, 20, 30, 60].includes(step) ? step : 15;
+        const options = [];
+
+        for (let minutes = 0; minutes < 24 * 60; minutes += safeStep) {
+          options.push(minutesToTime(minutes));
+        }
+
+        return options;
+      }
+
+      function populateSpecialTimeSelects() {
+        const step = Number(els.slotMinutesInput?.value || state.settings.appointment_slot_minutes || 15);
+        const options = buildTimeOptions(step);
+        const targets = [
+          els.specialOpen1Input,
+          els.specialClose1Input,
+          els.specialOpen2Input,
+          els.specialClose2Input
+        ];
+
+        targets.forEach((select) => {
+          if (!select) return;
+
+          const current = formatTime(select.value || "");
+          select.innerHTML =
+            '<option value="">未設定</option>' +
+            options.map((time) => `<option value="${escapeHtml(time)}">${escapeHtml(time)}</option>`).join("");
+
+          if (current && options.includes(current)) {
+            select.value = current;
+          }
+        });
+      }
+
       function buildFallbackSlotsForDate(dateText) {
         const day = new Date(`${dateText}T00:00:00+09:00`).getDay();
         const row = state.regularHours.find((item) => Number(item.day_of_week) === day);
@@ -2003,6 +2039,7 @@
         els.specialDateInput.max = addMonths(getTodayJST(), 12);
 
         renderRegularHoursInputs();
+        populateSpecialTimeSelects();
         renderSpecialDaysList();
         renderSettingsPreview();
         updateSummary();
@@ -2808,6 +2845,7 @@
 
         state.localPatients = getLocalPatients();
         renderRegularHoursInputs();
+        populateSpecialTimeSelects();
 
         const min = calculateLocalMinDate();
         const max = addMonths(getTodayJST(), Number(state.settings.appointment_max_months_ahead || 3));
@@ -2854,6 +2892,12 @@
 
         els.loadSettingsButton.addEventListener("click", loadSettings);
         els.saveSettingsButton.addEventListener("click", saveClinicSettings);
+
+        els.slotMinutesInput.addEventListener("change", () => {
+          state.settings.appointment_slot_minutes = Number(els.slotMinutesInput.value || 15);
+          populateSpecialTimeSelects();
+          updateSummary();
+        });
 
         els.loadSpecialDaysButton.addEventListener("click", loadSpecialDays);
         els.saveSpecialDayButton.addEventListener("click", saveSpecialDay);
