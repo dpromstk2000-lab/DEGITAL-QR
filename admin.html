@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | 患者登録・医院設定</title>
+  <title>DPRO SHOP | 患者登録・医院設定 家族診察券対応</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -667,6 +667,119 @@
       .card { box-shadow: none; }
       .result-card { page-break-inside: avoid; }
     }
+  
+    .family-demo-box {
+      border-radius: 24px;
+      border: 2px solid #2563eb;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(37, 99, 235, 0.14), transparent 34%),
+        linear-gradient(135deg, #eff6ff, #ffffff);
+      padding: 16px;
+      box-shadow: 0 14px 34px rgba(37, 99, 235, 0.12);
+    }
+
+    .family-demo-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .family-demo-title {
+      color: #1e3a8a;
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      line-height: 1.35;
+    }
+
+    .family-demo-sub {
+      margin-top: 5px;
+      color: #334155;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 750;
+    }
+
+    .family-demo-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 8px 10px;
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      color: #064e3b;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .family-demo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .family-demo-card {
+      border-radius: 18px;
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      padding: 12px;
+    }
+
+    .family-demo-label {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 6px 9px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-size: 11px;
+      font-weight: 950;
+      margin-bottom: 8px;
+    }
+
+    .family-demo-name {
+      color: #0f172a;
+      font-size: 15px;
+      font-weight: 950;
+      line-height: 1.4;
+    }
+
+    .family-demo-meta {
+      margin-top: 5px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 750;
+    }
+
+    .family-demo-note {
+      margin-top: 12px;
+      border-radius: 16px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #064e3b;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 750;
+    }
+
+    @media (max-width: 920px) {
+      .family-demo-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .family-demo-head {
+        flex-direction: column;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -1043,6 +1156,82 @@
           </div>
         </section>
 
+
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">家</span>
+              家族・子ども診察券の追加
+            </h2>
+            <div class="card-subtitle">
+              お母さん・保護者様のLINEに、本人用と子ども用のデジタル診察券をまとめて追加する見せ場です。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="family-demo-box">
+              <div class="family-demo-head">
+                <div>
+                  <div class="family-demo-title">
+                    お母さんのLINEに、家族の診察券をまとめる
+                  </div>
+                  <div class="family-demo-sub">
+                    営業デモでは、山田花子様のLINEに「お母さん・太郎くん・さくらちゃん」の3枚の診察券を追加します。
+                    患者さんはLINE公式のリッチメニューから診察券を開き、家族分を切り替えて受付できます。
+                  </div>
+                </div>
+
+                <div class="family-demo-pill">LINE公式 × 家族診察券</div>
+              </div>
+
+              <div class="mini-grid">
+                <div class="field">
+                  <label>保護者LINE名</label>
+                  <input id="familyGuardianNameInput" type="text" value="山田 花子" />
+                </div>
+
+                <div class="field">
+                  <label>家族名</label>
+                  <input id="familyNameInput" type="text" value="山田家" />
+                </div>
+              </div>
+
+              <div class="family-demo-grid" id="familyDemoCards">
+                <div class="family-demo-card">
+                  <div class="family-demo-label">お母さん</div>
+                  <div class="family-demo-name">山田 花子</div>
+                  <div class="family-demo-meta">診察券番号：D260600001</div>
+                </div>
+
+                <div class="family-demo-card">
+                  <div class="family-demo-label">長男・太郎くん</div>
+                  <div class="family-demo-name">山田 太郎</div>
+                  <div class="family-demo-meta">診察券番号：D260600002</div>
+                </div>
+
+                <div class="family-demo-card">
+                  <div class="family-demo-label">長女・さくらちゃん</div>
+                  <div class="family-demo-name">山田 さくら</div>
+                  <div class="family-demo-meta">診察券番号：D260600003</div>
+                </div>
+              </div>
+
+              <div class="family-demo-note">
+                営業ポイント：紙の診察券を家族分持ち歩く必要がなくなり、お母さんのLINEから子どもの診察券も表示できます。
+              </div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="familyDemoResetButton" type="button">山田家デモ診察券を作成・更新</button>
+                <button class="btn btn-light" id="familyLoadButton" type="button">山田家を確認</button>
+                <button class="btn btn-success" id="familyOpenMemberButton" type="button">家族診察券を開く</button>
+              </div>
+
+              <div id="familyMessage" class="message"></div>
+              <div id="familyResultBox" class="list" style="margin-top: 12px;"></div>
+            </div>
+          </div>
+        </section>
+
         <section class="card">
           <div class="card-header">
             <h2 class="card-title">
@@ -1367,6 +1556,14 @@
         clearFormButton: $("clearFormButton"),
         fillDemoFormButton: $("fillDemoFormButton"),
         createMessage: $("createMessage"),
+
+        familyGuardianNameInput: $("familyGuardianNameInput"),
+        familyNameInput: $("familyNameInput"),
+        familyDemoResetButton: $("familyDemoResetButton"),
+        familyLoadButton: $("familyLoadButton"),
+        familyOpenMemberButton: $("familyOpenMemberButton"),
+        familyMessage: $("familyMessage"),
+        familyResultBox: $("familyResultBox"),
 
         searchInput: $("searchInput"),
         searchButton: $("searchButton"),
@@ -2714,6 +2911,157 @@
         }
       }
 
+      function getApiBase() {
+        return String(getConfigValue("API.BASE_URL", "https://dpro-dental-qr-api.dpromstk2000.workers.dev")).replace(/\/+$/, "");
+      }
+
+      async function directApiGet(path, params = {}) {
+        const url = new URL(getApiBase() + path);
+
+        url.searchParams.set("clinic_code", getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"));
+        url.searchParams.set("admin_code", getAdminCode());
+
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && String(value) !== "") {
+            url.searchParams.set(key, String(value));
+          }
+        });
+
+        url.searchParams.set("_t", String(Date.now()));
+
+        const response = await fetch(url.toString(), {
+          method: "GET",
+          cache: "no-store",
+          mode: "cors"
+        });
+
+        const raw = await response.text();
+        let data = null;
+
+        try {
+          data = raw ? JSON.parse(raw) : {};
+        } catch (error) {
+          throw new Error("API応答を読めませんでした：" + raw.slice(0, 300));
+        }
+
+        if (!response.ok || data.ok === false) {
+          throw new Error(data.message || data.error || ("HTTP " + response.status));
+        }
+
+        return data;
+      }
+
+      function renderFamilyResult(family, cards) {
+        const safeCards = Array.isArray(cards) ? cards : [];
+
+        if (!els.familyResultBox) return;
+
+        if (!safeCards.length) {
+          els.familyResultBox.innerHTML = '<div class="empty-box">家族診察券はまだ読み込まれていません。</div>';
+          return;
+        }
+
+        const familyName = family?.family_name || "家族";
+        const guardian = family?.primary_guardian_name || "保護者";
+
+        els.familyResultBox.innerHTML = `
+          <div class="list-item">
+            <div class="list-title">${escapeHtml(familyName)} / 保護者：${escapeHtml(guardian)} 様</div>
+            <div class="list-meta">
+              LINE名：${escapeHtml(family?.line_display_name || "山田花子（お母さん）")} / 診察券 ${safeCards.length}枚
+            </div>
+          </div>
+          ${safeCards.map((card) => `
+            <div class="list-item">
+              <div class="list-title">${escapeHtml(card.display_label || card.relationship || "診察券")}：${escapeHtml(card.patient_name || "")}</div>
+              <div class="list-meta">
+                診察券番号：${escapeHtml(card.member_no || "---")} / QRトークン：${escapeHtml(card.qr_token || "---")}
+              </div>
+            </div>
+          `).join("")}
+        `;
+      }
+
+      async function resetFamilyDemoCards() {
+        clearMessage(els.familyMessage);
+
+        if (!getAdminCode()) {
+          showMessage(els.familyMessage, "warning", "先に管理設定で管理コードを保存してください。");
+          return;
+        }
+
+        setButtonLoading(els.familyDemoResetButton, true, "作成中...");
+
+        try {
+          const result = await directApiGet("/api/admin/demo/reset");
+
+          const family = result.family || null;
+          const cards = Array.isArray(result.family_cards) ? result.family_cards : [];
+
+          renderFamilyResult(family, cards);
+
+          showMessage(
+            els.familyMessage,
+            "success",
+            "山田家の家族診察券を作成・更新しました。\nお母さんのLINEに、花子様・太郎くん・さくらちゃんの診察券がまとまる状態です。"
+          );
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.familyMessage,
+            "error",
+            "家族診察券デモの作成に失敗しました。\n\n" +
+            "確認すること：\n" +
+            "・STEP 30-20A SQLを実行済みか\n" +
+            "・Workerが step-30-20b2-family-duplicate-fix 以降か\n" +
+            "・管理コードが正しいか\n\n" +
+            "詳細：" + (error.message || error)
+          );
+        } finally {
+          setButtonLoading(els.familyDemoResetButton, false);
+        }
+      }
+
+      async function loadFamilyDemoCards() {
+        clearMessage(els.familyMessage);
+
+        if (!getAdminCode()) {
+          showMessage(els.familyMessage, "warning", "先に管理設定で管理コードを保存してください。");
+          return;
+        }
+
+        setButtonLoading(els.familyLoadButton, true, "確認中...");
+
+        try {
+          const result = await directApiGet("/api/admin/families/detail", {
+            family_code: "FAM-DEMO-YAMADA"
+          });
+
+          renderFamilyResult(result.family || null, result.cards || []);
+
+          showMessage(
+            els.familyMessage,
+            "success",
+            "山田家の家族診察券を確認しました。"
+          );
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.familyMessage,
+            "error",
+            "山田家の確認に失敗しました。\n先に「山田家デモ診察券を作成・更新」を押してください。\n\n詳細：" + (error.message || error)
+          );
+        } finally {
+          setButtonLoading(els.familyLoadButton, false);
+        }
+      }
+
+      function openFamilyMemberPage() {
+        const base = getConfigValue("PAGES.BASE_PUBLIC_URL", "https://dpromstk2000-lab.github.io/DEGITAL-QR").replace(/\/+$/, "");
+        window.open(`${base}/member.html?t=demo-dental-patient-001`, "_blank", "noopener");
+      }
+
+
       async function searchPatients() {
         const q = els.searchInput.value.trim();
 
@@ -2952,6 +3300,18 @@
         els.clearFormButton.addEventListener("click", clearForm);
         els.fillDemoFormButton.addEventListener("click", fillDemoForm);
         els.demoModeButton.addEventListener("click", toggleDemoMode);
+
+        if (els.familyDemoResetButton) {
+          els.familyDemoResetButton.addEventListener("click", resetFamilyDemoCards);
+        }
+
+        if (els.familyLoadButton) {
+          els.familyLoadButton.addEventListener("click", loadFamilyDemoCards);
+        }
+
+        if (els.familyOpenMemberButton) {
+          els.familyOpenMemberButton.addEventListener("click", openFamilyMemberPage);
+        }
 
         els.searchButton.addEventListener("click", searchPatients);
         els.showLocalButton.addEventListener("click", showLocalPatients);
