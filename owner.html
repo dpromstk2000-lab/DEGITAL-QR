@@ -2704,6 +2704,130 @@
       }
 
 
+      function buildFamilyDemoPatientByMemberNo(memberNo) {
+        const current = state.selectedPatient || state.currentPatient || {};
+        const context = current.family_context || buildDemoFamilyContextIfNeeded(current);
+        const family = context.family || {
+          family_code: "FAM-DEMO-YAMADA",
+          family_name: "山田家",
+          primary_guardian_name: "山田 花子",
+          primary_guardian_phone: "090-0000-0000",
+          line_user_id: "demo-line-mother-yamada",
+          line_display_name: "山田花子（お母さん）"
+        };
+
+        const cards = Array.isArray(context.cards) && context.cards.length
+          ? context.cards
+          : buildDemoFamilyContextIfNeeded({ member_no: "D260600001", patient_name: "山田 花子" }).cards;
+
+        const selectedCard =
+          cards.find((card) => card.member_no === memberNo) ||
+          cards.find((card) => card.qr_token === memberNo) ||
+          cards[0];
+
+        const patient = normalizePatient({
+          id: selectedCard.patient_id || "family-demo-" + (selectedCard.member_no || selectedCard.qr_token || "patient"),
+          clinic_id: current.clinic_id || "",
+          member_no: selectedCard.member_no || "",
+          qr_token: selectedCard.qr_token || "",
+          patient_name: selectedCard.patient_name || "",
+          patient_name_kana:
+            selectedCard.patient_name === "山田 太郎" ? "ヤマダ タロウ" :
+            selectedCard.patient_name === "山田 さくら" ? "ヤマダ サクラ" :
+            "ヤマダ ハナコ",
+          phone: selectedCard.phone || family.primary_guardian_phone || current.phone || "090-0000-0000",
+          patient_kind: selectedCard.patient_kind || (selectedCard.relationship === "child" ? "child" : "adult"),
+          school_grade: selectedCard.school_grade || "",
+          guardian_name: selectedCard.primary_guardian_name || family.primary_guardian_name || "",
+          guardian_phone: family.primary_guardian_phone || current.phone || "090-0000-0000",
+          family_note: "お母さん・保護者様のLINEに追加された家族診察券です。",
+          line_display_name: family.line_display_name || "山田花子（お母さん）",
+          status: "active",
+          first_visit_date: selectedCard.first_visit_date || "",
+          last_visit_at: selectedCard.last_visit_at || "",
+          last_visit_type: selectedCard.last_visit_type || (selectedCard.relationship === "child" ? "checkup" : "cleaning"),
+          next_appointment_date: selectedCard.next_appointment_date || "",
+          next_appointment_time: selectedCard.next_appointment_time || "",
+          next_appointment_memo: selectedCard.next_appointment_memo || "",
+          patient_memo:
+            selectedCard.relationship === "child"
+              ? "お母さんのLINEから開ける子ども診察券です。"
+              : "お母さん本人の診察券です。子どもの診察券も同じLINEにまとめています。",
+          internal_memo:
+            "LINE公式のリッチメニューから家族の診察券を切り替える説明用。"
+        });
+
+        patient.family_context = {
+          family,
+          cards
+        };
+
+        return {
+          patient,
+          family,
+          cards,
+          selectedCard
+        };
+      }
+
+      function switchFamilyDemoPatient(memberNo) {
+        const result = buildFamilyDemoPatientByMemberNo(memberNo);
+        const patient = result.patient;
+        const selectedCard = result.selectedCard;
+
+        const next = buildNextAppointmentText(
+          patient.next_appointment_date,
+          patient.next_appointment_time,
+          patient.next_appointment_memo
+        );
+
+        const visit = {
+          id: "family-direct-switch-" + (patient.member_no || Date.now()),
+          patient_id: patient.id,
+          visit_date: todayLocal(),
+          visited_at: new Date().toISOString(),
+          visit_status: "visited",
+          visit_type: patient.patient_kind === "child" ? "checkup" : "cleaning",
+          chief_complaint: patient.patient_kind === "child" ? "子ども診察券の確認" : "家族診察券の確認",
+          treatment_summary:
+            patient.patient_kind === "child"
+              ? "お母さんのLINEから子どもの診察券を切り替えて受付できます。"
+              : "LINE公式から家族診察券を開き、家族分の診察券を管理できます。",
+          next_appointment_date: patient.next_appointment_date,
+          next_appointment_time: patient.next_appointment_time,
+          next_appointment_memo: patient.next_appointment_memo
+        };
+
+        const lineText = createFamilySwitchLineMessage(patient, result.family);
+
+        const followup = {
+          id: "family-direct-followup-" + (patient.member_no || Date.now()),
+          patient_id: patient.id,
+          status: "todo",
+          priority: patient.patient_kind === "child" ? "high" : "normal",
+          title:
+            patient.patient_kind === "child"
+              ? `${patient.patient_name}さんの定期検診案内`
+              : "家族診察券のご案内",
+          reason: "LINE公式の家族診察券デモ用",
+          message_text: lineText,
+          due_date: todayLocal()
+        };
+
+        renderPatientDetail(patient, [visit], [followup]);
+
+        showMessage(
+          els.patientMessage,
+          "success",
+          `${patient.patient_name || "患者"}様の診察券に切り替えました。`
+        );
+
+        return false;
+      }
+
+      window.__dproSwitchFamilyDemoPatient = switchFamilyDemoPatient;
+
+
       function renderFamilyDemoForceBlock(patient) {
         if (!els.familyDemoForceBox || !els.familyDemoForceGrid) return;
 
@@ -2746,7 +2870,7 @@
           );
 
           return `
-            <button class="family-demo-force-card ${isActive ? "active" : ""}" type="button" data-family-card-index="${index}">
+            <button class="family-demo-force-card ${isActive ? "active" : ""}" type="button" data-family-card-index="${index}" onclick="return window.__dproSwitchFamilyDemoPatient && window.__dproSwitchFamilyDemoPatient('${escapeHtml(card.member_no || card.qr_token || "")}')">
               <div class="family-demo-force-label">${escapeHtml(isActive ? "選択中" : "切替")}</div>
               <div class="family-demo-force-name">${escapeHtml(card.patient_name || "患者さま")}</div>
               <div class="family-demo-force-meta">${escapeHtml(label)} / 診察券番号：${escapeHtml(card.member_no || "---")}</div>
@@ -2811,7 +2935,7 @@
           );
 
           return `
-            <button class="family-card-item ${isActive ? "active" : ""}" type="button" data-family-context-index="${index}">
+            <button class="family-card-item ${isActive ? "active" : ""}" type="button" data-family-context-index="${index}" onclick="return window.__dproSwitchFamilyDemoPatient && window.__dproSwitchFamilyDemoPatient('${escapeHtml(card.member_no || card.qr_token || "")}')">
               <div class="family-card-label">${escapeHtml(isActive ? "選択中" : "切替")}</div>
               <div>
                 <div class="family-card-name">${escapeHtml(card.patient_name || "患者さま")}</div>
@@ -2939,6 +3063,7 @@
 
       function renderPatientDetail(patient, visits, followups) {
         state.selectedPatient = patient;
+        state.currentPatient = patient;
         state.selectedVisits = visits || [];
         state.selectedFollowups = followups || [];
 
