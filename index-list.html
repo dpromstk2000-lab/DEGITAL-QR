@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DPRO SHOP 営業デモ一覧</title>
+  <script src="./config.js"></script>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --accent: #facc15;
+      --accent-soft: #fff7d6;
+      --danger: #ef4444;
+      --danger-soft: #fef2f2;
+      --success: #16a34a;
+      --success-soft: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-soft: #fffbeb;
+      --dark: #0f172a;
+      --shadow: 0 18px 46px rgba(15, 23, 42, 0.09);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 90% 0%, rgba(37, 99, 235, 0.12), transparent 34%),
+        radial-gradient(circle at 0% 100%, rgba(250, 204, 21, 0.15), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 14px 56px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      padding: 32px 22px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 84% 8%, rgba(250, 204, 21, 0.34), transparent 30%),
+        linear-gradient(135deg, #07111f 0%, #0f172a 52%, #172554 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -90px;
+      bottom: -110px;
+      width: 290px;
+      height: 290px;
+      border-radius: 999px;
+      background: rgba(250, 204, 21, 0.15);
+      filter: blur(14px);
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .brand-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(250, 204, 21, 0.14);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(34px, 7vw, 68px);
+      line-height: 1.04;
+      letter-spacing: -0.065em;
+      font-weight: 950;
+    }
+
+    .hero p {
+      max-width: 780px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 15px;
+      font-weight: 760;
+    }
+
+    .hero-actions,
+    .actions,
+    .mini-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 15px;
+      color: var(--text);
+      background: #eef2f7;
+      font-size: 13px;
+      font-weight: 950;
+      text-decoration: none;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-primary { color: var(--dark); background: linear-gradient(135deg, #fde047, #facc15); }
+    .btn-blue { color: #fff; background: var(--primary); }
+    .btn-dark { color: #fff; background: var(--dark); }
+    .btn-green { color: #fff; background: var(--success); }
+    .btn-red { color: #fff; background: var(--danger); }
+    .btn-outline { border: 1px solid var(--line); background: #fff; }
+    .btn-white { color: var(--dark); background: #fff; }
+
+    .panel {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid rgba(219, 227, 239, 0.92);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.91);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 13px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.24;
+      letter-spacing: -0.045em;
+      font-weight: 950;
+    }
+
+    .panel small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .notice {
+      padding: 13px 14px;
+      border: 1px solid rgba(37, 99, 235, 0.16);
+      border-radius: 17px;
+      color: #1e3a8a;
+      background: var(--primary-soft);
+      font-size: 13px;
+      font-weight: 820;
+    }
+
+    .notice.yellow { color: #7c2d12; background: var(--accent-soft); border-color: rgba(250, 204, 21, 0.50); }
+    .notice.green { color: #166534; background: var(--success-soft); border-color: rgba(22, 163, 74, 0.22); }
+    .notice.red { color: #991b1b; background: var(--danger-soft); border-color: rgba(239, 68, 68, 0.22); }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .field { display: grid; gap: 6px; }
+    .field label { color: #334155; font-size: 12px; font-weight: 950; }
+
+    .input {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      font-weight: 800;
+    }
+
+    .input:focus {
+      border-color: rgba(37, 99, 235, 0.75);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .quick-card,
+    .shop-card {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+    }
+
+    .quick-card b,
+    .shop-card h3 {
+      display: block;
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.35;
+      letter-spacing: -0.025em;
+      font-weight: 950;
+    }
+
+    .quick-card p,
+    .shop-card p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 790;
+    }
+
+    .shop-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .shop-card.featured {
+      border-color: rgba(37, 99, 235, 0.34);
+      background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: #475569;
+      background: #f1f5f9;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .url-box {
+      margin-top: 11px;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 760;
+      overflow-wrap: anywhere;
+    }
+
+    .reset-result {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid rgba(22, 163, 74, 0.22);
+      border-radius: 16px;
+      background: var(--success-soft);
+      color: #166534;
+      font-size: 13px;
+      font-weight: 850;
+      white-space: pre-wrap;
+    }
+
+    .reset-result.active { display: block; }
+
+    .footer {
+      margin-top: 24px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      z-index: 110;
+      transform: translateX(-50%) translateY(120px);
+      width: min(92vw, 520px);
+      padding: 14px 16px;
+      border-radius: 18px;
+      color: #fff;
+      background: var(--dark);
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      font-weight: 900;
+      opacity: 0;
+      transition: 0.2s ease;
+    }
+
+    .toast.active { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    .loading {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      place-items: center;
+      background: rgba(244, 247, 251, 0.72);
+      backdrop-filter: blur(8px);
+    }
+
+    .loading.active { display: grid; }
+
+    .loading-box {
+      width: min(92vw, 360px);
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      text-align: center;
+      box-shadow: var(--shadow);
+      font-weight: 950;
+      white-space: pre-wrap;
+    }
+
+    .spinner {
+      width: 34px;
+      height: 34px;
+      margin: 0 auto 12px;
+      border: 4px solid #dbeafe;
+      border-top-color: var(--primary);
+      border-radius: 999px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hidden { display: none !important; }
+
+    @media (min-width: 760px) {
+      .page { padding: 32px 22px 64px; }
+      .hero { padding: 42px 38px 38px; }
+      .form-grid { grid-template-columns: minmax(280px, 1fr) auto; align-items: end; }
+      .quick-grid { grid-template-columns: repeat(4, 1fr); }
+      .shop-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .hero, .panel { box-shadow: none; }
+      .no-print { display: none !important; }
+      .page { max-width: none; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loading" class="loading">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <span id="loadingText">読み込み中です...</span>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="brand"><span class="brand-dot"></span><span>DPRO SHOP</span></div>
+        <div>
+          <h1>営業デモを<br>この1画面から開始</h1>
+          <p>
+            予約画面、管理画面、QR一覧、営業前デモ準備をまとめた営業用トップページです。
+            営業先の業種を選んで、その場で予約から管理画面反映まで見せられます。
+          </p>
+        </div>
+        <div class="hero-actions no-print">
+          <a class="btn btn-primary" href="./owner.html">管理画面を開く</a>
+          <a class="btn btn-white" href="./qr.html" target="_blank" rel="noopener">QR一覧を開く</a>
+          <button class="btn btn-outline" type="button" onclick="window.print()">印刷</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel no-print">
+      <div class="panel-head">
+        <div>
+          <h2>営業前デモ準備</h2>
+          <small>スマホで1回押すだけで、全業種の予約・今日やること・フォロー予定を今日基準で整えます</small>
+        </div>
+      </div>
+
+      <div class="notice yellow">
+        ADMIN_TOKENはこのブラウザ内だけに保存します。GitHubには保存しません。
+      </div>
+
+      <div class="form-grid" style="margin-top:12px;">
+        <div class="field">
+          <label for="adminTokenInput">ADMIN_TOKEN</label>
+          <input id="adminTokenInput" class="input" type="password" placeholder="DPRO_LIFF_ADMIN_2026_..." />
+        </div>
+        <button id="saveTokenBtn" class="btn btn-dark" type="button" onclick="saveAdminToken()">トークン保存</button>
+      </div>
+
+      <div class="actions" style="margin-top:12px;">
+        <button id="resetAllBtn" class="btn btn-primary" type="button" onclick="resetAllDemos()">全業種デモを1タップで準備</button>
+        <button class="btn btn-outline" type="button" onclick="openCurrentOwner()">管理画面で確認</button>
+      </div>
+
+      <div id="resetResult" class="reset-result"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>すぐ使うメニュー</h2>
+          <small>営業中に使う画面へすぐ移動できます</small>
+        </div>
+      </div>
+
+      <div class="quick-grid">
+        <article class="quick-card">
+          <b>営業前準備</b>
+          <p>全業種デモを今日基準にリセット</p>
+          <div class="actions"><button class="btn btn-primary" type="button" onclick="resetAllDemos()">準備する</button></div>
+        </article>
+
+        <article class="quick-card">
+          <b>QR一覧</b>
+          <p>営業先にQRを見せるページ</p>
+          <div class="actions"><a class="btn btn-blue" href="./qr.html" target="_blank" rel="noopener">開く</a></div>
+        </article>
+
+        <article class="quick-card">
+          <b>管理画面</b>
+          <p>予約・今日やること・LINE文面</p>
+          <div class="actions"><a class="btn btn-dark" href="./owner.html">開く</a></div>
+        </article>
+
+        <article class="quick-card">
+          <b>共通予約画面</b>
+          <p>汎用デモの予約フォーム</p>
+          <div class="actions"><a class="btn btn-outline" href="./index.html" target="_blank" rel="noopener">開く</a></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>業種別デモ一覧</h2>
+          <small>営業先の業種を選んで、予約画面と管理画面を開けます</small>
+        </div>
+        <div class="field no-print" style="min-width: min(100%, 300px);">
+          <label for="searchInput">業種検索</label>
+          <input id="searchInput" class="input" type="search" placeholder="例：ジム、居酒屋、歯科" oninput="renderShopCards()" />
+        </div>
+      </div>
+
+      <div id="shopGrid" class="shop-grid"></div>
+    </section>
+
+    <div class="footer">Presented by DPRO SHOP</div>
+  </main>
+
+  <script>
+    const DEFAULT_CONFIG = {
+      API_BASE_URL: 'https://dpro-liff-common-api.dpromstk2000.workers.dev',
+      SHOP_CODE: 'demo_shop_default'
+    };
+
+    const CONFIG = {
+      ...DEFAULT_CONFIG,
+      ...(window.DPRO_CONFIG || {})
+    };
+
+    const DEMO_SHOPS = [
+      { code: 'demo_shop_default', label: '共通デモ', short: '共通', industry: '汎用', description: 'どの業種にも見せやすい基本デモです。', tags: ['予約', '顧客管理', 'LINE文面'] },
+      { code: 'demo_personal_gym', label: 'パーソナルジム', short: 'ジム', industry: 'ジム', description: '体験予約、来店前案内、体験後の入会フォローを見せます。', tags: ['体験予約', '継続フォロー', '残回数'] },
+      { code: 'demo_private_yoga', label: 'プライベートヨガ', short: 'ヨガ', industry: 'ヨガ', description: 'レッスン予約、レッスン前後フォローを見せます。', tags: ['レッスン予約', '前日案内', '継続'] },
+      { code: 'demo_beauty_salon', label: '美容サロン', short: 'サロン', industry: '美容', description: 'サロン予約、再来店案内、LINE文面コピーを見せます。', tags: ['再来店', '予約', 'カウンセリング'] },
+      { code: 'demo_izakaya', label: '居酒屋', short: '居酒屋', industry: '飲食店', description: '席予約、人数確認、来店前案内を見せます。', tags: ['席予約', '人数確認', '宴会'] },
+      { code: 'demo_car_service', label: '整備工場', short: '整備', industry: '車検・整備', description: '入庫予約、車検相談、作業後フォローを見せます。', tags: ['入庫予約', '車検', '点検'] },
+      { code: 'demo_dental_clinic', label: '歯科クリニック', short: '歯科', industry: 'クリニック', description: '診療予約、定期検診フォローを見せます。', tags: ['診療予約', '検診', '再来院'] }
+    ];
+
+    const STORAGE_KEYS = {
+      adminToken: 'dpro_liff_admin_token'
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem(STORAGE_KEYS.adminToken) || '';
+      document.getElementById('adminTokenInput').value = saved;
+      renderShopCards();
+    });
+
+    function basePath() {
+      const url = new URL(window.location.href);
+      const dir = url.pathname.substring(0, url.pathname.lastIndexOf('/') + 1);
+      return `${url.origin}${dir}`;
+    }
+
+    function ownerUrl(shopCode) {
+      return `${basePath()}owner.html?shop_code=${encodeURIComponent(shopCode)}`;
+    }
+
+    function indexUrl(shopCode) {
+      return `${basePath()}index.html?shop_code=${encodeURIComponent(shopCode)}`;
+    }
+
+    function qrUrl() {
+      return `${basePath()}qr.html`;
+    }
+
+    function renderShopCards() {
+      const q = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+      const grid = document.getElementById('shopGrid');
+
+      const filtered = DEMO_SHOPS.filter((shop) => {
+        const text = [shop.code, shop.label, shop.short, shop.industry, shop.description, ...(shop.tags || [])].join(' ').toLowerCase();
+        return !q || text.includes(q);
+      });
+
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="notice red">該当する業種がありません。</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map((shop, index) => {
+        const reservation = indexUrl(shop.code);
+        const owner = ownerUrl(shop.code);
+        const featured = shop.code === 'demo_personal_gym' || shop.code === 'demo_izakaya';
+
+        return `
+          <article class="shop-card ${featured ? 'featured' : ''}">
+            <h3>${escapeHtml(shop.label)}</h3>
+            <p>${escapeHtml(shop.description)}</p>
+            <div class="badge-row">
+              <span class="badge">${escapeHtml(shop.industry)}</span>
+              ${(shop.tags || []).map((tag) => `<span class="badge">${escapeHtml(tag)}</span>`).join('')}
+            </div>
+            <div class="url-box">${escapeHtml(reservation)}</div>
+            <div class="mini-actions" style="margin-top:11px;">
+              <a class="btn btn-blue" href="${reservation}" target="_blank" rel="noopener">予約画面</a>
+              <a class="btn btn-dark" href="${owner}">管理画面</a>
+              <button class="btn btn-outline no-print" type="button" onclick="copyText('${safeJs(reservation)}')">URLコピー</button>
+              <button class="btn btn-primary no-print" type="button" onclick="resetOneDemo('${shop.code}', '${safeJs(shop.label)}')">この業種を準備</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function saveAdminToken() {
+      const token = document.getElementById('adminTokenInput').value.trim();
+      if (!token) {
+        showToast('ADMIN_TOKENを入力してください。');
+        return;
+      }
+      localStorage.setItem(STORAGE_KEYS.adminToken, token);
+      showToast('ADMIN_TOKENを保存しました。');
+    }
+
+    function getAdminToken() {
+      const input = document.getElementById('adminTokenInput');
+      const token = (input?.value || '').trim() || localStorage.getItem(STORAGE_KEYS.adminToken) || '';
+      if (token) localStorage.setItem(STORAGE_KEYS.adminToken, token);
+      return token;
+    }
+
+    async function resetOneDemo(shopCode, label = '') {
+      const token = getAdminToken();
+      if (!token) {
+        showToast('先にADMIN_TOKENを入力してください。');
+        return;
+      }
+
+      const ok = confirm(`${label || shopCode} のデモデータを今日基準で再作成しますか？`);
+      if (!ok) return;
+
+      showLoading(`${label || shopCode} を準備しています...`);
+      try {
+        await apiPost('/api/admin/demo/reset', { shop_code: shopCode }, token);
+        showToast(`${label || shopCode} の準備が完了しました。`);
+      } catch (error) {
+        showToast(error?.message || String(error));
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function resetAllDemos() {
+      const token = getAdminToken();
+      if (!token) {
+        showToast('先にADMIN_TOKENを入力してください。');
+        return;
+      }
+
+      const ok = confirm('全業種のデモデータを今日基準で再作成しますか？');
+      if (!ok) return;
+
+      const btn = document.getElementById('resetAllBtn');
+      const resultBox = document.getElementById('resetResult');
+      btn.disabled = true;
+      resultBox.classList.remove('active');
+      resultBox.textContent = '';
+
+      const results = [];
+      let success = 0;
+      let fail = 0;
+
+      showLoading('全業種デモを準備しています...');
+
+      try {
+        for (let i = 0; i < DEMO_SHOPS.length; i++) {
+          const shop = DEMO_SHOPS[i];
+          setLoadingText(`全業種デモを準備中... ${i + 1}/${DEMO_SHOPS.length}\n${shop.label}`);
+
+          try {
+            await apiPost('/api/admin/demo/reset', { shop_code: shop.code }, token);
+            success++;
+            results.push(`✅ ${shop.label}：準備完了`);
+          } catch (error) {
+            fail++;
+            results.push(`⚠️ ${shop.label}：失敗 ${error?.message || error}`);
+          }
+        }
+
+        const message = [
+          '営業前デモ準備が完了しました。',
+          `成功：${success}件`,
+          `失敗：${fail}件`,
+          '',
+          ...results
+        ].join('\n');
+
+        resultBox.textContent = message;
+        resultBox.classList.add('active');
+
+        if (fail === 0) {
+          showToast('全業種デモの準備が完了しました。');
+        } else {
+          showToast('一部の業種でエラーがありました。結果を確認してください。');
+        }
+      } finally {
+        btn.disabled = false;
+        hideLoading();
+      }
+    }
+
+    function openCurrentOwner() {
+      window.location.href = './owner.html';
+    }
+
+    async function apiPost(path, payload, token) {
+      const res = await fetch(`${CONFIG.API_BASE_URL}${path}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-token': token
+        },
+        body: JSON.stringify(payload || {})
+      });
+
+      let data = null;
+      try { data = await res.json(); } catch (_) { data = null; }
+
+      if (!res.ok || data?.ok === false) {
+        throw new Error(data?.error || data?.message || `APIエラー: ${res.status}`);
+      }
+
+      return data;
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('コピーしました。');
+      } catch (_) {
+        const area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand('copy');
+        document.body.removeChild(area);
+        showToast('コピーしました。');
+      }
+    }
+
+    function showLoading(message = '読み込み中です...') {
+      setLoadingText(message);
+      document.getElementById('loading').classList.add('active');
+    }
+
+    function setLoadingText(message) {
+      document.getElementById('loadingText').textContent = message;
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').classList.remove('active');
+    }
+
+    let toastTimer = null;
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('active');
+      toastTimer = setTimeout(() => toast.classList.remove('active'), 2800);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function safeJs(value) {
+      return String(value ?? '')
+        .replaceAll('\\', '\\\\')
+        .replaceAll("'", "\\'")
+        .replaceAll('\n', '\\n')
+        .replaceAll('\r', '');
+    }
+  </script>
+</body>
+</html>
