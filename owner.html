@@ -2754,6 +2754,19 @@
             </button>
           `;
         }).join("");
+
+        state.familySwitchCards = cards;
+
+        els.familyDemoForceGrid.querySelectorAll("[data-family-card-index]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const index = Number(button.dataset.familyCardIndex);
+            const card = cards[index];
+
+            if (!card) return;
+
+            await openFamilyPatientFromCard(card);
+          });
+        });
       }
 
 
@@ -3609,6 +3622,22 @@
         els.copyVisitLineButton.addEventListener("click", copyVisitLineText);
         els.saveVisitButton.addEventListener("click", saveVisit);
       }
+
+      document.addEventListener("click", async (event) => {
+        const familyButton = event.target.closest("[data-family-card-index]");
+
+        if (!familyButton || !state.familySwitchCards) return;
+
+        event.preventDefault();
+
+        const index = Number(familyButton.dataset.familyCardIndex);
+        const card = state.familySwitchCards[index];
+
+        if (!card) return;
+
+        await openFamilyPatientFromCard(card);
+      });
+
 
       document.addEventListener("DOMContentLoaded", async () => {
         applyInitialConfig();
