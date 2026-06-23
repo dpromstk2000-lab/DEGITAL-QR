@@ -4,17 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>LINE予約フォーム</title>
+  <title>LINE予約フォーム | DPRO SHOP</title>
 
-  <!-- 共通設定 -->
   <script src="./config.js"></script>
-
-  <!-- LIFF SDK：LIFF_IDが空でも通常ブラウザで動くようにしています -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
   <style>
     :root {
-      --bg: #f4f7fb;
+      --bg: #f3f6fb;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
@@ -24,10 +21,14 @@
       --accent: #facc15;
       --accent-soft: #fff7d6;
       --danger: #ef4444;
+      --danger-soft: #fef2f2;
       --success: #16a34a;
+      --success-soft: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-soft: #fffbeb;
       --dark: #0f172a;
-      --shadow: 0 20px 55px rgba(15, 23, 42, 0.10);
-      --radius: 22px;
+      --shadow: 0 18px 46px rgba(15, 23, 42, 0.09);
+      --radius: 24px;
     }
 
     * {
@@ -43,11 +44,11 @@
         "Segoe UI",
         sans-serif;
       background:
-        radial-gradient(circle at top right, rgba(37, 99, 235, 0.12), transparent 36%),
-        radial-gradient(circle at bottom left, rgba(250, 204, 21, 0.16), transparent 32%),
+        radial-gradient(circle at 92% 0%, rgba(37, 99, 235, 0.12), transparent 34%),
+        radial-gradient(circle at 0% 100%, rgba(250, 204, 21, 0.16), transparent 32%),
         var(--bg);
       color: var(--text);
-      line-height: 1.7;
+      line-height: 1.65;
     }
 
     button,
@@ -63,19 +64,19 @@
 
     .page {
       width: 100%;
-      max-width: 760px;
+      max-width: 980px;
       margin: 0 auto;
-      padding: 22px 16px 48px;
+      padding: 22px 14px 56px;
     }
 
     .hero {
       position: relative;
       overflow: hidden;
-      border-radius: 28px;
-      padding: 26px 22px 24px;
+      border-radius: 32px;
+      padding: 30px 22px;
       color: #ffffff;
       background:
-        radial-gradient(circle at 85% 5%, rgba(250, 204, 21, 0.32), transparent 30%),
+        radial-gradient(circle at 86% 10%, rgba(250, 204, 21, 0.34), transparent 30%),
         linear-gradient(135deg, #07111f 0%, #0f172a 52%, #172554 100%);
       box-shadow: var(--shadow);
     }
@@ -83,26 +84,30 @@
     .hero::after {
       content: "";
       position: absolute;
-      right: -60px;
-      bottom: -80px;
-      width: 220px;
-      height: 220px;
+      right: -80px;
+      bottom: -100px;
+      width: 280px;
+      height: 280px;
       border-radius: 999px;
-      background: rgba(250, 204, 21, 0.18);
-      filter: blur(12px);
+      background: rgba(250, 204, 21, 0.15);
+      filter: blur(14px);
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 22px;
     }
 
     .brand {
-      position: relative;
-      z-index: 1;
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 22px;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 0.16em;
+      gap: 9px;
       color: var(--accent);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
     }
 
@@ -111,35 +116,29 @@
       height: 9px;
       border-radius: 999px;
       background: var(--accent);
-      box-shadow: 0 0 0 6px rgba(250, 204, 21, 0.12);
+      box-shadow: 0 0 0 6px rgba(250, 204, 21, 0.14);
     }
 
     .hero h1 {
-      position: relative;
-      z-index: 1;
       margin: 0;
-      font-size: clamp(30px, 9vw, 54px);
-      line-height: 1.08;
-      letter-spacing: -0.05em;
+      font-size: clamp(33px, 9vw, 64px);
+      line-height: 1.04;
+      letter-spacing: -0.06em;
       font-weight: 950;
     }
 
     .hero p {
-      position: relative;
-      z-index: 1;
-      margin: 18px 0 0;
+      max-width: 760px;
+      margin: 0;
       color: rgba(255, 255, 255, 0.78);
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 760;
     }
 
     .hero-pills {
-      position: relative;
-      z-index: 1;
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 22px;
+      gap: 9px;
     }
 
     .pill {
@@ -148,50 +147,87 @@
       justify-content: center;
       min-height: 34px;
       padding: 7px 13px;
-      border: 1px solid rgba(250, 204, 21, 0.55);
+      border: 1px solid rgba(250, 204, 21, 0.52);
       border-radius: 999px;
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+      background: rgba(255, 255, 255, 0.07);
       font-size: 12px;
       font-weight: 900;
+      text-decoration: none;
       backdrop-filter: blur(10px);
     }
 
+    .pill.yellow {
+      color: var(--dark);
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .demo-flow {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .flow-card {
+      padding: 14px;
+      border: 1px solid rgba(219, 227, 239, 0.92);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.90);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(12px);
+    }
+
+    .flow-card b {
+      display: block;
+      font-size: 14px;
+      font-weight: 950;
+    }
+
+    .flow-card small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
     .section {
-      margin-top: 18px;
-      padding: 20px;
-      border: 1px solid rgba(219, 227, 239, 0.9);
+      margin-top: 16px;
+      padding: 18px;
+      border: 1px solid rgba(219, 227, 239, 0.92);
       border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.86);
-      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.07);
+      background: rgba(255, 255, 255, 0.91);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
       backdrop-filter: blur(12px);
     }
 
     .section-title {
       display: flex;
-      align-items: center;
       gap: 10px;
-      margin-bottom: 16px;
+      align-items: center;
+      margin-bottom: 15px;
     }
 
-    .step-badge {
-      display: inline-grid;
+    .step {
+      display: grid;
       place-items: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
+      width: 38px;
+      height: 38px;
+      border-radius: 15px;
       color: var(--dark);
       background: var(--accent);
       font-weight: 950;
-      box-shadow: 0 9px 18px rgba(250, 204, 21, 0.28);
       flex: 0 0 auto;
+      box-shadow: 0 10px 18px rgba(250, 204, 21, 0.24);
     }
 
     .section-title h2 {
       margin: 0;
       font-size: 22px;
-      line-height: 1.25;
-      letter-spacing: -0.04em;
+      line-height: 1.2;
+      letter-spacing: -0.045em;
       font-weight: 950;
     }
 
@@ -200,44 +236,44 @@
       margin-top: 2px;
       color: var(--muted);
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 820;
     }
 
     .notice {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      margin-top: 14px;
       padding: 13px 14px;
-      border-radius: 16px;
-      color: #7c2d12;
-      background: var(--accent-soft);
-      border: 1px solid rgba(250, 204, 21, 0.55);
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .notice.blue {
+      border: 1px solid rgba(37, 99, 235, 0.16);
+      border-radius: 17px;
       color: #1e3a8a;
       background: var(--primary-soft);
-      border-color: rgba(37, 99, 235, 0.18);
+      font-size: 13px;
+      font-weight: 820;
+    }
+
+    .notice.yellow {
+      color: #7c2d12;
+      background: var(--accent-soft);
+      border-color: rgba(250, 204, 21, 0.50);
     }
 
     .notice.green {
       color: #166534;
-      background: #ecfdf5;
+      background: var(--success-soft);
       border-color: rgba(22, 163, 74, 0.22);
     }
 
     .notice.red {
       color: #991b1b;
-      background: #fef2f2;
+      background: var(--danger-soft);
       border-color: rgba(239, 68, 68, 0.22);
     }
 
     .form-grid {
       display: grid;
-      gap: 14px;
+      gap: 13px;
+    }
+
+    .form-grid.two {
+      grid-template-columns: 1fr;
     }
 
     .field {
@@ -269,25 +305,71 @@
       color: var(--text);
       background: #ffffff;
       outline: none;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-      font-weight: 750;
+      font-weight: 780;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
     }
 
     .textarea {
-      min-height: 96px;
+      min-height: 108px;
       resize: vertical;
     }
 
     .input:focus,
     .select:focus,
     .textarea:focus {
-      border-color: rgba(37, 99, 235, 0.8);
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+      border-color: rgba(37, 99, 235, 0.75);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
+    .menu-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .menu-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+      text-align: left;
+    }
+
+    .menu-card.active {
+      border-color: rgba(37, 99, 235, 0.55);
+      background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.12);
+    }
+
+    .menu-card b {
+      display: block;
+      font-size: 16px;
+      font-weight: 950;
+    }
+
+    .menu-card span {
+      display: inline-flex;
+      margin-top: 6px;
+      min-height: 26px;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: var(--primary-soft);
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .menu-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
     }
 
     .date-row {
       display: grid;
-      grid-template-columns: 1fr;
       gap: 10px;
     }
 
@@ -305,7 +387,7 @@
       padding: 10px 11px;
       border: 1px solid var(--line);
       border-radius: 16px;
-      background: #ffffff;
+      background: #fff;
       text-align: center;
       color: var(--text);
       font-weight: 950;
@@ -321,8 +403,8 @@
     }
 
     .date-chip.active {
-      border-color: rgba(37, 99, 235, 0.55);
-      color: #ffffff;
+      border-color: var(--primary);
+      color: #fff;
       background: var(--primary);
     }
 
@@ -342,18 +424,14 @@
       border: 1px solid var(--line);
       border-radius: 16px;
       color: var(--text);
-      background: #ffffff;
+      background: #fff;
       font-weight: 950;
       box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
     }
 
-    .slot-btn:hover {
-      border-color: rgba(37, 99, 235, 0.4);
-    }
-
     .slot-btn.active {
       border-color: var(--primary);
-      color: #ffffff;
+      color: #fff;
       background: var(--primary);
       box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
     }
@@ -366,7 +444,7 @@
       text-decoration: line-through;
     }
 
-    .empty-box {
+    .empty {
       padding: 18px;
       border: 1px dashed #cbd5e1;
       border-radius: 18px;
@@ -384,7 +462,7 @@
 
     .summary-row {
       display: grid;
-      grid-template-columns: 108px 1fr;
+      grid-template-columns: 112px 1fr;
       gap: 10px;
       padding: 12px;
       border: 1px solid var(--line);
@@ -405,11 +483,39 @@
       word-break: break-word;
     }
 
+    .after-flow {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 13px;
+    }
+
+    .after-card {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+    }
+
+    .after-card b {
+      display: block;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .after-card small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 820;
+    }
+
     .button-row {
       display: grid;
       grid-template-columns: 1fr;
       gap: 10px;
-      margin-top: 18px;
+      margin-top: 16px;
     }
 
     .btn {
@@ -422,11 +528,6 @@
       border-radius: 18px;
       font-weight: 950;
       text-decoration: none;
-      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
-    }
-
-    .btn:active {
-      transform: translateY(1px);
     }
 
     .btn-primary {
@@ -436,7 +537,7 @@
     }
 
     .btn-blue {
-      color: #ffffff;
+      color: #fff;
       background: var(--primary);
       box-shadow: 0 14px 26px rgba(37, 99, 235, 0.22);
     }
@@ -444,90 +545,67 @@
     .btn-secondary {
       color: var(--text);
       background: #eef2f7;
-      box-shadow: none;
     }
 
     .btn:disabled {
       cursor: not-allowed;
-      opacity: 0.55;
+      opacity: 0.58;
       box-shadow: none;
     }
 
-    .progress {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin: 18px 0 0;
-    }
-
-    .progress-item {
-      height: 7px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.18);
-      overflow: hidden;
-    }
-
-    .progress-item span {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border-radius: inherit;
-      background: var(--accent);
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .complete-card {
+    .complete {
       text-align: center;
-      padding: 30px 20px 26px;
+      padding: 34px 20px 28px;
     }
 
     .complete-icon {
       display: inline-grid;
       place-items: center;
-      width: 74px;
-      height: 74px;
+      width: 78px;
+      height: 78px;
       margin-bottom: 16px;
       border-radius: 999px;
-      color: #ffffff;
+      color: #fff;
       background: var(--success);
-      font-size: 38px;
+      font-size: 40px;
       font-weight: 950;
-      box-shadow: 0 16px 28px rgba(22, 163, 74, 0.22);
+      box-shadow: 0 16px 30px rgba(22, 163, 74, 0.22);
     }
 
-    .complete-card h2 {
+    .complete h2 {
       margin: 0;
-      font-size: 28px;
-      line-height: 1.25;
-      letter-spacing: -0.05em;
+      font-size: 29px;
+      line-height: 1.2;
+      letter-spacing: -0.055em;
       font-weight: 950;
     }
 
-    .complete-card p {
+    .complete p {
       margin: 12px 0 0;
       color: var(--muted);
-      font-weight: 800;
+      font-weight: 820;
     }
 
     .footer {
-      margin-top: 20px;
+      margin-top: 22px;
       color: var(--muted);
       text-align: center;
       font-size: 12px;
-      font-weight: 750;
+      font-weight: 800;
     }
 
     .loading {
       position: fixed;
       inset: 0;
-      z-index: 50;
-      display: grid;
+      z-index: 100;
+      display: none;
       place-items: center;
-      background: rgba(244, 247, 251, 0.78);
+      background: rgba(244, 247, 251, 0.74);
       backdrop-filter: blur(8px);
+    }
+
+    .loading.active {
+      display: grid;
     }
 
     .loading-box {
@@ -535,7 +613,7 @@
       padding: 22px;
       border: 1px solid var(--line);
       border-radius: 24px;
-      background: #ffffff;
+      background: #fff;
       text-align: center;
       box-shadow: var(--shadow);
       font-weight: 950;
@@ -557,29 +635,68 @@
       }
     }
 
-    @media (min-width: 640px) {
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      z-index: 110;
+      transform: translateX(-50%) translateY(120px);
+      width: min(92vw, 520px);
+      padding: 14px 16px;
+      border-radius: 18px;
+      color: #fff;
+      background: var(--dark);
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      font-weight: 900;
+      opacity: 0;
+      transition: 0.2s ease;
+    }
+
+    .toast.active {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (min-width: 720px) {
       .page {
-        padding-top: 34px;
+        padding: 32px 20px 64px;
       }
 
       .hero {
-        padding: 34px 34px 32px;
+        padding: 40px 38px 36px;
       }
 
       .section {
-        padding: 26px;
+        padding: 24px;
+      }
+
+      .demo-flow {
+        grid-template-columns: repeat(3, 1fr);
       }
 
       .form-grid.two {
         grid-template-columns: 1fr 1fr;
       }
 
-      .button-row.two {
-        grid-template-columns: 1fr 1fr;
+      .menu-cards {
+        grid-template-columns: repeat(3, 1fr);
       }
 
       .slot-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
+      }
+
+      .after-flow {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .button-row.two {
+        grid-template-columns: 1fr 1fr;
       }
     }
   </style>
@@ -589,48 +706,62 @@
   <div id="loading" class="loading">
     <div class="loading-box">
       <div class="spinner"></div>
-      読み込み中です...
+      <span id="loadingText">読み込み中です...</span>
     </div>
   </div>
 
+  <div id="toast" class="toast"></div>
+
   <main class="page">
     <section class="hero">
-      <div class="brand">
-        <span class="brand-dot"></span>
-        <span id="providerName">DPRO SHOP</span>
+      <div class="hero-inner">
+        <div class="brand">
+          <span class="brand-dot"></span>
+          <span id="providerName">DPRO SHOP</span>
+        </div>
+
+        <div>
+          <h1 id="heroTitle">LINEでかんたん体験予約</h1>
+          <p id="heroDescription">
+            空き時間を選んで、お名前を入力するだけ。予約内容はすぐにオーナー管理画面へ反映されます。
+          </p>
+        </div>
+
+        <div class="hero-pills">
+          <span class="pill yellow">60秒で予約完了</span>
+          <span class="pill">LINEの中で開ける予約画面</span>
+          <span class="pill">予約後の案内もスムーズ</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-flow">
+      <div class="flow-card">
+        <b>1. 空き時間を選ぶ</b>
+        <small>定休日・臨時休業は自動で反映</small>
       </div>
 
-      <h1 id="heroTitle">体験予約</h1>
-
-      <p id="heroDescription">
-        LINEからかんたんに予約できます。ご希望日時とお名前を入力してください。
-      </p>
-
-      <div class="hero-pills">
-        <span class="pill">60秒で完了</span>
-        <span class="pill">変更・キャンセル対応</span>
-        <span class="pill">LINEでご案内</span>
+      <div class="flow-card">
+        <b>2. 必要情報を入力</b>
+        <small>2回目以降は入力の手間を減らせます</small>
       </div>
 
-      <div class="progress" aria-hidden="true">
-        <div class="progress-item"><span></span></div>
-        <div class="progress-item"><span></span></div>
-        <div class="progress-item"><span></span></div>
+      <div class="flow-card">
+        <b>3. 店舗がLINEで案内</b>
+        <small>管理画面で文面コピーまで対応</small>
       </div>
     </section>
 
     <section id="errorSection" class="section hidden">
-      <div class="notice red" id="errorText">
-        エラーが発生しました。
-      </div>
+      <div id="errorText" class="notice red"></div>
     </section>
 
-    <section id="formSection" class="section">
+    <section id="reservationSection" class="section">
       <div class="section-title">
-        <span class="step-badge">1</span>
+        <span class="step">1</span>
         <div>
           <h2>予約内容を選ぶ</h2>
-          <small>ご希望のメニュー・日付・時間を選んでください</small>
+          <small>メニュー・日付・時間を選択してください</small>
         </div>
       </div>
 
@@ -640,7 +771,10 @@
             ご希望メニュー
             <span class="required">必須</span>
           </label>
+
           <select id="menuSelect" class="select"></select>
+
+          <div id="menuCards" class="menu-cards"></div>
         </div>
 
         <div class="field">
@@ -648,6 +782,7 @@
             ご希望日
             <span class="required">必須</span>
           </label>
+
           <div class="date-row">
             <input id="dateInput" class="input" type="date" />
             <div id="dateChips" class="date-chips"></div>
@@ -660,7 +795,7 @@
             <span class="required">必須</span>
           </label>
 
-          <div id="slotStatus" class="empty-box">
+          <div id="slotStatus" class="empty">
             日付を選ぶと、予約できる時間が表示されます。
           </div>
 
@@ -668,19 +803,19 @@
         </div>
       </div>
 
-      <div id="dayNotice" class="notice blue hidden"></div>
+      <div id="dayNotice" class="notice yellow hidden" style="margin-top:14px;"></div>
     </section>
 
     <section id="customerSection" class="section">
       <div class="section-title">
-        <span class="step-badge">2</span>
+        <span class="step">2</span>
         <div>
           <h2>お客様情報を入力</h2>
-          <small>ご案内のために必要な情報です</small>
+          <small>店舗からのご案内に必要な情報です</small>
         </div>
       </div>
 
-      <div id="lineProfileNotice" class="notice green hidden"></div>
+      <div id="lineProfileNotice" class="notice green hidden" style="margin-bottom:14px;"></div>
 
       <div class="form-grid two">
         <div class="field">
@@ -700,16 +835,12 @@
         </div>
 
         <div class="field">
-          <label for="emailInput">
-            メールアドレス
-          </label>
+          <label for="emailInput">メールアドレス</label>
           <input id="emailInput" class="input" type="email" placeholder="任意" autocomplete="email" />
         </div>
 
         <div class="field">
-          <label for="peopleInput">
-            人数
-          </label>
+          <label for="peopleInput">人数</label>
           <select id="peopleInput" class="select">
             <option value="1">1名</option>
             <option value="2">2名</option>
@@ -720,18 +851,22 @@
         </div>
       </div>
 
-      <div class="field" style="margin-top:14px;">
+      <div class="field" style="margin-top:13px;">
         <label for="noteInput">ご相談内容・ご希望など</label>
-        <textarea id="noteInput" class="textarea" placeholder="例：初めてなので流れを知りたいです。"></textarea>
+        <textarea id="noteInput" class="textarea" placeholder="例：初めてなので体験の流れを知りたいです。"></textarea>
+      </div>
+
+      <div class="notice" style="margin-top:14px;">
+        入力内容は、店舗側の管理画面に反映されます。オーナーは予約確認後、LINEで案内文を送れます。
       </div>
     </section>
 
     <section id="confirmSection" class="section">
       <div class="section-title">
-        <span class="step-badge">3</span>
+        <span class="step">3</span>
         <div>
-          <h2>内容を確認</h2>
-          <small>間違いがなければ予約を送信してください</small>
+          <h2>予約内容を確認</h2>
+          <small>間違いがなければ送信してください</small>
         </div>
       </div>
 
@@ -748,37 +883,56 @@
 
         <div class="summary-row">
           <dt>日時</dt>
-          <dd id="summaryDateTime">-</dd>
+          <dd id="summaryDateTime">未選択</dd>
         </div>
 
         <div class="summary-row">
           <dt>お名前</dt>
-          <dd id="summaryName">-</dd>
+          <dd id="summaryName">未入力</dd>
         </div>
 
         <div class="summary-row">
           <dt>電話番号</dt>
-          <dd id="summaryPhone">-</dd>
+          <dd id="summaryPhone">未入力</dd>
         </div>
       </dl>
 
-      <div class="notice">
-        送信後、店舗側で内容を確認します。必要に応じてLINEでご案内します。
+      <div class="after-flow">
+        <div class="after-card">
+          <b>予約送信</b>
+          <small>お客様の入力内容を受付</small>
+        </div>
+
+        <div class="after-card">
+          <b>店舗が確認</b>
+          <small>管理画面に承認待ちで表示</small>
+        </div>
+
+        <div class="after-card">
+          <b>LINEで案内</b>
+          <small>確認文面をコピーして送信</small>
+        </div>
       </div>
 
       <div class="button-row">
         <button id="submitBtn" class="btn btn-primary" type="button">
-          予約を送信する
+          この内容で予約する
         </button>
       </div>
     </section>
 
-    <section id="completeSection" class="section complete-card hidden">
+    <section id="completeSection" class="section complete hidden">
       <div class="complete-icon">✓</div>
+
       <h2>予約を受け付けました</h2>
+
       <p id="completeMessage">
         内容を確認のうえ、LINEでご案内します。
       </p>
+
+      <div class="notice green" style="margin-top:18px; text-align:left;">
+        店舗側の管理画面に予約内容が反映されました。オーナーは予約確認後、LINE文面をコピーしてお客様へ案内できます。
+      </div>
 
       <div class="button-row two">
         <button id="newReservationBtn" class="btn btn-secondary" type="button">
@@ -797,17 +951,12 @@
   </main>
 
   <script>
-    // =========================================================
-    // STEP 5 index.html
-    // DPRO LIFF 共通予約画面
-    // =========================================================
-
     const DEFAULT_CONFIG = {
       API_BASE_URL: 'https://dpro-liff-common-api.dpromstk2000.workers.dev',
       SHOP_CODE: 'demo_shop_default',
       PROVIDER_NAME: 'DPRO SHOP',
       SHOP_NAME: 'デモ店舗',
-      SERVICE_NAME: '予約・顧客フォローLINEシステム',
+      SERVICE_NAME: 'LINE予約システム',
       LIFF_ID: '',
       DEFAULT_MENU_CODE: 'trial'
     };
@@ -836,6 +985,8 @@
 
     const els = {
       loading: $('loading'),
+      loadingText: $('loadingText'),
+      toast: $('toast'),
 
       providerName: $('providerName'),
       heroTitle: $('heroTitle'),
@@ -845,15 +996,15 @@
       errorSection: $('errorSection'),
       errorText: $('errorText'),
 
-      formSection: $('formSection'),
+      reservationSection: $('reservationSection'),
       customerSection: $('customerSection'),
       confirmSection: $('confirmSection'),
       completeSection: $('completeSection'),
 
       menuSelect: $('menuSelect'),
+      menuCards: $('menuCards'),
       dateInput: $('dateInput'),
       dateChips: $('dateChips'),
-
       slotStatus: $('slotStatus'),
       slotGrid: $('slotGrid'),
       dayNotice: $('dayNotice'),
@@ -875,7 +1026,6 @@
       submitBtn: $('submitBtn'),
       newReservationBtn: $('newReservationBtn'),
       closeLiffBtn: $('closeLiffBtn'),
-
       completeMessage: $('completeMessage')
     };
 
@@ -883,6 +1033,7 @@
 
     async function init() {
       try {
+        showLoading('読み込み中です...');
         applyInitialText();
         bindEvents();
 
@@ -893,12 +1044,9 @@
         setupMenuSelect();
         setupDateInput();
         renderDateChips();
-
         updateSummary();
 
-        if (state.selectedDate) {
-          await loadAvailability();
-        }
+        await loadAvailability();
       } catch (error) {
         showError(error.message || String(error));
       } finally {
@@ -909,9 +1057,8 @@
     function applyInitialText() {
       els.providerName.textContent = CONFIG.PROVIDER_NAME || 'DPRO SHOP';
       els.footerText.textContent = `Presented by ${CONFIG.PROVIDER_NAME || 'DPRO SHOP'}`;
-
-      els.heroTitle.textContent = CONFIG.SERVICE_NAME || '体験予約';
-      els.heroDescription.textContent = 'LINEからかんたんに予約できます。ご希望日時とお名前を入力してください。';
+      els.heroTitle.textContent = CONFIG.SERVICE_NAME || 'LINEでかんたん体験予約';
+      els.heroDescription.textContent = '空き時間を選んで、お名前を入力するだけ。予約内容はすぐにオーナー管理画面へ反映されます。';
       els.summaryShop.textContent = CONFIG.SHOP_NAME || 'デモ店舗';
     }
 
@@ -920,6 +1067,7 @@
         state.selectedMenuCode = els.menuSelect.value;
         state.selectedTime = '';
         state.selectedSlot = null;
+        renderMenuCards();
         updateSummary();
         await loadAvailability();
       });
@@ -948,16 +1096,17 @@
 
       els.submitBtn.addEventListener('click', submitReservation);
 
-      els.newReservationBtn.addEventListener('click', () => {
+      els.newReservationBtn.addEventListener('click', async () => {
         els.completeSection.classList.add('hidden');
-        els.formSection.classList.remove('hidden');
+        els.reservationSection.classList.remove('hidden');
         els.customerSection.classList.remove('hidden');
         els.confirmSection.classList.remove('hidden');
 
         state.selectedTime = '';
         state.selectedSlot = null;
-        renderSlots([]);
-        loadAvailability();
+
+        await loadAvailability();
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
 
@@ -1010,7 +1159,6 @@
 
     async function loadBootstrap() {
       const shopCode = getShopCode();
-
       const data = await apiGet(`/api/public/bootstrap?shop_code=${encodeURIComponent(shopCode)}`);
 
       state.shop = data.shop;
@@ -1023,15 +1171,14 @@
         state.settings?.reservation_page_title ||
         state.shop?.service_name ||
         CONFIG.SERVICE_NAME ||
-        '体験予約';
+        'LINE予約';
 
       const pageDescription =
         state.settings?.reservation_page_description ||
         'LINEからかんたんに予約できます。';
 
       els.heroTitle.textContent = pageTitle;
-      els.heroDescription.textContent = pageDescription;
-
+      els.heroDescription.textContent = `${pageDescription} 予約内容は店舗の管理画面に反映されます。`;
       els.summaryShop.textContent = state.shop?.shop_name || CONFIG.SHOP_NAME || '店舗';
 
       document.title = `${pageTitle} | ${state.shop?.shop_name || 'LINE予約'}`;
@@ -1061,18 +1208,50 @@
       }
 
       els.menuSelect.value = state.selectedMenuCode;
+      renderMenuCards();
       updateSummary();
+    }
+
+    function renderMenuCards() {
+      els.menuCards.innerHTML = '';
+
+      for (const menu of state.menus) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'menu-card';
+
+        if (menu.menu_code === state.selectedMenuCode) {
+          button.classList.add('active');
+        }
+
+        button.innerHTML = `
+          <b>${escapeHtml(menu.menu_name || 'メニュー')}</b>
+          <span>${escapeHtml(menu.price_label || `${menu.duration_minutes || 60}分`)}</span>
+          <p>${escapeHtml(menu.description || 'ご希望のメニューを選択してください。')}</p>
+        `;
+
+        button.addEventListener('click', async () => {
+          state.selectedMenuCode = menu.menu_code;
+          els.menuSelect.value = menu.menu_code;
+          state.selectedTime = '';
+          state.selectedSlot = null;
+          renderMenuCards();
+          updateSummary();
+          await loadAvailability();
+        });
+
+        els.menuCards.appendChild(button);
+      }
     }
 
     function setupDateInput() {
       const today = getJstToday();
       const openDays = Number(state.settings?.reservation_open_days || 60);
       const maxDate = addDays(today, openDays);
+      const queryDate = new URLSearchParams(location.search).get('date');
 
       els.dateInput.min = today;
       els.dateInput.max = maxDate;
-
-      const queryDate = new URLSearchParams(location.search).get('date');
 
       state.selectedDate =
         isDateString(queryDate) && queryDate >= today && queryDate <= maxDate
@@ -1084,17 +1263,12 @@
 
     function renderDateChips() {
       const today = getJstToday();
-      const chips = [];
+      els.dateChips.innerHTML = '';
 
       for (let i = 0; i < 14; i++) {
         const date = addDays(today, i);
-        chips.push(date);
-      }
-
-      els.dateChips.innerHTML = '';
-
-      for (const date of chips) {
         const button = document.createElement('button');
+
         button.type = 'button';
         button.className = 'date-chip';
 
@@ -1102,10 +1276,7 @@
           button.classList.add('active');
         }
 
-        const label = formatShortDate(date);
-        const weekday = getWeekdayLabel(date);
-
-        button.innerHTML = `${label}<small>${weekday}</small>`;
+        button.innerHTML = `${formatShortDate(date)}<small>${getWeekdayLabel(date)}</small>`;
 
         button.addEventListener('click', async () => {
           state.selectedDate = date;
@@ -1138,8 +1309,9 @@
         );
 
         if (!data.is_open) {
-          els.slotStatus.textContent = data.reason || 'この日は予約できません。';
-          els.dayNotice.textContent = data.reason || 'この日は予約できません。';
+          const reason = data.reason || 'この日は予約できません。';
+          els.slotStatus.textContent = reason;
+          els.dayNotice.textContent = reason;
           els.dayNotice.classList.remove('hidden');
           renderSlots([]);
           updateSummary();
@@ -1176,6 +1348,7 @@
 
       for (const slot of slots) {
         const button = document.createElement('button');
+
         button.type = 'button';
         button.className = 'slot-btn';
         button.textContent = slot.label || String(slot.time).slice(0, 5);
@@ -1196,7 +1369,6 @@
           });
 
           button.classList.add('active');
-
           updateSummary();
         });
 
@@ -1223,21 +1395,10 @@
       const name = els.nameInput.value.trim();
       const phone = els.phoneInput.value.trim();
 
-      if (!state.selectedDate) {
-        return 'ご希望日を選んでください。';
-      }
-
-      if (!state.selectedTime) {
-        return 'ご希望時間を選んでください。';
-      }
-
-      if (!name) {
-        return 'お名前を入力してください。';
-      }
-
-      if (!phone) {
-        return '電話番号を入力してください。';
-      }
+      if (!state.selectedDate) return 'ご希望日を選んでください。';
+      if (!state.selectedTime) return 'ご希望時間を選んでください。';
+      if (!name) return 'お名前を入力してください。';
+      if (!phone) return '電話番号を入力してください。';
 
       return '';
     }
@@ -1251,10 +1412,10 @@
       }
 
       hideError();
+      showLoading('予約を送信しています...');
 
       els.submitBtn.disabled = true;
       els.submitBtn.textContent = '送信中です...';
-      showLoading('予約を送信しています...');
 
       try {
         const selectedMenu = getSelectedMenu();
@@ -1273,7 +1434,7 @@
           number_of_people: Number(els.peopleInput.value || 1),
           customer_note: els.noteInput.value.trim() || null,
 
-          source: state.liffReady ? 'liff' : 'liff',
+          source: state.liffReady ? 'liff' : 'web',
 
           line_user_id: state.lineProfile?.userId || null,
           line_display_name: state.lineProfile?.displayName || null,
@@ -1295,7 +1456,7 @@
           state.settings?.thanks_message ||
           '内容を確認のうえ、LINEでご案内します。';
 
-        els.formSection.classList.add('hidden');
+        els.reservationSection.classList.add('hidden');
         els.customerSection.classList.add('hidden');
         els.confirmSection.classList.add('hidden');
         els.completeSection.classList.remove('hidden');
@@ -1306,7 +1467,7 @@
       } finally {
         hideLoading();
         els.submitBtn.disabled = false;
-        els.submitBtn.textContent = '予約を送信する';
+        els.submitBtn.textContent = 'この内容で予約する';
       }
     }
 
@@ -1336,7 +1497,7 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload || {})
       });
 
       return await parseApiResponse(res);
@@ -1370,12 +1531,24 @@
     }
 
     function showLoading(message = '読み込み中です...') {
-      els.loading.querySelector('.loading-box').lastChild.textContent = message;
-      els.loading.classList.remove('hidden');
+      els.loadingText.textContent = message;
+      els.loading.classList.add('active');
     }
 
     function hideLoading() {
-      els.loading.classList.add('hidden');
+      els.loading.classList.remove('active');
+    }
+
+    let toastTimer = null;
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      els.toast.textContent = message;
+      els.toast.classList.add('active');
+
+      toastTimer = setTimeout(() => {
+        els.toast.classList.remove('active');
+      }, 2600);
     }
 
     function saveCustomerInfo() {
@@ -1391,7 +1564,6 @@
     function restoreCustomerInfo() {
       try {
         const raw = localStorage.getItem('dpro_liff_customer_info');
-
         if (!raw) return;
 
         const data = JSON.parse(raw);
@@ -1434,6 +1606,15 @@
     function formatLongDate(dateString) {
       const [year, month, day] = dateString.split('-');
       return `${year}/${month}/${day}（${getWeekdayLabel(dateString).replace('曜', '')}）`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
     }
   </script>
 </body>
