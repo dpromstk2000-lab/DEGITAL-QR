@@ -4,14 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>オーナー管理画面</title>
+  <title>オーナー管理画面 | DPRO SHOP</title>
 
-  <!-- 共通設定 -->
   <script src="./config.js"></script>
 
   <style>
     :root {
-      --bg: #f4f7fb;
+      --bg: #f3f6fb;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
@@ -27,7 +26,8 @@
       --warning: #f59e0b;
       --warning-soft: #fffbeb;
       --dark: #0f172a;
-      --shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+      --dark2: #172554;
+      --shadow: 0 18px 46px rgba(15, 23, 42, 0.09);
       --radius: 22px;
     }
 
@@ -44,8 +44,8 @@
         "Segoe UI",
         sans-serif;
       background:
-        radial-gradient(circle at top right, rgba(37, 99, 235, 0.10), transparent 34%),
-        radial-gradient(circle at bottom left, rgba(250, 204, 21, 0.12), transparent 30%),
+        radial-gradient(circle at 90% 0%, rgba(37, 99, 235, 0.10), transparent 34%),
+        radial-gradient(circle at 0% 100%, rgba(250, 204, 21, 0.13), transparent 34%),
         var(--bg);
       color: var(--text);
       line-height: 1.65;
@@ -64,7 +64,7 @@
 
     .app {
       width: 100%;
-      max-width: 1280px;
+      max-width: 1320px;
       margin: 0 auto;
       padding: 22px 14px 56px;
     }
@@ -73,10 +73,10 @@
       position: relative;
       overflow: hidden;
       border-radius: 30px;
-      padding: 26px 22px;
-      color: #ffffff;
+      padding: 28px 22px;
+      color: #fff;
       background:
-        radial-gradient(circle at 86% 10%, rgba(250, 204, 21, 0.28), transparent 32%),
+        radial-gradient(circle at 85% 8%, rgba(250, 204, 21, 0.34), transparent 30%),
         linear-gradient(135deg, #07111f 0%, #0f172a 52%, #172554 100%);
       box-shadow: var(--shadow);
     }
@@ -84,20 +84,20 @@
     .hero::after {
       content: "";
       position: absolute;
-      right: -70px;
-      bottom: -90px;
+      right: -75px;
+      bottom: -95px;
       width: 260px;
       height: 260px;
       border-radius: 999px;
-      background: rgba(250, 204, 21, 0.16);
+      background: rgba(250, 204, 21, 0.15);
       filter: blur(14px);
     }
 
-    .hero-inner {
+    .hero-content {
       position: relative;
       z-index: 1;
       display: grid;
-      gap: 18px;
+      gap: 20px;
     }
 
     .brand {
@@ -116,30 +116,29 @@
       height: 9px;
       border-radius: 999px;
       background: var(--accent);
-      box-shadow: 0 0 0 6px rgba(250, 204, 21, 0.12);
+      box-shadow: 0 0 0 6px rgba(250, 204, 21, 0.14);
     }
 
     .hero h1 {
       margin: 0;
-      font-size: clamp(30px, 5vw, 54px);
-      line-height: 1.06;
-      letter-spacing: -0.055em;
+      font-size: clamp(31px, 5.2vw, 56px);
+      line-height: 1.04;
+      letter-spacing: -0.058em;
       font-weight: 950;
     }
 
     .hero p {
-      max-width: 780px;
+      max-width: 800px;
       margin: 0;
       color: rgba(255, 255, 255, 0.78);
       font-size: 15px;
       font-weight: 750;
     }
 
-    .hero-actions {
+    .hero-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 2px;
+      gap: 9px;
     }
 
     .pill {
@@ -148,16 +147,56 @@
       justify-content: center;
       min-height: 34px;
       padding: 7px 13px;
-      border: 1px solid rgba(250, 204, 21, 0.48);
+      border: 1px solid rgba(250, 204, 21, 0.52);
       border-radius: 999px;
-      color: #ffffff;
+      color: #fff;
       background: rgba(255, 255, 255, 0.07);
       font-size: 12px;
       font-weight: 900;
+      text-decoration: none;
       backdrop-filter: blur(10px);
     }
 
-    .top-grid {
+    .pill.yellow {
+      color: var(--dark);
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .login-box,
+    .toolbar,
+    .metric,
+    .panel,
+    .next-action {
+      border: 1px solid rgba(219, 227, 239, 0.92);
+      background: rgba(255, 255, 255, 0.90);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+      backdrop-filter: blur(12px);
+    }
+
+    .login-box {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 24px;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 24px;
+    }
+
+    .toolbar-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .metrics {
       display: grid;
       grid-template-columns: 1fr;
       gap: 14px;
@@ -167,10 +206,6 @@
     .metric {
       padding: 18px;
       border-radius: 22px;
-      border: 1px solid rgba(219, 227, 239, 0.9);
-      background: rgba(255, 255, 255, 0.88);
-      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
-      backdrop-filter: blur(12px);
     }
 
     .metric small {
@@ -195,38 +230,111 @@
       font-weight: 800;
     }
 
-    .toolbar {
-      display: grid;
-      gap: 10px;
+    .next-action {
       margin-top: 16px;
-      padding: 16px;
-      border: 1px solid rgba(219, 227, 239, 0.9);
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.88);
-      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
-      backdrop-filter: blur(12px);
+      overflow: hidden;
+      border-radius: 26px;
     }
 
-    .toolbar-row {
+    .next-action-head {
+      padding: 18px;
+      color: #fff;
+      background:
+        radial-gradient(circle at right top, rgba(250, 204, 21, 0.25), transparent 36%),
+        linear-gradient(135deg, #0f172a, #172554);
+    }
+
+    .next-action-head small {
+      display: block;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+    }
+
+    .next-action-head h2 {
+      margin: 5px 0 0;
+      font-size: 26px;
+      line-height: 1.2;
+      letter-spacing: -0.05em;
+      font-weight: 950;
+    }
+
+    .next-action-body {
+      padding: 16px;
+    }
+
+    .workflow {
       display: grid;
       grid-template-columns: 1fr;
       gap: 10px;
+      margin-top: 16px;
     }
 
-    .main-grid {
+    .flow-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+    }
+
+    .flow-card b {
+      display: block;
+      font-size: 14px;
+      font-weight: 950;
+    }
+
+    .flow-card small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-top: 16px;
+      padding: 2px 0 8px;
+    }
+
+    .tab {
+      flex: 0 0 auto;
+      min-height: 42px;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--text);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .tab.active {
+      border-color: var(--primary);
+      color: #fff;
+      background: var(--primary);
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.20);
+    }
+
+    .tab-panel {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .grid-main {
       display: grid;
       grid-template-columns: 1fr;
       gap: 16px;
-      margin-top: 16px;
     }
 
     .panel {
-      border: 1px solid rgba(219, 227, 239, 0.9);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.9);
-      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
       overflow: hidden;
-      backdrop-filter: blur(12px);
+      border-radius: var(--radius);
     }
 
     .panel-head {
@@ -237,7 +345,7 @@
       gap: 12px;
       padding: 18px 18px 14px;
       border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
     }
 
     .panel-title {
@@ -278,42 +386,6 @@
       padding: 16px;
     }
 
-    .tabs {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      margin-top: 16px;
-      padding: 2px 0 8px;
-    }
-
-    .tab {
-      flex: 0 0 auto;
-      min-height: 42px;
-      padding: 9px 14px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: #ffffff;
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 950;
-    }
-
-    .tab.active {
-      border-color: var(--primary);
-      color: #ffffff;
-      background: var(--primary);
-      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.20);
-    }
-
-    .tab-panel {
-      display: none;
-      margin-top: 12px;
-    }
-
-    .tab-panel.active {
-      display: block;
-    }
-
     .card-list {
       display: grid;
       gap: 12px;
@@ -323,8 +395,13 @@
       padding: 14px;
       border: 1px solid var(--line);
       border-radius: 18px;
-      background: #ffffff;
+      background: #fff;
       box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+    }
+
+    .item.featured {
+      border-color: rgba(37, 99, 235, 0.30);
+      background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
     }
 
     .item-head {
@@ -367,38 +444,36 @@
       font-size: 12px;
       font-weight: 950;
       white-space: nowrap;
+      border: 1px solid transparent;
     }
 
-    .badge.pending {
-      color: #92400e;
-      background: var(--warning-soft);
-      border: 1px solid rgba(245, 158, 11, 0.22);
-    }
-
+    .badge.open,
     .badge.confirmed {
       color: #1d4ed8;
       background: var(--primary-soft);
-      border: 1px solid rgba(37, 99, 235, 0.18);
+      border-color: rgba(37, 99, 235, 0.18);
     }
 
-    .badge.completed,
-    .badge.done {
+    .badge.pending,
+    .badge.high {
+      color: #92400e;
+      background: var(--warning-soft);
+      border-color: rgba(245, 158, 11, 0.22);
+    }
+
+    .badge.done,
+    .badge.completed {
       color: #166534;
       background: var(--success-soft);
-      border: 1px solid rgba(22, 163, 74, 0.20);
+      border-color: rgba(22, 163, 74, 0.20);
     }
 
     .badge.cancelled,
-    .badge.skipped {
+    .badge.skipped,
+    .badge.danger {
       color: #991b1b;
       background: var(--danger-soft);
-      border: 1px solid rgba(239, 68, 68, 0.20);
-    }
-
-    .badge.open {
-      color: #1e3a8a;
-      background: var(--primary-soft);
-      border: 1px solid rgba(37, 99, 235, 0.18);
+      border-color: rgba(239, 68, 68, 0.20);
     }
 
     .actions {
@@ -434,28 +509,28 @@
     }
 
     .btn-blue {
-      color: #ffffff;
+      color: #fff;
       background: var(--primary);
     }
 
     .btn-green {
-      color: #ffffff;
+      color: #fff;
       background: var(--success);
     }
 
     .btn-red {
-      color: #ffffff;
+      color: #fff;
       background: var(--danger);
     }
 
     .btn-dark {
-      color: #ffffff;
+      color: #fff;
       background: var(--dark);
     }
 
     .btn-outline {
       border: 1px solid var(--line);
-      background: #ffffff;
+      background: #fff;
     }
 
     .btn:disabled {
@@ -472,7 +547,7 @@
       border: 1px solid var(--line);
       border-radius: 14px;
       color: var(--text);
-      background: #ffffff;
+      background: #fff;
       outline: none;
       font-weight: 800;
     }
@@ -505,10 +580,7 @@
       gap: 12px;
     }
 
-    .form-grid.two {
-      grid-template-columns: 1fr;
-    }
-
+    .form-grid.two,
     .form-grid.three {
       grid-template-columns: 1fr;
     }
@@ -562,13 +634,35 @@
       background: #f8fafc;
     }
 
-    .token-box {
-      display: grid;
-      gap: 10px;
-      padding: 16px;
-      border: 1px solid rgba(250, 204, 21, 0.44);
-      border-radius: 20px;
-      background: var(--accent-soft);
+    .message-preview {
+      margin-top: 10px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      color: #334155;
+      background: #f8fafc;
+      font-size: 13px;
+      font-weight: 750;
+      white-space: pre-wrap;
+    }
+
+    .mini-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 8px;
+    }
+
+    .mini {
+      display: inline-flex;
+      min-height: 26px;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: #475569;
+      background: #f1f5f9;
+      font-size: 11px;
+      font-weight: 900;
     }
 
     .loading {
@@ -590,7 +684,7 @@
       padding: 22px;
       border: 1px solid var(--line);
       border-radius: 24px;
-      background: #ffffff;
+      background: #fff;
       text-align: center;
       box-shadow: var(--shadow);
       font-weight: 950;
@@ -621,7 +715,7 @@
       width: min(92vw, 520px);
       padding: 14px 16px;
       border-radius: 18px;
-      color: #ffffff;
+      color: #fff;
       background: var(--dark);
       box-shadow: var(--shadow);
       font-size: 13px;
@@ -653,20 +747,24 @@
       }
 
       .hero {
-        padding: 34px 34px 32px;
+        padding: 36px 36px 34px;
       }
 
-      .top-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
-
-      .toolbar-row {
-        grid-template-columns: 180px 1fr auto auto;
+      .toolbar-grid {
+        grid-template-columns: 180px minmax(260px, 1fr) auto auto;
         align-items: end;
       }
 
-      .main-grid {
-        grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+      .metrics {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .workflow {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .grid-main {
+        grid-template-columns: minmax(0, 1.2fr) minmax(370px, 0.8fr);
       }
 
       .form-grid.two {
@@ -692,49 +790,52 @@
 
   <main class="app">
     <section class="hero">
-      <div class="hero-inner">
+      <div class="hero-content">
         <div class="brand">
           <span class="brand-dot"></span>
           <span id="providerName">DPRO SHOP</span>
         </div>
 
         <div>
-          <h1>オーナー管理画面</h1>
+          <h1>今日の対応が<br />ひと目で分かる管理画面</h1>
           <p>
-            今日の予約、承認待ち、フォロー予定をまとめて確認できます。
-            まずは「今日やること」を見れば、次に何をすればよいか分かります。
+            予約確認、LINE文面コピー、来店後フォローまでを1画面に集約。
+            オーナーが「次に何をすればいいか」迷わないように整理しています。
           </p>
         </div>
 
-        <div class="hero-actions">
-          <a id="reservationPageLink" class="pill" href="./index.html" target="_blank" rel="noopener">予約画面を開く</a>
+        <div class="hero-row">
+          <a id="reservationPageLink" class="pill yellow" href="./index.html" target="_blank" rel="noopener">予約画面を開く</a>
           <span class="pill" id="shopNamePill">デモ店舗</span>
           <span class="pill" id="shopCodePill">demo_shop_default</span>
+          <span class="pill">LINE文面コピー対応</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="loginBox" class="login-box">
+      <div class="notice yellow">
+        管理画面を使うために、Cloudflare Worker に登録した ADMIN_TOKEN を入力してください。
+        入力したトークンは、このブラウザ内だけに保存されます。
+      </div>
+
+      <div class="form-grid two">
+        <div class="field">
+          <label for="adminTokenInput">ADMIN_TOKEN</label>
+          <input id="adminTokenInput" class="input" type="password" placeholder="DPRO_LIFF_ADMIN_2026_..." />
+        </div>
+
+        <div class="field">
+          <label>&nbsp;</label>
+          <button id="saveTokenBtn" class="btn btn-primary" type="button">
+            保存して管理画面を開く
+          </button>
         </div>
       </div>
     </section>
 
     <section class="toolbar">
-      <div id="tokenBox" class="token-box">
-        <div class="notice yellow">
-          管理画面を使うために、Cloudflare Workerに登録した ADMIN_TOKEN を入力してください。
-          入力したトークンはこのブラウザ内だけに保存されます。
-        </div>
-
-        <div class="form-grid two">
-          <div class="field">
-            <label for="adminTokenInput">ADMIN_TOKEN</label>
-            <input id="adminTokenInput" class="input" type="password" placeholder="DPRO_LIFF_ADMIN_2026_..." />
-          </div>
-
-          <div class="field">
-            <label>&nbsp;</label>
-            <button id="saveTokenBtn" class="btn btn-primary" type="button">トークンを保存して読み込む</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="toolbar-row">
+      <div class="toolbar-grid">
         <div class="field">
           <label for="dateInput">表示日</label>
           <input id="dateInput" class="input" type="date" />
@@ -750,7 +851,7 @@
       </div>
     </section>
 
-    <section class="top-grid">
+    <section class="metrics">
       <div class="metric">
         <small>本日の予約</small>
         <strong id="metricToday">0</strong>
@@ -776,6 +877,41 @@
       </div>
     </section>
 
+    <section class="next-action">
+      <div class="next-action-head">
+        <small>NEXT ACTION</small>
+        <h2 id="nextActionTitle">次にやることを確認中です</h2>
+      </div>
+
+      <div class="next-action-body">
+        <div id="nextActionBody" class="notice">
+          データを読み込むと、優先対応がここに表示されます。
+        </div>
+
+        <div class="workflow">
+          <div class="flow-card">
+            <b>1. 予約が入る</b>
+            <small>お客様がLINEから予約</small>
+          </div>
+
+          <div class="flow-card">
+            <b>2. 確認する</b>
+            <small>承認待ちを見て確定</small>
+          </div>
+
+          <div class="flow-card">
+            <b>3. LINEで案内</b>
+            <small>文面をコピーして送信</small>
+          </div>
+
+          <div class="flow-card">
+            <b>4. フォロー</b>
+            <small>来店後の再予約につなげる</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <div class="tabs">
       <button class="tab active" data-tab="today">今日やること</button>
       <button class="tab" data-tab="reservations">予約一覧</button>
@@ -785,14 +921,14 @@
     </div>
 
     <section id="tab-today" class="tab-panel active">
-      <div class="main-grid">
+      <div class="grid-main">
         <div class="panel">
           <div class="panel-head">
             <div class="panel-title">
               <div class="icon">✓</div>
               <div>
                 <h2>今日やること</h2>
-                <small>対応漏れを防ぐためのリストです</small>
+                <small>オーナーが最初に見る場所です</small>
               </div>
             </div>
           </div>
@@ -827,7 +963,7 @@
             <div class="icon">📅</div>
             <div>
               <h2>予約一覧</h2>
-              <small>表示日の予約を確認できます</small>
+              <small>予約確定・来店完了・キャンセルまで対応できます</small>
             </div>
           </div>
         </div>
@@ -839,14 +975,14 @@
     </section>
 
     <section id="tab-customers" class="tab-panel">
-      <div class="main-grid">
+      <div class="grid-main">
         <div class="panel">
           <div class="panel-head">
             <div class="panel-title">
               <div class="icon">👤</div>
               <div>
                 <h2>顧客検索</h2>
-                <small>名前・LINE名・電話番号で探せます</small>
+                <small>お客様が増えても名前で探せます</small>
               </div>
             </div>
           </div>
@@ -862,7 +998,7 @@
               <div class="icon">📋</div>
               <div>
                 <h2>顧客詳細</h2>
-                <small>予約履歴・フォロー履歴を確認</small>
+                <small>予約履歴とフォロー状況を確認できます</small>
               </div>
             </div>
           </div>
@@ -883,7 +1019,7 @@
             <div class="icon">💬</div>
             <div>
               <h2>LINE文面テンプレート</h2>
-              <small>文章を考える時間を減らします</small>
+              <small>予約確認・来店前・来店後の文面をすぐ使えます</small>
             </div>
           </div>
         </div>
@@ -895,7 +1031,7 @@
     </section>
 
     <section id="tab-settings" class="tab-panel">
-      <div class="main-grid">
+      <div class="grid-main">
         <div class="panel">
           <div class="panel-head">
             <div class="panel-title">
@@ -924,7 +1060,7 @@
               <div class="icon">休</div>
               <div>
                 <h2>臨時休業・特別営業</h2>
-                <small>定休日以外の休みや特別営業時間を設定</small>
+                <small>急な休みや特別営業日を予約画面へ反映できます</small>
               </div>
             </div>
           </div>
@@ -1002,10 +1138,9 @@
       adminToken: '',
       shop: null,
       summary: null,
-      day: null,
-      tasks: [],
       reservations: [],
       followups: [],
+      tasks: [],
       customers: [],
       templates: [],
       businessHours: [],
@@ -1026,7 +1161,7 @@
       shopCodePill: $('shopCodePill'),
       reservationPageLink: $('reservationPageLink'),
 
-      tokenBox: $('tokenBox'),
+      loginBox: $('loginBox'),
       adminTokenInput: $('adminTokenInput'),
       saveTokenBtn: $('saveTokenBtn'),
 
@@ -1039,6 +1174,9 @@
       metricPending: $('metricPending'),
       metricFollowups: $('metricFollowups'),
       metricTasks: $('metricTasks'),
+
+      nextActionTitle: $('nextActionTitle'),
+      nextActionBody: $('nextActionBody'),
 
       tasksList: $('tasksList'),
       quickTemplatesList: $('quickTemplatesList'),
@@ -1071,10 +1209,10 @@
       els.specialDateInput.value = state.selectedDate;
 
       if (state.adminToken) {
-        els.tokenBox.classList.add('hidden');
+        els.loginBox.classList.add('hidden');
         await loadAll();
       } else {
-        renderEmptyInitial();
+        renderInitialEmpty();
       }
     }
 
@@ -1095,7 +1233,7 @@
 
         state.adminToken = token;
         localStorage.setItem(STORAGE_KEYS.adminToken, token);
-        els.tokenBox.classList.add('hidden');
+        els.loginBox.classList.add('hidden');
 
         await loadAll();
       });
@@ -1127,18 +1265,19 @@
     function applyStaticText() {
       els.providerName.textContent = CONFIG.PROVIDER_NAME || 'DPRO SHOP';
       els.shopNamePill.textContent = CONFIG.SHOP_NAME || 'デモ店舗';
-      els.shopCodePill.textContent = CONFIG.SHOP_CODE || 'demo_shop_default';
+      els.shopCodePill.textContent = getShopCode();
       els.reservationPageLink.href = `./index.html?shop_code=${encodeURIComponent(getShopCode())}`;
     }
 
-    function renderEmptyInitial() {
+    function renderInitialEmpty() {
       els.tasksList.innerHTML = emptyHtml('ADMIN_TOKENを保存すると、今日やることが表示されます。');
-      els.quickTemplatesList.innerHTML = emptyHtml('LINE文面テンプレートがここに表示されます。');
-      els.reservationsList.innerHTML = emptyHtml('予約一覧がここに表示されます。');
-      els.customersList.innerHTML = emptyHtml('顧客一覧がここに表示されます。');
-      els.templatesList.innerHTML = emptyHtml('文面テンプレートがここに表示されます。');
-      els.businessHoursBox.innerHTML = emptyHtml('営業時間設定がここに表示されます。');
-      els.specialDaysList.innerHTML = emptyHtml('臨時休業・特別営業日がここに表示されます。');
+      els.quickTemplatesList.innerHTML = emptyHtml('LINE文面テンプレートが表示されます。');
+      els.reservationsList.innerHTML = emptyHtml('予約一覧が表示されます。');
+      els.customersList.innerHTML = emptyHtml('顧客一覧が表示されます。');
+      els.templatesList.innerHTML = emptyHtml('文面テンプレートが表示されます。');
+      els.businessHoursBox.innerHTML = emptyHtml('営業時間設定が表示されます。');
+      els.specialDaysList.innerHTML = emptyHtml('臨時休業・特別営業日が表示されます。');
+      renderNextAction();
     }
 
     async function loadAll() {
@@ -1147,13 +1286,14 @@
       try {
         await Promise.all([
           loadSummary(),
-          loadDayData(),
+          loadDayData(false),
           loadCustomers(),
           loadTemplates(),
           loadBusinessHours(),
           loadSpecialDays()
         ]);
 
+        renderNextAction();
         showToast('読み込みました。');
       } catch (error) {
         handleApiError(error);
@@ -1177,26 +1317,26 @@
       els.metricTasks.textContent = state.summary?.open_tasks ?? 0;
     }
 
-    async function loadDayData() {
-      showLoading();
+    async function loadDayData(withLoading = true) {
+      if (withLoading) showLoading();
 
       try {
         const data = await apiGet(
           `/api/admin/day?shop_code=${encodeURIComponent(getShopCode())}&date=${encodeURIComponent(state.selectedDate)}`
         );
 
-        state.day = data;
         state.reservations = data.reservations || [];
         state.followups = data.followups || [];
         state.tasks = data.tasks || [];
 
         renderTasks();
         renderReservations();
+        renderNextAction();
         await loadSummary();
       } catch (error) {
         handleApiError(error);
       } finally {
-        hideLoading();
+        if (withLoading) hideLoading();
       }
     }
 
@@ -1244,7 +1384,7 @@
         const to = addDays(from, 90);
 
         const data = await apiGet(
-          `/api/admin/special-days?shop_code=${encodeURIComponent(getShopCode())}&from=${from}&to=${to}`
+          `/api/admin/special-days?shop_code=${encodeURIComponent(getShopCode())}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`
         );
 
         state.specialDays = data.special_days || [];
@@ -1254,31 +1394,91 @@
       }
     }
 
+    function renderNextAction() {
+      const pending = state.reservations.find((r) => r.status === 'pending');
+      const openTask = state.tasks.find((t) => t.status === 'open') || state.tasks[0];
+      const dueFollowup = state.followups.find((f) => f.status === 'scheduled' || f.status === 'open');
+
+      if (pending) {
+        els.nextActionTitle.textContent = 'まずは承認待ちの予約を確認しましょう';
+        els.nextActionBody.className = 'notice yellow';
+        els.nextActionBody.innerHTML = `
+          <b>${escapeHtml(pending.customer_name || 'お客様')}</b> さんの予約が承認待ちです。<br>
+          予約一覧から「予約確定」を押して、その後LINE文面をコピーして送る流れです。
+          <div class="actions">
+            <button class="btn btn-blue" type="button" onclick="setActiveTab('reservations')">予約一覧を見る</button>
+            <button class="btn btn-outline" type="button" onclick="copyReservationMessage('${pending.id}')">LINE文面コピー</button>
+          </div>
+        `;
+        return;
+      }
+
+      if (openTask) {
+        els.nextActionTitle.textContent = openTask.title || '今日のタスクを確認しましょう';
+        els.nextActionBody.className = 'notice';
+        els.nextActionBody.innerHTML = `
+          ${escapeHtml(openTask.detail || '今日の対応があります。内容を確認してください。')}
+          <div class="actions">
+            <button class="btn btn-blue" type="button" onclick="setActiveTab('today')">今日やることを見る</button>
+          </div>
+        `;
+        return;
+      }
+
+      if (dueFollowup) {
+        els.nextActionTitle.textContent = 'フォロー予定があります';
+        els.nextActionBody.className = 'notice';
+        els.nextActionBody.innerHTML = `
+          来店後フォローや再予約の案内を送るタイミングです。
+          <div class="actions">
+            <button class="btn btn-blue" type="button" onclick="setActiveTab('today')">フォローを確認する</button>
+          </div>
+        `;
+        return;
+      }
+
+      els.nextActionTitle.textContent = '現在、急ぎの対応はありません';
+      els.nextActionBody.className = 'notice green';
+      els.nextActionBody.textContent = '予約確認・フォロー予定・未対応タスクは落ち着いています。新しい予約が入るとここに表示されます。';
+    }
+
     function renderTasks() {
       if (!state.tasks.length) {
         els.tasksList.innerHTML = emptyHtml('今日やることはありません。');
         return;
       }
 
-      els.tasksList.innerHTML = state.tasks.map((task) => {
+      els.tasksList.innerHTML = state.tasks.map((task, index) => {
+        const priority = Number(task.priority || 3);
+        const priorityText = priority <= 2 ? '優先対応' : '通常対応';
+        const customerName = findCustomerName(task.customer_id) || 'お客様';
+        const message = buildMessageForTask(task, customerName);
+
         return `
-          <article class="item">
+          <article class="item ${index === 0 ? 'featured' : ''}">
             <div class="item-head">
               <div>
                 <h3 class="item-title">${escapeHtml(task.title || 'タスク')}</h3>
                 <div class="item-meta">
                   ${formatDate(task.due_date) || '期限なし'}
                   ${task.due_time ? ' ' + String(task.due_time).slice(0, 5) : ''}
-                  / 優先度 ${task.priority || 3}
                 </div>
               </div>
-              <span class="badge ${escapeHtml(task.status || 'open')}">${statusLabel(task.status)}</span>
+              <span class="badge ${priority <= 2 ? 'high' : 'open'}">${priorityText}</span>
+            </div>
+
+            <div class="mini-row">
+              <span class="mini">${escapeHtml(task.task_type || 'task')}</span>
+              <span class="mini">${statusLabel(task.status)}</span>
+              <span class="mini">優先度 ${priority}</span>
             </div>
 
             <p class="item-text">${escapeHtml(task.detail || '')}</p>
 
+            <div class="message-preview">${escapeHtml(message)}</div>
+
             <div class="actions">
-              ${task.action_label ? `<button class="btn btn-blue" type="button" onclick="copyTaskMessage('${task.id}')">${escapeHtml(task.action_label)}</button>` : ''}
+              <button class="btn btn-blue" type="button" onclick="copyTaskMessage('${task.id}')">LINE文面コピー</button>
               <button class="btn btn-green" type="button" onclick="markTaskDone('${task.id}')">対応済み</button>
               <button class="btn btn-outline" type="button" onclick="skipTask('${task.id}')">今回は不要</button>
             </div>
@@ -1295,7 +1495,7 @@
 
       els.reservationsList.innerHTML = state.reservations.map((r) => {
         return `
-          <article class="item">
+          <article class="item ${r.status === 'pending' ? 'featured' : ''}">
             <div class="item-head">
               <div>
                 <h3 class="item-title">${escapeHtml(r.customer_name || 'お客様')}</h3>
@@ -1308,13 +1508,21 @@
               <span class="badge ${reservationBadgeClass(r.status)}">${reservationStatusLabel(r.status)}</span>
             </div>
 
+            <div class="mini-row">
+              <span class="mini">${escapeHtml(r.source || '予約')}</span>
+              <span class="mini">${escapeHtml(r.number_of_people || 1)}名</span>
+              ${r.line_display_name ? `<span class="mini">LINE名：${escapeHtml(r.line_display_name)}</span>` : ''}
+            </div>
+
             ${r.customer_note ? `<p class="item-text">${escapeHtml(r.customer_note)}</p>` : ''}
+
+            <div class="message-preview">${escapeHtml(buildReservationMessage(r))}</div>
 
             <div class="actions">
               ${r.status === 'pending' ? `<button class="btn btn-blue" type="button" onclick="updateReservationStatus('${r.id}', 'confirmed')">予約確定</button>` : ''}
               ${r.status !== 'completed' ? `<button class="btn btn-green" type="button" onclick="updateReservationStatus('${r.id}', 'completed')">来店完了</button>` : ''}
               ${!String(r.status || '').startsWith('cancelled') ? `<button class="btn btn-red" type="button" onclick="updateReservationStatus('${r.id}', 'cancelled_by_owner')">キャンセル</button>` : ''}
-              <button class="btn btn-outline" type="button" onclick="copyReservationMessage('${r.id}')">LINE文面</button>
+              <button class="btn btn-outline" type="button" onclick="copyReservationMessage('${r.id}')">LINE文面コピー</button>
             </div>
           </article>
         `;
@@ -1349,7 +1557,8 @@
 
             <div class="actions">
               <button class="btn btn-blue" type="button" onclick="loadCustomerDetail('${c.id}')">詳細を見る</button>
-              <button class="btn btn-outline" type="button" onclick="copyText('${escapeAttr(name)}')">名前コピー</button>
+              <button class="btn btn-outline" type="button" onclick="copyCustomerName('${c.id}')">名前コピー</button>
+              ${c.phone ? `<button class="btn btn-outline" type="button" onclick="copyCustomerPhone('${c.id}')">電話コピー</button>` : ''}
             </div>
           </article>
         `;
@@ -1367,7 +1576,7 @@
         const c = data.customer;
         const name = c.customer_name || c.line_display_name || 'お客様';
 
-        const reservationsHtml = (data.reservations || []).slice(0, 8).map((r) => {
+        const reservationsHtml = (data.reservations || []).slice(0, 10).map((r) => {
           return `
             <div class="item">
               <div class="item-head">
@@ -1380,7 +1589,7 @@
           `;
         }).join('');
 
-        const followupsHtml = (data.followups || []).slice(0, 8).map((f) => {
+        const followupsHtml = (data.followups || []).slice(0, 10).map((f) => {
           return `
             <div class="item">
               <div class="item-head">
@@ -1397,7 +1606,7 @@
         els.customerDetailBox.className = '';
         els.customerDetailBox.innerHTML = `
           <div class="card-list">
-            <article class="item">
+            <article class="item featured">
               <div class="item-head">
                 <div>
                   <h3 class="item-title">${escapeHtml(name)}</h3>
@@ -1412,8 +1621,8 @@
               ${c.memo ? `<p class="item-text">${escapeHtml(c.memo)}</p>` : ''}
 
               <div class="actions">
-                <button class="btn btn-outline" type="button" onclick="copyText('${escapeAttr(name)}')">名前コピー</button>
-                ${c.phone ? `<button class="btn btn-outline" type="button" onclick="copyText('${escapeAttr(c.phone)}')">電話番号コピー</button>` : ''}
+                <button class="btn btn-outline" type="button" onclick="copyText('${safeJs(name)}')">名前コピー</button>
+                ${c.phone ? `<button class="btn btn-outline" type="button" onclick="copyText('${safeJs(c.phone)}')">電話番号コピー</button>` : ''}
               </div>
             </article>
 
@@ -1573,7 +1782,7 @@
       try {
         await apiPost(`/api/admin/tasks/${taskId}/done`, {});
         showToast('対応済みにしました。');
-        await loadDayData();
+        await loadDayData(false);
       } catch (error) {
         handleApiError(error);
       } finally {
@@ -1589,7 +1798,7 @@
       try {
         await apiPost(`/api/admin/tasks/${taskId}/skip`, { reason });
         showToast('今回は不要にしました。');
-        await loadDayData();
+        await loadDayData(false);
       } catch (error) {
         handleApiError(error);
       } finally {
@@ -1608,7 +1817,7 @@
       try {
         await apiPost(`/api/admin/reservations/${reservationId}/status`, { status });
         showToast(`予約を「${label}」に変更しました。`);
-        await loadDayData();
+        await loadDayData(false);
       } catch (error) {
         handleApiError(error);
       } finally {
@@ -1637,7 +1846,7 @@
           message_body: message
         });
       } catch (_) {
-        // コピー自体は成功しているため、記録エラーは無視
+        // コピー成功を優先
       }
     }
 
@@ -1646,16 +1855,7 @@
 
       if (!r) return;
 
-      const message =
-`${r.customer_name || 'お客様'}
-
-ご予約ありがとうございます。
-下記の内容で確認いたしました。
-
-日時：${formatDate(r.reservation_date)} ${String(r.start_time || '').slice(0, 5)}
-内容：${r.menu_name || 'ご予約'}
-
-当日はお気をつけてお越しください。`;
+      const message = buildReservationMessage(r);
 
       await copyText(message);
 
@@ -1669,28 +1869,65 @@
           message_body: message
         });
       } catch (_) {
-        // 何もしない
+        // コピー成功を優先
       }
+    }
+
+    function buildReservationMessage(r) {
+      return `${r.customer_name || 'お客様'}様
+
+ご予約ありがとうございます。
+下記の内容で確認いたしました。
+
+日時：${formatDate(r.reservation_date)} ${String(r.start_time || '').slice(0, 5)}
+内容：${r.menu_name || 'ご予約'}
+
+当日はお気をつけてお越しください。
+ご不明点がありましたら、LINEでお気軽にご連絡ください。`;
     }
 
     function buildMessageForTask(task, customerName) {
       if (task.task_type === 'reservation_approval') {
-        return `${customerName}様\n\nご予約ありがとうございます。\n内容を確認いたしました。\n確定後、改めてLINEでご案内します。`;
+        return `${customerName}様
+
+ご予約ありがとうございます。
+内容を確認いたしました。
+
+このあと予約確定のご案内をお送りします。
+ご不明点がありましたら、LINEでお気軽にご連絡ください。`;
       }
 
       if (task.task_type === 'before_visit_message') {
-        return `${customerName}様\n\n明日のご来店をお待ちしております。\nご不明点がありましたら、お気軽にLINEでご連絡ください。`;
+        return `${customerName}様
+
+明日のご来店をお待ちしております。
+お気をつけてお越しください。
+
+ご不明点がありましたら、LINEでお気軽にご連絡ください。`;
       }
 
       if (task.task_type === 'remaining_low_followup') {
-        return `${customerName}様\n\n残り回数が少なくなってきました。\n継続をご希望の場合は、次回ご来店時にご相談ください。`;
+        return `${customerName}様
+
+いつもありがとうございます。
+残り回数が少なくなってきました。
+
+継続をご希望の場合は、次回ご来店時にお気軽にご相談ください。`;
       }
 
       if (task.task_type === 'after_visit_followup') {
-        return `${customerName}様\n\n先日はありがとうございました。\n次回のご予約や継続について、ご不明点がありましたらお気軽にご相談ください。`;
+        return `${customerName}様
+
+先日はありがとうございました。
+その後、ご不明点や気になることはありませんか？
+
+次回のご予約や継続についても、お気軽にご相談ください。`;
       }
 
-      return `${customerName}様\n\nいつもありがとうございます。\nご確認よろしくお願いいたします。`;
+      return `${customerName}様
+
+いつもありがとうございます。
+ご確認よろしくお願いいたします。`;
     }
 
     async function copyTemplate(templateId) {
@@ -1845,8 +2082,8 @@
     function handleApiError(error) {
       const message = error?.message || String(error);
 
-      if (message.includes('admin token')) {
-        els.tokenBox.classList.remove('hidden');
+      if (message.includes('admin token') || message.includes('Unauthorized')) {
+        els.loginBox.classList.remove('hidden');
       }
 
       showToast(message);
@@ -1871,8 +2108,27 @@
 
     function findCustomerName(customerId) {
       const c = state.customers.find((x) => x.id === customerId);
-
       return c?.customer_name || c?.line_display_name || '';
+    }
+
+    function findCustomer(customerId) {
+      return state.customers.find((x) => x.id === customerId) || null;
+    }
+
+    async function copyCustomerName(customerId) {
+      const c = findCustomer(customerId);
+
+      if (!c) return;
+
+      await copyText(c.customer_name || c.line_display_name || 'お客様');
+    }
+
+    async function copyCustomerPhone(customerId) {
+      const c = findCustomer(customerId);
+
+      if (!c || !c.phone) return;
+
+      await copyText(c.phone);
     }
 
     async function copyText(text) {
@@ -2009,6 +2265,15 @@
       return escapeHtml(value).replaceAll('\n', '&#10;');
     }
 
+    function safeJs(value) {
+      return String(value ?? '')
+        .replaceAll('\\', '\\\\')
+        .replaceAll("'", "\\'")
+        .replaceAll('\n', '\\n')
+        .replaceAll('\r', '');
+    }
+
+    window.setActiveTab = setActiveTab;
     window.markTaskDone = markTaskDone;
     window.skipTask = skipTask;
     window.updateReservationStatus = updateReservationStatus;
@@ -2017,6 +2282,8 @@
     window.copyTemplate = copyTemplate;
     window.logTemplateCopied = logTemplateCopied;
     window.loadCustomerDetail = loadCustomerDetail;
+    window.copyCustomerName = copyCustomerName;
+    window.copyCustomerPhone = copyCustomerPhone;
     window.copyText = copyText;
   </script>
 </body>
