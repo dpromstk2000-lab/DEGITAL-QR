@@ -879,6 +879,102 @@
         font-size: 27px;
       }
     }
+  
+    .family-demo-force-box {
+      margin: 14px 0 0;
+      border-radius: 24px;
+      border: 2px solid #2563eb;
+      background:
+        radial-gradient(circle at 8% 14%, rgba(37, 99, 235, 0.14), transparent 34%),
+        linear-gradient(135deg, #eff6ff, #ffffff);
+      padding: 16px;
+      box-shadow: 0 14px 34px rgba(37, 99, 235, 0.12);
+    }
+
+    .family-demo-force-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: #1e3a8a;
+      font-size: 17px;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+    }
+
+    .family-demo-force-sub {
+      color: #334155;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 750;
+      margin-bottom: 12px;
+    }
+
+    .family-demo-force-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .family-demo-force-card {
+      border-radius: 18px;
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      padding: 12px;
+    }
+
+    .family-demo-force-card.active {
+      border-color: #2563eb;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.16);
+      background: #f8fbff;
+    }
+
+    .family-demo-force-label {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 6px 9px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      font-size: 11px;
+      font-weight: 950;
+      margin-bottom: 8px;
+    }
+
+    .family-demo-force-name {
+      color: #0f172a;
+      font-size: 15px;
+      font-weight: 950;
+      line-height: 1.4;
+    }
+
+    .family-demo-force-meta {
+      margin-top: 5px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 750;
+    }
+
+    .family-demo-force-note {
+      margin-top: 10px;
+      border-radius: 16px;
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      color: #064e3b;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 750;
+    }
+
+    @media (max-width: 860px) {
+      .family-demo-force-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -1225,6 +1321,24 @@
               </div>
             </div>
 
+            <div id="familyDemoForceBox" class="family-demo-force-box hidden">
+              <div class="family-demo-force-title">
+                <span id="familyDemoForceTitle">山田家のデジタル診察券</span>
+                <span class="family-context-pill" id="familyDemoForceCount">3枚</span>
+              </div>
+
+              <div class="family-demo-force-sub" id="familyDemoForceSub">
+                お母さん・保護者様のLINEに、子どもの診察券もまとめて表示できます。
+              </div>
+
+              <div class="family-demo-force-grid" id="familyDemoForceGrid"></div>
+
+              <div class="family-demo-force-note">
+                営業ポイント：紙の診察券を家族分持ち歩く必要がなくなり、LINE公式のリッチメニューから家族の診察券を切り替えて受付できます。
+              </div>
+            </div>
+
+
             <div id="patientMessage" class="message"></div>
 
             <div class="section">
@@ -1474,6 +1588,11 @@
         familyContextCount: $("familyContextCount"),
         familyCardList: $("familyCardList"),
         lineOfficialNote: $("lineOfficialNote"),
+        familyDemoForceBox: $("familyDemoForceBox"),
+        familyDemoForceTitle: $("familyDemoForceTitle"),
+        familyDemoForceSub: $("familyDemoForceSub"),
+        familyDemoForceCount: $("familyDemoForceCount"),
+        familyDemoForceGrid: $("familyDemoForceGrid"),
         lastVisit: $("lastVisit"),
         nextAppointment: $("nextAppointment"),
         patientMemo: $("patientMemo"),
@@ -2432,6 +2551,59 @@
         ].filter(Boolean).join("\n");
       }
 
+      function renderFamilyDemoForceBlock(patient) {
+        if (!els.familyDemoForceBox || !els.familyDemoForceGrid) return;
+
+        let context = patient.family_context || {};
+        if (!Array.isArray(context.cards) || context.cards.length <= 1) {
+          context = buildDemoFamilyContextIfNeeded(patient);
+        }
+
+        const family = context.family || null;
+        const cards = Array.isArray(context.cards) ? context.cards : [];
+
+        if (!cards.length || cards.length <= 1) {
+          els.familyDemoForceBox.classList.add("hidden");
+          els.familyDemoForceGrid.innerHTML = "";
+          return;
+        }
+
+        els.familyDemoForceBox.classList.remove("hidden");
+
+        const familyName = family?.family_name || cards[0]?.family_name || "家族";
+        const guardianName = family?.primary_guardian_name || cards[0]?.primary_guardian_name || patient.guardian_name || "";
+
+        els.familyDemoForceTitle.textContent = `${familyName}のデジタル診察券`;
+        els.familyDemoForceSub.textContent = guardianName
+          ? `保護者：${guardianName} 様のLINEに、家族の診察券がまとまっています。`
+          : "保護者様のLINEに、家族の診察券がまとまっています。";
+        els.familyDemoForceCount.textContent = `${cards.length}枚`;
+
+        els.familyDemoForceGrid.innerHTML = cards.map((card) => {
+          const isActive =
+            (card.patient_id && card.patient_id === patient.id) ||
+            (card.qr_token && card.qr_token === patient.qr_token) ||
+            (card.member_no && card.member_no === patient.member_no);
+
+          const label = getFamilyCardLabel(card);
+          const next = buildNextAppointmentText(
+            card.next_appointment_date,
+            card.next_appointment_time,
+            card.next_appointment_memo
+          );
+
+          return `
+            <div class="family-demo-force-card ${isActive ? "active" : ""}">
+              <div class="family-demo-force-label">${escapeHtml(isActive ? "選択中" : label)}</div>
+              <div class="family-demo-force-name">${escapeHtml(card.patient_name || "患者さま")}</div>
+              <div class="family-demo-force-meta">${escapeHtml(label)} / 診察券番号：${escapeHtml(card.member_no || "---")}</div>
+              <div class="family-demo-force-meta">次回：${escapeHtml(next)}</div>
+            </div>
+          `;
+        }).join("");
+      }
+
+
       function renderFamilyContext(patient) {
         const context = patient.family_context || {};
         const family = context.family || null;
@@ -2629,7 +2801,12 @@
           patient.next_appointment_memo
         );
         els.patientMemo.textContent = patient.patient_memo || "なし";
-        els.internalMemo.textContent = patient.internal_memo || "なし";
+        els.internalMemo.textContent =
+          buildFamilyInfoText(patient, family, familyCards) +
+          (patient.internal_memo ? "\n\n院内メモ：" + patient.internal_memo : "");
+
+        renderFamilyContext(patient);
+        renderFamilyDemoForceBlock(patient);
 
         els.nextDateInput.value = patient.next_appointment_date || "";
         els.nextMemoInput.value = patient.next_appointment_memo || "";
