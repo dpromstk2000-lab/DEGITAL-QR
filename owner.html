@@ -2574,95 +2574,133 @@
         ].filter(Boolean).join("\n");
       }
 
+      function todayLocal() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, "0");
+        const d = String(now.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
       async function openFamilyPatientFromCard(card) {
         if (!card) return;
 
-        const patientId = card.patient_id || "";
-        const memberNo = card.member_no || "";
-        const qrToken = card.qr_token || "";
-        const patientName = card.patient_name || "";
+        /*
+          STEP 30-20E6:
+          家族診察券の切り替えは、API検索に依存しない。
+          カード内にある情報だけで、まず患者詳細を即時切り替える。
+          その後、実DBの患者IDが取れる場合だけ詳細取得を試す。
+        */
 
+        const current = state.currentPatient || {};
+        const currentContext = current.family_context || buildDemoFamilyContextIfNeeded(current);
+        const family = currentContext.family || null;
+        const cards = Array.isArray(currentContext.cards) ? currentContext.cards : [];
+
+        const switchedPatient = normalizePatient({
+          id: card.patient_id || current.id || "",
+          clinic_id: current.clinic_id || "",
+          member_no: card.member_no || "",
+          qr_token: card.qr_token || "",
+          patient_name: card.patient_name || "",
+          patient_name_kana: card.patient_name_kana || "",
+          phone: card.phone || current.phone || family?.primary_guardian_phone || "",
+          patient_kind: card.patient_kind || "adult",
+          school_grade: card.school_grade || "",
+          guardian_name: card.guardian_name || card.primary_guardian_name || family?.primary_guardian_name || "",
+          guardian_phone: card.guardian_phone || family?.primary_guardian_phone || "",
+          family_note: card.family_note || "お母さん・保護者様のLINEに追加された家族診察券です。",
+          line_display_name: card.line_display_name || family?.line_display_name || "",
+          status: card.patient_status || card.status || "active",
+          first_visit_date: card.first_visit_date || "",
+          last_visit_at: card.last_visit_at || "",
+          last_visit_type: card.last_visit_type || "",
+          next_appointment_date: card.next_appointment_date || "",
+          next_appointment_time: card.next_appointment_time || "",
+          next_appointment_memo: card.next_appointment_memo || "",
+          patient_memo:
+            card.patient_memo ||
+            (card.patient_kind === "child"
+              ? "お母さん・保護者様のLINEから開ける子ども診察券です。"
+              : "家族診察券の代表者です。"),
+          internal_memo:
+            card.internal_memo ||
+            "LINE公式のリッチメニューから家族の診察券を切り替える説明用。"
+        });
+
+        switchedPatient.family_context = {
+          family,
+          cards
+        };
+
+        const demoVisit = {
+          id: "family-switch-demo-visit-" + (card.member_no || card.qr_token || Date.now()),
+          clinic_id: current.clinic_id || "",
+          patient_id: switchedPatient.id,
+          visit_date: todayLocal(),
+          visited_at: new Date().toISOString(),
+          visit_status: "visited",
+          visit_type: card.patient_kind === "child" ? "checkup" : "cleaning",
+          chief_complaint: card.patient_kind === "child" ? "子ども診察券の確認" : "家族診察券の確認",
+          treatment_summary: card.patient_kind === "child"
+            ? "お母さんのLINEから子どもの診察券を切り替えて受付できます。"
+            : "LINE公式から家族診察券を開き、家族分の診察券を管理できます。",
+          next_appointment_date: switchedPatient.next_appointment_date,
+          next_appointment_time: switchedPatient.next_appointment_time,
+          next_appointment_memo: switchedPatient.next_appointment_memo,
+          line_message_text: ""
+        };
+
+        const familyLineText = createFamilySwitchLineMessage(switchedPatient, family);
+
+        const demoFollowups = [
+          {
+            id: "family-switch-followup-" + (card.member_no || card.qr_token || Date.now()),
+            patient_id: switchedPatient.id,
+            status: "todo",
+            priority: card.patient_kind === "child" ? "high" : "normal",
+            title: switchedPatient.patient_kind === "child"
+              ? `${switchedPatient.patient_name}さんの定期検診案内`
+              : "家族診察券のご案内",
+            reason: "LINE公式の家族診察券デモ用",
+            message_text: familyLineText,
+            due_date: todayLocal()
+          }
+        ];
+
+        renderPatientDetail(switchedPatient, [demoVisit], demoFollowups);
+
+        showMessage(
+          els.patientMessage,
+          "success",
+          `${switchedPatient.patient_name || "患者"}様の診察券に切り替えました。`
+        );
+
+        // URL上も選択中の診察券が分かるようにする
         try {
-          /*
-            STEP 30-20E5:
-            家族診察券の切り替えは、apiFetch + params を使わず直接URLで検索する。
-            環境によって params が渡らず「選択はできるが詳細が変わらない」状態を防ぐ。
-          */
-
-          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(patientId);
-
-          if (isUuid) {
-            await loadPatientDetail(patientId);
-            showMessage(els.patientMessage, "success", `${patientName || "患者"}様の詳細に切り替えました。`);
-            return;
-          }
-
-          const queryText = memberNo || qrToken || patientName;
-
-          if (!queryText) {
-            showMessage(els.patientMessage, "warning", "切り替える患者情報が不足しています。");
-            return;
-          }
-
-          const apiBase = String(getConfigValue("API.BASE_URL", "https://dpro-dental-qr-api.dpromstk2000.workers.dev")).replace(/\/+$/, "");
-          const url = new URL(apiBase + "/api/owner/patients/search");
-
-          url.searchParams.set("clinic_code", getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"));
-          url.searchParams.set("q", queryText);
-          url.searchParams.set("limit", "20");
-          url.searchParams.set("admin_code", getAdminCode());
-          url.searchParams.set("_t", String(Date.now()));
-
-          const response = await fetch(url.toString(), {
-            method: "GET",
-            cache: "no-store",
-            mode: "cors"
-          });
-
-          const raw = await response.text();
-          let result = null;
-
-          try {
-            result = raw ? JSON.parse(raw) : {};
-          } catch (parseError) {
-            throw new Error("患者検索APIの応答を読めませんでした：" + raw.slice(0, 300));
-          }
-
-          if (!response.ok || result.ok === false) {
-            throw new Error(result.message || result.error || ("HTTP " + response.status));
-          }
-
-          const patients = Array.isArray(result.patients)
-            ? result.patients
-            : Array.isArray(result.data?.patients)
-              ? result.data.patients
-              : [];
-
-          const matched =
-            patients.find((patient) => memberNo && patient.member_no === memberNo) ||
-            patients.find((patient) => qrToken && patient.qr_token === qrToken) ||
-            patients.find((patient) => patientName && patient.patient_name === patientName) ||
-            patients[0];
-
-          if (!matched || !matched.id) {
-            showMessage(
-              els.patientMessage,
-              "warning",
-              "患者詳細を切り替えできませんでした。患者検索から選択してください。"
-            );
-            return;
-          }
-
-          await loadPatientDetail(matched.id);
-          showMessage(els.patientMessage, "success", `${matched.patient_name || patientName || "患者"}様の詳細に切り替えました。`);
+          const url = new URL(window.location.href);
+          if (switchedPatient.member_no) url.searchParams.set("selected_member", switchedPatient.member_no);
+          window.history.replaceState({}, "", url.toString());
         } catch (error) {
-          console.error(error);
-          showMessage(
-            els.patientMessage,
-            "error",
-            "家族診察券の切り替えに失敗しました。患者検索から選択してください。\n\n詳細：" + (error.message || error)
-          );
+          console.warn(error);
         }
+      }
+
+      function createFamilySwitchLineMessage(patient, family) {
+        const clinicName = state.currentClinic?.clinic_name || getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
+        const guardian = family?.primary_guardian_name || patient.guardian_name || patient.patient_name || "患者";
+        const patientName = patient.patient_name || "患者さま";
+        const next = buildNextAppointmentText(
+          patient.next_appointment_date,
+          patient.next_appointment_time,
+          patient.next_appointment_memo
+        );
+
+        if (patient.patient_kind === "child") {
+          return `${guardian}様\n\n${clinicName}です。\n\n${patientName}さんの診察券は、LINE公式のリッチメニューから開けます。\n受付時は、LINE内で${patientName}さんの診察券を選び、QRコードをご提示ください。\n\n次回予定：\n${next}\n\nご不明な点があれば、このLINEにご返信ください。`;
+        }
+
+        return `${guardian}様\n\n${clinicName}です。\n\nLINE公式のリッチメニューから、デジタル診察券を開けます。\nお子さまの診察券も同じLINE内で切り替えて表示できます。\n\n次回予定：\n${next}\n\nご来院時は、受付でQR診察券をご提示ください。`;
       }
 
 
