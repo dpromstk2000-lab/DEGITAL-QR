@@ -521,6 +521,13 @@
       height: 200px;
     }
 
+    #qrFallbackImage {
+      width: 200px;
+      height: 200px;
+      display: block;
+      object-fit: contain;
+    }
+
     .url-box {
       border-radius: 16px;
       border: 1px dashed var(--border);
@@ -1110,6 +1117,7 @@
                   <div class="qr-area">
                     <div class="qr-box">
                       <canvas id="qrCanvas" width="200" height="200"></canvas>
+                      <img id="qrFallbackImage" class="hidden" alt="QR診察券コード" />
                     </div>
 
                     <div class="form-grid">
@@ -1355,6 +1363,7 @@
         resultStatus: $("resultStatus"),
         resultClinicName: $("resultClinicName"),
         qrCanvas: $("qrCanvas"),
+        qrFallbackImage: $("qrFallbackImage"),
         memberUrlText: $("memberUrlText"),
         qrTokenText: $("qrTokenText"),
         copyMemberUrlButton: $("copyMemberUrlButton"),
@@ -2435,14 +2444,57 @@
       async function generateQrForPatient(patient) {
         const token = patient.qr_token || "";
         const url = buildMemberUrl(token);
-        if (!token) return;
 
-        if (window.QRCode && typeof window.QRCode.toCanvas === "function") {
-          await window.QRCode.toCanvas(els.qrCanvas, url, {
-            width: 200,
-            margin: 2,
-            errorCorrectionLevel: "M"
-          });
+        if (!token || !url) return;
+
+        const canvas = els.qrCanvas;
+        const fallbackImage = els.qrFallbackImage;
+
+        function showFallbackImage() {
+          const qrImageUrl =
+            "https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=12&data=" +
+            encodeURIComponent(url);
+
+          if (fallbackImage) {
+            fallbackImage.src = qrImageUrl;
+            fallbackImage.classList.remove("hidden");
+          }
+
+          if (canvas) {
+            canvas.classList.add("hidden");
+          }
+        }
+
+        function showCanvas() {
+          if (canvas) {
+            canvas.classList.remove("hidden");
+          }
+
+          if (fallbackImage) {
+            fallbackImage.classList.add("hidden");
+          }
+        }
+
+        try {
+          if (window.QRCode && typeof window.QRCode.toCanvas === "function") {
+            await window.QRCode.toCanvas(canvas, url, {
+              width: 200,
+              margin: 2,
+              errorCorrectionLevel: "M",
+              color: {
+                dark: "#0f172a",
+                light: "#ffffff"
+              }
+            });
+
+            showCanvas();
+            return;
+          }
+
+          showFallbackImage();
+        } catch (error) {
+          console.warn("QRコード生成に失敗したため、画像方式で表示します。", error);
+          showFallbackImage();
         }
       }
 
