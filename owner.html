@@ -975,6 +975,29 @@
     }
 
 
+  
+    .family-demo-force-card {
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .family-demo-force-card:hover {
+      transform: translateY(-1px);
+      border-color: #2563eb;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.14);
+    }
+
+    .family-card-item {
+      cursor: pointer;
+    }
+
+    .family-card-item:hover {
+      border-color: #2563eb;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.12);
+    }
+
   </style>
 </head>
 
@@ -2551,6 +2574,61 @@
         ].filter(Boolean).join("\n");
       }
 
+      async function openFamilyPatientFromCard(card) {
+        if (!card) return;
+
+        const patientId = card.patient_id || "";
+        const memberNo = card.member_no || "";
+        const qrToken = card.qr_token || "";
+
+        try {
+          if (patientId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(patientId)) {
+            await loadPatientDetail(patientId);
+            showMessage(els.patientMessage, "success", `${card.patient_name || "患者"}様の詳細に切り替えました。`);
+            return;
+          }
+
+          const q = memberNo || qrToken || card.patient_name || "";
+
+          if (!q) {
+            showMessage(els.patientMessage, "warning", "切り替える患者情報が不足しています。");
+            return;
+          }
+
+          const result = await apiFetch("/api/owner/patients/search", {
+            method: "GET",
+            params: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              q,
+              limit: 10
+            }
+          });
+
+          const patients = Array.isArray(result.patients) ? result.patients : [];
+          const matched =
+            patients.find((patient) => patient.member_no === memberNo) ||
+            patients.find((patient) => patient.qr_token === qrToken) ||
+            patients.find((patient) => patient.patient_name === card.patient_name) ||
+            patients[0];
+
+          if (!matched || !matched.id) {
+            showMessage(els.patientMessage, "warning", "患者詳細を切り替えできませんでした。患者検索から選択してください。");
+            return;
+          }
+
+          await loadPatientDetail(matched.id);
+          showMessage(els.patientMessage, "success", `${matched.patient_name || card.patient_name || "患者"}様の詳細に切り替えました。`);
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.patientMessage,
+            "error",
+            "家族診察券の切り替えに失敗しました。患者検索から選択してください。\n\n詳細：" + (error.message || error)
+          );
+        }
+      }
+
+
       function renderFamilyDemoForceBlock(patient) {
         if (!els.familyDemoForceBox || !els.familyDemoForceGrid) return;
 
@@ -2579,7 +2657,7 @@
           : "保護者様のLINEに、家族の診察券がまとまっています。";
         els.familyDemoForceCount.textContent = `${cards.length}枚`;
 
-        els.familyDemoForceGrid.innerHTML = cards.map((card) => {
+        els.familyDemoForceGrid.innerHTML = cards.map((card, index) => {
           const isActive =
             (card.patient_id && card.patient_id === patient.id) ||
             (card.qr_token && card.qr_token === patient.qr_token) ||
@@ -2593,12 +2671,12 @@
           );
 
           return `
-            <div class="family-demo-force-card ${isActive ? "active" : ""}">
-              <div class="family-demo-force-label">${escapeHtml(isActive ? "選択中" : label)}</div>
+            <button class="family-demo-force-card ${isActive ? "active" : ""}" type="button" data-family-card-index="${index}">
+              <div class="family-demo-force-label">${escapeHtml(isActive ? "選択中" : "切替")}</div>
               <div class="family-demo-force-name">${escapeHtml(card.patient_name || "患者さま")}</div>
               <div class="family-demo-force-meta">${escapeHtml(label)} / 診察券番号：${escapeHtml(card.member_no || "---")}</div>
               <div class="family-demo-force-meta">次回：${escapeHtml(next)}</div>
-            </div>
+            </button>
           `;
         }).join("");
       }
@@ -2631,7 +2709,7 @@
 
         els.familyContextCount.textContent = `${cards.length}枚`;
 
-        els.familyCardList.innerHTML = cards.map((card) => {
+        els.familyCardList.innerHTML = cards.map((card, index) => {
           const isActive =
             (card.patient_id && card.patient_id === patient.id) ||
             (card.qr_token && card.qr_token === patient.qr_token) ||
@@ -2645,8 +2723,8 @@
           );
 
           return `
-            <div class="family-card-item ${isActive ? "active" : ""}">
-              <div class="family-card-label">${escapeHtml(isActive ? "選択中" : label)}</div>
+            <button class="family-card-item ${isActive ? "active" : ""}" type="button" data-family-context-index="${index}">
+              <div class="family-card-label">${escapeHtml(isActive ? "選択中" : "切替")}</div>
               <div>
                 <div class="family-card-name">${escapeHtml(card.patient_name || "患者さま")}</div>
                 <div class="family-card-meta">
@@ -2656,9 +2734,17 @@
                   次回：${escapeHtml(next)}
                 </div>
               </div>
-            </div>
+            </button>
           `;
         }).join("");
+
+        els.familyCardList.querySelectorAll("[data-family-context-index]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const index = Number(button.dataset.familyContextIndex);
+            const card = cards[index];
+            await openFamilyPatientFromCard(card);
+          });
+        });
 
         els.lineOfficialNote.textContent =
           `${familyName}は、LINE公式のリッチメニューから家族分の診察券を切り替えできます。` +
