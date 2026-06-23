@@ -193,6 +193,75 @@
       font-weight: 850;
     }
 
+    .industry-switch {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid rgba(219, 227, 239, 0.92);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.91);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+      backdrop-filter: blur(12px);
+    }
+
+    .industry-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .industry-head h2 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.25;
+      letter-spacing: -0.04em;
+      font-weight: 950;
+    }
+
+    .industry-head small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .industry-buttons {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 2px 0 6px;
+    }
+
+    .industry-btn {
+      flex: 0 0 auto;
+      min-height: 44px;
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--text);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .industry-btn.active {
+      border-color: var(--primary);
+      color: #fff;
+      background: var(--primary);
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.20);
+    }
+
+    .industry-links {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
     .section {
       margin-top: 16px;
       padding: 18px;
@@ -547,6 +616,17 @@
       background: #eef2f7;
     }
 
+    .btn-outline {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: #fff;
+    }
+
+    .btn-dark {
+      color: #fff;
+      background: var(--dark);
+    }
+
     .btn:disabled {
       cursor: not-allowed;
       opacity: 0.58;
@@ -679,6 +759,10 @@
         grid-template-columns: repeat(3, 1fr);
       }
 
+      .industry-links {
+        grid-template-columns: 1fr 1fr;
+      }
+
       .form-grid.two {
         grid-template-columns: 1fr 1fr;
       }
@@ -730,7 +814,7 @@
         <div class="hero-pills">
           <span class="pill yellow">60秒で予約完了</span>
           <span class="pill">LINEの中で開ける予約画面</span>
-          <span class="pill">予約後の案内もスムーズ</span>
+          <span class="pill">業種別デモ切替対応</span>
         </div>
       </div>
     </section>
@@ -749,6 +833,22 @@
       <div class="flow-card">
         <b>3. 店舗がLINEで案内</b>
         <small>管理画面で文面コピーまで対応</small>
+      </div>
+    </section>
+
+    <section class="industry-switch">
+      <div class="industry-head">
+        <div>
+          <h2>業種別デモ切り替え</h2>
+          <small>営業先に合わせて、予約画面のメニュー・営業時間を切り替えできます</small>
+        </div>
+      </div>
+
+      <div id="industryButtons" class="industry-buttons"></div>
+
+      <div class="industry-links">
+        <a id="currentIndexLink" class="btn btn-blue" href="./index.html" target="_self">この業種の予約画面</a>
+        <a id="currentOwnerLink" class="btn btn-outline" href="./owner.html" target="_blank" rel="noopener">この業種の管理画面</a>
       </div>
     </section>
 
@@ -939,6 +1039,10 @@
           もう一度予約する
         </button>
 
+        <a id="ownerAfterCompleteLink" class="btn btn-outline" href="./owner.html" target="_blank" rel="noopener">
+          管理画面で確認
+        </a>
+
         <button id="closeLiffBtn" class="btn btn-blue hidden" type="button">
           LINE画面を閉じる
         </button>
@@ -966,6 +1070,51 @@
       ...(window.DPRO_CONFIG || {})
     };
 
+    const DEMO_SHOPS = [
+      {
+        code: 'demo_shop_default',
+        label: '共通デモ',
+        short: '共通',
+        description: '汎用の予約・顧客フォローデモ'
+      },
+      {
+        code: 'demo_personal_gym',
+        label: 'パーソナルジム',
+        short: 'ジム',
+        description: '体験予約・継続フォロー向け'
+      },
+      {
+        code: 'demo_private_yoga',
+        label: 'プライベートヨガ',
+        short: 'ヨガ',
+        description: 'レッスン予約・前後フォロー向け'
+      },
+      {
+        code: 'demo_beauty_salon',
+        label: '美容サロン',
+        short: 'サロン',
+        description: '予約・再来店フォロー向け'
+      },
+      {
+        code: 'demo_izakaya',
+        label: '居酒屋',
+        short: '居酒屋',
+        description: '席予約・来店前案内向け'
+      },
+      {
+        code: 'demo_car_service',
+        label: '整備工場',
+        short: '整備',
+        description: '入庫予約・車検フォロー向け'
+      },
+      {
+        code: 'demo_dental_clinic',
+        label: '歯科クリニック',
+        short: '歯科',
+        description: '診療予約・定期検診フォロー向け'
+      }
+    ];
+
     const state = {
       shop: null,
       settings: null,
@@ -992,6 +1141,11 @@
       heroTitle: $('heroTitle'),
       heroDescription: $('heroDescription'),
       footerText: $('footerText'),
+
+      industryButtons: $('industryButtons'),
+      currentIndexLink: $('currentIndexLink'),
+      currentOwnerLink: $('currentOwnerLink'),
+      ownerAfterCompleteLink: $('ownerAfterCompleteLink'),
 
       errorSection: $('errorSection'),
       errorText: $('errorText'),
@@ -1036,6 +1190,7 @@
         showLoading('読み込み中です...');
         applyInitialText();
         bindEvents();
+        renderIndustryButtons();
 
         await initLiffIfNeeded();
         await loadBootstrap();
@@ -1055,11 +1210,17 @@
     }
 
     function applyInitialText() {
+      const shopCode = getShopCode();
+
       els.providerName.textContent = CONFIG.PROVIDER_NAME || 'DPRO SHOP';
       els.footerText.textContent = `Presented by ${CONFIG.PROVIDER_NAME || 'DPRO SHOP'}`;
       els.heroTitle.textContent = CONFIG.SERVICE_NAME || 'LINEでかんたん体験予約';
       els.heroDescription.textContent = '空き時間を選んで、お名前を入力するだけ。予約内容はすぐにオーナー管理画面へ反映されます。';
       els.summaryShop.textContent = CONFIG.SHOP_NAME || 'デモ店舗';
+
+      els.currentIndexLink.href = `./index.html?shop_code=${encodeURIComponent(shopCode)}`;
+      els.currentOwnerLink.href = `./owner.html?shop_code=${encodeURIComponent(shopCode)}`;
+      els.ownerAfterCompleteLink.href = `./owner.html?shop_code=${encodeURIComponent(shopCode)}`;
     }
 
     function bindEvents() {
@@ -1115,6 +1276,38 @@
           liff.closeWindow();
         }
       });
+    }
+
+    function renderIndustryButtons() {
+      const current = getShopCode();
+
+      els.industryButtons.innerHTML = DEMO_SHOPS.map((shop) => {
+        const isActive = shop.code === current;
+
+        return `
+          <button
+            class="industry-btn ${isActive ? 'active' : ''}"
+            type="button"
+            onclick="switchShop('${shop.code}')"
+            title="${escapeAttr(shop.description)}"
+          >
+            ${escapeHtml(shop.label)}
+          </button>
+        `;
+      }).join('');
+
+      const currentShop = DEMO_SHOPS.find((s) => s.code === current);
+
+      if (currentShop) {
+        els.currentIndexLink.textContent = `${currentShop.short}の予約画面`;
+        els.currentOwnerLink.textContent = `${currentShop.short}の管理画面`;
+      }
+    }
+
+    function switchShop(shopCode) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('shop_code', shopCode);
+      window.location.href = url.toString();
     }
 
     async function initLiffIfNeeded() {
@@ -1616,6 +1809,12 @@
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
     }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replaceAll('\n', '&#10;');
+    }
+
+    window.switchShop = switchShop;
   </script>
 </body>
 </html>
