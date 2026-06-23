@@ -2323,17 +2323,37 @@
         clearMessage(els.demoResetMessage);
 
         try {
-          const result = await apiFetch("/api/admin/demo/reset", {
-            method: "POST",
-            body: {
-              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-              staff_name: getStaffName(),
-              reset_from: "owner.html"
-            }
+          const apiBase = String(getConfigValue("API.BASE_URL", "https://dpro-dental-qr-api.dpromstk2000.workers.dev")).replace(/\/+$/, "");
+          const url = new URL(apiBase + "/api/admin/demo/reset");
+
+          url.searchParams.set("clinic_code", getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"));
+          url.searchParams.set("admin_code", adminCode);
+          url.searchParams.set("staff_name", getStaffName());
+          url.searchParams.set("reset_from", "owner.html");
+          url.searchParams.set("_t", String(Date.now()));
+
+          /*
+            営業前デモリセットだけは、POST + custom header を使わない。
+            GitHub Pages → Cloudflare Worker の事前確認通信（CORS preflight）で
+            ブラウザに止められる環境があるため、GET + query で確実に通す。
+          */
+          const response = await fetch(url.toString(), {
+            method: "GET",
+            cache: "no-store",
+            mode: "cors"
           });
 
-          if (result && result.ok === false) {
-            throw new Error(result.message || result.error || "デモリセットに失敗しました。");
+          const raw = await response.text();
+          let result = null;
+
+          try {
+            result = raw ? JSON.parse(raw) : {};
+          } catch (parseError) {
+            throw new Error("API応答をJSONとして読めませんでした。応答：" + raw.slice(0, 300));
+          }
+
+          if (!response.ok || (result && result.ok === false)) {
+            throw new Error((result && (result.message || result.error)) || ("HTTP " + response.status));
           }
 
           showMessage(
@@ -2364,15 +2384,16 @@
             "error",
             "営業前デモリセットに失敗しました。\n\n" +
             "確認すること：\n" +
-            "・Cloudflare Worker が STEP 30-10 修正版になっているか\n" +
+            "・Cloudflare Worker が STEP 30-15 版になっているか\n" +
             "・管理コード dpro-dental-2026 を保存しているか\n" +
-            "・SUPABASE_SERVICE_ROLE_KEY がWorker Secretsに入っているか\n\n" +
+            "・GitHub Pages の owner.html を最新に上書きしているか\n\n" +
             "詳細：" + (error.message || error)
           );
         } finally {
           buttons.forEach((button) => setButtonLoading(button, false));
         }
       }
+
 
       function showDemo() {
         const demo = getDemoData();
