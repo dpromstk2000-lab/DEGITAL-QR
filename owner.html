@@ -2233,34 +2233,153 @@
       }
 
       async function loadFamilyContextForPatient(patient) {
-        if (!patient || !patient.id) {
+        if (!patient) {
           return {
             family: null,
             cards: []
           };
         }
 
+        /*
+          STEP 30-20E2:
+          家族診察券は営業で一番大事な見せ場なので、
+          API取得に失敗しても山田家デモは必ず表示する。
+          また、CONFIG.utils.apiFetch の params 仕様差で取れないことがあるため、
+          ここだけはURLを明示してGETする。
+        */
         try {
-          const result = await apiFetch("/api/owner/families/detail", {
+          const apiBase = String(getConfigValue("API.BASE_URL", "https://dpro-dental-qr-api.dpromstk2000.workers.dev")).replace(/\/+$/, "");
+          const url = new URL(apiBase + "/api/owner/families/detail");
+
+          url.searchParams.set("clinic_code", getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"));
+          url.searchParams.set("admin_code", getAdminCode());
+
+          if (patient.id) {
+            url.searchParams.set("patient_id", patient.id);
+          } else if (patient.member_no) {
+            url.searchParams.set("member_no", patient.member_no);
+          } else if (patient.qr_token) {
+            url.searchParams.set("t", patient.qr_token);
+          }
+
+          url.searchParams.set("_t", String(Date.now()));
+
+          const response = await fetch(url.toString(), {
             method: "GET",
-            params: {
-              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-              patient_id: patient.id
-            }
+            cache: "no-store",
+            mode: "cors"
           });
 
-          return {
-            family: result.family || null,
-            cards: Array.isArray(result.cards) ? result.cards : []
-          };
+          const raw = await response.text();
+          let result = null;
+
+          try {
+            result = raw ? JSON.parse(raw) : {};
+          } catch (error) {
+            throw new Error("家族診察券APIの応答を読めませんでした：" + raw.slice(0, 300));
+          }
+
+          if (!response.ok || result.ok === false) {
+            throw new Error(result.message || result.error || ("HTTP " + response.status));
+          }
+
+          const cards = Array.isArray(result.cards) ? result.cards : [];
+
+          if (cards.length) {
+            return {
+              family: result.family || null,
+              cards
+            };
+          }
         } catch (error) {
-          console.warn("家族診察券情報を取得できませんでした。", error);
+          console.warn("家族診察券情報をAPIから取得できませんでした。デモ用の家族情報を補完します。", error);
+        }
+
+        return buildDemoFamilyContextIfNeeded(patient);
+      }
+
+      function buildDemoFamilyContextIfNeeded(patient) {
+        const memberNo = String(patient.member_no || "");
+        const token = String(patient.qr_token || "");
+        const name = String(patient.patient_name || "");
+
+        const isYamadaDemo =
+          memberNo === "D260600001" ||
+          memberNo === "D260600002" ||
+          memberNo === "D260600003" ||
+          token === "demo-dental-patient-001" ||
+          token === "demo-dental-child-taro" ||
+          token === "demo-dental-child-sakura" ||
+          name.includes("山田");
+
+        if (!isYamadaDemo) {
           return {
             family: null,
             cards: []
           };
         }
+
+        return {
+          family: {
+            family_code: "FAM-DEMO-YAMADA",
+            family_name: "山田家",
+            primary_guardian_name: "山田 花子",
+            primary_guardian_phone: "090-0000-0000",
+            line_user_id: "demo-line-mother-yamada",
+            line_display_name: "山田花子（お母さん）"
+          },
+          cards: [
+            {
+              patient_id: patient.member_no === "D260600001" ? patient.id : "demo-mother",
+              qr_token: "demo-dental-patient-001",
+              member_no: "D260600001",
+              patient_name: "山田 花子",
+              patient_kind: "adult",
+              relationship: "mother",
+              display_label: "お母さん",
+              display_order: 1,
+              next_appointment_date: patient.member_no === "D260600001" ? patient.next_appointment_date : "",
+              next_appointment_time: patient.member_no === "D260600001" ? patient.next_appointment_time : "",
+              next_appointment_memo: patient.member_no === "D260600001" ? patient.next_appointment_memo : "定期検診・クリーニング予定",
+              family_name: "山田家",
+              primary_guardian_name: "山田 花子"
+            },
+            {
+              patient_id: patient.member_no === "D260600002" ? patient.id : "demo-child-taro",
+              qr_token: "demo-dental-child-taro",
+              member_no: "D260600002",
+              patient_name: "山田 太郎",
+              patient_kind: "child",
+              school_grade: "小学2年生",
+              relationship: "child",
+              display_label: "長男・太郎くん",
+              display_order: 2,
+              next_appointment_date: patient.member_no === "D260600002" ? patient.next_appointment_date : "",
+              next_appointment_time: patient.member_no === "D260600002" ? patient.next_appointment_time : "",
+              next_appointment_memo: patient.member_no === "D260600002" ? patient.next_appointment_memo : "3か月定期検診の案内対象",
+              family_name: "山田家",
+              primary_guardian_name: "山田 花子"
+            },
+            {
+              patient_id: patient.member_no === "D260600003" ? patient.id : "demo-child-sakura",
+              qr_token: "demo-dental-child-sakura",
+              member_no: "D260600003",
+              patient_name: "山田 さくら",
+              patient_kind: "child",
+              school_grade: "年長",
+              relationship: "child",
+              display_label: "長女・さくらちゃん",
+              display_order: 3,
+              next_appointment_date: patient.member_no === "D260600003" ? patient.next_appointment_date : "",
+              next_appointment_time: patient.member_no === "D260600003" ? patient.next_appointment_time : "",
+              next_appointment_memo: patient.member_no === "D260600003" ? patient.next_appointment_memo : "フッ素塗布・経過確認",
+              family_name: "山田家",
+              primary_guardian_name: "山田 花子"
+            }
+          ]
+        };
       }
+
 
       function getFamilyCardLabel(card) {
         if (card.display_label) return card.display_label;
@@ -2488,7 +2607,12 @@
         els.patientStatus.textContent = getStatusLabel(patient.status);
         els.visitCount.textContent = `来院 ${patient.visit_count || visits.length || 0}回`;
         els.patientPhone.textContent = patient.phone || "未登録";
-        const familyContext = patient.family_context || {};
+        let familyContext = patient.family_context || {};
+        if (!Array.isArray(familyContext.cards) || familyContext.cards.length <= 1) {
+          familyContext = buildDemoFamilyContextIfNeeded(patient);
+          patient.family_context = familyContext;
+        }
+
         const family = familyContext.family || null;
         const familyCards = Array.isArray(familyContext.cards) ? familyContext.cards : [];
 
