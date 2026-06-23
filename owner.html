@@ -2,212 +2,2942 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>オーナー管理画面 | DPRO SHOP</title>
-  <script src="./config.js"></script>
-  <style>
-    :root{
-      --bg:#f3f6fb;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#dbe3ef;
-      --primary:#2563eb;--primary-soft:#eff6ff;--accent:#facc15;--accent-soft:#fff7d6;
-      --danger:#ef4444;--danger-soft:#fef2f2;--success:#16a34a;--success-soft:#ecfdf5;
-      --warning:#f59e0b;--warning-soft:#fffbeb;--dark:#0f172a;--shadow:0 18px 46px rgba(15,23,42,.09);--radius:22px;
-    }
-    *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at 90% 0%,rgba(37,99,235,.10),transparent 34%),radial-gradient(circle at 0% 100%,rgba(250,204,21,.13),transparent 34%),var(--bg);color:var(--text);line-height:1.65}button,input,select,textarea{font:inherit}button{cursor:pointer}.app{width:100%;max-width:1320px;margin:0 auto;padding:22px 14px 56px}.hero{position:relative;overflow:hidden;border-radius:30px;padding:28px 22px;color:#fff;background:radial-gradient(circle at 85% 8%,rgba(250,204,21,.34),transparent 30%),linear-gradient(135deg,#07111f 0%,#0f172a 52%,#172554 100%);box-shadow:var(--shadow)}.hero::after{content:"";position:absolute;right:-75px;bottom:-95px;width:260px;height:260px;border-radius:999px;background:rgba(250,204,21,.15);filter:blur(14px)}.hero-content{position:relative;z-index:1;display:grid;gap:20px}.brand{display:flex;align-items:center;gap:9px;color:var(--accent);font-size:12px;font-weight:950;letter-spacing:.14em;text-transform:uppercase}.brand-dot{width:9px;height:9px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 6px rgba(250,204,21,.14)}.hero h1{margin:0;font-size:clamp(31px,5.2vw,56px);line-height:1.04;letter-spacing:-.058em;font-weight:950}.hero p{max-width:820px;margin:0;color:rgba(255,255,255,.78);font-size:15px;font-weight:760}.hero-row{display:flex;flex-wrap:wrap;gap:9px}.pill{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:7px 13px;border:1px solid rgba(250,204,21,.52);border-radius:999px;color:#fff;background:rgba(255,255,255,.07);font-size:12px;font-weight:900;text-decoration:none;backdrop-filter:blur(10px)}.pill.yellow{color:var(--dark);background:var(--accent);border-color:var(--accent)}
-    .login-box,.toolbar,.metric,.panel,.next-action,.industry-switch,.morning-reset{border:1px solid rgba(219,227,239,.92);background:rgba(255,255,255,.90);box-shadow:0 14px 34px rgba(15,23,42,.07);backdrop-filter:blur(12px)}.login-box,.toolbar,.industry-switch,.morning-reset{display:grid;gap:12px;margin-top:16px;padding:16px;border-radius:24px}.toolbar-grid{display:grid;grid-template-columns:1fr;gap:10px}.industry-head,.morning-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:2px}.industry-head h2,.morning-head h2{margin:0;font-size:19px;line-height:1.25;letter-spacing:-.04em;font-weight:950}.industry-head small,.morning-head small{display:block;margin-top:2px;color:var(--muted);font-size:12px;font-weight:850}.industry-buttons{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px}.industry-btn{flex:0 0 auto;min-height:44px;padding:9px 13px;border:1px solid var(--line);border-radius:999px;color:var(--text);background:#fff;font-size:13px;font-weight:950;white-space:nowrap}.industry-btn.active{border-color:var(--primary);color:#fff;background:var(--primary);box-shadow:0 12px 22px rgba(37,99,235,.20)}.industry-links,.morning-actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:4px}.reset-result{display:none;margin-top:4px;padding:12px;border:1px solid rgba(22,163,74,.22);border-radius:16px;background:var(--success-soft);color:#166534;font-size:13px;font-weight:850;white-space:pre-wrap}.reset-result.active{display:block}
-    .metrics{display:grid;grid-template-columns:1fr;gap:14px;margin-top:16px}.metric{padding:18px;border-radius:22px}.metric small{display:block;color:var(--muted);font-size:12px;font-weight:950}.metric strong{display:block;margin-top:4px;font-size:36px;line-height:1;font-weight:950;letter-spacing:-.06em}.metric span{color:var(--muted);font-size:13px;font-weight:800}.next-action{margin-top:16px;overflow:hidden;border-radius:26px}.next-action-head{padding:18px;color:#fff;background:radial-gradient(circle at right top,rgba(250,204,21,.25),transparent 36%),linear-gradient(135deg,#0f172a,#172554)}.next-action-head small{display:block;color:var(--accent);font-size:12px;font-weight:950;letter-spacing:.08em}.next-action-head h2{margin:5px 0 0;font-size:26px;line-height:1.2;letter-spacing:-.05em;font-weight:950}.next-action-body{padding:16px}.workflow{display:grid;grid-template-columns:1fr;gap:10px;margin-top:16px}.flow-card{padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff}.flow-card b{display:block;font-size:14px;font-weight:950}.flow-card small{color:var(--muted);font-size:12px;font-weight:850}.tabs{display:flex;gap:8px;overflow-x:auto;margin-top:16px;padding:2px 0 8px}.tab{flex:0 0 auto;min-height:42px;padding:9px 14px;border:1px solid var(--line);border-radius:999px;color:var(--text);background:#fff;font-size:13px;font-weight:950}.tab.active{border-color:var(--primary);color:#fff;background:var(--primary);box-shadow:0 12px 22px rgba(37,99,235,.20)}.tab-panel{display:none;margin-top:12px}.tab-panel.active{display:block}.grid-main{display:grid;grid-template-columns:1fr;gap:16px}.panel{overflow:hidden;border-radius:var(--radius)}.panel-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 18px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff 0%,#f8fafc 100%)}.panel-title{display:flex;gap:10px;align-items:center}.icon{display:grid;place-items:center;width:38px;height:38px;border-radius:14px;color:var(--dark);background:var(--accent);font-weight:950;flex:0 0 auto}.panel-title h2{margin:0;font-size:21px;line-height:1.25;letter-spacing:-.04em;font-weight:950}.panel-title small{display:block;margin-top:2px;color:var(--muted);font-size:12px;font-weight:800}.panel-body{padding:16px}.card-list{display:grid;gap:12px}.item{padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 10px 22px rgba(15,23,42,.04)}.item.featured{border-color:rgba(37,99,235,.30);background:linear-gradient(180deg,#fff 0%,#eff6ff 100%)}.item-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-bottom:8px}.item-title{margin:0;font-size:16px;line-height:1.35;font-weight:950;letter-spacing:-.02em}.item-meta{color:var(--muted);font-size:12px;font-weight:850}.item-text{margin:8px 0 0;color:#334155;font-size:13px;font-weight:750;white-space:pre-wrap}.badge{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:950;white-space:nowrap;border:1px solid transparent}.badge.open,.badge.confirmed{color:#1d4ed8;background:var(--primary-soft);border-color:rgba(37,99,235,.18)}.badge.pending,.badge.high{color:#92400e;background:var(--warning-soft);border-color:rgba(245,158,11,.22)}.badge.done,.badge.completed{color:#166534;background:var(--success-soft);border-color:rgba(22,163,74,.20)}.badge.cancelled,.badge.skipped,.badge.danger{color:#991b1b;background:var(--danger-soft);border-color:rgba(239,68,68,.20)}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 13px;border:0;border-radius:14px;color:var(--text);background:#eef2f7;font-size:13px;font-weight:950;text-decoration:none;transition:transform .12s ease,opacity .12s ease}.btn:active{transform:translateY(1px)}.btn-primary{color:var(--dark);background:linear-gradient(135deg,#fde047,#facc15)}.btn-blue{color:#fff;background:var(--primary)}.btn-green{color:#fff;background:var(--success)}.btn-red{color:#fff;background:var(--danger)}.btn-dark{color:#fff;background:var(--dark)}.btn-outline{border:1px solid var(--line);background:#fff}.btn:disabled{cursor:not-allowed;opacity:.52}.input,.select,.textarea{width:100%;min-height:46px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;color:var(--text);background:#fff;outline:none;font-weight:800}.textarea{min-height:100px;resize:vertical}.input:focus,.select:focus,.textarea:focus{border-color:rgba(37,99,235,.75);box-shadow:0 0 0 4px rgba(37,99,235,.10)}.field{display:grid;gap:6px}.field label{color:#334155;font-size:12px;font-weight:950}.form-grid{display:grid;gap:12px}.form-grid.two,.form-grid.three{grid-template-columns:1fr}.notice{padding:13px 14px;border:1px solid rgba(37,99,235,.16);border-radius:16px;color:#1e3a8a;background:var(--primary-soft);font-size:13px;font-weight:800}.notice.yellow{color:#7c2d12;background:var(--accent-soft);border-color:rgba(250,204,21,.48)}.notice.red{color:#991b1b;background:var(--danger-soft);border-color:rgba(239,68,68,.22)}.notice.green{color:#166534;background:var(--success-soft);border-color:rgba(22,163,74,.22)}.empty{padding:22px;border:1px dashed #cbd5e1;border-radius:18px;background:#f8fafc;color:var(--muted);text-align:center;font-size:13px;font-weight:850}.copy-box{display:grid;gap:10px;margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:18px;background:#f8fafc}.message-preview{margin-top:10px;padding:13px;border:1px solid var(--line);border-radius:16px;color:#334155;background:#f8fafc;font-size:13px;font-weight:750;white-space:pre-wrap}.mini-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.mini{display:inline-flex;min-height:26px;align-items:center;padding:4px 9px;border-radius:999px;color:#475569;background:#f1f5f9;font-size:11px;font-weight:900}.loading{position:fixed;inset:0;z-index:100;display:none;place-items:center;background:rgba(244,247,251,.72);backdrop-filter:blur(8px)}.loading.active{display:grid}.loading-box{width:min(92vw,340px);padding:22px;border:1px solid var(--line);border-radius:24px;background:#fff;text-align:center;box-shadow:var(--shadow);font-weight:950;white-space:pre-wrap}.spinner{width:34px;height:34px;margin:0 auto 12px;border:4px solid #dbeafe;border-top-color:var(--primary);border-radius:999px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.toast{position:fixed;left:50%;bottom:18px;z-index:110;transform:translateX(-50%) translateY(120px);width:min(92vw,520px);padding:14px 16px;border-radius:18px;color:#fff;background:var(--dark);box-shadow:var(--shadow);font-size:13px;font-weight:900;opacity:0;transition:.2s ease}.toast.active{transform:translateX(-50%) translateY(0);opacity:1}.footer{margin-top:24px;color:var(--muted);text-align:center;font-size:12px;font-weight:800}.hidden{display:none!important}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>DPRO SHOP | 歯科医院 管理画面</title>
 
-    .guide-panel{display:none;margin-top:16px;padding:18px;border:1px solid rgba(37,99,235,.18);border-radius:26px;background:linear-gradient(180deg,#fff 0%,#eff6ff 100%);box-shadow:0 14px 34px rgba(15,23,42,.07)}.guide-panel.active{display:block}.guide-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}.guide-head h2{margin:0;font-size:22px;line-height:1.25;letter-spacing:-.04em;font-weight:950}.guide-head p{margin:4px 0 0;color:var(--muted);font-size:13px;font-weight:850}.guide-grid{display:grid;grid-template-columns:1fr;gap:10px}.guide-card{padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff}.guide-card b{display:block;font-size:14px;font-weight:950;color:#0f172a}.guide-card p{margin:6px 0 0;color:#475569;font-size:13px;font-weight:800}.guide-talk{margin-top:12px;padding:14px;border:1px solid rgba(250,204,21,.50);border-radius:18px;background:var(--accent-soft);color:#713f12;font-size:13px;font-weight:850}.guide-note{display:none;margin-top:10px;padding:12px;border:1px dashed rgba(37,99,235,.40);border-radius:16px;background:#f8fbff;color:#1e3a8a;font-size:13px;font-weight:850}.guide-mode .guide-note{display:block}.guide-mini{display:inline-flex;align-items:center;min-height:24px;padding:3px 8px;border-radius:999px;background:var(--primary-soft);color:#1d4ed8;font-size:11px;font-weight:950;margin-right:5px}button.pill{cursor:pointer}
-    @media(min-width:720px){.app{padding:30px 22px 64px}.hero{padding:36px 36px 34px}.toolbar-grid{grid-template-columns:180px minmax(260px,1fr) auto auto;align-items:end}.industry-links,.morning-actions{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:repeat(4,1fr)}.workflow{grid-template-columns:repeat(4,1fr)}.grid-main{grid-template-columns:minmax(0,1.2fr) minmax(370px,.8fr)}.form-grid.two{grid-template-columns:1fr 1fr}.form-grid.three{grid-template-columns:repeat(3,1fr)}.guide-grid{grid-template-columns:repeat(3,1fr)}}
+  <script src="./config.js"></script>
+
+  <style>
+    :root {
+      --main: #2563eb;
+      --main-dark: #1d4ed8;
+      --sub: #0f766e;
+      --accent: #f59e0b;
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #dc2626;
+      --info: #2563eb;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34%),
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.1), transparent 30%),
+        var(--bg);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 18px 18px 42px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand-kicker {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-title {
+      margin-top: 4px;
+      font-size: 28px;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+      line-height: 1.22;
+    }
+
+    .brand-sub {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .badge-link,
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+      white-space: nowrap;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--main-dark);
+      border: 1px solid rgba(37, 99, 235, 0.16);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .left-stack,
+    .right-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 17px 19px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.78), #ffffff);
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-subtitle {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .card-body {
+      padding: 18px 19px 20px;
+    }
+
+    .icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--main-dark);
+      font-weight: 950;
+      flex: 0 0 auto;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .summary-card {
+      border-radius: 22px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.055);
+      padding: 16px;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .summary-value {
+      margin-top: 8px;
+      font-size: 30px;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .summary-note {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: #ffffff;
+      color: var(--text);
+      padding: 12px 13px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .field textarea {
+      min-height: 88px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: rgba(37, 99, 235, 0.5);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 46px;
+      border: none;
+      border-radius: 15px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-weight: 950;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      text-decoration: none;
+      transition: transform 0.08s ease, opacity 0.08s ease;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      opacity: 0.92;
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--main), var(--main-dark));
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-sub {
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--sub), #115e59);
+      box-shadow: 0 12px 24px rgba(15, 118, 110, 0.17);
+    }
+
+    .btn-light {
+      color: var(--text);
+      background: #ffffff;
+      border: 1px solid var(--border);
+    }
+
+    .btn-warning {
+      color: #78350f;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+    }
+
+    .btn-danger {
+      color: #991b1b;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+    }
+
+    .btn-success {
+      color: #14532d;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 13px;
+    }
+
+    .message {
+      margin-top: 12px;
+      border-radius: 16px;
+      padding: 13px 14px;
+      font-size: 14px;
+      line-height: 1.65;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.info {
+      background: #eff6ff;
+      color: #1e3a8a;
+      border: 1px solid #bfdbfe;
+    }
+
+    .message.success {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .message.warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .message.error {
+      background: #fff1f2;
+      color: #991b1b;
+      border: 1px solid #fecdd3;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-item {
+      border: 1px solid var(--border);
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 14px;
+      transition: border-color 0.08s ease, box-shadow 0.08s ease, transform 0.08s ease;
+    }
+
+    .list-item.clickable {
+      cursor: pointer;
+    }
+
+    .list-item.clickable:hover {
+      border-color: rgba(37, 99, 235, 0.4);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .item-title {
+      font-size: 15px;
+      font-weight: 950;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .item-sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .item-meta {
+      white-space: nowrap;
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      color: var(--main-dark);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .item-text {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .pill.blue {
+      background: #eff6ff;
+      color: #1e3a8a;
+      border-color: #bfdbfe;
+    }
+
+    .pill.green {
+      background: #f0fdf4;
+      color: #14532d;
+      border-color: #bbf7d0;
+    }
+
+    .pill.yellow {
+      background: #fffbeb;
+      color: #78350f;
+      border-color: #fde68a;
+    }
+
+    .pill.red {
+      background: #fff1f2;
+      color: #991b1b;
+      border-color: #fecdd3;
+    }
+
+    .empty-box {
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px dashed var(--border);
+      padding: 18px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .patient-hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, #ffffff, #eef6ff);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .patient-hero::after {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      right: -75px;
+      top: -85px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.1);
+    }
+
+    .patient-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .patient-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      letter-spacing: 0.07em;
+    }
+
+    .patient-name {
+      margin-top: 7px;
+      font-size: 32px;
+      line-height: 1.18;
+      letter-spacing: -0.05em;
+      font-weight: 950;
+      word-break: break-word;
+    }
+
+    .patient-kana {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #ffffff;
+      margin-top: 14px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .info-row:last-child {
+      border-bottom: 0;
+    }
+
+    .info-key {
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .info-value {
+      color: var(--text);
+      font-weight: 750;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tab-button {
+      min-height: 38px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--muted);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .tab-button.active {
+      background: var(--main);
+      color: #ffffff;
+      border-color: var(--main);
+    }
+
+    .detail-section {
+      display: none;
+    }
+
+    .detail-section.active {
+      display: block;
+    }
+
+    .line-box {
+      border-radius: 18px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      padding: 14px;
+    }
+
+    .line-title {
+      font-weight: 950;
+      color: #1e3a8a;
+      margin-bottom: 8px;
+    }
+
+    .line-text {
+      color: #1e3a8a;
+      font-size: 14px;
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+
+    .loading-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 3px solid #dbeafe;
+      border-top-color: var(--main);
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .footer {
+      margin-top: 22px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .debug {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: #f8fafc;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 1050px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 14px 12px 32px;
+      }
+
+      .top-bar {
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .brand-title {
+        font-size: 24px;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .summary-value {
+        font-size: 26px;
+      }
+
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .patient-name {
+        font-size: 27px;
+      }
+
+      .info-row {
+        grid-template-columns: 96px 1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div id="loading" class="loading"><div class="loading-box"><div class="spinner"></div><span id="loadingText">読み込み中です...</span></div></div>
-  <div id="toast" class="toast"></div>
-
-  <main class="app">
-    <section class="hero">
-      <div class="hero-content">
-        <div class="brand"><span class="brand-dot"></span><span id="providerName">DPRO SHOP</span></div>
-        <div><h1>営業前の準備も<br>1タップで完了</h1><p>業種別デモをワンタップで整え、予約確認、LINE文面コピー、来店後フォローまでをすぐ見せられる状態にします。</p></div>
-        <div class="hero-row"><a id="reservationPageLink" class="pill yellow" href="./index.html" target="_blank" rel="noopener">予約画面を開く</a><button id="guideToggleBtn" class="pill yellow" type="button" onclick="toggleGuideMode()">説明モードON</button><span class="pill" id="shopNamePill">デモ店舗</span><span class="pill" id="shopCodePill">demo_shop_default</span><span class="pill">全業種デモ一括準備</span></div>
-      </div>
-    </section>
-
-    <section id="guidePanel" class="guide-panel">
-      <div class="guide-head">
-        <div>
-          <h2>営業用説明モード</h2>
-          <p>営業先のオーナーに「この画面で何が便利になるか」を短く説明するためのモードです。</p>
+  <main class="page">
+    <header class="top-bar">
+      <div>
+        <div class="brand-kicker" id="systemName">DPRO SHOP</div>
+        <div class="brand-title" id="pageTitle">歯科医院 管理画面</div>
+        <div class="brand-sub" id="clinicNameText">
+          DPRO歯科クリニック / 今日の受付・患者検索・来院履歴・フォロー管理
         </div>
-        <button class="btn btn-outline" type="button" onclick="toggleGuideMode()">説明モードを閉じる</button>
       </div>
-      <div class="guide-grid">
-        <div class="guide-card"><b>① 営業前デモ準備</b><p>営業前に1回押すだけで、今日の日付に合わせた予約・顧客・フォロー予定を自動で作り直します。</p></div>
-        <div class="guide-card"><b>② 業種別デモ切替</b><p>ジム・ヨガ・サロン・居酒屋など、営業先に合わせて予約画面と管理画面をすぐ切り替えできます。</p></div>
-        <div class="guide-card"><b>③ 今日やること</b><p>オーナーが最初に見る場所です。予約確認、LINE文面コピー、来店後フォローを迷わず処理できます。</p></div>
-        <div class="guide-card"><b>④ 予約一覧</b><p>承認待ち予約を確認し、予約確定・来店完了・キャンセルまで1画面で操作できます。</p></div>
-        <div class="guide-card"><b>⑤ LINE文面コピー</b><p>文章を考えなくても、そのままLINE公式に貼れる文面を作れます。新人スタッフでも使いやすい導線です。</p></div>
-        <div class="guide-card"><b>⑥ 休業日・営業時間</b><p>定休日や臨時休業を設定すると、予約画面側にも反映され、休みの日の予約ミスを減らせます。</p></div>
+
+      <div class="top-actions">
+        <a class="badge-link" id="scanLink" href="./scan.html">受付QR読取</a>
+        <a class="badge-link" id="adminLink" href="./admin.html">患者登録</a>
+        <a class="badge-link" id="memberLink" href="./member.html?t=demo">患者画面</a>
+        <button class="badge" id="reloadAllButton" type="button">再読み込み</button>
       </div>
-      <div class="guide-talk">
-        <span class="guide-mini">営業トーク例</span>
-        「予約を受けるだけではなく、今日やること・LINE文面・来店後フォローまで見えるので、オーナーが毎日使いやすい管理画面です。」
+    </header>
+
+    <section class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-label">今日の受付</div>
+        <div class="summary-value" id="todayCount">0</div>
+        <div class="summary-note">本日の来院・受付記録</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-label">要フォロー</div>
+        <div class="summary-value" id="followupCount">0</div>
+        <div class="summary-note">LINE案内が必要な患者さん</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-label">検索結果</div>
+        <div class="summary-value" id="searchCount">0</div>
+        <div class="summary-note">現在表示中の患者件数</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-label">選択中</div>
+        <div class="summary-value" id="selectedPatientLabel">--</div>
+        <div class="summary-note">患者詳細を右側に表示</div>
       </div>
     </section>
 
-    <section id="loginBox" class="login-box">
-      <div class="notice yellow">管理画面を使うために、Cloudflare Worker に登録した ADMIN_TOKEN を入力してください。入力したトークンは、このブラウザ内だけに保存されます。</div>
-      <div class="form-grid two"><div class="field"><label for="adminTokenInput">ADMIN_TOKEN</label><input id="adminTokenInput" class="input" type="password" placeholder="DPRO_LIFF_ADMIN_2026_..."></div><div class="field"><label>&nbsp;</label><button id="saveTokenBtn" class="btn btn-primary" type="button">保存して管理画面を開く</button></div></div>
-    </section>
+    <div class="layout">
+      <div class="left-stack">
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">今</span>
+              今日の受付
+            </h2>
+            <div class="card-subtitle">
+              本日受付・来院記録を残した患者さんを表示します。
+            </div>
+          </div>
 
-    <section class="morning-reset">
-      <div class="morning-head"><div><h2>営業前デモ準備</h2><small>スマホで1回押すだけで、全業種のデモデータを今日の日付基準で整えます</small></div></div>
-      <div class="notice yellow">営業前にこのボタンを押すと、ジム・ヨガ・サロン・居酒屋・整備工場・歯科などのデモ予約、今日やること、フォロー予定をまとめて再作成します。</div><div class="guide-note"><b>説明ポイント：</b>営業前に押しておけば、予約日・タスク日が今日基準になるので、古いデモに見えません。</div>
-      <div class="morning-actions"><button id="demoResetAllBtn" class="btn btn-primary" type="button" onclick="demoResetAllWithConfirm()">全業種デモを1タップで準備</button><button id="demoResetBtnTop" class="btn btn-dark" type="button" onclick="demoResetWithConfirm()">表示中の業種だけ再作成</button></div>
-      <div id="resetAllResult" class="reset-result"></div>
-    </section>
+          <div class="card-body">
+            <div class="actions" style="margin-top: 0;">
+              <button class="btn btn-primary" id="loadTodayButton" type="button">
+                今日の受付を更新
+              </button>
+            </div>
 
-    <section class="industry-switch">
-      <div class="industry-head"><div><h2>業種別デモ切り替え</h2><small>営業先に合わせて、予約画面と管理画面をすぐ切り替えできます</small></div></div>
-      <div id="industryButtons" class="industry-buttons"></div><div class="guide-note"><b>説明ポイント：</b>営業先の業種に合わせて画面を切り替えられるため、相手が自分のお店で使うイメージを持ちやすくなります。</div>
-      <div class="industry-links"><a id="currentOwnerLink" class="btn btn-blue" href="./owner.html" target="_self">この業種の管理画面を開く</a><a id="currentIndexLink" class="btn btn-outline" href="./index.html" target="_blank" rel="noopener">この業種の予約画面を開く</a></div>
-    </section>
+            <div id="todayMessage" class="message"></div>
+            <div id="todayList" class="list" style="margin-top: 12px;">
+              <div class="empty-box">まだ読み込んでいません。</div>
+            </div>
+          </div>
+        </section>
 
-    <section class="toolbar">
-      <div class="guide-note"><b>説明ポイント：</b>表示日を変えると、その日の予約・タスクを確認できます。顧客検索は名前や電話番号から探せます。</div>
-      <div class="toolbar-grid"><div class="field"><label for="dateInput">表示日</label><input id="dateInput" class="input" type="date"></div><div class="field"><label for="searchInput">顧客検索</label><input id="searchInput" class="input" type="search" placeholder="名前・LINE名・電話番号で検索"></div><button id="reloadBtn" class="btn btn-blue" type="button">再読み込み</button><button id="demoResetBtn" class="btn btn-dark" type="button" onclick="demoResetWithConfirm()">この業種を再作成</button></div>
-    </section>
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">検</span>
+              患者検索
+            </h2>
+            <div class="card-subtitle">
+              氏名・ふりがな・電話番号・診察券番号で検索できます。
+            </div>
+          </div>
 
-    <section class="metrics"><div class="guide-note"><b>説明ポイント：</b>今日の予約数・承認待ち・フォロー予定・未対応タスクが数字で見えるので、朝の確認が早くなります。</div><div class="metric"><small>本日の予約</small><strong id="metricToday">0</strong><span>件</span></div><div class="metric"><small>承認待ち</small><strong id="metricPending">0</strong><span>件</span></div><div class="metric"><small>フォロー予定</small><strong id="metricFollowups">0</strong><span>件</span></div><div class="metric"><small>今日やること</small><strong id="metricTasks">0</strong><span>件</span></div></section>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="searchInput">検索キーワード</label>
+                <input
+                  id="searchInput"
+                  type="text"
+                  placeholder="例：山田 / ヤマダ / 090 / D2606"
+                  autocomplete="off"
+                />
+              </div>
 
-    <section class="next-action"><div class="guide-note"><b>説明ポイント：</b>「まず何をすればいいか」を大きく表示します。オーナーやスタッフが迷いにくくなります。</div><div class="next-action-head"><small>NEXT ACTION</small><h2 id="nextActionTitle">次にやることを確認中です</h2></div><div class="next-action-body"><div id="nextActionBody" class="notice">データを読み込むと、優先対応がここに表示されます。</div><div class="workflow"><div class="flow-card"><b>1. 予約が入る</b><small>お客様がLINEから予約</small></div><div class="flow-card"><b>2. 確認する</b><small>承認待ちを見て確定</small></div><div class="flow-card"><b>3. LINEで案内</b><small>文面をコピーして送信</small></div><div class="flow-card"><b>4. フォロー</b><small>来店後の再予約につなげる</small></div></div></div></section>
+              <div class="mini-grid">
+                <button class="btn btn-sub" id="searchButton" type="button">
+                  患者を検索
+                </button>
+                <button class="btn btn-light" id="demoButton" type="button">
+                  デモ表示
+                </button>
+              </div>
+            </div>
 
-    <div class="tabs"><button class="tab active" data-tab="today">今日やること</button><button class="tab" data-tab="reservations">予約一覧</button><button class="tab" data-tab="customers">顧客検索</button><button class="tab" data-tab="templates">LINE文面</button><button class="tab" data-tab="settings">休業日・営業時間</button></div>
+            <div id="searchMessage" class="message"></div>
+            <div id="searchList" class="list" style="margin-top: 12px;">
+              <div class="empty-box">検索すると患者一覧が表示されます。</div>
+            </div>
+          </div>
+        </section>
 
-    <section id="tab-today" class="tab-panel active"><div class="grid-main"><div class="panel"><div class="panel-head"><div class="panel-title"><div class="icon">✓</div><div><h2>今日やること</h2><small>オーナーが最初に見る場所です</small></div></div></div><div class="panel-body"><div class="guide-note"><b>説明ポイント：</b>予約確認やフォローなど、今日対応すべきことだけを表示します。LINE文面コピーまでこの画面でできます。</div><div id="tasksList" class="card-list"></div></div></div><div class="panel"><div class="panel-head"><div class="panel-title"><div class="icon">💬</div><div><h2>すぐ使うLINE文面</h2><small>コピーしてLINE公式で送れます</small></div></div></div><div class="panel-body"><div id="quickTemplatesList" class="card-list"></div></div></div></div></section>
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">L</span>
+              フォロー対象
+            </h2>
+            <div class="card-subtitle">
+              定期検診・再来院案内など、LINEで連絡する患者さんを表示します。
+            </div>
+          </div>
 
-    <section id="tab-reservations" class="tab-panel"><div class="panel"><div class="panel-head"><div class="panel-title"><div class="icon">📅</div><div><h2>予約一覧</h2><small>予約確定・来店完了・キャンセルまで対応できます</small></div></div></div><div class="panel-body"><div class="guide-note"><b>説明ポイント：</b>承認待ち予約を確定し、そのままLINE文面コピーまで見せると営業デモで伝わりやすいです。</div><div id="reservationsList" class="card-list"></div></div></div></section>
+          <div class="card-body">
+            <div class="actions" style="margin-top: 0;">
+              <button class="btn btn-primary" id="loadFollowupsButton" type="button">
+                フォロー対象を更新
+              </button>
+            </div>
 
-    <section id="tab-customers" class="tab-panel"><div class="grid-main"><div class="panel"><div class="panel-head"><div class="panel-title"><div class="icon">👤</div><div><h2>顧客検索</h2><small>お客様が増えても名前で探せます</small></div></div></div><div class="panel-body"><div class="guide-note"><b>説明ポイント：</b>お客様が増えても検索できます。名前コピー・電話コピーでLINE公式側の検索にもつなげやすくなります。</div><div id="customersList" class="card-list"></div></div></div><div class="panel"><div class="panel-head"><div class="panel-title"><div class="icon">📋</div><div><h2>顧客詳細</h2><small>予約履歴とフォロー状況を確認できます</small></div></div></div><div class="panel-body"><div id="customerDetailBox" class="empty">左の一覧から顧客を選択してください。</div></div></div></div></section>
+            <div id="followupListMessage" class="message"></div>
+            <div id="followupList" class="list" style="margin-top: 12px;">
+              <div class="empty-box">まだ読み込んでいません。</div>
+            </div>
+          </div>
+        </section>
 
-    <section id="tab-templates" class="tab-panel"><div class="panel"><div class="panel-head"><div class="panel-title"><div class="icon">💬</div><div><h2>LINE文面テンプレート</h2><small>予約確認・来店前・来店後の文面をすぐ使えます</small></div></div></div><div class="panel-body"><div class="guide-note"><b>説明ポイント：</b>予約確認・来店前・来店後フォローの文章を毎回考えずに使えます。対応品質をそろえやすいです。</div><div id="templatesList" class="card-list"></div></div></div></section>
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">設</span>
+              管理設定
+            </h2>
+            <div class="card-subtitle">
+              管理コードはWorker側で確認します。秘密キーはこの画面に書きません。
+            </div>
+          </div>
 
-    <section id="tab-settings" class="tab-panel"><div class="grid-main"><div class="panel"><div class="panel-head"><div class="panel-title"><div class="icon">⏰</div><div><h2>営業時間</h2><small>曜日ごとの営業時間を設定できます</small></div></div></div><div class="panel-body"><div class="guide-note"><b>説明ポイント：</b>営業時間や休みをここで変えると、予約画面の空き時間にも反映されます。</div><div id="businessHoursBox" class="form-grid"></div><div class="actions"><button id="saveBusinessHoursBtn" class="btn btn-primary" type="button">営業時間を保存</button></div></div></div><div class="panel"><div class="panel-head"><div class="panel-title"><div class="icon">休</div><div><h2>臨時休業・特別営業</h2><small>急な休みや特別営業日を予約画面へ反映できます</small></div></div></div><div class="panel-body"><div class="form-grid"><div class="field"><label for="specialDateInput">日付</label><input id="specialDateInput" class="input" type="date"></div><div class="field"><label for="specialModeInput">設定</label><select id="specialModeInput" class="select"><option value="closed">臨時休業</option><option value="special_hours">特別営業時間</option><option value="fully_open">特別営業</option></select></div><div class="form-grid two"><div class="field"><label for="specialOpenInput">開始時間</label><input id="specialOpenInput" class="input" type="time" value="10:00"></div><div class="field"><label for="specialCloseInput">終了時間</label><input id="specialCloseInput" class="input" type="time" value="18:00"></div></div><div class="field"><label for="specialMemoInput">メモ</label><input id="specialMemoInput" class="input" type="text" placeholder="例：研修のため休業"></div><button id="saveSpecialDayBtn" class="btn btn-primary" type="button">臨時休業・特別営業を保存</button></div><div style="height:14px"></div><div id="specialDaysList" class="card-list"></div></div></div></div></section>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="staffNameInput">スタッフ名</label>
+                <input id="staffNameInput" type="text" placeholder="受付スタッフ" />
+              </div>
 
-    <div class="footer">Presented by DPRO SHOP</div>
+              <div class="field">
+                <label for="adminCodeInput">管理コード</label>
+                <input id="adminCodeInput" type="password" placeholder="Cloudflare Worker 側で確認する管理コード" />
+              </div>
+
+              <button class="btn btn-light" id="saveSettingsButton" type="button">
+                設定を保存
+              </button>
+            </div>
+
+            <div id="settingsMessage" class="message"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="right-stack">
+        <section id="emptyDetailCard" class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">患</span>
+              患者詳細
+            </h2>
+            <div class="card-subtitle">
+              左側の患者一覧・今日の受付・フォロー対象から患者を選択してください。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="empty-box">
+              まだ患者が選択されていません。<br />
+              検索結果や今日の受付から患者をクリックすると、ここに詳細が表示されます。
+            </div>
+          </div>
+        </section>
+
+        <section id="patientDetailCard" class="card hidden">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">患</span>
+              患者詳細
+            </h2>
+            <div class="card-subtitle">
+              患者情報・来院履歴・次回予約・フォロー文面を確認できます。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="patient-hero">
+              <div class="patient-content">
+                <div class="patient-label">PATIENT DETAIL</div>
+                <div class="patient-name" id="detailPatientName">---</div>
+                <div class="patient-kana" id="detailPatientKana"></div>
+
+                <div class="pill-row">
+                  <div class="pill blue">
+                    <span>診察券番号</span>
+                    <strong id="detailMemberNo">---</strong>
+                  </div>
+                  <div class="pill" id="detailStatusPill">
+                    <span>状態</span>
+                    <strong id="detailStatus">---</strong>
+                  </div>
+                  <div class="pill green">
+                    <span>来院回数</span>
+                    <strong id="detailVisitCount">0</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tabs">
+              <button class="tab-button active" data-tab="profile" type="button">基本情報</button>
+              <button class="tab-button" data-tab="visits" type="button">来院履歴</button>
+              <button class="tab-button" data-tab="newVisit" type="button">来院記録追加</button>
+              <button class="tab-button" data-tab="line" type="button">LINE文面</button>
+            </div>
+
+            <section id="tab-profile" class="detail-section active">
+              <div class="info-list">
+                <div class="info-row">
+                  <div class="info-key">電話</div>
+                  <div class="info-value" id="detailPhone">---</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-key">LINE名</div>
+                  <div class="info-value" id="detailLineName">---</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-key">前回来院</div>
+                  <div class="info-value" id="detailLastVisit">---</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-key">次回予約</div>
+                  <div class="info-value" id="detailNextAppointment">---</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-key">患者メモ</div>
+                  <div class="info-value" id="detailPatientMemo">---</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-key">院内メモ</div>
+                  <div class="info-value" id="detailInternalMemo">---</div>
+                </div>
+              </div>
+
+              <div class="actions">
+                <div class="mini-grid">
+                  <button class="btn btn-primary" id="copyNameButton" type="button">
+                    患者名コピー
+                  </button>
+                  <button class="btn btn-light" id="openMemberButton" type="button">
+                    診察券を開く
+                  </button>
+                </div>
+              </div>
+
+              <div id="profileMessage" class="message"></div>
+            </section>
+
+            <section id="tab-visits" class="detail-section">
+              <div id="detailVisitsList" class="list">
+                <div class="empty-box">来院履歴はまだありません。</div>
+              </div>
+            </section>
+
+            <section id="tab-newVisit" class="detail-section">
+              <div class="form-grid">
+                <div class="mini-grid">
+                  <div class="field">
+                    <label for="visitTypeInput">来院種別</label>
+                    <select id="visitTypeInput"></select>
+                  </div>
+
+                  <div class="field">
+                    <label for="visitStatusInput">来院ステータス</label>
+                    <select id="visitStatusInput"></select>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="chiefComplaintInput">来院理由・主訴</label>
+                  <textarea id="chiefComplaintInput" placeholder="例：定期検診、歯がしみる、クリーニング希望など"></textarea>
+                </div>
+
+                <div class="field">
+                  <label for="treatmentSummaryInput">処置内容メモ</label>
+                  <textarea id="treatmentSummaryInput" placeholder="例：検診、スケーリング、ブラッシング説明など"></textarea>
+                </div>
+
+                <div class="mini-grid">
+                  <div class="field">
+                    <label for="nextDateInput">次回予約日</label>
+                    <input id="nextDateInput" type="date" />
+                  </div>
+
+                  <div class="field">
+                    <label for="nextTimeInput">次回予約時間</label>
+                    <input id="nextTimeInput" type="time" />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="nextMemoInput">次回予約メモ</label>
+                  <textarea id="nextMemoInput" placeholder="例：3か月後の定期検診、右下治療の続きなど"></textarea>
+                </div>
+
+                <div class="mini-grid">
+                  <div class="field">
+                    <label for="needsFollowupInput">フォロー</label>
+                    <select id="needsFollowupInput">
+                      <option value="false">フォロー不要</option>
+                      <option value="true">フォロー予定を作る</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="followupDueDateInput">フォロー予定日</label>
+                    <input id="followupDueDateInput" type="date" />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="followupReasonInput">フォロー理由</label>
+                  <textarea id="followupReasonInput" placeholder="例：3か月後の定期検診案内、治療後の様子確認など"></textarea>
+                </div>
+
+                <div class="field">
+                  <label for="visitLineMessageInput">LINE送信用文面</label>
+                  <textarea id="visitLineMessageInput" placeholder="来院後にLINE公式へ貼り付ける文面"></textarea>
+                </div>
+
+                <div class="actions">
+                  <button class="btn btn-primary" id="saveVisitButton" type="button">
+                    来院記録を保存
+                  </button>
+
+                  <div class="mini-grid">
+                    <button class="btn btn-light" id="makeVisitLineMessageButton" type="button">
+                      文面を自動作成
+                    </button>
+                    <button class="btn btn-success" id="copyVisitLineMessageButton" type="button">
+                      LINE文面をコピー
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="visitMessage" class="message"></div>
+            </section>
+
+            <section id="tab-line" class="detail-section">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="templateSelect">文面テンプレート</label>
+                  <select id="templateSelect"></select>
+                </div>
+
+                <div class="line-box">
+                  <div class="line-title">コピー用LINE文面</div>
+                  <div class="line-text" id="lineCopyPreview"></div>
+                </div>
+
+                <textarea id="lineCopyTextarea" class="hidden"></textarea>
+
+                <div class="actions">
+                  <button class="btn btn-success" id="copyLineTextButton" type="button">
+                    LINE文面をコピー
+                  </button>
+                </div>
+              </div>
+
+              <div id="lineMessage" class="message"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="templatesCard" class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">文</span>
+              文面テンプレート
+            </h2>
+            <div class="card-subtitle">
+              DBから取得できない場合は、config.js のデフォルト文面を使います。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="actions" style="margin-top: 0;">
+              <button class="btn btn-light" id="loadTemplatesButton" type="button">
+                テンプレートを更新
+              </button>
+            </div>
+
+            <div id="templatesMessage" class="message"></div>
+            <div id="templatesList" class="list" style="margin-top: 12px;">
+              <div class="empty-box">テンプレートはまだ読み込んでいません。</div>
+            </div>
+          </div>
+        </section>
+
+        <div id="debugBox" class="debug hidden"></div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <strong id="footerClinicName">DPRO歯科クリニック</strong><br />
+      DPRO SHOP 歯科デジタルQR診察券 / owner.html<br />
+      この画面には Supabase Service Role Key や ADMIN_TOKEN は直書きしていません。
+    </footer>
   </main>
 
   <script>
-    const DEFAULT_CONFIG={API_BASE_URL:'https://dpro-liff-common-api.dpromstk2000.workers.dev',SHOP_CODE:'demo_shop_default',PROVIDER_NAME:'DPRO SHOP',SHOP_NAME:'デモ店舗',SERVICE_NAME:'予約・顧客フォローLINEシステム'};
-    const CONFIG={...DEFAULT_CONFIG,...(window.DPRO_CONFIG||{})};
-    const DEMO_SHOPS=[
-      {code:'demo_shop_default',label:'共通デモ',short:'共通',description:'汎用の予約・顧客フォローデモ'},
-      {code:'demo_personal_gym',label:'パーソナルジム',short:'ジム',description:'体験予約・継続フォロー向け'},
-      {code:'demo_private_yoga',label:'プライベートヨガ',short:'ヨガ',description:'レッスン予約・前後フォロー向け'},
-      {code:'demo_beauty_salon',label:'美容サロン',short:'サロン',description:'予約・再来店フォロー向け'},
-      {code:'demo_izakaya',label:'居酒屋',short:'居酒屋',description:'席予約・来店前案内向け'},
-      {code:'demo_car_service',label:'整備工場',short:'整備',description:'入庫予約・車検フォロー向け'},
-      {code:'demo_dental_clinic',label:'歯科クリニック',short:'歯科',description:'診療予約・定期検診フォロー向け'}
-    ];
-    const STORAGE_KEYS={adminToken:'dpro_liff_admin_token',guideMode:'dpro_liff_guide_mode'};
-    const state={adminToken:'',shop:null,summary:null,reservations:[],followups:[],tasks:[],customers:[],templates:[],businessHours:[],specialDays:[],selectedDate:getJstToday(),selectedCustomer:null,searchTimer:null};
-    const $=(id)=>document.getElementById(id);
-    const els={
-      loading:$('loading'),loadingText:$('loadingText'),toast:$('toast'),providerName:$('providerName'),shopNamePill:$('shopNamePill'),shopCodePill:$('shopCodePill'),reservationPageLink:$('reservationPageLink'),loginBox:$('loginBox'),adminTokenInput:$('adminTokenInput'),saveTokenBtn:$('saveTokenBtn'),demoResetAllBtn:$('demoResetAllBtn'),demoResetBtnTop:$('demoResetBtnTop'),resetAllResult:$('resetAllResult'),industryButtons:$('industryButtons'),currentOwnerLink:$('currentOwnerLink'),currentIndexLink:$('currentIndexLink'),dateInput:$('dateInput'),searchInput:$('searchInput'),reloadBtn:$('reloadBtn'),demoResetBtn:$('demoResetBtn'),metricToday:$('metricToday'),metricPending:$('metricPending'),metricFollowups:$('metricFollowups'),metricTasks:$('metricTasks'),nextActionTitle:$('nextActionTitle'),nextActionBody:$('nextActionBody'),tasksList:$('tasksList'),quickTemplatesList:$('quickTemplatesList'),reservationsList:$('reservationsList'),customersList:$('customersList'),customerDetailBox:$('customerDetailBox'),templatesList:$('templatesList'),businessHoursBox:$('businessHoursBox'),saveBusinessHoursBtn:$('saveBusinessHoursBtn'),specialDateInput:$('specialDateInput'),specialModeInput:$('specialModeInput'),specialOpenInput:$('specialOpenInput'),specialCloseInput:$('specialCloseInput'),specialMemoInput:$('specialMemoInput'),saveSpecialDayBtn:$('saveSpecialDayBtn'),specialDaysList:$('specialDaysList')
-    };
+    (function () {
+      "use strict";
 
-    document.addEventListener('DOMContentLoaded',init);
-    async function init(){
-      try{bindEvents();applyStaticText();renderIndustryButtons();applyGuideMode();state.adminToken=localStorage.getItem(STORAGE_KEYS.adminToken)||'';els.adminTokenInput.value=state.adminToken;els.dateInput.value=state.selectedDate;els.specialDateInput.value=state.selectedDate;if(state.adminToken){els.loginBox.classList.add('hidden');await loadAll();}else{renderInitialEmpty();}}catch(error){handleApiError(error);}
-    }
-    function on(el,event,fn){if(el)el.addEventListener(event,fn)}
-    function bindEvents(){
-      document.querySelectorAll('.tab').forEach((tab)=>tab.addEventListener('click',()=>setActiveTab(tab.dataset.tab)));
-      on(els.saveTokenBtn,'click',async()=>{const token=els.adminTokenInput.value.trim();if(!token){showToast('ADMIN_TOKENを入力してください。');return;}state.adminToken=token;localStorage.setItem(STORAGE_KEYS.adminToken,token);els.loginBox.classList.add('hidden');await loadAll();});
-      on(els.reloadBtn,'click',loadAll);on(els.dateInput,'change',async()=>{state.selectedDate=els.dateInput.value||getJstToday();await loadDayData();});
-      on(els.searchInput,'input',()=>{clearTimeout(state.searchTimer);state.searchTimer=setTimeout(loadCustomers,350);});
-      on(els.demoResetBtn,'click',demoResetWithConfirm);on(els.demoResetBtnTop,'click',demoResetWithConfirm);on(els.demoResetAllBtn,'click',demoResetAllWithConfirm);
-      on(els.saveBusinessHoursBtn,'click',saveBusinessHours);on(els.saveSpecialDayBtn,'click',saveSpecialDay);
-    }
-    function applyStaticText(){const shopCode=getShopCode();els.providerName.textContent=CONFIG.PROVIDER_NAME||'DPRO SHOP';els.shopNamePill.textContent=CONFIG.SHOP_NAME||'デモ店舗';els.shopCodePill.textContent=shopCode;els.reservationPageLink.href='./index.html?shop_code='+encodeURIComponent(shopCode);els.currentOwnerLink.href='./owner.html?shop_code='+encodeURIComponent(shopCode);els.currentIndexLink.href='./index.html?shop_code='+encodeURIComponent(shopCode);}
-    function renderIndustryButtons(){const current=getShopCode();els.industryButtons.innerHTML=DEMO_SHOPS.map((shop)=>'<button class="industry-btn '+(shop.code===current?'active':'')+'" type="button" onclick="switchShop(\''+shop.code+'\')" title="'+escapeAttr(shop.description)+'">'+escapeHtml(shop.label)+'</button>').join('');const currentShop=DEMO_SHOPS.find((s)=>s.code===current);if(currentShop){els.currentOwnerLink.textContent=currentShop.short+'の管理画面を開く';els.currentIndexLink.textContent=currentShop.short+'の予約画面を開く';}}
-    function switchShop(shopCode){const url=new URL(window.location.href);url.searchParams.set('shop_code',shopCode);window.location.href=url.toString();}
-    function applyGuideMode(){
-      const enabled=localStorage.getItem(STORAGE_KEYS.guideMode)==='1';
-      document.body.classList.toggle('guide-mode',enabled);
-      const panel=document.getElementById('guidePanel');
-      const btn=document.getElementById('guideToggleBtn');
-      if(panel)panel.classList.toggle('active',enabled);
-      if(btn)btn.textContent=enabled?'説明モードOFF':'説明モードON';
-    }
-    function toggleGuideMode(){
-      const enabled=localStorage.getItem(STORAGE_KEYS.guideMode)==='1';
-      localStorage.setItem(STORAGE_KEYS.guideMode,enabled?'0':'1');
-      applyGuideMode();
-      showToast(enabled?'説明モードをOFFにしました。':'説明モードをONにしました。');
-    }
+      const CONFIG =
+        window.DPRO_DENTAL_QR_CONFIG ||
+        window.DPRO_CONFIG ||
+        {};
 
-    function renderInitialEmpty(){els.tasksList.innerHTML=emptyHtml('ADMIN_TOKENを保存すると、今日やることが表示されます。');els.quickTemplatesList.innerHTML=emptyHtml('LINE文面テンプレートが表示されます。');els.reservationsList.innerHTML=emptyHtml('予約一覧が表示されます。');els.customersList.innerHTML=emptyHtml('顧客一覧が表示されます。');els.templatesList.innerHTML=emptyHtml('文面テンプレートが表示されます。');els.businessHoursBox.innerHTML=emptyHtml('営業時間設定が表示されます。');els.specialDaysList.innerHTML=emptyHtml('臨時休業・特別営業日が表示されます。');renderNextAction();}
-    async function loadAll(){showLoading();try{await Promise.all([loadSummary(),loadDayData(false),loadCustomers(),loadTemplates(),loadBusinessHours(),loadSpecialDays()]);renderNextAction();showToast('読み込みました。');}catch(error){handleApiError(error);}finally{hideLoading();}}
-    async function loadSummary(){const data=await apiGet('/api/admin/summary?shop_code='+encodeURIComponent(getShopCode()));state.shop=data.shop;state.summary=data.summary;els.shopNamePill.textContent=state.shop?.shop_name||CONFIG.SHOP_NAME||'店舗';els.shopCodePill.textContent=state.shop?.shop_code||getShopCode();document.title=(state.shop?.shop_name||'デモ店舗')+' | オーナー管理画面';els.reservationPageLink.href='./index.html?shop_code='+encodeURIComponent(getShopCode());els.currentOwnerLink.href='./owner.html?shop_code='+encodeURIComponent(getShopCode());els.currentIndexLink.href='./index.html?shop_code='+encodeURIComponent(getShopCode());els.metricToday.textContent=state.summary?.today_reservations??0;els.metricPending.textContent=state.summary?.pending_reservations??0;els.metricFollowups.textContent=state.summary?.due_followups??0;els.metricTasks.textContent=state.summary?.open_tasks??0;}
-    async function loadDayData(withLoading=true){if(withLoading)showLoading();try{const data=await apiGet('/api/admin/day?shop_code='+encodeURIComponent(getShopCode())+'&date='+encodeURIComponent(state.selectedDate));state.reservations=data.reservations||[];state.followups=data.followups||[];state.tasks=data.tasks||[];renderTasks();renderReservations();renderNextAction();await loadSummary();}catch(error){handleApiError(error);}finally{if(withLoading)hideLoading();}}
-    async function loadCustomers(){const q=els.searchInput.value.trim();try{const data=await apiGet('/api/admin/customers?shop_code='+encodeURIComponent(getShopCode())+'&q='+encodeURIComponent(q)+'&limit=50');state.customers=data.customers||[];renderCustomers();}catch(error){handleApiError(error);}}
-    async function loadTemplates(){try{const data=await apiGet('/api/admin/templates?shop_code='+encodeURIComponent(getShopCode()));state.templates=data.templates||[];renderTemplates();renderQuickTemplates();}catch(error){handleApiError(error);}}
-    async function loadBusinessHours(){try{const data=await apiGet('/api/admin/business-hours?shop_code='+encodeURIComponent(getShopCode()));state.businessHours=data.business_hours||[];renderBusinessHours();}catch(error){handleApiError(error);}}
-    async function loadSpecialDays(){try{const from=getJstToday();const to=addDays(from,90);const data=await apiGet('/api/admin/special-days?shop_code='+encodeURIComponent(getShopCode())+'&from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to));state.specialDays=data.special_days||[];renderSpecialDays();}catch(error){handleApiError(error);}}
-    async function demoResetWithConfirm(){if(!state.adminToken){els.loginBox.classList.remove('hidden');showToast('先にADMIN_TOKENを保存してください。');return;}const ok=confirm('表示中の業種のデモデータを再作成します。現在のデモ予約・顧客・タスクは削除されます。よろしいですか？');if(!ok)return;await demoReset();}
-    async function demoResetAllWithConfirm(){if(!state.adminToken){els.loginBox.classList.remove('hidden');showToast('先にADMIN_TOKENを保存してください。');return;}const ok=confirm('全業種のデモデータをまとめて再作成します。営業前の準備として実行しますか？');if(!ok)return;await demoResetAll();}
-    async function demoReset(){showLoading('表示中の業種デモを再作成しています...');try{await apiPost('/api/admin/demo/reset',{shop_code:getShopCode()});showToast('表示中の業種デモを再作成しました。');await loadAll();}catch(error){handleApiError(error);}finally{hideLoading();}}
-    async function demoResetAll(){showLoading('全業種デモを準備しています...');els.demoResetAllBtn.disabled=true;els.demoResetBtn.disabled=true;els.demoResetBtnTop.disabled=true;els.resetAllResult.classList.remove('active');els.resetAllResult.textContent='';const results=[];let successCount=0;let failCount=0;try{for(let i=0;i<DEMO_SHOPS.length;i++){const shop=DEMO_SHOPS[i];setLoadingText('全業種デモを準備中... '+(i+1)+'/'+DEMO_SHOPS.length+'\n'+shop.label);try{await apiPost('/api/admin/demo/reset',{shop_code:shop.code});successCount++;results.push('✅ '+shop.label+'：準備完了');}catch(error){failCount++;results.push('⚠️ '+shop.label+'：失敗 '+(error?.message||error));}}const message=['営業前デモ準備が完了しました。','成功：'+successCount+'件','失敗：'+failCount+'件','',...results].join('\n');els.resetAllResult.textContent=message;els.resetAllResult.classList.add('active');showToast(failCount===0?'全業種デモの準備が完了しました。':'一部の業種でエラーがありました。結果を確認してください。');await loadAll();}catch(error){handleApiError(error);}finally{els.demoResetAllBtn.disabled=false;els.demoResetBtn.disabled=false;els.demoResetBtnTop.disabled=false;hideLoading();}}
-    function renderNextAction(){const pending=state.reservations.find((r)=>r.status==='pending');const openTask=state.tasks.find((t)=>t.status==='open')||state.tasks[0];const dueFollowup=state.followups.find((f)=>f.status==='scheduled'||f.status==='open');if(pending){els.nextActionTitle.textContent='まずは承認待ちの予約を確認しましょう';els.nextActionBody.className='notice yellow';els.nextActionBody.innerHTML='<b>'+escapeHtml(pending.customer_name||'お客様')+'</b> さんの予約が承認待ちです。<br>予約一覧から「予約確定」を押して、その後LINE文面をコピーして送る流れです。<div class="actions"><button class="btn btn-blue" type="button" onclick="setActiveTab(\'reservations\')">予約一覧を見る</button><button class="btn btn-outline" type="button" onclick="copyReservationMessage(\''+pending.id+'\')">LINE文面コピー</button></div>';return;}if(openTask){els.nextActionTitle.textContent=openTask.title||'今日のタスクを確認しましょう';els.nextActionBody.className='notice';els.nextActionBody.innerHTML=escapeHtml(openTask.detail||'今日の対応があります。内容を確認してください。')+'<div class="actions"><button class="btn btn-blue" type="button" onclick="setActiveTab(\'today\')">今日やることを見る</button></div>';return;}if(dueFollowup){els.nextActionTitle.textContent='フォロー予定があります';els.nextActionBody.className='notice';els.nextActionBody.innerHTML='来店後フォローや再予約の案内を送るタイミングです。<div class="actions"><button class="btn btn-blue" type="button" onclick="setActiveTab(\'today\')">フォローを確認する</button></div>';return;}els.nextActionTitle.textContent='現在、急ぎの対応はありません';els.nextActionBody.className='notice green';els.nextActionBody.textContent='予約確認・フォロー予定・未対応タスクは落ち着いています。新しい予約が入るとここに表示されます。';}
-    function renderTasks(){if(!state.tasks.length){els.tasksList.innerHTML=emptyHtml('今日やることはありません。');return;}els.tasksList.innerHTML=state.tasks.map((task,index)=>{const priority=Number(task.priority||3);const priorityText=priority<=2?'優先対応':'通常対応';const customerName=findCustomerName(task.customer_id)||'お客様';const message=buildMessageForTask(task,customerName);return '<article class="item '+(index===0?'featured':'')+'"><div class="item-head"><div><h3 class="item-title">'+escapeHtml(task.title||'タスク')+'</h3><div class="item-meta">'+(formatDate(task.due_date)||'期限なし')+(task.due_time?' '+String(task.due_time).slice(0,5):'')+'</div></div><span class="badge '+(priority<=2?'high':'open')+'">'+priorityText+'</span></div><div class="mini-row"><span class="mini">'+escapeHtml(task.task_type||'task')+'</span><span class="mini">'+statusLabel(task.status)+'</span><span class="mini">優先度 '+priority+'</span></div><p class="item-text">'+escapeHtml(task.detail||'')+'</p><div class="message-preview">'+escapeHtml(message)+'</div><div class="actions"><button class="btn btn-blue" type="button" onclick="copyTaskMessage(\''+task.id+'\')">LINE文面コピー</button><button class="btn btn-green" type="button" onclick="markTaskDone(\''+task.id+'\')">対応済み</button><button class="btn btn-outline" type="button" onclick="skipTask(\''+task.id+'\')">今回は不要</button></div></article>';}).join('');}
-    function renderReservations(){if(!state.reservations.length){els.reservationsList.innerHTML=emptyHtml('この日の予約はありません。');return;}els.reservationsList.innerHTML=state.reservations.map((r)=>'<article class="item '+(r.status==='pending'?'featured':'')+'"><div class="item-head"><div><h3 class="item-title">'+escapeHtml(r.customer_name||'お客様')+'</h3><div class="item-meta">'+formatDate(r.reservation_date)+' '+String(r.start_time||'').slice(0,5)+' / '+escapeHtml(r.menu_name||'')+(r.phone?' / '+escapeHtml(r.phone):'')+'</div></div><span class="badge '+reservationBadgeClass(r.status)+'">'+reservationStatusLabel(r.status)+'</span></div><div class="mini-row"><span class="mini">'+escapeHtml(r.source||'予約')+'</span><span class="mini">'+escapeHtml(r.number_of_people||1)+'名</span>'+(r.line_display_name?'<span class="mini">LINE名：'+escapeHtml(r.line_display_name)+'</span>':'')+'</div>'+(r.customer_note?'<p class="item-text">'+escapeHtml(r.customer_note)+'</p>':'')+'<div class="message-preview">'+escapeHtml(buildReservationMessage(r))+'</div><div class="actions">'+(r.status==='pending'?'<button class="btn btn-blue" type="button" onclick="updateReservationStatus(\''+r.id+'\',\'confirmed\')">予約確定</button>':'')+(r.status!=='completed'?'<button class="btn btn-green" type="button" onclick="updateReservationStatus(\''+r.id+'\',\'completed\')">来店完了</button>':'')+(!String(r.status||'').startsWith('cancelled')?'<button class="btn btn-red" type="button" onclick="updateReservationStatus(\''+r.id+'\',\'cancelled_by_owner\')">キャンセル</button>':'')+'<button class="btn btn-outline" type="button" onclick="copyReservationMessage(\''+r.id+'\')">LINE文面コピー</button></div></article>').join('');}
-    function renderCustomers(){if(!state.customers.length){els.customersList.innerHTML=emptyHtml('該当する顧客が見つかりません。');return;}els.customersList.innerHTML=state.customers.map((c)=>{const name=c.customer_name||c.line_display_name||'お客様';const sub=[c.phone||'',customerStatusLabel(c.status),c.remaining_count!==null&&c.remaining_count!==undefined?'残り'+c.remaining_count+'回':''].filter(Boolean).join(' / ');return '<article class="item"><div class="item-head"><div><h3 class="item-title">'+escapeHtml(name)+'</h3><div class="item-meta">'+escapeHtml(sub||'情報なし')+'</div></div><span class="badge open">'+escapeHtml(customerStatusLabel(c.status))+'</span></div>'+(c.memo?'<p class="item-text">'+escapeHtml(c.memo)+'</p>':'')+'<div class="actions"><button class="btn btn-blue" type="button" onclick="loadCustomerDetail(\''+c.id+'\')">詳細を見る</button><button class="btn btn-outline" type="button" onclick="copyCustomerName(\''+c.id+'\')">名前コピー</button>'+(c.phone?'<button class="btn btn-outline" type="button" onclick="copyCustomerPhone(\''+c.id+'\')">電話コピー</button>':'')+'</div></article>';}).join('');}
-    async function loadCustomerDetail(customerId){showLoading();try{const data=await apiGet('/api/admin/customers/'+customerId);state.selectedCustomer=data.customer;const c=data.customer;const name=c.customer_name||c.line_display_name||'お客様';const reservationsHtml=(data.reservations||[]).slice(0,10).map((r)=>'<div class="item"><div class="item-head"><div><h3 class="item-title">'+formatDate(r.reservation_date)+' '+String(r.start_time||'').slice(0,5)+'</h3><div class="item-meta">'+escapeHtml(r.menu_name||'')+' / '+reservationStatusLabel(r.status)+'</div></div></div></div>').join('');const followupsHtml=(data.followups||[]).slice(0,10).map((f)=>'<div class="item"><div class="item-head"><div><h3 class="item-title">'+escapeHtml(f.title||'フォロー')+'</h3><div class="item-meta">'+formatDate(f.due_date)+' / '+statusLabel(f.status)+'</div></div></div>'+(f.detail?'<p class="item-text">'+escapeHtml(f.detail)+'</p>':'')+'</div>').join('');els.customerDetailBox.className='';els.customerDetailBox.innerHTML='<div class="card-list"><article class="item featured"><div class="item-head"><div><h3 class="item-title">'+escapeHtml(name)+'</h3><div class="item-meta">'+escapeHtml(c.phone||'電話番号なし')+(c.line_display_name?' / LINE名：'+escapeHtml(c.line_display_name):'')+'</div></div><span class="badge open">'+escapeHtml(customerStatusLabel(c.status))+'</span></div>'+(c.memo?'<p class="item-text">'+escapeHtml(c.memo)+'</p>':'')+'<div class="actions"><button class="btn btn-outline" type="button" onclick="copyText(\''+safeJs(name)+'\')">名前コピー</button>'+(c.phone?'<button class="btn btn-outline" type="button" onclick="copyText(\''+safeJs(c.phone)+'\')">電話番号コピー</button>':'')+'</div></article><div class="notice">予約履歴</div>'+(reservationsHtml||emptyHtml('予約履歴はありません。'))+'<div class="notice">フォロー履歴</div>'+(followupsHtml||emptyHtml('フォロー履歴はありません。'))+'</div>'; }catch(error){handleApiError(error);}finally{hideLoading();}}
-    function renderTemplates(){if(!state.templates.length){els.templatesList.innerHTML=emptyHtml('LINE文面テンプレートがありません。');return;}els.templatesList.innerHTML=state.templates.map(templateCardHtml).join('');}
-    function renderQuickTemplates(){const list=state.templates.slice(0,4);if(!list.length){els.quickTemplatesList.innerHTML=emptyHtml('テンプレートがありません。');return;}els.quickTemplatesList.innerHTML=list.map(templateCardHtml).join('');}
-    function templateCardHtml(t){return '<article class="item"><div class="item-head"><div><h3 class="item-title">'+escapeHtml(t.title||'テンプレート')+'</h3><div class="item-meta">'+escapeHtml(t.category||'general')+'</div></div></div><div class="copy-box"><textarea class="textarea" id="template-'+t.id+'">'+escapeHtml(t.body||'')+'</textarea><div class="actions"><button class="btn btn-blue" type="button" onclick="copyTemplate(\''+t.id+'\')">コピー</button><button class="btn btn-outline" type="button" onclick="logTemplateCopied(\''+t.id+'\')">コピー済みに記録</button></div></div></article>';}
-    function renderBusinessHours(){const labels=['日','月','火','水','木','金','土'];const byWeekday=new Map();for(const h of state.businessHours){byWeekday.set(Number(h.weekday),h);}els.businessHoursBox.innerHTML='';for(let i=0;i<=6;i++){const h=byWeekday.get(i)||{weekday:i,is_open:false,open_time:'10:00:00',close_time:'19:00:00',last_start_time:'18:00:00'};const row=document.createElement('div');row.className='item';row.dataset.weekday=String(i);row.innerHTML='<div class="form-grid three"><div class="field"><label>'+labels[i]+'曜日</label><select class="select bh-open"><option value="true" '+(h.is_open?'selected':'')+'>営業</option><option value="false" '+(!h.is_open?'selected':'')+'>休み</option></select></div><div class="field"><label>開始</label><input class="input bh-open-time" type="time" value="'+timeValue(h.open_time||'10:00:00')+'"></div><div class="field"><label>終了</label><input class="input bh-close-time" type="time" value="'+timeValue(h.close_time||'19:00:00')+'"></div></div><div class="form-grid two" style="margin-top:10px"><div class="field"><label>最終受付</label><input class="input bh-last-time" type="time" value="'+timeValue(h.last_start_time||'18:00:00')+'"></div><div class="field"><label>メモ</label><input class="input bh-memo" type="text" value="'+escapeAttr(h.memo||'')+'"></div></div>';els.businessHoursBox.appendChild(row);}}
-    function renderSpecialDays(){if(!state.specialDays.length){els.specialDaysList.innerHTML=emptyHtml('直近90日の臨時休業・特別営業はありません。');return;}els.specialDaysList.innerHTML=state.specialDays.map((d)=>{const title=d.mode==='closed'?'臨時休業':d.mode==='special_hours'?'特別営業時間':'特別営業';const time=d.mode==='closed'?'終日休み':String(d.open_time||'').slice(0,5)+'〜'+String(d.close_time||'').slice(0,5);return '<article class="item"><div class="item-head"><div><h3 class="item-title">'+formatDate(d.special_date)+'：'+title+'</h3><div class="item-meta">'+time+'</div></div><span class="badge '+(d.mode==='closed'?'cancelled':'confirmed')+'">'+title+'</span></div>'+(d.memo?'<p class="item-text">'+escapeHtml(d.memo)+'</p>':'')+'</article>';}).join('');}
-    async function markTaskDone(taskId){showLoading();try{await apiPost('/api/admin/tasks/'+taskId+'/done',{});showToast('対応済みにしました。');await loadDayData(false);}catch(error){handleApiError(error);}finally{hideLoading();}}
-    async function skipTask(taskId){const reason=prompt('スキップ理由を入力してください。空欄でもOKです。')||'';showLoading();try{await apiPost('/api/admin/tasks/'+taskId+'/skip',{reason});showToast('今回は不要にしました。');await loadDayData(false);}catch(error){handleApiError(error);}finally{hideLoading();}}
-    async function updateReservationStatus(reservationId,status){const label=reservationStatusLabel(status);const ok=confirm('この予約を「'+label+'」に変更しますか？');if(!ok)return;showLoading();try{await apiPost('/api/admin/reservations/'+reservationId+'/status',{status});showToast('予約を「'+label+'」に変更しました。');await loadDayData(false);}catch(error){handleApiError(error);}finally{hideLoading();}}
-    async function copyTaskMessage(taskId){const task=state.tasks.find((t)=>t.id===taskId);if(!task)return;const customerName=findCustomerName(task.customer_id)||'お客様';const message=buildMessageForTask(task,customerName);await copyText(message);try{await apiPost('/api/admin/message-log',{shop_id:state.shop?.id,customer_id:task.customer_id,reservation_id:task.reservation_id,followup_id:task.followup_id,action:'copied',channel:'line',message_body:message});}catch(_){}}
-    async function copyReservationMessage(reservationId){const r=state.reservations.find((x)=>x.id===reservationId);if(!r)return;const message=buildReservationMessage(r);await copyText(message);try{await apiPost('/api/admin/message-log',{shop_id:state.shop?.id,customer_id:r.customer_id,reservation_id:r.id,action:'copied',channel:'line',message_body:message});}catch(_){}}
-    function buildReservationMessage(r){return (r.customer_name||'お客様')+'様\n\nご予約ありがとうございます。\n下記の内容で確認いたしました。\n\n日時：'+formatDate(r.reservation_date)+' '+String(r.start_time||'').slice(0,5)+'\n内容：'+(r.menu_name||'ご予約')+'\n\n当日はお気をつけてお越しください。\nご不明点がありましたら、LINEでお気軽にご連絡ください。';}
-    function buildMessageForTask(task,customerName){if(task.task_type==='reservation_approval')return customerName+'様\n\nご予約ありがとうございます。\n内容を確認いたしました。\n\nこのあと予約確定のご案内をお送りします。\nご不明点がありましたら、LINEでお気軽にご連絡ください。';if(task.task_type==='before_visit_message')return customerName+'様\n\n本日のご来店をお待ちしております。\nお気をつけてお越しください。\n\nご不明点がありましたら、LINEでお気軽にご連絡ください。';if(task.task_type==='remaining_low_followup')return customerName+'様\n\nいつもありがとうございます。\n残り回数が少なくなってきました。\n\n継続をご希望の場合は、次回ご来店時にお気軽にご相談ください。';if(task.task_type==='after_visit_followup')return customerName+'様\n\n先日はありがとうございました。\nその後、ご不明点や気になることはありませんか？\n\n次回のご予約や継続についても、お気軽にご相談ください。';return customerName+'様\n\nいつもありがとうございます。\nご確認よろしくお願いいたします。';}
-    async function copyTemplate(templateId){const textarea=document.getElementById('template-'+templateId);if(!textarea)return;await copyText(textarea.value);}
-    async function logTemplateCopied(templateId){const textarea=document.getElementById('template-'+templateId);if(!textarea)return;try{await apiPost('/api/admin/message-log',{shop_id:state.shop?.id,template_id:templateId,action:'copied',channel:'line',message_body:textarea.value});showToast('コピー済みとして記録しました。');}catch(error){handleApiError(error);}}
-    async function saveBusinessHours(){const rows=[...els.businessHoursBox.querySelectorAll('.item')];const business_hours=rows.map((row)=>({weekday:Number(row.dataset.weekday),is_open:row.querySelector('.bh-open').value==='true',open_time:row.querySelector('.bh-open-time').value,close_time:row.querySelector('.bh-close-time').value,last_start_time:row.querySelector('.bh-last-time').value,memo:row.querySelector('.bh-memo').value}));showLoading();try{await apiPost('/api/admin/business-hours',{shop_code:getShopCode(),business_hours});showToast('営業時間を保存しました。');await loadBusinessHours();}catch(error){handleApiError(error);}finally{hideLoading();}}
-    async function saveSpecialDay(){const specialDate=els.specialDateInput.value;if(!specialDate){showToast('日付を選んでください。');return;}showLoading();try{await apiPost('/api/admin/special-days',{shop_code:getShopCode(),special_date:specialDate,mode:els.specialModeInput.value,open_time:els.specialOpenInput.value,close_time:els.specialCloseInput.value,title:els.specialModeInput.value==='closed'?'臨時休業':'特別営業',memo:els.specialMemoInput.value});showToast('臨時休業・特別営業を保存しました。');await loadSpecialDays();}catch(error){handleApiError(error);}finally{hideLoading();}}
-    async function apiGet(path){const res=await fetch(CONFIG.API_BASE_URL+path,{method:'GET',headers:{'Content-Type':'application/json','x-admin-token':state.adminToken}});return await parseApiResponse(res);}
-    async function apiPost(path,payload){const res=await fetch(CONFIG.API_BASE_URL+path,{method:'POST',headers:{'Content-Type':'application/json','x-admin-token':state.adminToken},body:JSON.stringify(payload||{})});return await parseApiResponse(res);}
-    async function parseApiResponse(res){let data=null;try{data=await res.json();}catch(_){data=null;}if(!res.ok||data?.ok===false){throw new Error(data?.error||data?.message||'APIエラー: '+res.status);}return data;}
-    function handleApiError(error){const message=error?.message||String(error);if(message.includes('admin token')||message.includes('Unauthorized'))els.loginBox.classList.remove('hidden');showToast(message);console.error(error);}
-    function setActiveTab(tabName){document.querySelectorAll('.tab').forEach((tab)=>tab.classList.toggle('active',tab.dataset.tab===tabName));document.querySelectorAll('.tab-panel').forEach((panel)=>panel.classList.remove('active'));const panel=document.getElementById('tab-'+tabName);if(panel)panel.classList.add('active');}
-    function findCustomerName(customerId){const c=state.customers.find((x)=>x.id===customerId);return c?.customer_name||c?.line_display_name||'';}
-    function findCustomer(customerId){return state.customers.find((x)=>x.id===customerId)||null;}
-    async function copyCustomerName(customerId){const c=findCustomer(customerId);if(!c)return;await copyText(c.customer_name||c.line_display_name||'お客様');}
-    async function copyCustomerPhone(customerId){const c=findCustomer(customerId);if(!c||!c.phone)return;await copyText(c.phone);}
-    async function copyText(text){try{await navigator.clipboard.writeText(text);showToast('コピーしました。');}catch(_){const area=document.createElement('textarea');area.value=text;document.body.appendChild(area);area.select();document.execCommand('copy');document.body.removeChild(area);showToast('コピーしました。');}}
-    function showLoading(message='読み込み中です...'){setLoadingText(message);els.loading.classList.add('active');}
-    function setLoadingText(message){if(els.loadingText)els.loadingText.textContent=message;}
-    function hideLoading(){els.loading.classList.remove('active');}
-    let toastTimer=null;function showToast(message){clearTimeout(toastTimer);els.toast.textContent=message;els.toast.classList.add('active');toastTimer=setTimeout(()=>els.toast.classList.remove('active'),2800);}
-    function getShopCode(){const params=new URLSearchParams(location.search);return params.get('shop_code')||CONFIG.SHOP_CODE||'demo_shop_default';}
-    function getJstToday(){const now=new Date();const jst=new Date(now.getTime()+9*60*60*1000);return jst.toISOString().slice(0,10);}
-    function addDays(dateString,days){const d=new Date(dateString+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10);}
-    function formatDate(dateString){if(!dateString)return'';const [year,month,day]=String(dateString).split('-');const date=new Date(dateString+'T00:00:00Z');const labels=['日','月','火','水','木','金','土'];return year+'/'+month+'/'+day+'（'+labels[date.getUTCDay()]+'）';}
-    function timeValue(timeString){if(!timeString)return'';return String(timeString).slice(0,5);}
-    function statusLabel(status){const map={open:'未対応',done:'対応済み',skipped:'不要',cancelled:'取消',scheduled:'予定',completed:'完了'};return map[status]||status||'-';}
-    function reservationStatusLabel(status){const map={pending:'承認待ち',confirmed:'確定',changed:'変更済み',cancelled_by_customer:'お客様キャンセル',cancelled_by_owner:'店舗キャンセル',completed:'完了',no_show:'無断キャンセル',archived:'保管'};return map[status]||status||'-';}
-    function reservationBadgeClass(status){if(status==='pending')return'pending';if(status==='confirmed')return'confirmed';if(status==='completed')return'completed';if(String(status||'').startsWith('cancelled'))return'cancelled';return'open';}
-    function customerStatusLabel(status){const map={new:'新規',lead:'見込み',trial_booked:'体験予約',trial_done:'体験済み',active:'継続中',inactive:'休眠',paused:'休会',archived:'保管'};return map[status]||status||'-';}
-    function emptyHtml(message){return '<div class="empty">'+escapeHtml(message)+'</div>';}
-    function escapeHtml(value){return String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
-    function escapeAttr(value){return escapeHtml(value).replaceAll('\n','&#10;');}
-    function safeJs(value){return String(value??'').replaceAll('\\','\\\\').replaceAll("'","\\'").replaceAll('\n','\\n').replaceAll('\r','');}
-    window.switchShop=switchShop;window.toggleGuideMode=toggleGuideMode;window.setActiveTab=setActiveTab;window.demoResetWithConfirm=demoResetWithConfirm;window.demoResetAllWithConfirm=demoResetAllWithConfirm;window.markTaskDone=markTaskDone;window.skipTask=skipTask;window.updateReservationStatus=updateReservationStatus;window.copyTaskMessage=copyTaskMessage;window.copyReservationMessage=copyReservationMessage;window.copyTemplate=copyTemplate;window.logTemplateCopied=logTemplateCopied;window.loadCustomerDetail=loadCustomerDetail;window.copyCustomerName=copyCustomerName;window.copyCustomerPhone=copyCustomerPhone;window.copyText=copyText;
+      const $ = (id) => document.getElementById(id);
+
+      const state = {
+        todayVisits: [],
+        followups: [],
+        searchResults: [],
+        templates: [],
+        selectedPatient: null,
+        selectedVisits: [],
+        selectedFollowups: [],
+        demoMode: false
+      };
+
+      const els = {
+        systemName: $("systemName"),
+        pageTitle: $("pageTitle"),
+        clinicNameText: $("clinicNameText"),
+        scanLink: $("scanLink"),
+        adminLink: $("adminLink"),
+        memberLink: $("memberLink"),
+        reloadAllButton: $("reloadAllButton"),
+
+        todayCount: $("todayCount"),
+        followupCount: $("followupCount"),
+        searchCount: $("searchCount"),
+        selectedPatientLabel: $("selectedPatientLabel"),
+
+        loadTodayButton: $("loadTodayButton"),
+        todayMessage: $("todayMessage"),
+        todayList: $("todayList"),
+
+        searchInput: $("searchInput"),
+        searchButton: $("searchButton"),
+        demoButton: $("demoButton"),
+        searchMessage: $("searchMessage"),
+        searchList: $("searchList"),
+
+        loadFollowupsButton: $("loadFollowupsButton"),
+        followupListMessage: $("followupListMessage"),
+        followupList: $("followupList"),
+
+        staffNameInput: $("staffNameInput"),
+        adminCodeInput: $("adminCodeInput"),
+        saveSettingsButton: $("saveSettingsButton"),
+        settingsMessage: $("settingsMessage"),
+
+        emptyDetailCard: $("emptyDetailCard"),
+        patientDetailCard: $("patientDetailCard"),
+        detailPatientName: $("detailPatientName"),
+        detailPatientKana: $("detailPatientKana"),
+        detailMemberNo: $("detailMemberNo"),
+        detailStatusPill: $("detailStatusPill"),
+        detailStatus: $("detailStatus"),
+        detailVisitCount: $("detailVisitCount"),
+        detailPhone: $("detailPhone"),
+        detailLineName: $("detailLineName"),
+        detailLastVisit: $("detailLastVisit"),
+        detailNextAppointment: $("detailNextAppointment"),
+        detailPatientMemo: $("detailPatientMemo"),
+        detailInternalMemo: $("detailInternalMemo"),
+        copyNameButton: $("copyNameButton"),
+        openMemberButton: $("openMemberButton"),
+        profileMessage: $("profileMessage"),
+
+        detailVisitsList: $("detailVisitsList"),
+
+        visitTypeInput: $("visitTypeInput"),
+        visitStatusInput: $("visitStatusInput"),
+        chiefComplaintInput: $("chiefComplaintInput"),
+        treatmentSummaryInput: $("treatmentSummaryInput"),
+        nextDateInput: $("nextDateInput"),
+        nextTimeInput: $("nextTimeInput"),
+        nextMemoInput: $("nextMemoInput"),
+        needsFollowupInput: $("needsFollowupInput"),
+        followupDueDateInput: $("followupDueDateInput"),
+        followupReasonInput: $("followupReasonInput"),
+        visitLineMessageInput: $("visitLineMessageInput"),
+        saveVisitButton: $("saveVisitButton"),
+        makeVisitLineMessageButton: $("makeVisitLineMessageButton"),
+        copyVisitLineMessageButton: $("copyVisitLineMessageButton"),
+        visitMessage: $("visitMessage"),
+
+        templateSelect: $("templateSelect"),
+        lineCopyPreview: $("lineCopyPreview"),
+        lineCopyTextarea: $("lineCopyTextarea"),
+        copyLineTextButton: $("copyLineTextButton"),
+        lineMessage: $("lineMessage"),
+
+        loadTemplatesButton: $("loadTemplatesButton"),
+        templatesMessage: $("templatesMessage"),
+        templatesList: $("templatesList"),
+
+        debugBox: $("debugBox"),
+        footerClinicName: $("footerClinicName")
+      };
+
+      function getConfigValue(path, fallback) {
+        try {
+          return path.split(".").reduce((obj, key) => obj && obj[key], CONFIG) ?? fallback;
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function escapeHtml(value) {
+        if (CONFIG.utils && typeof CONFIG.utils.escapeHtml === "function") {
+          return CONFIG.utils.escapeHtml(value);
+        }
+
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function nl2br(value) {
+        if (CONFIG.utils && typeof CONFIG.utils.nl2br === "function") {
+          return CONFIG.utils.nl2br(value);
+        }
+
+        return escapeHtml(value).replace(/\n/g, "<br>");
+      }
+
+      function formatDate(dateText) {
+        if (CONFIG.utils && typeof CONFIG.utils.formatDate === "function") {
+          return CONFIG.utils.formatDate(dateText);
+        }
+
+        if (!dateText) return "未設定";
+        const date = new Date(`${dateText}T00:00:00+09:00`);
+        if (Number.isNaN(date.getTime())) return dateText;
+
+        return new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          weekday: "short"
+        }).format(date);
+      }
+
+      function formatDateShort(dateText) {
+        if (CONFIG.utils && typeof CONFIG.utils.formatDateShort === "function") {
+          return CONFIG.utils.formatDateShort(dateText);
+        }
+
+        if (!dateText) return "未設定";
+        const date = new Date(`${dateText}T00:00:00+09:00`);
+        if (Number.isNaN(date.getTime())) return dateText;
+
+        return new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          month: "numeric",
+          day: "numeric",
+          weekday: "short"
+        }).format(date);
+      }
+
+      function formatDateTime(dateTimeText) {
+        if (CONFIG.utils && typeof CONFIG.utils.formatDateTime === "function") {
+          return CONFIG.utils.formatDateTime(dateTimeText);
+        }
+
+        if (!dateTimeText) return "未設定";
+        const date = new Date(dateTimeText);
+        if (Number.isNaN(date.getTime())) return dateTimeText;
+
+        return new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+          weekday: "short",
+          hour: "2-digit",
+          minute: "2-digit"
+        }).format(date);
+      }
+
+      function formatTime(timeText) {
+        if (CONFIG.utils && typeof CONFIG.utils.formatTime === "function") {
+          return CONFIG.utils.formatTime(timeText);
+        }
+
+        if (!timeText) return "";
+        const parts = String(timeText).split(":");
+        if (parts.length < 2) return timeText;
+        return `${parts[0]}:${parts[1]}`;
+      }
+
+      function getTodayJST() {
+        if (CONFIG.utils && typeof CONFIG.utils.getTodayJST === "function") {
+          return CONFIG.utils.getTodayJST();
+        }
+
+        const now = new Date();
+        const formatter = new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        });
+
+        const parts = formatter.formatToParts(now);
+        const y = parts.find((p) => p.type === "year").value;
+        const m = parts.find((p) => p.type === "month").value;
+        const d = parts.find((p) => p.type === "day").value;
+        return `${y}-${m}-${d}`;
+      }
+
+      function addDays(dateText, days) {
+        const base = new Date(`${dateText}T00:00:00+09:00`);
+        base.setDate(base.getDate() + days);
+        const y = base.getFullYear();
+        const m = String(base.getMonth() + 1).padStart(2, "0");
+        const d = String(base.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      function getStatusLabel(status) {
+        if (CONFIG.utils && typeof CONFIG.utils.getStatusLabel === "function") {
+          return CONFIG.utils.getStatusLabel(status);
+        }
+
+        const map = getConfigValue("PATIENT_STATUS", {});
+        return map[status]?.label || status || "未設定";
+      }
+
+      function getVisitTypeLabel(type) {
+        if (CONFIG.utils && typeof CONFIG.utils.getVisitTypeLabel === "function") {
+          return CONFIG.utils.getVisitTypeLabel(type);
+        }
+
+        const map = getConfigValue("VISIT_TYPES", {});
+        return map[type]?.label || type || "未設定";
+      }
+
+      function getVisitStatusLabel(status) {
+        if (CONFIG.utils && typeof CONFIG.utils.getVisitStatusLabel === "function") {
+          return CONFIG.utils.getVisitStatusLabel(status);
+        }
+
+        const map = getConfigValue("VISIT_STATUS", {});
+        return map[status]?.label || status || "未設定";
+      }
+
+      function getFollowupTypeLabel(type) {
+        if (CONFIG.utils && typeof CONFIG.utils.getFollowupTypeLabel === "function") {
+          return CONFIG.utils.getFollowupTypeLabel(type);
+        }
+
+        const map = getConfigValue("FOLLOWUP_TYPES", {});
+        return map[type]?.label || type || "未設定";
+      }
+
+      function getFollowupStatusLabel(status) {
+        if (CONFIG.utils && typeof CONFIG.utils.getFollowupStatusLabel === "function") {
+          return CONFIG.utils.getFollowupStatusLabel(status);
+        }
+
+        const map = getConfigValue("FOLLOWUP_STATUS", {});
+        return map[status]?.label || status || "未設定";
+      }
+
+      function buildNextAppointmentText(dateText, timeText, memo) {
+        if (CONFIG.utils && typeof CONFIG.utils.buildNextAppointmentText === "function") {
+          return CONFIG.utils.buildNextAppointmentText(dateText, timeText, memo);
+        }
+
+        if (!dateText && !timeText && !memo) return "未設定";
+
+        return [
+          dateText ? formatDate(dateText) : "",
+          timeText ? formatTime(timeText) : "",
+          memo || ""
+        ].filter(Boolean).join(" ");
+      }
+
+      function replaceTemplateVariables(templateText, data) {
+        if (CONFIG.utils && typeof CONFIG.utils.replaceTemplateVariables === "function") {
+          return CONFIG.utils.replaceTemplateVariables(templateText, data);
+        }
+
+        const values = {
+          clinic_name: getConfigValue("CLINIC.NAME", "DPRO歯科クリニック"),
+          patient_name: data?.patient_name || "",
+          member_no: data?.member_no || "",
+          next_appointment: buildNextAppointmentText(
+            data?.next_appointment_date,
+            data?.next_appointment_time,
+            data?.next_appointment_memo
+          ),
+          followup_due_date: data?.followup_due_date ? formatDate(data.followup_due_date) : "",
+          last_visit_date: data?.last_visit_date ? formatDate(data.last_visit_date) : "",
+          today: formatDate(getTodayJST())
+        };
+
+        let text = String(templateText || "");
+        Object.keys(values).forEach((key) => {
+          text = text.replaceAll(`{{${key}}}`, values[key] || "");
+        });
+
+        return text;
+      }
+
+      async function copyText(text) {
+        if (CONFIG.utils && typeof CONFIG.utils.copyText === "function") {
+          return CONFIG.utils.copyText(text);
+        }
+
+        const value = String(text || "");
+
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(value);
+          return true;
+        }
+
+        const textarea = document.createElement("textarea");
+        textarea.value = value;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        const result = document.execCommand("copy");
+        document.body.removeChild(textarea);
+        return result;
+      }
+
+      async function apiFetch(endpoint, options) {
+        if (CONFIG.utils && typeof CONFIG.utils.apiFetch === "function") {
+          return CONFIG.utils.apiFetch(endpoint, options);
+        }
+
+        throw new Error("API設定がまだ読み込まれていません。");
+      }
+
+      function getAdminCode() {
+        if (CONFIG.utils && typeof CONFIG.utils.getAdminCode === "function") {
+          return CONFIG.utils.getAdminCode();
+        }
+
+        try {
+          return localStorage.getItem(getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code")) || "";
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function setAdminCode(code) {
+        if (CONFIG.utils && typeof CONFIG.utils.setAdminCode === "function") {
+          CONFIG.utils.setAdminCode(code);
+          return;
+        }
+
+        try {
+          localStorage.setItem(getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code"), code || "");
+        } catch (error) {
+          console.warn(error);
+        }
+      }
+
+      function getStaffName() {
+        if (CONFIG.utils && typeof CONFIG.utils.getStaffName === "function") {
+          return CONFIG.utils.getStaffName();
+        }
+
+        try {
+          return localStorage.getItem(getConfigValue("STORAGE_KEYS.STAFF_NAME", "dpro_dental_qr_staff_name")) || "受付スタッフ";
+        } catch (error) {
+          return "受付スタッフ";
+        }
+      }
+
+      function setStaffName(name) {
+        if (CONFIG.utils && typeof CONFIG.utils.setStaffName === "function") {
+          CONFIG.utils.setStaffName(name);
+          return;
+        }
+
+        try {
+          localStorage.setItem(getConfigValue("STORAGE_KEYS.STAFF_NAME", "dpro_dental_qr_staff_name"), name || "受付スタッフ");
+        } catch (error) {
+          console.warn(error);
+        }
+      }
+
+      function showMessage(target, type, text) {
+        target.className = `message ${type || "info"} show`;
+        target.innerHTML = nl2br(text || "");
+      }
+
+      function clearMessage(target) {
+        target.className = "message";
+        target.innerHTML = "";
+      }
+
+      function setButtonLoading(button, loading, text) {
+        if (!button) return;
+
+        if (loading) {
+          button.dataset.originalText = button.textContent;
+          button.textContent = text || "処理中...";
+          button.disabled = true;
+        } else {
+          button.textContent = button.dataset.originalText || button.textContent;
+          button.disabled = false;
+        }
+      }
+
+      function getDefaultTemplates() {
+        const messages = getConfigValue("DEFAULT_MESSAGES", {});
+
+        return Object.entries(messages).map(([key, body], index) => {
+          const titles = {
+            regular_checkup_3months: "3か月定期検診のご案内",
+            revisit_followup: "再来院フォロー",
+            after_treatment_care: "治療後の様子確認",
+            missed_revisit: "次回予約未定の患者さん向け",
+            next_appointment_reminder: "次回予約リマインド"
+          };
+
+          return {
+            id: `default-${key}`,
+            template_key: key,
+            category: "default",
+            title: titles[key] || key,
+            body,
+            sort_order: (index + 1) * 10,
+            is_active: true
+          };
+        });
+      }
+
+      function getDemoData() {
+        const today = getTodayJST();
+        const yesterday = addDays(today, -1);
+        const next1 = addDays(today, 14);
+        const next2 = addDays(today, 21);
+        const followupDate = addDays(today, 90);
+
+        const patients = [
+          {
+            id: "demo-patient-1",
+            clinic_id: "demo-clinic",
+            qr_token: "demo-dental-patient-001",
+            member_no: "D260600001",
+            patient_name: "山田 太郎",
+            patient_name_kana: "ヤマダ タロウ",
+            phone: "090-0000-0000",
+            email: "",
+            line_display_name: "Taro Yamada",
+            status: "active",
+            card_enabled: true,
+            first_visit_date: addDays(today, -180),
+            last_visit_at: new Date().toISOString(),
+            last_visit_type: "cleaning",
+            next_appointment_date: next1,
+            next_appointment_time: "10:30",
+            next_appointment_memo: "定期検診・クリーニング予定",
+            patient_memo: "デモ用患者。QR診察券の流れを説明できます。",
+            internal_memo: "受付でQR読取 → 来院履歴 → LINEフォローの説明用。",
+            visit_count: 4
+          },
+          {
+            id: "demo-patient-2",
+            clinic_id: "demo-clinic",
+            qr_token: "demo-dental-patient-002",
+            member_no: "D260600002",
+            patient_name: "佐藤 花子",
+            patient_name_kana: "サトウ ハナコ",
+            phone: "080-1111-2222",
+            email: "",
+            line_display_name: "Hanako",
+            status: "needs_followup",
+            card_enabled: true,
+            first_visit_date: addDays(today, -120),
+            last_visit_at: new Date(Date.now() - 92 * 86400000).toISOString(),
+            last_visit_type: "checkup",
+            next_appointment_date: "",
+            next_appointment_time: "",
+            next_appointment_memo: "定期検診の案内が必要",
+            patient_memo: "定期検診フォロー対象。",
+            internal_memo: "LINE文面コピーを見せるデモに最適。",
+            visit_count: 2
+          },
+          {
+            id: "demo-patient-3",
+            clinic_id: "demo-clinic",
+            qr_token: "demo-dental-patient-003",
+            member_no: "D260600003",
+            patient_name: "田中 一郎",
+            patient_name_kana: "タナカ イチロウ",
+            phone: "070-3333-4444",
+            email: "",
+            line_display_name: "Ichiro",
+            status: "active",
+            card_enabled: true,
+            first_visit_date: addDays(today, -60),
+            last_visit_at: new Date(Date.now() - 86400000).toISOString(),
+            last_visit_type: "treatment",
+            next_appointment_date: next2,
+            next_appointment_time: "15:00",
+            next_appointment_memo: "右下治療の続き",
+            patient_memo: "治療継続中。",
+            internal_memo: "次回予約あり。",
+            visit_count: 3
+          }
+        ];
+
+        const visits = [
+          {
+            id: "demo-visit-1",
+            clinic_id: "demo-clinic",
+            patient_id: "demo-patient-1",
+            member_no: "D260600001",
+            patient_name: "山田 太郎",
+            patient_name_kana: "ヤマダ タロウ",
+            phone: "090-0000-0000",
+            visit_date: today,
+            visited_at: new Date().toISOString(),
+            visit_status: "visited",
+            visit_type: "cleaning",
+            chief_complaint: "定期検診・クリーニング",
+            treatment_summary: "口腔内チェック、スケーリング、ブラッシング説明",
+            next_appointment_date: next1,
+            next_appointment_time: "10:30",
+            next_appointment_memo: "3か月後の定期検診",
+            needs_followup: true,
+            followup_due_date: followupDate,
+            followup_reason: "3か月後の定期検診案内",
+            line_message_text: "",
+            created_by_staff: "受付スタッフ"
+          },
+          {
+            id: "demo-visit-2",
+            clinic_id: "demo-clinic",
+            patient_id: "demo-patient-3",
+            member_no: "D260600003",
+            patient_name: "田中 一郎",
+            patient_name_kana: "タナカ イチロウ",
+            phone: "070-3333-4444",
+            visit_date: yesterday,
+            visited_at: new Date(Date.now() - 86400000).toISOString(),
+            visit_status: "completed",
+            visit_type: "treatment",
+            chief_complaint: "右下の治療",
+            treatment_summary: "治療説明、次回予約設定",
+            next_appointment_date: next2,
+            next_appointment_time: "15:00",
+            next_appointment_memo: "右下治療の続き",
+            needs_followup: false,
+            followup_due_date: "",
+            followup_reason: "",
+            line_message_text: "",
+            created_by_staff: "受付スタッフ"
+          }
+        ];
+
+        const followups = [
+          {
+            id: "demo-followup-1",
+            clinic_id: "demo-clinic",
+            patient_id: "demo-patient-2",
+            visit_id: null,
+            member_no: "D260600002",
+            patient_name: "佐藤 花子",
+            patient_name_kana: "サトウ ハナコ",
+            phone: "080-1111-2222",
+            line_display_name: "Hanako",
+            followup_type: "regular_checkup",
+            due_date: today,
+            status: "todo",
+            priority: "high",
+            title: "3か月定期検診のご案内",
+            reason: "前回来院から約3か月経過",
+            message_template_key: "regular_checkup_3months",
+            message_text: "こんにちは。DPRO歯科クリニックです。\n\n前回のご来院からお日にちが経ちましたので、定期検診とクリーニングのご案内です。\n\nお口の状態を良い状態で保つために、そろそろ一度チェックにお越しください。\n\nご都合のよい日時がありましたら、このLINEにそのままご返信ください。"
+          }
+        ];
+
+        const patientDetails = {
+          "demo-patient-1": {
+            patient: patients[0],
+            visits: visits.filter((v) => v.patient_id === "demo-patient-1").concat([
+              {
+                id: "demo-visit-old-1",
+                clinic_id: "demo-clinic",
+                patient_id: "demo-patient-1",
+                visit_date: addDays(today, -92),
+                visited_at: new Date(Date.now() - 92 * 86400000).toISOString(),
+                visit_status: "completed",
+                visit_type: "checkup",
+                chief_complaint: "3か月定期検診",
+                treatment_summary: "問題なし。クリーニング実施。",
+                next_appointment_memo: "次回も3か月後"
+              }
+            ]),
+            followups: []
+          },
+          "demo-patient-2": {
+            patient: patients[1],
+            visits: [
+              {
+                id: "demo-visit-old-2",
+                clinic_id: "demo-clinic",
+                patient_id: "demo-patient-2",
+                visit_date: addDays(today, -92),
+                visited_at: new Date(Date.now() - 92 * 86400000).toISOString(),
+                visit_status: "completed",
+                visit_type: "cleaning",
+                chief_complaint: "定期検診・クリーニング",
+                treatment_summary: "次回も3か月後検診を案内。",
+                next_appointment_memo: "未予約"
+              }
+            ],
+            followups
+          },
+          "demo-patient-3": {
+            patient: patients[2],
+            visits: visits.filter((v) => v.patient_id === "demo-patient-3"),
+            followups: []
+          }
+        };
+
+        return {
+          patients,
+          visits,
+          followups,
+          patientDetails,
+          templates: getDefaultTemplates()
+        };
+      }
+
+      function normalizePatient(raw) {
+        const patient = raw || {};
+
+        return {
+          id: patient.id || "",
+          clinic_id: patient.clinic_id || "",
+          qr_token: patient.qr_token || patient.token || "",
+          member_no: patient.member_no || patient.memberNo || patient.card_no || "---",
+          patient_name: patient.patient_name || patient.name || patient.patientName || "患者さま",
+          patient_name_kana: patient.patient_name_kana || patient.kana || patient.patientNameKana || "",
+          phone: patient.phone || "",
+          email: patient.email || "",
+          line_user_id: patient.line_user_id || "",
+          line_display_name: patient.line_display_name || patient.lineDisplayName || "",
+          status: patient.status || "active",
+          card_enabled: patient.card_enabled !== false,
+          first_visit_date: patient.first_visit_date || "",
+          last_visit_at: patient.last_visit_at || "",
+          last_visit_type: patient.last_visit_type || "",
+          next_appointment_date: patient.next_appointment_date || patient.nextAppointmentDate || "",
+          next_appointment_time: patient.next_appointment_time || patient.nextAppointmentTime || "",
+          next_appointment_memo: patient.next_appointment_memo || patient.nextAppointmentMemo || "",
+          patient_memo: patient.patient_memo || patient.patientMemo || "",
+          internal_memo: patient.internal_memo || patient.internalMemo || "",
+          visit_count: patient.visit_count ?? patient.visitCount ?? 0
+        };
+      }
+
+      function normalizeVisit(raw) {
+        const visit = raw || {};
+
+        return {
+          id: visit.id || "",
+          clinic_id: visit.clinic_id || "",
+          patient_id: visit.patient_id || "",
+          member_no: visit.member_no || "",
+          patient_name: visit.patient_name || "",
+          patient_name_kana: visit.patient_name_kana || "",
+          phone: visit.phone || "",
+          visit_date: visit.visit_date || "",
+          visited_at: visit.visited_at || "",
+          visit_status: visit.visit_status || "visited",
+          visit_type: visit.visit_type || "checkup",
+          chief_complaint: visit.chief_complaint || "",
+          treatment_summary: visit.treatment_summary || "",
+          staff_memo: visit.staff_memo || "",
+          next_appointment_date: visit.next_appointment_date || "",
+          next_appointment_time: visit.next_appointment_time || "",
+          next_appointment_memo: visit.next_appointment_memo || "",
+          needs_followup: visit.needs_followup === true,
+          followup_due_date: visit.followup_due_date || "",
+          followup_reason: visit.followup_reason || "",
+          line_message_text: visit.line_message_text || "",
+          line_message_copied: visit.line_message_copied === true,
+          created_by_staff: visit.created_by_staff || ""
+        };
+      }
+
+      function normalizeFollowup(raw) {
+        const followup = raw || {};
+
+        return {
+          id: followup.id || "",
+          clinic_id: followup.clinic_id || "",
+          patient_id: followup.patient_id || "",
+          visit_id: followup.visit_id || "",
+          member_no: followup.member_no || "",
+          patient_name: followup.patient_name || "",
+          patient_name_kana: followup.patient_name_kana || "",
+          phone: followup.phone || "",
+          line_display_name: followup.line_display_name || "",
+          followup_type: followup.followup_type || "regular_checkup",
+          due_date: followup.due_date || "",
+          status: followup.status || "todo",
+          priority: followup.priority || "normal",
+          title: followup.title || "フォロー",
+          reason: followup.reason || "",
+          message_template_key: followup.message_template_key || "",
+          message_text: followup.message_text || "",
+          staff_memo: followup.staff_memo || ""
+        };
+      }
+
+      function normalizeTemplate(raw) {
+        const template = raw || {};
+
+        return {
+          id: template.id || template.template_key || "",
+          template_key: template.template_key || template.key || "",
+          category: template.category || "followup",
+          title: template.title || template.template_key || "テンプレート",
+          body: template.body || template.message || "",
+          sort_order: template.sort_order ?? 100,
+          is_active: template.is_active !== false
+        };
+      }
+
+      function updateSummary() {
+        els.todayCount.textContent = String(state.todayVisits.length);
+        els.followupCount.textContent = String(state.followups.length);
+        els.searchCount.textContent = String(state.searchResults.length);
+
+        if (state.selectedPatient) {
+          els.selectedPatientLabel.textContent = state.selectedPatient.member_no || "選択中";
+        } else {
+          els.selectedPatientLabel.textContent = "--";
+        }
+      }
+
+      function buildMemberUrl(token) {
+        const pages = CONFIG.PAGES || {};
+
+        if (pages && typeof pages.getMemberUrl === "function") {
+          return pages.getMemberUrl(token);
+        }
+
+        const base = pages.BASE_PUBLIC_URL || window.location.origin + window.location.pathname.replace(/\/owner\.html.*$/, "");
+        return `${String(base).replace(/\/$/, "")}/member.html?t=${encodeURIComponent(token || "")}`;
+      }
+
+      function patientListItemHtml(patient) {
+        const statusLabel = patient.card_enabled === false ? "利用停止" : getStatusLabel(patient.status);
+        const pillClass =
+          patient.card_enabled === false || patient.status === "blocked"
+            ? "red"
+            : patient.status === "needs_followup" || patient.status === "temporary"
+              ? "yellow"
+              : "green";
+
+        return `
+          <div class="item-top">
+            <div>
+              <div class="item-title">${escapeHtml(patient.patient_name)}</div>
+              <div class="item-sub">
+                ${escapeHtml(patient.patient_name_kana || "ふりがな未登録")} / ${escapeHtml(patient.phone || "電話未登録")}
+              </div>
+            </div>
+            <div class="item-meta">${escapeHtml(patient.member_no || "---")}</div>
+          </div>
+          <div class="pill-row">
+            <span class="pill ${pillClass}">${escapeHtml(statusLabel)}</span>
+            <span class="pill blue">来院 ${escapeHtml(patient.visit_count ?? 0)} 回</span>
+          </div>
+        `;
+      }
+
+      function renderSearchResults() {
+        if (!state.searchResults.length) {
+          els.searchList.innerHTML = '<div class="empty-box">該当する患者はいません。</div>';
+          updateSummary();
+          return;
+        }
+
+        els.searchList.innerHTML = state.searchResults.map((patient) => {
+          return `
+            <div class="list-item clickable" data-patient-id="${escapeHtml(patient.id)}">
+              ${patientListItemHtml(patient)}
+            </div>
+          `;
+        }).join("");
+
+        els.searchList.querySelectorAll("[data-patient-id]").forEach((item) => {
+          item.addEventListener("click", async () => {
+            await loadPatientDetail(item.dataset.patientId);
+          });
+        });
+
+        updateSummary();
+      }
+
+      function renderTodayVisits() {
+        if (!state.todayVisits.length) {
+          els.todayList.innerHTML = '<div class="empty-box">今日の受付記録はまだありません。</div>';
+          updateSummary();
+          return;
+        }
+
+        els.todayList.innerHTML = state.todayVisits.map((visit) => {
+          const time = visit.visited_at ? formatDateTime(visit.visited_at) : formatDateShort(visit.visit_date);
+          const title = visit.patient_name || "患者さま";
+          const summary =
+            visit.treatment_summary ||
+            visit.chief_complaint ||
+            visit.next_appointment_memo ||
+            "メモなし";
+
+          return `
+            <div class="list-item clickable" data-patient-id="${escapeHtml(visit.patient_id)}">
+              <div class="item-top">
+                <div>
+                  <div class="item-title">${escapeHtml(title)}</div>
+                  <div class="item-sub">${escapeHtml(time)} / ${escapeHtml(getVisitTypeLabel(visit.visit_type))}</div>
+                </div>
+                <div class="item-meta">${escapeHtml(getVisitStatusLabel(visit.visit_status))}</div>
+              </div>
+              <div class="item-text">${nl2br(summary)}</div>
+              <div class="pill-row">
+                <span class="pill blue">${escapeHtml(visit.member_no || "---")}</span>
+                ${
+                  visit.next_appointment_date
+                    ? `<span class="pill green">次回 ${escapeHtml(formatDateShort(visit.next_appointment_date))}</span>`
+                    : `<span class="pill yellow">次回未設定</span>`
+                }
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        els.todayList.querySelectorAll("[data-patient-id]").forEach((item) => {
+          item.addEventListener("click", async () => {
+            await loadPatientDetail(item.dataset.patientId);
+          });
+        });
+
+        updateSummary();
+      }
+
+      function renderFollowups() {
+        if (!state.followups.length) {
+          els.followupList.innerHTML = '<div class="empty-box">現在、対応が必要なフォローはありません。</div>';
+          updateSummary();
+          return;
+        }
+
+        els.followupList.innerHTML = state.followups.map((followup) => {
+          const priorityClass =
+            followup.priority === "high"
+              ? "red"
+              : followup.priority === "low"
+                ? "blue"
+                : "yellow";
+
+          return `
+            <div class="list-item clickable" data-patient-id="${escapeHtml(followup.patient_id)}" data-followup-id="${escapeHtml(followup.id)}">
+              <div class="item-top">
+                <div>
+                  <div class="item-title">${escapeHtml(followup.patient_name || "患者さま")}</div>
+                  <div class="item-sub">
+                    ${escapeHtml(followup.title || getFollowupTypeLabel(followup.followup_type))}
+                  </div>
+                </div>
+                <div class="item-meta">${escapeHtml(formatDateShort(followup.due_date))}</div>
+              </div>
+              <div class="item-text">${nl2br(followup.reason || followup.message_text || "フォロー理由未入力")}</div>
+              <div class="pill-row">
+                <span class="pill ${priorityClass}">${escapeHtml(followup.priority || "normal")}</span>
+                <span class="pill blue">${escapeHtml(getFollowupStatusLabel(followup.status))}</span>
+                <button class="btn btn-success" style="min-height: 36px; padding: 7px 10px;" data-copy-followup="${escapeHtml(followup.id)}" type="button">文面コピー</button>
+                <button class="btn btn-light" style="min-height: 36px; padding: 7px 10px;" data-done-followup="${escapeHtml(followup.id)}" type="button">完了</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        els.followupList.querySelectorAll("[data-patient-id]").forEach((item) => {
+          item.addEventListener("click", async (event) => {
+            if (event.target.closest("button")) return;
+            await loadPatientDetail(item.dataset.patientId);
+          });
+        });
+
+        els.followupList.querySelectorAll("[data-copy-followup]").forEach((button) => {
+          button.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            const id = button.dataset.copyFollowup;
+            const followup = state.followups.find((item) => item.id === id);
+            if (!followup) return;
+
+            const text = followup.message_text || buildLineMessageForPatient(null, followup.message_template_key);
+            await copyText(text);
+            showMessage(els.followupListMessage, "success", "フォロー文面をコピーしました。LINE公式チャットに貼り付けて送信してください。");
+            await updateFollowupStatus(id, "copied");
+          });
+        });
+
+        els.followupList.querySelectorAll("[data-done-followup]").forEach((button) => {
+          button.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            const id = button.dataset.doneFollowup;
+            await updateFollowupStatus(id, "done");
+          });
+        });
+
+        updateSummary();
+      }
+
+      function renderTemplates() {
+        if (!state.templates.length) {
+          els.templatesList.innerHTML = '<div class="empty-box">利用できるテンプレートがありません。</div>';
+          els.templateSelect.innerHTML = '<option value="">テンプレートなし</option>';
+          return;
+        }
+
+        const sorted = [...state.templates].sort((a, b) => {
+          return Number(a.sort_order || 100) - Number(b.sort_order || 100);
+        });
+
+        els.templatesList.innerHTML = sorted.map((template) => {
+          return `
+            <div class="list-item">
+              <div class="item-top">
+                <div>
+                  <div class="item-title">${escapeHtml(template.title)}</div>
+                  <div class="item-sub">${escapeHtml(template.template_key)} / ${escapeHtml(template.category)}</div>
+                </div>
+                <div class="item-meta">${template.is_active ? "有効" : "無効"}</div>
+              </div>
+              <div class="item-text">${nl2br(template.body)}</div>
+            </div>
+          `;
+        }).join("");
+
+        els.templateSelect.innerHTML = sorted.map((template) => {
+          return `<option value="${escapeHtml(template.template_key)}">${escapeHtml(template.title)}</option>`;
+        }).join("");
+
+        updateLinePreview();
+      }
+
+      function renderPatientDetail() {
+        const patient = state.selectedPatient;
+
+        if (!patient) {
+          els.emptyDetailCard.classList.remove("hidden");
+          els.patientDetailCard.classList.add("hidden");
+          updateSummary();
+          return;
+        }
+
+        els.emptyDetailCard.classList.add("hidden");
+        els.patientDetailCard.classList.remove("hidden");
+
+        els.detailPatientName.textContent = patient.patient_name || "患者さま";
+        els.detailPatientKana.textContent = patient.patient_name_kana || "";
+        els.detailPatientKana.classList.toggle("hidden", !patient.patient_name_kana);
+
+        els.detailMemberNo.textContent = patient.member_no || "---";
+        els.detailVisitCount.textContent = String(patient.visit_count ?? state.selectedVisits.length ?? 0);
+
+        const statusText = patient.card_enabled === false ? "利用停止中" : getStatusLabel(patient.status);
+        els.detailStatus.textContent = statusText;
+        els.detailStatusPill.className = "pill";
+
+        if (patient.card_enabled === false || patient.status === "blocked") {
+          els.detailStatusPill.classList.add("red");
+        } else if (patient.status === "needs_followup" || patient.status === "temporary" || patient.status === "paused") {
+          els.detailStatusPill.classList.add("yellow");
+        } else {
+          els.detailStatusPill.classList.add("green");
+        }
+
+        els.detailPhone.textContent = patient.phone || "未登録";
+        els.detailLineName.textContent = patient.line_display_name || "未取得";
+
+        els.detailLastVisit.textContent = patient.last_visit_at
+          ? `${formatDateTime(patient.last_visit_at)} / ${getVisitTypeLabel(patient.last_visit_type)}`
+          : "来院履歴なし";
+
+        els.detailNextAppointment.textContent = buildNextAppointmentText(
+          patient.next_appointment_date,
+          patient.next_appointment_time,
+          patient.next_appointment_memo
+        );
+
+        els.detailPatientMemo.textContent = patient.patient_memo || "なし";
+        els.detailInternalMemo.textContent = patient.internal_memo || "なし";
+
+        els.nextDateInput.value = patient.next_appointment_date || "";
+        els.nextTimeInput.value = patient.next_appointment_time ? formatTime(patient.next_appointment_time) : "";
+        els.nextMemoInput.value = patient.next_appointment_memo || "";
+
+        renderDetailVisits();
+        updateLinePreview();
+        updateSummary();
+
+        const debug = {
+          selected_patient_id: patient.id,
+          member_no: patient.member_no,
+          qr_token: patient.qr_token,
+          visits: state.selectedVisits.length,
+          followups: state.selectedFollowups.length
+        };
+
+        els.debugBox.textContent = JSON.stringify(debug, null, 2);
+      }
+
+      function renderDetailVisits() {
+        const visits = state.selectedVisits || [];
+
+        if (!visits.length) {
+          els.detailVisitsList.innerHTML = '<div class="empty-box">来院履歴はまだありません。</div>';
+          return;
+        }
+
+        els.detailVisitsList.innerHTML = visits.map((visit) => {
+          const date = visit.visit_date ? formatDate(visit.visit_date) : formatDateTime(visit.visited_at);
+          const summary = visit.treatment_summary || visit.chief_complaint || visit.staff_memo || "メモなし";
+          const next = buildNextAppointmentText(
+            visit.next_appointment_date,
+            visit.next_appointment_time,
+            visit.next_appointment_memo
+          );
+
+          return `
+            <div class="list-item">
+              <div class="item-top">
+                <div>
+                  <div class="item-title">${escapeHtml(date)}</div>
+                  <div class="item-sub">${escapeHtml(getVisitTypeLabel(visit.visit_type))} / ${escapeHtml(getVisitStatusLabel(visit.visit_status))}</div>
+                </div>
+                <div class="item-meta">${escapeHtml(visit.created_by_staff || "記録")}</div>
+              </div>
+              <div class="item-text">${nl2br(summary)}</div>
+              <div class="pill-row">
+                ${
+                  visit.next_appointment_date || visit.next_appointment_memo
+                    ? `<span class="pill green">次回：${escapeHtml(next)}</span>`
+                    : `<span class="pill yellow">次回未設定</span>`
+                }
+                ${
+                  visit.needs_followup
+                    ? `<span class="pill blue">フォロー ${escapeHtml(formatDateShort(visit.followup_due_date))}</span>`
+                    : ""
+                }
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function buildLineMessageForPatient(patientArg, templateKey) {
+        const patient = patientArg || state.selectedPatient;
+
+        if (!patient) {
+          return "";
+        }
+
+        const key = templateKey || els.templateSelect.value || "revisit_followup";
+
+        const template =
+          state.templates.find((item) => item.template_key === key) ||
+          state.templates[0] ||
+          getDefaultTemplates()[0];
+
+        return replaceTemplateVariables(template.body || "", {
+          patient_name: patient.patient_name,
+          member_no: patient.member_no,
+          next_appointment_date: patient.next_appointment_date,
+          next_appointment_time: patient.next_appointment_time,
+          next_appointment_memo: patient.next_appointment_memo,
+          followup_due_date: els.followupDueDateInput.value || "",
+          last_visit_date: patient.last_visit_at ? patient.last_visit_at.slice(0, 10) : ""
+        });
+      }
+
+      function updateLinePreview() {
+        const text = buildLineMessageForPatient(state.selectedPatient, els.templateSelect.value);
+
+        els.lineCopyPreview.textContent = text || "患者を選択すると文面が表示されます。";
+        els.lineCopyTextarea.value = text || "";
+
+        if (state.selectedPatient) {
+          els.visitLineMessageInput.value = text || "";
+        }
+      }
+
+      function fillDefaultFollowupByVisitType() {
+        const visitType = els.visitTypeInput.value || getConfigValue("SCAN.DEFAULT_VISIT_TYPE", "checkup");
+        const visitTypes = getConfigValue("VISIT_TYPES", {});
+        const days = visitTypes[visitType]?.followupDefaultDays || 90;
+
+        els.followupDueDateInput.value = addDays(getTodayJST(), days);
+
+        if (!els.followupReasonInput.value) {
+          if (visitType === "checkup" || visitType === "cleaning") {
+            els.followupReasonInput.value = "定期検診・クリーニングの再来院案内";
+          } else if (visitType === "treatment") {
+            els.followupReasonInput.value = "治療後の状態確認・次回案内";
+          } else {
+            els.followupReasonInput.value = "来院後の再来院フォロー";
+          }
+        }
+      }
+
+      function populateSelects() {
+        const visitTypes = getConfigValue("VISIT_TYPES", {});
+        const visitStatus = getConfigValue("VISIT_STATUS", {});
+
+        els.visitTypeInput.innerHTML = Object.entries(visitTypes).map(([key, item]) => {
+          return `<option value="${escapeHtml(key)}">${escapeHtml(item.label || key)}</option>`;
+        }).join("");
+
+        els.visitStatusInput.innerHTML = Object.entries(visitStatus).map(([key, item]) => {
+          return `<option value="${escapeHtml(key)}">${escapeHtml(item.label || key)}</option>`;
+        }).join("");
+
+        els.visitTypeInput.value = getConfigValue("SCAN.DEFAULT_VISIT_TYPE", "checkup");
+        els.visitStatusInput.value = getConfigValue("SCAN.DEFAULT_VISIT_STATUS", "visited");
+      }
+
+      async function loadToday() {
+        setButtonLoading(els.loadTodayButton, true, "読み込み中...");
+        clearMessage(els.todayMessage);
+
+        try {
+          if (state.demoMode) {
+            const demo = getDemoData();
+            state.todayVisits = demo.visits.map(normalizeVisit).filter((visit) => visit.visit_date === getTodayJST());
+            renderTodayVisits();
+            showMessage(els.todayMessage, "success", "デモ用の今日の受付を表示しました。");
+            return;
+          }
+
+          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_TODAY", "/api/owner/today");
+
+          const result = await apiFetch(endpoint, {
+            method: "GET",
+            params: {
+              date: getTodayJST(),
+              limit: getConfigValue("OWNER.DEFAULT_TODAY_LIMIT", 50)
+            }
+          });
+
+          const rows =
+            result?.data?.visits ||
+            result?.data ||
+            result?.visits ||
+            result?.today ||
+            [];
+
+          state.todayVisits = Array.isArray(rows) ? rows.map(normalizeVisit) : [];
+          renderTodayVisits();
+          showMessage(els.todayMessage, "success", "今日の受付を更新しました。");
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.todayMessage,
+            "error",
+            "今日の受付を取得できませんでした。\n\n" +
+            "まだWorker未作成の場合は、デモ表示で画面確認できます。\n\n" +
+            "詳細：" +
+            (error.message || error)
+          );
+        } finally {
+          setButtonLoading(els.loadTodayButton, false);
+        }
+      }
+
+      async function loadFollowups() {
+        setButtonLoading(els.loadFollowupsButton, true, "読み込み中...");
+        clearMessage(els.followupListMessage);
+
+        try {
+          if (state.demoMode) {
+            const demo = getDemoData();
+            state.followups = demo.followups.map(normalizeFollowup);
+            renderFollowups();
+            showMessage(els.followupListMessage, "success", "デモ用のフォロー対象を表示しました。");
+            return;
+          }
+
+          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_FOLLOWUPS", "/api/owner/followups");
+
+          const result = await apiFetch(endpoint, {
+            method: "GET",
+            params: {
+              status: "active",
+              limit: getConfigValue("OWNER.DEFAULT_FOLLOWUP_LIMIT", 50)
+            }
+          });
+
+          const rows =
+            result?.data?.followups ||
+            result?.data ||
+            result?.followups ||
+            [];
+
+          state.followups = Array.isArray(rows) ? rows.map(normalizeFollowup) : [];
+          renderFollowups();
+          showMessage(els.followupListMessage, "success", "フォロー対象を更新しました。");
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.followupListMessage,
+            "error",
+            "フォロー対象を取得できませんでした。\n\n" +
+            "まだWorker未作成の場合は、デモ表示で画面確認できます。\n\n" +
+            "詳細：" +
+            (error.message || error)
+          );
+        } finally {
+          setButtonLoading(els.loadFollowupsButton, false);
+        }
+      }
+
+      async function searchPatients() {
+        const q = els.searchInput.value.trim();
+
+        setButtonLoading(els.searchButton, true, "検索中...");
+        clearMessage(els.searchMessage);
+
+        try {
+          if (state.demoMode || !q) {
+            const demo = getDemoData();
+            const lower = q.toLowerCase();
+
+            state.searchResults = demo.patients
+              .filter((patient) => {
+                if (!q) return true;
+
+                return [
+                  patient.patient_name,
+                  patient.patient_name_kana,
+                  patient.phone,
+                  patient.member_no,
+                  patient.line_display_name
+                ].some((value) => String(value || "").toLowerCase().includes(lower));
+              })
+              .map(normalizePatient);
+
+            renderSearchResults();
+            showMessage(els.searchMessage, "success", "デモ用の患者検索結果を表示しました。");
+            return;
+          }
+
+          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_PATIENT_SEARCH", "/api/owner/patients/search");
+
+          const result = await apiFetch(endpoint, {
+            method: "GET",
+            params: {
+              q,
+              limit: getConfigValue("OWNER.DEFAULT_SEARCH_LIMIT", 20)
+            }
+          });
+
+          const rows =
+            result?.data?.patients ||
+            result?.data ||
+            result?.patients ||
+            [];
+
+          state.searchResults = Array.isArray(rows) ? rows.map(normalizePatient) : [];
+          renderSearchResults();
+          showMessage(els.searchMessage, "success", "患者検索が完了しました。");
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.searchMessage,
+            "error",
+            "患者検索に失敗しました。\n\n" +
+            "まだWorker未作成の場合は、デモ表示を使ってください。\n\n" +
+            "詳細：" +
+            (error.message || error)
+          );
+        } finally {
+          setButtonLoading(els.searchButton, false);
+        }
+      }
+
+      async function loadPatientDetail(patientId) {
+        if (!patientId) return;
+
+        clearMessage(els.profileMessage);
+
+        try {
+          if (state.demoMode || patientId.startsWith("demo-")) {
+            const demo = getDemoData();
+            const detail = demo.patientDetails[patientId];
+
+            if (!detail) {
+              throw new Error("デモ患者情報が見つかりません。");
+            }
+
+            state.selectedPatient = normalizePatient(detail.patient);
+            state.selectedVisits = (detail.visits || []).map(normalizeVisit);
+            state.selectedFollowups = (detail.followups || []).map(normalizeFollowup);
+            renderPatientDetail();
+            return;
+          }
+
+          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_PATIENT_DETAIL", "/api/owner/patients/detail");
+
+          const result = await apiFetch(endpoint, {
+            method: "GET",
+            params: {
+              patient_id: patientId
+            }
+          });
+
+          const root = result?.data || result || {};
+
+          state.selectedPatient = normalizePatient(root.patient || root);
+          state.selectedVisits = Array.isArray(root.visits) ? root.visits.map(normalizeVisit) : [];
+          state.selectedFollowups = Array.isArray(root.followups) ? root.followups.map(normalizeFollowup) : [];
+
+          renderPatientDetail();
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.profileMessage,
+            "error",
+            "患者詳細を取得できませんでした。\n\n詳細：" + (error.message || error)
+          );
+        }
+      }
+
+      async function loadTemplates() {
+        setButtonLoading(els.loadTemplatesButton, true, "読み込み中...");
+        clearMessage(els.templatesMessage);
+
+        try {
+          if (state.demoMode) {
+            state.templates = getDefaultTemplates();
+            renderTemplates();
+            showMessage(els.templatesMessage, "success", "デモ用テンプレートを表示しました。");
+            return;
+          }
+
+          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_TEMPLATES", "/api/owner/templates");
+
+          const result = await apiFetch(endpoint, {
+            method: "GET",
+            params: {
+              active: "true"
+            }
+          });
+
+          const rows =
+            result?.data?.templates ||
+            result?.data ||
+            result?.templates ||
+            [];
+
+          state.templates = Array.isArray(rows) && rows.length
+            ? rows.map(normalizeTemplate)
+            : getDefaultTemplates();
+
+          renderTemplates();
+          showMessage(els.templatesMessage, "success", "テンプレートを更新しました。");
+        } catch (error) {
+          console.warn(error);
+          state.templates = getDefaultTemplates();
+          renderTemplates();
+          showMessage(
+            els.templatesMessage,
+            "warning",
+            "DBテンプレートを取得できなかったため、config.js のデフォルト文面を表示しています。"
+          );
+        } finally {
+          setButtonLoading(els.loadTemplatesButton, false);
+        }
+      }
+
+      async function updateFollowupStatus(followupId, status) {
+        const followup = state.followups.find((item) => item.id === followupId);
+
+        if (!followup) return;
+
+        try {
+          if (state.demoMode || followupId.startsWith("demo-")) {
+            followup.status = status;
+
+            if (status === "done" || status === "sent" || status === "cancelled") {
+              state.followups = state.followups.filter((item) => item.id !== followupId);
+            }
+
+            renderFollowups();
+            showMessage(els.followupListMessage, "success", `フォローを「${getFollowupStatusLabel(status)}」にしました。`);
+            return;
+          }
+
+          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_FOLLOWUP_UPDATE", "/api/owner/followups/update");
+
+          const result = await apiFetch(endpoint, {
+            method: "POST",
+            body: {
+              followup_id: followupId,
+              status,
+              staff_name: getStaffName()
+            }
+          });
+
+          if (result && result.ok === false) {
+            throw new Error(result.message || result.error || "フォロー更新に失敗しました。");
+          }
+
+          await loadFollowups();
+          showMessage(els.followupListMessage, "success", `フォローを「${getFollowupStatusLabel(status)}」にしました。`);
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.followupListMessage,
+            "error",
+            "フォロー状態を更新できませんでした。\n\n詳細：" + (error.message || error)
+          );
+        }
+      }
+
+      async function saveVisit() {
+        const patient = state.selectedPatient;
+
+        if (!patient || !patient.id) {
+          showMessage(els.visitMessage, "warning", "先に患者を選択してください。");
+          return;
+        }
+
+        const body = {
+          clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+          clinic_id: patient.clinic_id || null,
+          patient_id: patient.id,
+
+          visit_date: getTodayJST(),
+          visit_status: els.visitStatusInput.value,
+          visit_type: els.visitTypeInput.value,
+
+          chief_complaint: els.chiefComplaintInput.value.trim(),
+          treatment_summary: els.treatmentSummaryInput.value.trim(),
+          staff_memo: "",
+
+          next_appointment_date: els.nextDateInput.value || null,
+          next_appointment_time: els.nextTimeInput.value || null,
+          next_appointment_memo: els.nextMemoInput.value.trim(),
+
+          needs_followup: els.needsFollowupInput.value === "true",
+          followup_due_date: els.needsFollowupInput.value === "true" ? els.followupDueDateInput.value || null : null,
+          followup_reason: els.followupReasonInput.value.trim(),
+
+          line_message_text: els.visitLineMessageInput.value.trim(),
+
+          created_by_staff: getStaffName()
+        };
+
+        setButtonLoading(els.saveVisitButton, true, "保存中...");
+        clearMessage(els.visitMessage);
+
+        try {
+          if (state.demoMode || patient.id.startsWith("demo-")) {
+            const newVisit = normalizeVisit({
+              id: `demo-new-visit-${Date.now()}`,
+              clinic_id: patient.clinic_id,
+              patient_id: patient.id,
+              visit_date: body.visit_date,
+              visited_at: new Date().toISOString(),
+              visit_status: body.visit_status,
+              visit_type: body.visit_type,
+              chief_complaint: body.chief_complaint,
+              treatment_summary: body.treatment_summary,
+              next_appointment_date: body.next_appointment_date,
+              next_appointment_time: body.next_appointment_time,
+              next_appointment_memo: body.next_appointment_memo,
+              needs_followup: body.needs_followup,
+              followup_due_date: body.followup_due_date,
+              followup_reason: body.followup_reason,
+              line_message_text: body.line_message_text,
+              created_by_staff: body.created_by_staff
+            });
+
+            state.selectedVisits = [newVisit].concat(state.selectedVisits);
+            state.selectedPatient.last_visit_at = newVisit.visited_at;
+            state.selectedPatient.last_visit_type = newVisit.visit_type;
+            state.selectedPatient.next_appointment_date = body.next_appointment_date || "";
+            state.selectedPatient.next_appointment_time = body.next_appointment_time || "";
+            state.selectedPatient.next_appointment_memo = body.next_appointment_memo || "";
+            state.selectedPatient.visit_count = Number(state.selectedPatient.visit_count || 0) + 1;
+
+            state.todayVisits = [Object.assign({}, newVisit, {
+              patient_name: patient.patient_name,
+              patient_name_kana: patient.patient_name_kana,
+              member_no: patient.member_no,
+              phone: patient.phone
+            })].concat(state.todayVisits);
+
+            if (body.needs_followup && body.followup_due_date) {
+              const newFollowup = normalizeFollowup({
+                id: `demo-followup-${Date.now()}`,
+                clinic_id: patient.clinic_id,
+                patient_id: patient.id,
+                member_no: patient.member_no,
+                patient_name: patient.patient_name,
+                patient_name_kana: patient.patient_name_kana,
+                phone: patient.phone,
+                line_display_name: patient.line_display_name,
+                followup_type: "revisit",
+                due_date: body.followup_due_date,
+                status: "todo",
+                priority: "normal",
+                title: "再来院フォロー",
+                reason: body.followup_reason,
+                message_text: body.line_message_text
+              });
+
+              state.followups = [newFollowup].concat(state.followups);
+              state.selectedFollowups = [newFollowup].concat(state.selectedFollowups);
+            }
+
+            renderPatientDetail();
+            renderTodayVisits();
+            renderFollowups();
+
+            showMessage(
+              els.visitMessage,
+              "success",
+              "デモ用の来院記録を画面上に追加しました。\n実データ保存はWorker作成後に動作します。"
+            );
+            return;
+          }
+
+          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_VISIT_CREATE", "/api/owner/visits/create");
+
+          const result = await apiFetch(endpoint, {
+            method: "POST",
+            body
+          });
+
+          if (result && result.ok === false) {
+            throw new Error(result.message || result.error || "来院記録を保存できませんでした。");
+          }
+
+          showMessage(els.visitMessage, "success", "来院記録を保存しました。");
+
+          await loadPatientDetail(patient.id);
+          await loadToday();
+          await loadFollowups();
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.visitMessage,
+            "error",
+            "来院記録を保存できませんでした。\n\n" +
+            "まだWorker未作成の場合は保存APIがないため、このエラーで正常です。\n\n" +
+            "詳細：" +
+            (error.message || error)
+          );
+        } finally {
+          setButtonLoading(els.saveVisitButton, false);
+        }
+      }
+
+      function switchTab(tabName) {
+        document.querySelectorAll(".tab-button").forEach((button) => {
+          button.classList.toggle("active", button.dataset.tab === tabName);
+        });
+
+        document.querySelectorAll(".detail-section").forEach((section) => {
+          section.classList.remove("active");
+        });
+
+        const target = $(`tab-${tabName}`);
+        if (target) {
+          target.classList.add("active");
+        }
+      }
+
+      function saveSettings() {
+        const staffName = els.staffNameInput.value.trim() || getConfigValue("ADMIN.DEFAULT_STAFF_NAME", "受付スタッフ");
+        const adminCode = els.adminCodeInput.value.trim();
+
+        setStaffName(staffName);
+        setAdminCode(adminCode);
+
+        showMessage(
+          els.settingsMessage,
+          "success",
+          "管理設定を保存しました。\n管理コードはWorker側の認証で使用します。"
+        );
+      }
+
+      async function loadDemo() {
+        state.demoMode = true;
+
+        const demo = getDemoData();
+
+        state.searchResults = demo.patients.map(normalizePatient);
+        state.todayVisits = demo.visits.map(normalizeVisit).filter((visit) => {
+          return visit.visit_date === getTodayJST();
+        });
+        state.followups = demo.followups.map(normalizeFollowup);
+        state.templates = demo.templates.map(normalizeTemplate);
+
+        renderSearchResults();
+        renderTodayVisits();
+        renderFollowups();
+        renderTemplates();
+
+        await loadPatientDetail("demo-patient-1");
+
+        showMessage(
+          els.searchMessage,
+          "success",
+          "デモ表示に切り替えました。Worker未作成でも画面の流れを確認できます。"
+        );
+      }
+
+      async function reloadAll() {
+        await loadTemplates();
+
+        if (state.demoMode) {
+          await loadDemo();
+          return;
+        }
+
+        await Promise.allSettled([
+          loadToday(),
+          loadFollowups()
+        ]);
+      }
+
+      function applyInitialConfig() {
+        const systemName = getConfigValue("SYSTEM_NAME", "DPRO SHOP");
+        const title = getConfigValue("OWNER.TITLE", "歯科医院 管理画面");
+        const clinicName = getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
+
+        document.title = `${systemName} | ${title}`;
+
+        els.systemName.textContent = systemName;
+        els.pageTitle.textContent = title;
+        els.clinicNameText.textContent = `${clinicName} / 今日の受付・患者検索・来院履歴・フォロー管理`;
+        els.footerClinicName.textContent = clinicName;
+
+        const pages = CONFIG.PAGES || {};
+
+        els.scanLink.href = pages.SCAN ? `./${pages.SCAN}` : "./scan.html";
+        els.adminLink.href = pages.ADMIN ? `./${pages.ADMIN}` : "./admin.html";
+        els.memberLink.href = pages.MEMBER ? `./${pages.MEMBER}?t=demo` : "./member.html?t=demo";
+
+        els.staffNameInput.value = getStaffName();
+        els.adminCodeInput.value = getAdminCode();
+
+        populateSelects();
+
+        state.templates = getDefaultTemplates();
+        renderTemplates();
+
+        fillDefaultFollowupByVisitType();
+        updateSummary();
+      }
+
+      function bindEvents() {
+        els.reloadAllButton.addEventListener("click", reloadAll);
+        els.loadTodayButton.addEventListener("click", loadToday);
+        els.loadFollowupsButton.addEventListener("click", loadFollowups);
+        els.searchButton.addEventListener("click", searchPatients);
+        els.demoButton.addEventListener("click", loadDemo);
+        els.saveSettingsButton.addEventListener("click", saveSettings);
+        els.loadTemplatesButton.addEventListener("click", loadTemplates);
+
+        els.searchInput.addEventListener("keydown", async (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            await searchPatients();
+          }
+        });
+
+        document.querySelectorAll(".tab-button").forEach((button) => {
+          button.addEventListener("click", () => {
+            switchTab(button.dataset.tab);
+          });
+        });
+
+        els.copyNameButton.addEventListener("click", async () => {
+          if (!state.selectedPatient) return;
+
+          await copyText(state.selectedPatient.patient_name || "");
+          showMessage(els.profileMessage, "success", "患者名をコピーしました。");
+        });
+
+        els.openMemberButton.addEventListener("click", () => {
+          if (!state.selectedPatient) return;
+
+          const url = buildMemberUrl(state.selectedPatient.qr_token || "");
+          window.open(url, "_blank", "noopener");
+        });
+
+        els.visitTypeInput.addEventListener("change", () => {
+          fillDefaultFollowupByVisitType();
+          updateLinePreview();
+        });
+
+        els.needsFollowupInput.addEventListener("change", () => {
+          if (els.needsFollowupInput.value === "true") {
+            fillDefaultFollowupByVisitType();
+          }
+        });
+
+        els.makeVisitLineMessageButton.addEventListener("click", () => {
+          if (!state.selectedPatient) {
+            showMessage(els.visitMessage, "warning", "先に患者を選択してください。");
+            return;
+          }
+
+          const text = buildLineMessageForPatient(state.selectedPatient, els.templateSelect.value);
+          els.visitLineMessageInput.value = text;
+          showMessage(els.visitMessage, "success", "LINE文面を自動作成しました。");
+        });
+
+        els.copyVisitLineMessageButton.addEventListener("click", async () => {
+          const text = els.visitLineMessageInput.value.trim();
+
+          if (!text) {
+            showMessage(els.visitMessage, "warning", "コピーするLINE文面がありません。");
+            return;
+          }
+
+          await copyText(text);
+          showMessage(
+            els.visitMessage,
+            "success",
+            "LINE文面をコピーしました。LINE公式のチャットに貼り付けて送信してください。"
+          );
+        });
+
+        els.saveVisitButton.addEventListener("click", saveVisit);
+
+        els.templateSelect.addEventListener("change", updateLinePreview);
+
+        els.copyLineTextButton.addEventListener("click", async () => {
+          const text = els.lineCopyTextarea.value.trim();
+
+          if (!text) {
+            showMessage(els.lineMessage, "warning", "コピーするLINE文面がありません。");
+            return;
+          }
+
+          await copyText(text);
+          showMessage(
+            els.lineMessage,
+            "success",
+            "LINE文面をコピーしました。LINE公式のチャットに貼り付けて送信してください。"
+          );
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        applyInitialConfig();
+        bindEvents();
+
+        await loadTemplates();
+      });
+    })();
   </script>
 </body>
 </html>
