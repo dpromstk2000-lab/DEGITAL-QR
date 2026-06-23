@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | 患者登録・QR診察券発行</title>
+  <title>DPRO SHOP | 患者登録・医院設定</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -13,7 +13,6 @@
       --main: #2563eb;
       --main-dark: #1d4ed8;
       --sub: #0f766e;
-      --accent: #f59e0b;
       --bg: #f6f8fb;
       --card: #ffffff;
       --text: #0f172a;
@@ -22,48 +21,28 @@
       --success: #16a34a;
       --warning: #f59e0b;
       --danger: #dc2626;
-      --info: #2563eb;
       --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      min-height: 100%;
-      background: var(--bg);
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      min-height: 100%;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background:
         radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34%),
-        radial-gradient(circle at top right, rgba(15, 118, 110, 0.1), transparent 30%),
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.10), transparent 30%),
         var(--bg);
     }
 
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    a {
-      color: inherit;
-    }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
 
     .page {
       width: 100%;
-      max-width: 1280px;
+      max-width: 1320px;
       margin: 0 auto;
       padding: 18px 18px 42px;
     }
@@ -81,7 +60,6 @@
       color: var(--muted);
       font-weight: 900;
       letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
 
     .brand-title {
@@ -118,7 +96,7 @@
       font-weight: 900;
       text-decoration: none;
       white-space: nowrap;
-      background: rgba(37, 99, 235, 0.1);
+      background: rgba(37, 99, 235, 0.10);
       color: var(--main-dark);
       border: 1px solid rgba(37, 99, 235, 0.16);
     }
@@ -132,7 +110,7 @@
 
     .summary-card {
       border-radius: 22px;
-      background: #ffffff;
+      background: #fff;
       border: 1px solid var(--border);
       box-shadow: 0 12px 30px rgba(15, 23, 42, 0.055);
       padding: 16px;
@@ -147,7 +125,7 @@
 
     .summary-value {
       margin-top: 8px;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 950;
       letter-spacing: -0.05em;
       line-height: 1;
@@ -162,15 +140,12 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-columns: 1.06fr 0.94fr;
       gap: 18px;
       align-items: start;
     }
 
-    .stack {
-      display: grid;
-      gap: 16px;
-    }
+    .stack { display: grid; gap: 16px; }
 
     .card {
       background: var(--card);
@@ -183,7 +158,7 @@
     .card-header {
       padding: 17px 19px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(248, 250, 252, 0.78), #ffffff);
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.78), #fff);
     }
 
     .card-title {
@@ -203,9 +178,7 @@
       line-height: 1.65;
     }
 
-    .card-body {
-      padding: 18px 19px 20px;
-    }
+    .card-body { padding: 18px 19px 20px; }
 
     .icon {
       width: 34px;
@@ -214,21 +187,15 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: rgba(37, 99, 235, 0.1);
+      background: rgba(37, 99, 235, 0.10);
       color: var(--main-dark);
       font-weight: 950;
       flex: 0 0 auto;
     }
 
-    .form-grid {
-      display: grid;
-      gap: 12px;
-    }
+    .form-grid { display: grid; gap: 12px; }
 
-    .field {
-      display: grid;
-      gap: 7px;
-    }
+    .field { display: grid; gap: 7px; }
 
     .field label {
       font-size: 13px;
@@ -242,7 +209,7 @@
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 15px;
-      background: #ffffff;
+      background: #fff;
       color: var(--text);
       padding: 12px 13px;
       outline: none;
@@ -258,7 +225,7 @@
     .field input:focus,
     .field textarea:focus,
     .field select:focus {
-      border-color: rgba(37, 99, 235, 0.5);
+      border-color: rgba(37, 99, 235, 0.50);
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
     }
 
@@ -295,31 +262,24 @@
       transition: transform 0.08s ease, opacity 0.08s ease;
     }
 
-    .btn:active {
-      transform: translateY(1px);
-      opacity: 0.92;
-    }
-
-    .btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
+    .btn:active { transform: translateY(1px); opacity: 0.92; }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
     .btn-primary {
-      color: #ffffff;
+      color: #fff;
       background: linear-gradient(135deg, var(--main), var(--main-dark));
-      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.20);
     }
 
     .btn-sub {
-      color: #ffffff;
+      color: #fff;
       background: linear-gradient(135deg, var(--sub), #115e59);
       box-shadow: 0 12px 24px rgba(15, 118, 110, 0.17);
     }
 
     .btn-light {
       color: var(--text);
-      background: #ffffff;
+      background: #fff;
       border: 1px solid var(--border);
     }
 
@@ -356,224 +316,80 @@
       display: none;
     }
 
-    .message.show {
-      display: block;
-    }
+    .message.show { display: block; }
+    .message.info { background: #eff6ff; color: #1e3a8a; border: 1px solid #bfdbfe; }
+    .message.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .message.warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+    .message.error { background: #fff1f2; color: #991b1b; border: 1px solid #fecdd3; }
 
-    .message.info {
-      background: #eff6ff;
-      color: #1e3a8a;
-      border: 1px solid #bfdbfe;
-    }
-
-    .message.success {
-      background: #f0fdf4;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-    }
-
-    .message.warning {
-      background: #fffbeb;
-      color: #92400e;
-      border: 1px solid #fde68a;
-    }
-
-    .message.error {
-      background: #fff1f2;
-      color: #991b1b;
-      border: 1px solid #fecdd3;
-    }
-
-    .result-card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 24px;
+    .setting-panel {
       border: 1px solid var(--border);
-      background: linear-gradient(135deg, #ffffff, #eef6ff);
-      padding: 20px;
+      border-radius: 20px;
+      background: #f8fafc;
+      padding: 14px;
     }
 
-    .result-card::after {
-      content: "";
-      position: absolute;
-      width: 190px;
-      height: 190px;
-      right: -78px;
-      top: -88px;
-      border-radius: 50%;
-      background: rgba(37, 99, 235, 0.1);
-    }
-
-    .result-content {
-      position: relative;
-      z-index: 1;
-    }
-
-    .result-label {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 900;
-      letter-spacing: 0.07em;
-    }
-
-    .result-name {
-      margin-top: 7px;
-      font-size: 30px;
-      line-height: 1.18;
-      letter-spacing: -0.05em;
+    .setting-title {
+      font-size: 15px;
       font-weight: 950;
-      word-break: break-word;
+      margin-bottom: 10px;
     }
 
-    .result-kana {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 800;
+    .hours-table {
+      display: grid;
+      gap: 10px;
     }
 
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
+    .hours-row {
+      display: grid;
+      grid-template-columns: 70px 86px 1fr 1fr 1fr 1fr;
       gap: 8px;
-      margin-top: 12px;
+      align-items: end;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 10px;
     }
 
-    .pill {
-      display: inline-flex;
+    .day-label {
+      font-weight: 950;
+      padding-bottom: 12px;
+    }
+
+    .check-field {
+      display: flex;
       align-items: center;
       gap: 6px;
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-size: 12px;
-      font-weight: 900;
-      background: #ffffff;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    .pill.blue {
-      background: #eff6ff;
-      color: #1e3a8a;
-      border-color: #bfdbfe;
-    }
-
-    .pill.green {
-      background: #f0fdf4;
-      color: #14532d;
-      border-color: #bbf7d0;
-    }
-
-    .pill.yellow {
-      background: #fffbeb;
-      color: #78350f;
-      border-color: #fde68a;
-    }
-
-    .pill.red {
-      background: #fff1f2;
-      color: #991b1b;
-      border-color: #fecdd3;
-    }
-
-    .qr-area {
-      margin-top: 16px;
-      display: grid;
-      grid-template-columns: 230px 1fr;
-      gap: 16px;
-      align-items: start;
-    }
-
-    .qr-box {
-      width: 230px;
-      min-height: 230px;
-      border-radius: 22px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      display: grid;
-      place-items: center;
-      padding: 14px;
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
-    }
-
-    #qrCanvas {
-      width: 200px;
-      height: 200px;
-    }
-
-    .qr-info {
-      display: grid;
-      gap: 10px;
-    }
-
-    .url-box {
-      border-radius: 16px;
-      border: 1px dashed var(--border);
-      background: #f8fafc;
-      padding: 12px;
-      color: var(--muted);
+      min-height: 42px;
       font-size: 13px;
-      line-height: 1.6;
-      word-break: break-all;
-    }
-
-    .info-list {
-      display: grid;
-      gap: 0;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-      background: #ffffff;
-      margin-top: 14px;
-    }
-
-    .info-row {
-      display: grid;
-      grid-template-columns: 150px 1fr;
-      gap: 12px;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .info-row:last-child {
-      border-bottom: 0;
-    }
-
-    .info-key {
       color: var(--muted);
       font-weight: 900;
     }
 
-    .info-value {
-      color: var(--text);
-      font-weight: 750;
-      word-break: break-word;
-      white-space: pre-wrap;
+    .check-field input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--main);
     }
 
-    .list {
+    .special-list {
       display: grid;
       gap: 10px;
     }
 
+    .special-item,
     .list-item {
       border: 1px solid var(--border);
-      background: #ffffff;
+      background: #fff;
       border-radius: 18px;
       padding: 14px;
-      transition: border-color 0.08s ease, box-shadow 0.08s ease, transform 0.08s ease;
     }
 
-    .list-item.clickable {
-      cursor: pointer;
-    }
+    .list-item.clickable { cursor: pointer; }
 
     .list-item.clickable:hover {
-      border-color: rgba(37, 99, 235, 0.4);
+      border-color: rgba(37, 99, 235, 0.40);
       box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-      transform: translateY(-1px);
     }
 
     .item-top {
@@ -610,6 +426,146 @@
       font-weight: 900;
     }
 
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .pill.blue { background: #eff6ff; color: #1e3a8a; border-color: #bfdbfe; }
+    .pill.green { background: #f0fdf4; color: #14532d; border-color: #bbf7d0; }
+    .pill.yellow { background: #fffbeb; color: #78350f; border-color: #fde68a; }
+    .pill.red { background: #fff1f2; color: #991b1b; border-color: #fecdd3; }
+
+    .result-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, #fff, #eef6ff);
+      padding: 20px;
+    }
+
+    .result-card::after {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      right: -78px;
+      top: -88px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.10);
+    }
+
+    .result-content { position: relative; z-index: 1; }
+
+    .result-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      letter-spacing: 0.07em;
+    }
+
+    .result-name {
+      margin-top: 7px;
+      font-size: 30px;
+      line-height: 1.18;
+      letter-spacing: -0.05em;
+      font-weight: 950;
+      word-break: break-word;
+    }
+
+    .result-kana {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .qr-area {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .qr-box {
+      width: 230px;
+      min-height: 230px;
+      border-radius: 22px;
+      background: #fff;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      padding: 14px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    #qrCanvas {
+      width: 200px;
+      height: 200px;
+    }
+
+    .url-box {
+      border-radius: 16px;
+      border: 1px dashed var(--border);
+      background: #f8fafc;
+      padding: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      word-break: break-all;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+      margin-top: 14px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .info-row:last-child { border-bottom: 0; }
+
+    .info-key {
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .info-value {
+      color: var(--text);
+      font-weight: 750;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
     .empty-box {
       border-radius: 18px;
       background: #f8fafc;
@@ -621,9 +577,7 @@
       text-align: center;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
     .footer {
       margin-top: 22px;
@@ -646,73 +600,31 @@
       white-space: pre-wrap;
     }
 
-    @media (max-width: 1050px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-
-      .summary-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .qr-area {
-        grid-template-columns: 1fr;
-      }
-
-      .qr-box {
-        width: 100%;
-      }
+    @media (max-width: 1120px) {
+      .layout { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .qr-area { grid-template-columns: 1fr; }
+      .qr-box { width: 100%; }
     }
 
-    @media (max-width: 640px) {
-      .page {
-        padding: 14px 12px 32px;
-      }
-
-      .top-bar {
-        flex-direction: column;
-      }
-
-      .top-actions {
-        justify-content: flex-start;
-      }
-
-      .brand-title {
-        font-size: 24px;
-      }
-
-      .summary-grid {
+    @media (max-width: 760px) {
+      .page { padding: 14px 12px 32px; }
+      .top-bar { flex-direction: column; }
+      .top-actions { justify-content: flex-start; }
+      .brand-title { font-size: 24px; }
+      .summary-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .summary-value { font-size: 23px; }
+      .mini-grid, .three-grid { grid-template-columns: 1fr; }
+      .hours-row {
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
       }
-
-      .summary-value {
-        font-size: 24px;
-      }
-
-      .mini-grid,
-      .three-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .result-name {
-        font-size: 26px;
-      }
-
-      .info-row {
-        grid-template-columns: 96px 1fr;
-      }
+      .day-label { padding-bottom: 0; }
+      .info-row { grid-template-columns: 96px 1fr; }
     }
 
     @media print {
-      body {
-        background: #ffffff;
-      }
-
-      .page {
-        max-width: 920px;
-      }
-
+      body { background: #fff; }
+      .page { max-width: 920px; }
       .top-actions,
       .summary-grid,
       .layout > .stack:first-child,
@@ -722,18 +634,9 @@
       .debug {
         display: none !important;
       }
-
-      .layout {
-        display: block;
-      }
-
-      .card {
-        box-shadow: none;
-      }
-
-      .result-card {
-        page-break-inside: avoid;
-      }
+      .layout { display: block; }
+      .card { box-shadow: none; }
+      .result-card { page-break-inside: avoid; }
     }
   </style>
 </head>
@@ -743,9 +646,9 @@
     <header class="top-bar">
       <div>
         <div class="brand-kicker" id="systemName">DPRO SHOP</div>
-        <div class="brand-title" id="pageTitle">患者登録・QR診察券発行</div>
+        <div class="brand-title" id="pageTitle">患者登録・医院設定</div>
         <div class="brand-sub" id="clinicNameText">
-          DPRO歯科クリニック / 新規患者登録・デジタルQR診察券URL発行
+          DPRO歯科クリニック / 医院設定・患者登録・QR診察券発行
         </div>
       </div>
 
@@ -765,21 +668,21 @@
       </div>
 
       <div class="summary-card">
+        <div class="summary-label">予約可能期間</div>
+        <div class="summary-value" id="appointmentRangeLabel">3か月</div>
+        <div class="summary-note">医院設定から反映</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-label">時間単位</div>
+        <div class="summary-value" id="slotLabel">15分</div>
+        <div class="summary-note">次回予約の選択間隔</div>
+      </div>
+
+      <div class="summary-card">
         <div class="summary-label">今回の診察券番号</div>
         <div class="summary-value" id="currentMemberNo">---</div>
         <div class="summary-note">自動採番または手入力</div>
-      </div>
-
-      <div class="summary-card">
-        <div class="summary-label">ローカル登録</div>
-        <div class="summary-value" id="localCount">0</div>
-        <div class="summary-note">Worker未作成時の確認用</div>
-      </div>
-
-      <div class="summary-card">
-        <div class="summary-label">最終発行</div>
-        <div class="summary-value" id="lastIssuedLabel">--</div>
-        <div class="summary-note">直近で発行した診察券</div>
       </div>
     </section>
 
@@ -788,11 +691,216 @@
         <section class="card">
           <div class="card-header">
             <h1 class="card-title">
+              <span class="icon">設</span>
+              医院設定
+            </h1>
+            <div class="card-subtitle">
+              最初に定休日・営業時間・臨時休業・特別営業を設定します。次回予約の日付と時間候補に反映されます。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="setting-panel">
+                <div class="setting-title">基本情報</div>
+                <div class="mini-grid">
+                  <div class="field">
+                    <label for="clinicNameInput">医院名</label>
+                    <input id="clinicNameInput" type="text" placeholder="DPRO歯科クリニック" />
+                  </div>
+                  <div class="field">
+                    <label for="clinicKanaInput">医院名かな</label>
+                    <input id="clinicKanaInput" type="text" placeholder="ディープロシカクリニック" />
+                  </div>
+                </div>
+
+                <div class="mini-grid" style="margin-top: 10px;">
+                  <div class="field">
+                    <label for="clinicPhoneInput">電話番号</label>
+                    <input id="clinicPhoneInput" type="tel" placeholder="000-0000-0000" />
+                  </div>
+                  <div class="field">
+                    <label for="clinicAddressInput">住所</label>
+                    <input id="clinicAddressInput" type="text" placeholder="大分県内" />
+                  </div>
+                </div>
+
+                <div class="mini-grid" style="margin-top: 10px;">
+                  <div class="field">
+                    <label for="businessHoursNoteInput">診療時間メモ</label>
+                    <input id="businessHoursNoteInput" type="text" placeholder="月・火・水・金 9:00〜18:00 / 土 9:00〜13:00" />
+                  </div>
+                  <div class="field">
+                    <label for="closedDaysNoteInput">休診日メモ</label>
+                    <input id="closedDaysNoteInput" type="text" placeholder="木曜・日曜・祝日" />
+                  </div>
+                </div>
+
+                <div class="mini-grid" style="margin-top: 10px;">
+                  <div class="field">
+                    <label for="noticeTitleInput">患者画面のお知らせタイトル</label>
+                    <input id="noticeTitleInput" type="text" placeholder="QR診察券のご案内" />
+                  </div>
+                  <div class="field">
+                    <label for="noticeBodyInput">患者画面のお知らせ本文</label>
+                    <textarea id="noticeBodyInput" placeholder="次回来院時は、この画面のQR診察券を受付でご提示ください。"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-panel">
+                <div class="setting-title">予約入力ルール</div>
+                <div class="three-grid">
+                  <div class="field">
+                    <label for="maxMonthsInput">予約可能月数</label>
+                    <select id="maxMonthsInput">
+                      <option value="1">1か月先まで</option>
+                      <option value="2">2か月先まで</option>
+                      <option value="3">3か月先まで</option>
+                      <option value="4">4か月先まで</option>
+                      <option value="5">5か月先まで</option>
+                      <option value="6">6か月先まで</option>
+                      <option value="12">12か月先まで</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="slotMinutesInput">時間単位</label>
+                    <select id="slotMinutesInput">
+                      <option value="10">10分単位</option>
+                      <option value="15">15分単位</option>
+                      <option value="20">20分単位</option>
+                      <option value="30">30分単位</option>
+                      <option value="60">60分単位</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="durationMinutesInput">1枠の目安時間</label>
+                    <select id="durationMinutesInput">
+                      <option value="15">15分</option>
+                      <option value="30">30分</option>
+                      <option value="45">45分</option>
+                      <option value="60">60分</option>
+                      <option value="90">90分</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mini-grid" style="margin-top: 10px;">
+                  <label class="check-field">
+                    <input id="sameDayInput" type="checkbox" />
+                    当日予約を許可
+                  </label>
+                  <label class="check-field">
+                    <input id="useSpecialDaysInput" type="checkbox" />
+                    臨時休業・特別営業を反映
+                  </label>
+                </div>
+              </div>
+
+              <div class="setting-panel">
+                <div class="setting-title">曜日別 診療時間</div>
+                <div id="regularHoursBox" class="hours-table"></div>
+              </div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="saveSettingsButton" type="button">医院設定を保存</button>
+                <button class="btn btn-light" id="loadSettingsButton" type="button">医院設定を再読み込み</button>
+              </div>
+            </div>
+
+            <div id="settingsMessage" class="message"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">休</span>
+              臨時休業・特別営業
+            </h2>
+            <div class="card-subtitle">
+              年末年始、研修休み、普段休みの日の午前だけ営業などを登録します。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="mini-grid">
+                <div class="field">
+                  <label for="specialDateInput">日付</label>
+                  <input id="specialDateInput" type="date" />
+                </div>
+                <div class="field">
+                  <label for="specialTypeInput">種類</label>
+                  <select id="specialTypeInput">
+                    <option value="closed">臨時休業</option>
+                    <option value="special_open">特別営業</option>
+                    <option value="short_hours">時短営業・午前だけ営業</option>
+                    <option value="memo">メモのみ</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mini-grid">
+                <div class="field">
+                  <label for="specialTitleInput">タイトル</label>
+                  <input id="specialTitleInput" type="text" placeholder="例：年末年始休診 / 午前のみ診療" />
+                </div>
+                <div class="field">
+                  <label for="specialNoteInput">メモ</label>
+                  <input id="specialNoteInput" type="text" placeholder="例：研修のため休診" />
+                </div>
+              </div>
+
+              <div class="three-grid">
+                <div class="field">
+                  <label for="specialOpen1Input">午前 開始</label>
+                  <input id="specialOpen1Input" type="time" step="900" />
+                </div>
+                <div class="field">
+                  <label for="specialClose1Input">午前 終了</label>
+                  <input id="specialClose1Input" type="time" step="900" />
+                </div>
+                <div class="field">
+                  <label for="specialOpen2Input">午後 開始</label>
+                  <input id="specialOpen2Input" type="time" step="900" />
+                </div>
+              </div>
+
+              <div class="mini-grid">
+                <div class="field">
+                  <label for="specialClose2Input">午後 終了</label>
+                  <input id="specialClose2Input" type="time" step="900" />
+                </div>
+                <div class="field">
+                  <label>&nbsp;</label>
+                  <button class="btn btn-primary" id="saveSpecialDayButton" type="button">臨時休業・特別営業を保存</button>
+                </div>
+              </div>
+
+              <div class="mini-grid">
+                <button class="btn btn-light" id="loadSpecialDaysButton" type="button">一覧を更新</button>
+                <button class="btn btn-danger" id="deleteSpecialDayButton" type="button">選択日の設定を削除</button>
+              </div>
+            </div>
+
+            <div id="specialMessage" class="message"></div>
+            <div id="specialDaysList" class="special-list" style="margin-top: 12px;">
+              <div class="empty-box">まだ読み込んでいません。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h1 class="card-title">
               <span class="icon">登</span>
               新規患者登録
             </h1>
             <div class="card-subtitle">
-              患者情報を登録し、デジタルQR診察券を発行します。必須は患者名と診察券番号です。
+              医院設定に合わせて、次回予約日は過去日・休診日を選べず、時間は診療時間内の候補から選びます。
             </div>
           </div>
 
@@ -811,9 +919,7 @@
               </div>
 
               <div class="actions" style="margin-top: 0;">
-                <button class="btn btn-light" id="generateMemberNoButton" type="button">
-                  診察券番号を自動作成
-                </button>
+                <button class="btn btn-light" id="generateMemberNoButton" type="button">診察券番号を自動作成</button>
               </div>
 
               <div class="mini-grid">
@@ -871,9 +977,13 @@
 
                 <div class="field">
                   <label for="nextTimeInput">次回予約時間</label>
-                  <input id="nextTimeInput" type="time" />
+                  <select id="nextTimeInput">
+                    <option value="">日付を選択してください</option>
+                  </select>
                 </div>
               </div>
+
+              <div id="appointmentMessage" class="message"></div>
 
               <div class="field">
                 <label for="nextMemoInput">次回予約メモ</label>
@@ -891,17 +1001,11 @@
               </div>
 
               <div class="actions">
-                <button class="btn btn-primary" id="createPatientButton" type="button">
-                  患者登録してQR診察券を発行
-                </button>
+                <button class="btn btn-primary" id="createPatientButton" type="button">患者登録してQR診察券を発行</button>
 
                 <div class="mini-grid">
-                  <button class="btn btn-light" id="clearFormButton" type="button">
-                    入力をクリア
-                  </button>
-                  <button class="btn btn-warning" id="fillDemoFormButton" type="button">
-                    デモ入力
-                  </button>
+                  <button class="btn btn-light" id="clearFormButton" type="button">入力をクリア</button>
+                  <button class="btn btn-warning" id="fillDemoFormButton" type="button">デモ入力</button>
                 </div>
               </div>
             </div>
@@ -929,12 +1033,8 @@
               </div>
 
               <div class="mini-grid">
-                <button class="btn btn-sub" id="searchButton" type="button">
-                  患者検索
-                </button>
-                <button class="btn btn-light" id="showLocalButton" type="button">
-                  ローカル一覧
-                </button>
+                <button class="btn btn-sub" id="searchButton" type="button">患者検索</button>
+                <button class="btn btn-light" id="showLocalButton" type="button">ローカル一覧</button>
               </div>
             </div>
 
@@ -948,7 +1048,7 @@
         <section class="card">
           <div class="card-header">
             <h2 class="card-title">
-              <span class="icon">設</span>
+              <span class="icon">鍵</span>
               管理設定
             </h2>
             <div class="card-subtitle">
@@ -968,12 +1068,10 @@
                 <input id="adminCodeInput" type="password" placeholder="Cloudflare Worker 側で確認する管理コード" />
               </div>
 
-              <button class="btn btn-light" id="saveSettingsButton" type="button">
-                設定を保存
-              </button>
+              <button class="btn btn-light" id="saveAdminCodeButton" type="button">管理設定を保存</button>
             </div>
 
-            <div id="settingsMessage" class="message"></div>
+            <div id="adminCodeMessage" class="message"></div>
           </div>
         </section>
       </div>
@@ -1014,7 +1112,7 @@
                       <canvas id="qrCanvas" width="200" height="200"></canvas>
                     </div>
 
-                    <div class="qr-info">
+                    <div class="form-grid">
                       <div class="field">
                         <label>患者さん用 診察券URL</label>
                         <div class="url-box" id="memberUrlText">---</div>
@@ -1026,17 +1124,11 @@
                       </div>
 
                       <div class="actions">
-                        <button class="btn btn-success" id="copyMemberUrlButton" type="button">
-                          診察券URLをコピー
-                        </button>
+                        <button class="btn btn-success" id="copyMemberUrlButton" type="button">診察券URLをコピー</button>
 
                         <div class="mini-grid">
-                          <button class="btn btn-primary" id="openMemberPageButton" type="button">
-                            患者画面を開く
-                          </button>
-                          <button class="btn btn-light" id="printCardButton" type="button">
-                            印刷
-                          </button>
+                          <button class="btn btn-primary" id="openMemberPageButton" type="button">患者画面を開く</button>
+                          <button class="btn btn-light" id="printCardButton" type="button">印刷</button>
                         </div>
                       </div>
                     </div>
@@ -1102,20 +1194,35 @@
 
               <div class="actions">
                 <div class="mini-grid">
-                  <button class="btn btn-success" id="copySelectedUrlButton" type="button">
-                    URLコピー
-                  </button>
-                  <button class="btn btn-primary" id="openSelectedMemberButton" type="button">
-                    患者画面を開く
-                  </button>
+                  <button class="btn btn-success" id="copySelectedUrlButton" type="button">URLコピー</button>
+                  <button class="btn btn-primary" id="openSelectedMemberButton" type="button">患者画面を開く</button>
                 </div>
 
-                <button class="btn btn-light" id="loadSelectedIntoFormButton" type="button">
-                  フォームに読み込む
-                </button>
+                <button class="btn btn-light" id="loadSelectedIntoFormButton" type="button">フォームに読み込む</button>
               </div>
 
               <div id="selectedMessage" class="message"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">確</span>
+              医院設定の確認
+            </h2>
+            <div class="card-subtitle">
+              保存済みの診療時間・臨時休業をここで確認できます。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div id="settingsPreview" class="info-list" style="margin-top: 0;">
+              <div class="info-row">
+                <div class="info-key">状態</div>
+                <div class="info-value">未読み込み</div>
+              </div>
             </div>
           </div>
         </section>
@@ -1135,15 +1242,27 @@
     (function () {
       "use strict";
 
-      const CONFIG =
-        window.DPRO_DENTAL_QR_CONFIG ||
-        window.DPRO_CONFIG ||
-        {};
-
+      const CONFIG = window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
       const $ = (id) => document.getElementById(id);
+
+      const DAY_LABELS = ["日曜", "月曜", "火曜", "水曜", "木曜", "金曜", "土曜"];
 
       const state = {
         demoMode: false,
+        settingsLoaded: false,
+        clinic: {},
+        settings: {
+          appointment_max_months_ahead: 3,
+          appointment_min_days_ahead: 0,
+          appointment_slot_minutes: 15,
+          default_visit_duration_minutes: 30,
+          allow_same_day_appointment: true,
+          use_regular_hours: true,
+          use_special_days: true,
+          timezone: "Asia/Tokyo"
+        },
+        regularHours: [],
+        specialDays: [],
         lastIssuedPatient: null,
         selectedPatient: null,
         localPatients: []
@@ -1159,9 +1278,42 @@
         demoModeButton: $("demoModeButton"),
 
         modeLabel: $("modeLabel"),
+        appointmentRangeLabel: $("appointmentRangeLabel"),
+        slotLabel: $("slotLabel"),
         currentMemberNo: $("currentMemberNo"),
-        localCount: $("localCount"),
-        lastIssuedLabel: $("lastIssuedLabel"),
+
+        clinicNameInput: $("clinicNameInput"),
+        clinicKanaInput: $("clinicKanaInput"),
+        clinicPhoneInput: $("clinicPhoneInput"),
+        clinicAddressInput: $("clinicAddressInput"),
+        businessHoursNoteInput: $("businessHoursNoteInput"),
+        closedDaysNoteInput: $("closedDaysNoteInput"),
+        noticeTitleInput: $("noticeTitleInput"),
+        noticeBodyInput: $("noticeBodyInput"),
+        maxMonthsInput: $("maxMonthsInput"),
+        slotMinutesInput: $("slotMinutesInput"),
+        durationMinutesInput: $("durationMinutesInput"),
+        sameDayInput: $("sameDayInput"),
+        useSpecialDaysInput: $("useSpecialDaysInput"),
+        regularHoursBox: $("regularHoursBox"),
+        saveSettingsButton: $("saveSettingsButton"),
+        loadSettingsButton: $("loadSettingsButton"),
+        settingsMessage: $("settingsMessage"),
+        settingsPreview: $("settingsPreview"),
+
+        specialDateInput: $("specialDateInput"),
+        specialTypeInput: $("specialTypeInput"),
+        specialTitleInput: $("specialTitleInput"),
+        specialNoteInput: $("specialNoteInput"),
+        specialOpen1Input: $("specialOpen1Input"),
+        specialClose1Input: $("specialClose1Input"),
+        specialOpen2Input: $("specialOpen2Input"),
+        specialClose2Input: $("specialClose2Input"),
+        saveSpecialDayButton: $("saveSpecialDayButton"),
+        loadSpecialDaysButton: $("loadSpecialDaysButton"),
+        deleteSpecialDayButton: $("deleteSpecialDayButton"),
+        specialMessage: $("specialMessage"),
+        specialDaysList: $("specialDaysList"),
 
         memberNoInput: $("memberNoInput"),
         statusInput: $("statusInput"),
@@ -1175,6 +1327,7 @@
         lineDisplayNameInput: $("lineDisplayNameInput"),
         nextDateInput: $("nextDateInput"),
         nextTimeInput: $("nextTimeInput"),
+        appointmentMessage: $("appointmentMessage"),
         nextMemoInput: $("nextMemoInput"),
         patientMemoInput: $("patientMemoInput"),
         internalMemoInput: $("internalMemoInput"),
@@ -1191,8 +1344,8 @@
 
         staffNameInput: $("staffNameInput"),
         adminCodeInput: $("adminCodeInput"),
-        saveSettingsButton: $("saveSettingsButton"),
-        settingsMessage: $("settingsMessage"),
+        saveAdminCodeButton: $("saveAdminCodeButton"),
+        adminCodeMessage: $("adminCodeMessage"),
 
         emptyResultBox: $("emptyResultBox"),
         resultArea: $("resultArea"),
@@ -1256,33 +1409,27 @@
         return escapeHtml(value).replace(/\n/g, "<br>");
       }
 
-      function formatDate(dateText) {
-        if (CONFIG.utils && typeof CONFIG.utils.formatDate === "function") {
-          return CONFIG.utils.formatDate(dateText);
-        }
-
-        if (!dateText) return "未設定";
-        const date = new Date(`${dateText}T00:00:00+09:00`);
-        if (Number.isNaN(date.getTime())) return dateText;
-
-        return new Intl.DateTimeFormat("ja-JP", {
-          timeZone: "Asia/Tokyo",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          weekday: "short"
-        }).format(date);
+      function showMessage(target, type, text) {
+        target.className = `message ${type || "info"} show`;
+        target.innerHTML = nl2br(text || "");
       }
 
-      function formatTime(timeText) {
-        if (CONFIG.utils && typeof CONFIG.utils.formatTime === "function") {
-          return CONFIG.utils.formatTime(timeText);
-        }
+      function clearMessage(target) {
+        target.className = "message";
+        target.innerHTML = "";
+      }
 
-        if (!timeText) return "";
-        const parts = String(timeText).split(":");
-        if (parts.length < 2) return timeText;
-        return `${parts[0]}:${parts[1]}`;
+      function setButtonLoading(button, loading, text) {
+        if (!button) return;
+
+        if (loading) {
+          button.dataset.originalText = button.textContent;
+          button.textContent = text || "処理中...";
+          button.disabled = true;
+        } else {
+          button.textContent = button.dataset.originalText || button.textContent;
+          button.disabled = false;
+        }
       }
 
       function getTodayJST() {
@@ -1302,8 +1449,91 @@
         const y = parts.find((p) => p.type === "year").value;
         const m = parts.find((p) => p.type === "month").value;
         const d = parts.find((p) => p.type === "day").value;
-
         return `${y}-${m}-${d}`;
+      }
+
+      function addMonths(dateText, months) {
+        const base = new Date(`${dateText}T00:00:00+09:00`);
+        const originalDate = base.getDate();
+        base.setMonth(base.getMonth() + Number(months || 0));
+        if (base.getDate() < originalDate) base.setDate(0);
+        return toDateText(base);
+      }
+
+      function addDays(dateText, days) {
+        const base = new Date(`${dateText}T00:00:00+09:00`);
+        base.setDate(base.getDate() + Number(days || 0));
+        return toDateText(base);
+      }
+
+      function toDateText(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      function formatDate(dateText) {
+        if (CONFIG.utils && typeof CONFIG.utils.formatDate === "function") {
+          return CONFIG.utils.formatDate(dateText);
+        }
+
+        if (!dateText) return "未設定";
+        const date = new Date(`${dateText}T00:00:00+09:00`);
+        if (Number.isNaN(date.getTime())) return dateText;
+
+        return new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          weekday: "short"
+        }).format(date);
+      }
+
+      function formatTime(timeText) {
+        if (!timeText) return "";
+        const parts = String(timeText).split(":");
+        if (parts.length < 2) return timeText;
+        return `${parts[0].padStart(2, "0")}:${parts[1]}`;
+      }
+
+      function timeToMinutes(time) {
+        if (!time) return null;
+        const parts = String(time).split(":");
+        if (parts.length < 2) return null;
+        return Number(parts[0]) * 60 + Number(parts[1]);
+      }
+
+      function minutesToTime(minutes) {
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+      }
+
+      function buildFallbackSlotsForDate(dateText) {
+        const day = new Date(`${dateText}T00:00:00+09:00`).getDay();
+        const row = state.regularHours.find((item) => Number(item.day_of_week) === day);
+        const slots = [];
+        const step = Number(state.settings.appointment_slot_minutes || 15);
+        const duration = Number(state.settings.default_visit_duration_minutes || 30);
+
+        if (!row || row.is_closed) return slots;
+
+        [
+          [row.open_time_1, row.close_time_1],
+          [row.open_time_2, row.close_time_2]
+        ].forEach(([open, close]) => {
+          const start = timeToMinutes(open);
+          const end = timeToMinutes(close);
+          if (start === null || end === null || start >= end) return;
+
+          for (let t = start; t <= end - duration; t += step) {
+            slots.push(minutesToTime(t));
+          }
+        });
+
+        return slots;
       }
 
       function buildNextAppointmentText(dateText, timeText, memo) {
@@ -1419,37 +1649,12 @@
         }
       }
 
-      function showMessage(target, type, text) {
-        target.className = `message ${type || "info"} show`;
-        target.innerHTML = nl2br(text || "");
-      }
-
-      function clearMessage(target) {
-        target.className = "message";
-        target.innerHTML = "";
-      }
-
-      function setButtonLoading(button, loading, text) {
-        if (!button) return;
-
-        if (loading) {
-          button.dataset.originalText = button.textContent;
-          button.textContent = text || "処理中...";
-          button.disabled = true;
-        } else {
-          button.textContent = button.dataset.originalText || button.textContent;
-          button.disabled = false;
-        }
-      }
-
       function randomToken() {
         const array = new Uint8Array(24);
 
         if (window.crypto && window.crypto.getRandomValues) {
           window.crypto.getRandomValues(array);
-          return Array.from(array)
-            .map((n) => n.toString(16).padStart(2, "0"))
-            .join("");
+          return Array.from(array).map((n) => n.toString(16).padStart(2, "0")).join("");
         }
 
         return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -1568,14 +1773,9 @@
       }
 
       function validateForm(data) {
-        if (!data.member_no) {
-          return "診察券番号を入力してください。";
-        }
-
-        if (!data.patient_name) {
-          return "患者名を入力してください。";
-        }
-
+        if (!data.member_no) return "診察券番号を入力してください。";
+        if (!data.patient_name) return "患者名を入力してください。";
+        if (data.next_appointment_time && !data.next_appointment_date) return "次回予約時間を入れる場合は、次回予約日も選択してください。";
         return "";
       }
 
@@ -1590,12 +1790,14 @@
         els.lineUserIdInput.value = patient.line_user_id || "";
         els.lineDisplayNameInput.value = patient.line_display_name || "";
         els.nextDateInput.value = patient.next_appointment_date || "";
-        els.nextTimeInput.value = patient.next_appointment_time ? formatTime(patient.next_appointment_time) : "";
         els.nextMemoInput.value = patient.next_appointment_memo || "";
         els.patientMemoInput.value = patient.patient_memo || "";
         els.internalMemoInput.value = patient.internal_memo || "";
-
         updateCurrentMemberNo();
+
+        if (patient.next_appointment_date) {
+          loadAppointmentOptions(patient.next_appointment_date, patient.next_appointment_time ? formatTime(patient.next_appointment_time) : "");
+        }
       }
 
       function clearForm() {
@@ -1609,23 +1811,19 @@
         els.lineUserIdInput.value = "";
         els.lineDisplayNameInput.value = "";
         els.nextDateInput.value = "";
-        els.nextTimeInput.value = "";
+        els.nextTimeInput.innerHTML = '<option value="">日付を選択してください</option>';
         els.nextMemoInput.value = "";
         els.patientMemoInput.value = "";
         els.internalMemoInput.value = "";
 
         clearMessage(els.createMessage);
+        clearMessage(els.appointmentMessage);
         updateCurrentMemberNo();
       }
 
-      function fillDemoForm() {
+      async function fillDemoForm() {
         const today = getTodayJST();
-        const base = new Date(`${today}T00:00:00+09:00`);
-        base.setDate(base.getDate() + 14);
-
-        const y = base.getFullYear();
-        const m = String(base.getMonth() + 1).padStart(2, "0");
-        const d = String(base.getDate()).padStart(2, "0");
+        const candidate = findFirstAvailableDate(today);
 
         els.memberNoInput.value = generateMemberNo();
         els.statusInput.value = "active";
@@ -1636,14 +1834,30 @@
         els.genderInput.value = "male";
         els.lineUserIdInput.value = "";
         els.lineDisplayNameInput.value = "Taro Yamada";
-        els.nextDateInput.value = `${y}-${m}-${d}`;
-        els.nextTimeInput.value = "10:30";
+        els.nextDateInput.value = candidate;
         els.nextMemoInput.value = "定期検診・クリーニング予定";
         els.patientMemoInput.value = "次回来院時はQR診察券を受付でご提示ください。";
         els.internalMemoInput.value = "デモ登録用の患者です。受付QR読み取りとLINE文面コピーの説明に使えます。";
 
         updateCurrentMemberNo();
+        await loadAppointmentOptions(candidate, "10:30");
         showMessage(els.createMessage, "info", "デモ入力を反映しました。登録ボタンでQR診察券を発行できます。");
+      }
+
+      function findFirstAvailableDate(startDate) {
+        const min = els.nextDateInput.min || startDate;
+        const max = els.nextDateInput.max || addMonths(startDate, 3);
+        let date = min;
+
+        for (let i = 0; i < 100; i += 1) {
+          if (date > max) break;
+          const day = new Date(`${date}T00:00:00+09:00`).getDay();
+          const row = state.regularHours.find((item) => Number(item.day_of_week) === day);
+          if (row && !row.is_closed) return date;
+          date = addDays(date, 1);
+        }
+
+        return min;
       }
 
       function populateStatusSelect() {
@@ -1667,29 +1881,523 @@
         els.statusInput.value = getConfigValue("ADMIN_SCREEN.DEFAULT_STATUS", "active");
       }
 
-      function updateCurrentMemberNo() {
-        els.currentMemberNo.textContent = els.memberNoInput.value.trim() || "---";
+      function renderRegularHoursInputs() {
+        const defaults = [
+          { day_of_week: 0, is_closed: true, open_time_1: "", close_time_1: "", open_time_2: "", close_time_2: "", display_label: "日曜" },
+          { day_of_week: 1, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00", display_label: "月曜" },
+          { day_of_week: 2, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00", display_label: "火曜" },
+          { day_of_week: 3, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00", display_label: "水曜" },
+          { day_of_week: 4, is_closed: true, open_time_1: "", close_time_1: "", open_time_2: "", close_time_2: "", display_label: "木曜" },
+          { day_of_week: 5, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00", display_label: "金曜" },
+          { day_of_week: 6, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "", close_time_2: "", display_label: "土曜" }
+        ];
+
+        const rows = DAY_LABELS.map((_, day) => {
+          const existing = state.regularHours.find((item) => Number(item.day_of_week) === day);
+          return Object.assign({}, defaults[day], existing || {});
+        });
+
+        state.regularHours = rows;
+
+        els.regularHoursBox.innerHTML = rows.map((row) => {
+          const day = Number(row.day_of_week);
+          return `
+            <div class="hours-row" data-day="${day}">
+              <div class="day-label">${escapeHtml(DAY_LABELS[day])}</div>
+              <label class="check-field">
+                <input type="checkbox" data-hour-field="is_closed" ${row.is_closed ? "checked" : ""} />
+                休診
+              </label>
+
+              <div class="field">
+                <label>午前開始</label>
+                <input type="time" step="900" data-hour-field="open_time_1" value="${escapeHtml(formatTime(row.open_time_1 || ""))}" />
+              </div>
+
+              <div class="field">
+                <label>午前終了</label>
+                <input type="time" step="900" data-hour-field="close_time_1" value="${escapeHtml(formatTime(row.close_time_1 || ""))}" />
+              </div>
+
+              <div class="field">
+                <label>午後開始</label>
+                <input type="time" step="900" data-hour-field="open_time_2" value="${escapeHtml(formatTime(row.open_time_2 || ""))}" />
+              </div>
+
+              <div class="field">
+                <label>午後終了</label>
+                <input type="time" step="900" data-hour-field="close_time_2" value="${escapeHtml(formatTime(row.close_time_2 || ""))}" />
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        els.regularHoursBox.querySelectorAll("[data-hour-field='is_closed']").forEach((checkbox) => {
+          checkbox.addEventListener("change", () => {
+            const row = checkbox.closest(".hours-row");
+            row.querySelectorAll("input[type='time']").forEach((input) => {
+              input.disabled = checkbox.checked;
+            });
+          });
+          checkbox.dispatchEvent(new Event("change"));
+        });
       }
 
-      function updateSummary() {
-        state.localPatients = getLocalPatients();
-        els.localCount.textContent = String(state.localPatients.length);
+      function collectRegularHoursFromForm() {
+        const rows = [];
 
-        els.modeLabel.textContent = state.demoMode ? "デモ" : "本番";
+        els.regularHoursBox.querySelectorAll(".hours-row").forEach((row) => {
+          const day = Number(row.dataset.day);
+          const isClosed = row.querySelector("[data-hour-field='is_closed']").checked;
+          const get = (field) => row.querySelector(`[data-hour-field='${field}']`)?.value || "";
 
-        if (state.lastIssuedPatient) {
-          els.lastIssuedLabel.textContent = state.lastIssuedPatient.member_no || "--";
-        } else {
-          els.lastIssuedLabel.textContent = "--";
+          rows.push({
+            day_of_week: day,
+            is_closed: isClosed,
+            open_time_1: isClosed ? null : get("open_time_1"),
+            close_time_1: isClosed ? null : get("close_time_1"),
+            open_time_2: isClosed ? null : get("open_time_2"),
+            close_time_2: isClosed ? null : get("close_time_2"),
+            display_label: `${DAY_LABELS[day]} ${isClosed ? "休診" : "診療"}`,
+            note: ""
+          });
+        });
+
+        return rows;
+      }
+
+      function applySettingsToForm(data) {
+        const clinic = data?.clinic || {};
+        const settings = data?.settings || {};
+        const regularHours = data?.regular_hours || [];
+        const specialDays = data?.special_days || [];
+
+        state.clinic = clinic;
+        state.settings = Object.assign({}, state.settings, settings);
+        state.regularHours = regularHours;
+        state.specialDays = specialDays;
+        state.settingsLoaded = true;
+
+        els.clinicNameInput.value = clinic.clinic_name || getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
+        els.clinicKanaInput.value = clinic.clinic_name_kana || getConfigValue("CLINIC.NAME_KANA", "");
+        els.clinicPhoneInput.value = clinic.phone || "";
+        els.clinicAddressInput.value = clinic.address || "";
+        els.businessHoursNoteInput.value = clinic.business_hours_note || "";
+        els.closedDaysNoteInput.value = clinic.closed_days_note || "";
+        els.noticeTitleInput.value = clinic.notice_title || "";
+        els.noticeBodyInput.value = clinic.notice_body || "";
+
+        els.maxMonthsInput.value = String(state.settings.appointment_max_months_ahead || 3);
+        els.slotMinutesInput.value = String(state.settings.appointment_slot_minutes || 15);
+        els.durationMinutesInput.value = String(state.settings.default_visit_duration_minutes || 30);
+        els.sameDayInput.checked = state.settings.allow_same_day_appointment !== false;
+        els.useSpecialDaysInput.checked = state.settings.use_special_days !== false;
+
+        const rules = data?.appointment_rules || {};
+        const minDate = rules.min_date || calculateLocalMinDate();
+        const maxDate = rules.max_date || addMonths(getTodayJST(), Number(state.settings.appointment_max_months_ahead || 3));
+
+        els.nextDateInput.min = minDate;
+        els.nextDateInput.max = maxDate;
+        els.specialDateInput.min = getTodayJST();
+        els.specialDateInput.max = addMonths(getTodayJST(), 12);
+
+        renderRegularHoursInputs();
+        renderSpecialDaysList();
+        renderSettingsPreview();
+        updateSummary();
+      }
+
+      function calculateLocalMinDate() {
+        return state.settings.allow_same_day_appointment === false ? addDays(getTodayJST(), 1) : getTodayJST();
+      }
+
+      async function loadSettings() {
+        setButtonLoading(els.loadSettingsButton, true, "読み込み中...");
+        clearMessage(els.settingsMessage);
+
+        try {
+          const data = await apiFetch("/api/admin/settings", {
+            method: "GET",
+            params: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo")
+            }
+          });
+
+          applySettingsToForm(data);
+          showMessage(els.settingsMessage, "success", "医院設定を読み込みました。");
+        } catch (error) {
+          console.warn(error);
+          applySettingsToForm({
+            clinic: {
+              clinic_name: getConfigValue("CLINIC.NAME", "DPRO歯科クリニック"),
+              clinic_name_kana: getConfigValue("CLINIC.NAME_KANA", ""),
+              phone: getConfigValue("CLINIC.PHONE", ""),
+              address: getConfigValue("CLINIC.ADDRESS", ""),
+              business_hours_note: getConfigValue("CLINIC.BUSINESS_HOURS_NOTE", ""),
+              closed_days_note: getConfigValue("CLINIC.CLOSED_DAYS_NOTE", ""),
+              notice_title: getConfigValue("CLINIC.NOTICE_TITLE", "QR診察券のご案内"),
+              notice_body: getConfigValue("CLINIC.NOTICE_BODY", "")
+            },
+            settings: state.settings,
+            regular_hours: state.regularHours.length ? state.regularHours : []
+          });
+          showMessage(
+            els.settingsMessage,
+            "warning",
+            "医院設定APIを読み込めなかったため、画面内の初期設定で表示しています。Workerと管理コードを確認してください。\n\n詳細：" + (error.message || error)
+          );
+        } finally {
+          setButtonLoading(els.loadSettingsButton, false);
+        }
+      }
+
+      async function saveClinicSettings() {
+        setButtonLoading(els.saveSettingsButton, true, "保存中...");
+        clearMessage(els.settingsMessage);
+
+        const body = {
+          clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+          clinic: {
+            clinic_name: els.clinicNameInput.value.trim(),
+            clinic_name_kana: els.clinicKanaInput.value.trim(),
+            phone: els.clinicPhoneInput.value.trim(),
+            address: els.clinicAddressInput.value.trim(),
+            business_hours_note: els.businessHoursNoteInput.value.trim(),
+            closed_days_note: els.closedDaysNoteInput.value.trim(),
+            notice_title: els.noticeTitleInput.value.trim(),
+            notice_body: els.noticeBodyInput.value.trim()
+          },
+          settings: {
+            appointment_max_months_ahead: Number(els.maxMonthsInput.value || 3),
+            appointment_min_days_ahead: 0,
+            appointment_slot_minutes: Number(els.slotMinutesInput.value || 15),
+            default_visit_duration_minutes: Number(els.durationMinutesInput.value || 30),
+            allow_same_day_appointment: els.sameDayInput.checked,
+            use_regular_hours: true,
+            use_special_days: els.useSpecialDaysInput.checked,
+            holiday_handling: "manual",
+            timezone: "Asia/Tokyo",
+            public_note: `次回予約は原則${els.maxMonthsInput.value}か月先まで、${els.slotMinutesInput.value}分単位で受付します。`,
+            internal_note: "admin.htmlから更新"
+          },
+          regular_hours: collectRegularHoursFromForm()
+        };
+
+        try {
+          if (state.demoMode) {
+            applySettingsToForm({
+              clinic: body.clinic,
+              settings: body.settings,
+              regular_hours: body.regular_hours,
+              special_days: state.specialDays
+            });
+            showMessage(els.settingsMessage, "success", "デモモードで医院設定を画面に反映しました。");
+            return;
+          }
+
+          const result = await apiFetch("/api/admin/settings", {
+            method: "POST",
+            body
+          });
+
+          applySettingsToForm(result);
+          showMessage(els.settingsMessage, "success", "医院設定を保存しました。次回予約の日付・時間候補に反映されます。");
+        } catch (error) {
+          console.error(error);
+          showMessage(els.settingsMessage, "error", "医院設定を保存できませんでした。\n\n詳細：" + (error.message || error));
+        } finally {
+          setButtonLoading(els.saveSettingsButton, false);
+        }
+      }
+
+      async function loadSpecialDays() {
+        clearMessage(els.specialMessage);
+
+        try {
+          if (state.demoMode) {
+            renderSpecialDaysList();
+            showMessage(els.specialMessage, "success", "デモモードの臨時休業一覧を表示しました。");
+            return;
+          }
+
+          const result = await apiFetch("/api/admin/special-days", {
+            method: "GET",
+            params: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              from: getTodayJST(),
+              to: addMonths(getTodayJST(), 12)
+            }
+          });
+
+          state.specialDays = result.special_days || [];
+          renderSpecialDaysList();
+          renderSettingsPreview();
+          showMessage(els.specialMessage, "success", "臨時休業・特別営業を読み込みました。");
+        } catch (error) {
+          console.error(error);
+          showMessage(els.specialMessage, "error", "臨時休業・特別営業を読み込めませんでした。\n\n詳細：" + (error.message || error));
+        }
+      }
+
+      async function saveSpecialDay() {
+        clearMessage(els.specialMessage);
+
+        if (!els.specialDateInput.value) {
+          showMessage(els.specialMessage, "warning", "日付を選択してください。");
+          return;
         }
 
-        updateCurrentMemberNo();
+        const dayType = els.specialTypeInput.value;
+        const isClosed = dayType === "closed";
+
+        const specialDay = {
+          special_date: els.specialDateInput.value,
+          day_type: dayType,
+          is_closed: isClosed,
+          title: els.specialTitleInput.value.trim() || (isClosed ? "臨時休業" : "特別営業"),
+          note: els.specialNoteInput.value.trim(),
+          open_time_1: isClosed || dayType === "memo" ? null : els.specialOpen1Input.value || null,
+          close_time_1: isClosed || dayType === "memo" ? null : els.specialClose1Input.value || null,
+          open_time_2: isClosed || dayType === "memo" ? null : els.specialOpen2Input.value || null,
+          close_time_2: isClosed || dayType === "memo" ? null : els.specialClose2Input.value || null
+        };
+
+        if (!isClosed && dayType !== "memo" && (!specialDay.open_time_1 || !specialDay.close_time_1)) {
+          showMessage(els.specialMessage, "warning", "特別営業・時短営業の場合は、少なくとも午前の開始・終了時間を入力してください。");
+          return;
+        }
+
+        try {
+          if (state.demoMode) {
+            state.specialDays = state.specialDays.filter((item) => item.special_date !== specialDay.special_date);
+            state.specialDays.push(Object.assign({}, specialDay, {
+              day_type_label: isClosed ? "臨時休業" : "特別営業",
+              hours_text: isClosed ? "休診" : buildHoursText(specialDay)
+            }));
+            state.specialDays.sort((a, b) => String(a.special_date).localeCompare(String(b.special_date)));
+            renderSpecialDaysList();
+            renderSettingsPreview();
+            showMessage(els.specialMessage, "success", "デモモードで臨時休業・特別営業を保存しました。");
+            return;
+          }
+
+          await apiFetch("/api/admin/special-days/upsert", {
+            method: "POST",
+            body: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              staff_name: getStaffName(),
+              special_day: specialDay
+            }
+          });
+
+          await loadSpecialDays();
+          showMessage(els.specialMessage, "success", "臨時休業・特別営業を保存しました。");
+        } catch (error) {
+          console.error(error);
+          showMessage(els.specialMessage, "error", "保存できませんでした。\n\n詳細：" + (error.message || error));
+        }
+      }
+
+      async function deleteSpecialDay() {
+        const date = els.specialDateInput.value;
+
+        if (!date) {
+          showMessage(els.specialMessage, "warning", "削除する日付を選択してください。");
+          return;
+        }
+
+        try {
+          if (state.demoMode) {
+            state.specialDays = state.specialDays.filter((item) => item.special_date !== date);
+            renderSpecialDaysList();
+            renderSettingsPreview();
+            showMessage(els.specialMessage, "success", "デモモードで選択日の設定を削除しました。");
+            return;
+          }
+
+          await apiFetch("/api/admin/special-days/delete", {
+            method: "POST",
+            body: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              special_date: date
+            }
+          });
+
+          await loadSpecialDays();
+          showMessage(els.specialMessage, "success", "選択日の設定を削除しました。");
+        } catch (error) {
+          console.error(error);
+          showMessage(els.specialMessage, "error", "削除できませんでした。\n\n詳細：" + (error.message || error));
+        }
+      }
+
+      function buildHoursText(day) {
+        if (day.is_closed) return "休診";
+        const a = day.open_time_1 && day.close_time_1 ? `${formatTime(day.open_time_1)}〜${formatTime(day.close_time_1)}` : "";
+        const b = day.open_time_2 && day.close_time_2 ? `${formatTime(day.open_time_2)}〜${formatTime(day.close_time_2)}` : "";
+        return [a, b].filter(Boolean).join(" / ");
+      }
+
+      function renderSpecialDaysList() {
+        if (!state.specialDays.length) {
+          els.specialDaysList.innerHTML = '<div class="empty-box">臨時休業・特別営業はまだ登録されていません。</div>';
+          return;
+        }
+
+        els.specialDaysList.innerHTML = state.specialDays.map((day) => {
+          const isClosed = day.is_closed || day.day_type === "closed";
+          return `
+            <div class="special-item clickable" data-date="${escapeHtml(day.special_date)}">
+              <div class="item-top">
+                <div>
+                  <div class="item-title">${escapeHtml(formatDate(day.special_date))}</div>
+                  <div class="item-sub">${escapeHtml(day.title || day.day_type_label || "")}</div>
+                </div>
+                <div class="item-meta">${escapeHtml(isClosed ? "休診" : (day.hours_text || buildHoursText(day)))}</div>
+              </div>
+              <div class="pill-row">
+                <span class="pill ${isClosed ? "red" : "green"}">${escapeHtml(day.day_type_label || day.day_type || "")}</span>
+                ${day.note ? `<span class="pill yellow">${escapeHtml(day.note)}</span>` : ""}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        els.specialDaysList.querySelectorAll("[data-date]").forEach((item) => {
+          item.addEventListener("click", () => {
+            const date = item.dataset.date;
+            const day = state.specialDays.find((d) => d.special_date === date);
+            if (!day) return;
+            els.specialDateInput.value = day.special_date || "";
+            els.specialTypeInput.value = day.day_type || "closed";
+            els.specialTitleInput.value = day.title || "";
+            els.specialNoteInput.value = day.note || "";
+            els.specialOpen1Input.value = formatTime(day.open_time_1 || "");
+            els.specialClose1Input.value = formatTime(day.close_time_1 || "");
+            els.specialOpen2Input.value = formatTime(day.open_time_2 || "");
+            els.specialClose2Input.value = formatTime(day.close_time_2 || "");
+          });
+        });
+      }
+
+      function renderSettingsPreview() {
+        const hours = state.regularHours.map((row) => {
+          return `
+            <div class="info-row">
+              <div class="info-key">${escapeHtml(DAY_LABELS[Number(row.day_of_week)])}</div>
+              <div class="info-value">${escapeHtml(row.is_closed ? "休診" : buildHoursText(row))}</div>
+            </div>
+          `;
+        }).join("");
+
+        const specialSummary = state.specialDays.length
+          ? `${state.specialDays.length}件 登録済み`
+          : "登録なし";
+
+        els.settingsPreview.innerHTML = `
+          <div class="info-row">
+            <div class="info-key">医院名</div>
+            <div class="info-value">${escapeHtml(state.clinic.clinic_name || els.clinicNameInput.value || "DPRO歯科クリニック")}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-key">予約期間</div>
+            <div class="info-value">${escapeHtml(state.settings.appointment_max_months_ahead || 3)}か月先まで / ${escapeHtml(state.settings.appointment_slot_minutes || 15)}分単位</div>
+          </div>
+          <div class="info-row">
+            <div class="info-key">臨時設定</div>
+            <div class="info-value">${escapeHtml(specialSummary)}</div>
+          </div>
+          ${hours}
+        `;
+      }
+
+      async function loadAppointmentOptions(dateText, preferredTime) {
+        clearMessage(els.appointmentMessage);
+        els.nextTimeInput.innerHTML = '<option value="">読み込み中...</option>';
+
+        if (!dateText) {
+          els.nextTimeInput.innerHTML = '<option value="">日付を選択してください</option>';
+          return;
+        }
+
+        const min = els.nextDateInput.min || calculateLocalMinDate();
+        const max = els.nextDateInput.max || addMonths(getTodayJST(), Number(state.settings.appointment_max_months_ahead || 3));
+
+        if (dateText < min) {
+          els.nextTimeInput.innerHTML = '<option value="">過去日は選択できません</option>';
+          showMessage(els.appointmentMessage, "warning", "過去日、または予約可能開始日より前の日付です。");
+          return;
+        }
+
+        if (dateText > max) {
+          els.nextTimeInput.innerHTML = '<option value="">予約可能期間外です</option>';
+          showMessage(els.appointmentMessage, "warning", `予約可能期間は${state.settings.appointment_max_months_ahead || 3}か月先までです。`);
+          return;
+        }
+
+        try {
+          if (state.demoMode) {
+            const slots = buildFallbackSlotsForDate(dateText);
+            populateTimeOptions(slots, preferredTime);
+            if (slots.length) {
+              showMessage(els.appointmentMessage, "success", `${formatDate(dateText)} の予約可能時間を表示しています。`);
+            } else {
+              showMessage(els.appointmentMessage, "warning", "この日は休診、または予約可能な時間がありません。");
+            }
+            return;
+          }
+
+          const result = await apiFetch("/api/admin/appointment-options", {
+            method: "GET",
+            params: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              date: dateText
+            }
+          });
+
+          const slots = result.slots || [];
+          populateTimeOptions(slots, preferredTime);
+
+          if (result.is_available) {
+            showMessage(els.appointmentMessage, "success", `${formatDate(dateText)} の予約可能時間を表示しています。`);
+          } else {
+            showMessage(els.appointmentMessage, "warning", result.reason || "この日は予約できません。");
+          }
+        } catch (error) {
+          console.error(error);
+          const slots = buildFallbackSlotsForDate(dateText);
+          populateTimeOptions(slots, preferredTime);
+          showMessage(
+            els.appointmentMessage,
+            slots.length ? "warning" : "error",
+            "予約候補APIを取得できなかったため、画面内の曜日設定で候補を表示しています。\n\n詳細：" + (error.message || error)
+          );
+        }
+      }
+
+      function populateTimeOptions(slots, preferredTime) {
+        const selected = preferredTime ? formatTime(preferredTime) : "";
+
+        if (!slots.length) {
+          els.nextTimeInput.innerHTML = '<option value="">選択できる時間がありません</option>';
+          return;
+        }
+
+        els.nextTimeInput.innerHTML =
+          '<option value="">時間を選択</option>' +
+          slots.map((slot) => `<option value="${escapeHtml(slot)}">${escapeHtml(slot)}</option>`).join("");
+
+        if (selected && slots.includes(selected)) {
+          els.nextTimeInput.value = selected;
+        } else if (slots.includes("10:30")) {
+          els.nextTimeInput.value = "10:30";
+        }
       }
 
       async function generateQrForPatient(patient) {
         const token = patient.qr_token || "";
         const url = buildMemberUrl(token);
-
         if (!token) return;
 
         if (window.QRCode && typeof window.QRCode.toCanvas === "function") {
@@ -1716,7 +2424,7 @@
 
         els.resultMemberNo.textContent = patient.member_no || "---";
         els.resultStatus.textContent = getStatusLabel(patient.status);
-        els.resultClinicName.textContent = getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
+        els.resultClinicName.textContent = state.clinic.clinic_name || getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
 
         els.memberUrlText.textContent = memberUrl;
         els.qrTokenText.textContent = patient.qr_token || "---";
@@ -1869,12 +2577,7 @@
           const patient = normalizePatient(root.patient || root);
 
           await renderIssuedPatient(patient, "QR診察券");
-
-          showMessage(
-            els.createMessage,
-            "success",
-            getConfigValue("ADMIN_SCREEN.CREATED_MESSAGE", "患者登録が完了しました。QR診察券を発行できます。")
-          );
+          showMessage(els.createMessage, "success", "患者登録が完了しました。QR診察券を発行しました。");
         } catch (error) {
           console.error(error);
 
@@ -1882,7 +2585,7 @@
             els.createMessage,
             "error",
             "患者登録に失敗しました。\n\n" +
-            "まだWorker未作成の場合は、右上の「デモ登録」を押してから登録してください。\n\n" +
+            "休診日・営業時間外・予約可能期間外の次回予約は登録できません。\n\n" +
             "詳細：" +
             (error.message || error)
           );
@@ -2001,7 +2704,7 @@
         updateSummary();
       }
 
-      function saveSettings() {
+      function saveAdminSettings() {
         const staffName = els.staffNameInput.value.trim() || getConfigValue("ADMIN.DEFAULT_STAFF_NAME", "受付スタッフ");
         const adminCode = els.adminCodeInput.value.trim();
 
@@ -2009,7 +2712,7 @@
         setAdminCode(adminCode);
 
         showMessage(
-          els.settingsMessage,
+          els.adminCodeMessage,
           "success",
           "管理設定を保存しました。\n管理コードはWorker側の認証で使用します。"
         );
@@ -2063,16 +2766,28 @@
         window.open(buildMemberUrl(state.selectedPatient.qr_token), "_blank", "noopener");
       }
 
+      function updateCurrentMemberNo() {
+        els.currentMemberNo.textContent = els.memberNoInput.value.trim() || "---";
+      }
+
+      function updateSummary() {
+        state.localPatients = getLocalPatients();
+        els.modeLabel.textContent = state.demoMode ? "デモ" : "本番";
+        els.appointmentRangeLabel.textContent = `${state.settings.appointment_max_months_ahead || 3}か月`;
+        els.slotLabel.textContent = `${state.settings.appointment_slot_minutes || 15}分`;
+        updateCurrentMemberNo();
+      }
+
       function applyInitialConfig() {
         const systemName = getConfigValue("SYSTEM_NAME", "DPRO SHOP");
-        const title = getConfigValue("ADMIN_SCREEN.TITLE", "患者登録・QR診察券発行");
+        const title = "患者登録・医院設定";
         const clinicName = getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
 
         document.title = `${systemName} | ${title}`;
 
         els.systemName.textContent = systemName;
         els.pageTitle.textContent = title;
-        els.clinicNameText.textContent = `${clinicName} / 新規患者登録・デジタルQR診察券URL発行`;
+        els.clinicNameText.textContent = `${clinicName} / 医院設定・患者登録・QR診察券発行`;
         els.footerClinicName.textContent = clinicName;
         els.resultClinicName.textContent = clinicName;
 
@@ -2092,6 +2807,14 @@
         }
 
         state.localPatients = getLocalPatients();
+        renderRegularHoursInputs();
+
+        const min = calculateLocalMinDate();
+        const max = addMonths(getTodayJST(), Number(state.settings.appointment_max_months_ahead || 3));
+        els.nextDateInput.min = min;
+        els.nextDateInput.max = max;
+        els.specialDateInput.min = getTodayJST();
+        els.specialDateInput.max = addMonths(getTodayJST(), 12);
 
         updateSummary();
       }
@@ -2119,7 +2842,7 @@
           }
         });
 
-        els.saveSettingsButton.addEventListener("click", saveSettings);
+        els.saveAdminCodeButton.addEventListener("click", saveAdminSettings);
 
         els.copyMemberUrlButton.addEventListener("click", copyIssuedUrl);
         els.openMemberPageButton.addEventListener("click", openIssuedMemberPage);
@@ -2128,11 +2851,34 @@
         els.copySelectedUrlButton.addEventListener("click", copySelectedUrl);
         els.openSelectedMemberButton.addEventListener("click", openSelectedMemberPage);
         els.loadSelectedIntoFormButton.addEventListener("click", loadSelectedIntoForm);
+
+        els.loadSettingsButton.addEventListener("click", loadSettings);
+        els.saveSettingsButton.addEventListener("click", saveClinicSettings);
+
+        els.loadSpecialDaysButton.addEventListener("click", loadSpecialDays);
+        els.saveSpecialDayButton.addEventListener("click", saveSpecialDay);
+        els.deleteSpecialDayButton.addEventListener("click", deleteSpecialDay);
+
+        els.specialTypeInput.addEventListener("change", () => {
+          const closed = els.specialTypeInput.value === "closed" || els.specialTypeInput.value === "memo";
+          [els.specialOpen1Input, els.specialClose1Input, els.specialOpen2Input, els.specialClose2Input].forEach((input) => {
+            input.disabled = closed;
+          });
+        });
+
+        els.nextDateInput.addEventListener("change", async () => {
+          await loadAppointmentOptions(els.nextDateInput.value, "");
+        });
       }
 
-      document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("DOMContentLoaded", async () => {
         applyInitialConfig();
         bindEvents();
+
+        els.specialTypeInput.dispatchEvent(new Event("change"));
+
+        await loadSettings();
+        await loadSpecialDays();
       });
     })();
   </script>
