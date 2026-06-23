@@ -689,6 +689,7 @@
         <a class="badge-link" id="scanLink" href="./scan.html">受付QR読取</a>
         <a class="badge-link" id="memberLink" href="./member.html?t=demo">患者画面</a>
         <button class="badge" id="reloadSettingsButton" type="button">設定更新</button>
+        <button class="badge" id="demoResetButton" type="button">営業前デモリセット</button>
         <button class="badge" id="demoButton" type="button">デモ表示</button>
       </div>
     </header>
@@ -801,6 +802,26 @@
             <div id="followupsList" class="list" style="margin-top: 12px;">
               <div class="empty-box">まだ読み込んでいません。</div>
             </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">整</span>
+              営業前デモリセット
+            </h2>
+            <div class="card-subtitle">
+              営業前に押すと、デモ患者・今日の受付・フォロー対象を今日基準に整えます。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="actions" style="margin-top: 0;">
+              <button class="btn btn-warning" id="demoResetMainButton" type="button">デモデータを今日基準にリセット</button>
+            </div>
+
+            <div id="demoResetMessage" class="message"></div>
           </div>
         </section>
 
@@ -1113,6 +1134,7 @@
         scanLink: $("scanLink"),
         memberLink: $("memberLink"),
         reloadSettingsButton: $("reloadSettingsButton"),
+        demoResetButton: $("demoResetButton"),
         demoButton: $("demoButton"),
 
         todayCount: $("todayCount"),
@@ -1136,6 +1158,9 @@
         loadFollowupsButton: $("loadFollowupsButton"),
         followupsMessage: $("followupsMessage"),
         followupsList: $("followupsList"),
+
+        demoResetMainButton: $("demoResetMainButton"),
+        demoResetMessage: $("demoResetMessage"),
 
         staffNameInput: $("staffNameInput"),
         adminCodeInput: $("adminCodeInput"),
@@ -2280,6 +2305,75 @@
         return min;
       }
 
+      async function resetDemoData() {
+        const adminCode = getAdminCode();
+
+        if (!adminCode) {
+          showMessage(
+            els.demoResetMessage,
+            "warning",
+            "先に管理設定で管理コードを保存してください。"
+          );
+          return;
+        }
+
+        const buttons = [els.demoResetButton, els.demoResetMainButton].filter(Boolean);
+        buttons.forEach((button) => setButtonLoading(button, true, "リセット中..."));
+
+        clearMessage(els.demoResetMessage);
+
+        try {
+          const result = await apiFetch("/api/admin/demo/reset", {
+            method: "POST",
+            body: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              staff_name: getStaffName(),
+              reset_from: "owner.html"
+            }
+          });
+
+          if (result && result.ok === false) {
+            throw new Error(result.message || result.error || "デモリセットに失敗しました。");
+          }
+
+          showMessage(
+            els.demoResetMessage,
+            "success",
+            "営業前デモリセットが完了しました。今日の受付・フォロー対象を更新します。"
+          );
+
+          await loadToday();
+          await loadFollowups();
+
+          const patients = Array.isArray(result.patients) ? result.patients : [];
+          const visits = Array.isArray(result.visits) ? result.visits : [];
+          const followups = Array.isArray(result.followups) ? result.followups : [];
+
+          if (patients.length) {
+            const firstPatient = normalizePatient(patients[0]);
+            const patientVisits = visits.filter((visit) => visit.patient_id === firstPatient.id);
+            const patientFollowups = followups.filter((followup) => followup.patient_id === firstPatient.id);
+            renderPatientDetail(firstPatient, patientVisits, patientFollowups);
+          }
+
+          updateSummary();
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.demoResetMessage,
+            "error",
+            "営業前デモリセットに失敗しました。\n\n" +
+            "確認すること：\n" +
+            "・Cloudflare Worker が STEP 30-10 修正版になっているか\n" +
+            "・管理コード dpro-dental-2026 を保存しているか\n" +
+            "・SUPABASE_SERVICE_ROLE_KEY がWorker Secretsに入っているか\n\n" +
+            "詳細：" + (error.message || error)
+          );
+        } finally {
+          buttons.forEach((button) => setButtonLoading(button, false));
+        }
+      }
+
       function showDemo() {
         const demo = getDemoData();
         renderPatientDetail(demo.patient, demo.visits, demo.followups);
@@ -2390,6 +2484,14 @@
       function bindEvents() {
         els.reloadSettingsButton.addEventListener("click", loadSettings);
         els.demoButton.addEventListener("click", showDemo);
+
+        if (els.demoResetButton) {
+          els.demoResetButton.addEventListener("click", resetDemoData);
+        }
+
+        if (els.demoResetMainButton) {
+          els.demoResetMainButton.addEventListener("click", resetDemoData);
+        }
 
         els.loadTodayButton.addEventListener("click", loadToday);
         els.loadFollowupsButton.addEventListener("click", loadFollowups);
