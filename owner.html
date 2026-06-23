@@ -1357,7 +1357,7 @@
               <div class="family-demo-force-grid" id="familyDemoForceGrid"></div>
 
               <div class="family-demo-force-note">
-                営業ポイント：紙の診察券を家族分持ち歩く必要がなくなり、LINE公式のリッチメニューから家族の診察券を切り替えて受付できます。
+                営業ポイント：紙の診察券を家族分持ち歩く必要がなくなり、LINE公式のリッチメニューから家族の診察券を切り替えて受付できます。上の家族カードを押すと、患者詳細がその人に切り替わります。
               </div>
             </div>
 
@@ -2580,44 +2580,81 @@
         const patientId = card.patient_id || "";
         const memberNo = card.member_no || "";
         const qrToken = card.qr_token || "";
+        const patientName = card.patient_name || "";
 
         try {
-          if (patientId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(patientId)) {
+          /*
+            STEP 30-20E5:
+            家族診察券の切り替えは、apiFetch + params を使わず直接URLで検索する。
+            環境によって params が渡らず「選択はできるが詳細が変わらない」状態を防ぐ。
+          */
+
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(patientId);
+
+          if (isUuid) {
             await loadPatientDetail(patientId);
-            showMessage(els.patientMessage, "success", `${card.patient_name || "患者"}様の詳細に切り替えました。`);
+            showMessage(els.patientMessage, "success", `${patientName || "患者"}様の詳細に切り替えました。`);
             return;
           }
 
-          const q = memberNo || qrToken || card.patient_name || "";
+          const queryText = memberNo || qrToken || patientName;
 
-          if (!q) {
+          if (!queryText) {
             showMessage(els.patientMessage, "warning", "切り替える患者情報が不足しています。");
             return;
           }
 
-          const result = await apiFetch("/api/owner/patients/search", {
+          const apiBase = String(getConfigValue("API.BASE_URL", "https://dpro-dental-qr-api.dpromstk2000.workers.dev")).replace(/\/+$/, "");
+          const url = new URL(apiBase + "/api/owner/patients/search");
+
+          url.searchParams.set("clinic_code", getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"));
+          url.searchParams.set("q", queryText);
+          url.searchParams.set("limit", "20");
+          url.searchParams.set("admin_code", getAdminCode());
+          url.searchParams.set("_t", String(Date.now()));
+
+          const response = await fetch(url.toString(), {
             method: "GET",
-            params: {
-              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-              q,
-              limit: 10
-            }
+            cache: "no-store",
+            mode: "cors"
           });
 
-          const patients = Array.isArray(result.patients) ? result.patients : [];
+          const raw = await response.text();
+          let result = null;
+
+          try {
+            result = raw ? JSON.parse(raw) : {};
+          } catch (parseError) {
+            throw new Error("患者検索APIの応答を読めませんでした：" + raw.slice(0, 300));
+          }
+
+          if (!response.ok || result.ok === false) {
+            throw new Error(result.message || result.error || ("HTTP " + response.status));
+          }
+
+          const patients = Array.isArray(result.patients)
+            ? result.patients
+            : Array.isArray(result.data?.patients)
+              ? result.data.patients
+              : [];
+
           const matched =
-            patients.find((patient) => patient.member_no === memberNo) ||
-            patients.find((patient) => patient.qr_token === qrToken) ||
-            patients.find((patient) => patient.patient_name === card.patient_name) ||
+            patients.find((patient) => memberNo && patient.member_no === memberNo) ||
+            patients.find((patient) => qrToken && patient.qr_token === qrToken) ||
+            patients.find((patient) => patientName && patient.patient_name === patientName) ||
             patients[0];
 
           if (!matched || !matched.id) {
-            showMessage(els.patientMessage, "warning", "患者詳細を切り替えできませんでした。患者検索から選択してください。");
+            showMessage(
+              els.patientMessage,
+              "warning",
+              "患者詳細を切り替えできませんでした。患者検索から選択してください。"
+            );
             return;
           }
 
           await loadPatientDetail(matched.id);
-          showMessage(els.patientMessage, "success", `${matched.patient_name || card.patient_name || "患者"}様の詳細に切り替えました。`);
+          showMessage(els.patientMessage, "success", `${matched.patient_name || patientName || "患者"}様の詳細に切り替えました。`);
         } catch (error) {
           console.error(error);
           showMessage(
