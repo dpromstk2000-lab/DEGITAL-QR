@@ -13,7 +13,7 @@
       --main-dark: #1d4ed8;
       --sub: #0f766e;
       --accent: #f59e0b;
-      --bg: #f6f8fb;
+      --bg: #f5f7fb;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
@@ -21,7 +21,6 @@
       --success: #16a34a;
       --warning: #f59e0b;
       --danger: #dc2626;
-      --info: #2563eb;
       --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
     }
 
@@ -29,19 +28,13 @@
       box-sizing: border-box;
     }
 
-    html {
-      min-height: 100%;
-      background: var(--bg);
-    }
-
     body {
       margin: 0;
-      min-height: 100%;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34%),
-        radial-gradient(circle at top right, rgba(15, 118, 110, 0.1), transparent 30%),
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.11), transparent 31%),
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.10), transparent 30%),
         var(--bg);
     }
 
@@ -62,7 +55,7 @@
 
     .page {
       width: 100%;
-      max-width: 1320px;
+      max-width: 1420px;
       margin: 0 auto;
       padding: 18px 18px 42px;
     }
@@ -80,7 +73,6 @@
       color: var(--muted);
       font-weight: 900;
       letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
 
     .brand-title {
@@ -88,14 +80,14 @@
       font-size: 28px;
       font-weight: 950;
       letter-spacing: -0.05em;
-      line-height: 1.22;
+      line-height: 1.2;
     }
 
     .brand-sub {
       margin-top: 7px;
       color: var(--muted);
       font-size: 14px;
-      line-height: 1.65;
+      line-height: 1.6;
     }
 
     .top-actions {
@@ -117,20 +109,56 @@
       font-weight: 900;
       text-decoration: none;
       white-space: nowrap;
-      background: rgba(37, 99, 235, 0.1);
+      background: rgba(37, 99, 235, 0.10);
       color: var(--main-dark);
       border: 1px solid rgba(37, 99, 235, 0.16);
     }
 
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .summary-card {
+      border-radius: 22px;
+      background: #fff;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.055);
+      padding: 16px;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .summary-value {
+      margin-top: 8px;
+      font-size: 26px;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .summary-note {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
     .layout {
       display: grid;
-      grid-template-columns: 390px 1fr;
+      grid-template-columns: 430px 1fr;
       gap: 18px;
       align-items: start;
     }
 
-    .left-stack,
-    .right-stack {
+    .stack {
       display: grid;
       gap: 16px;
     }
@@ -146,7 +174,7 @@
     .card-header {
       padding: 17px 19px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(248, 250, 252, 0.78), #ffffff);
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.80), #fff);
     }
 
     .card-title {
@@ -177,47 +205,10 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: rgba(37, 99, 235, 0.1);
+      background: rgba(37, 99, 235, 0.10);
       color: var(--main-dark);
       font-weight: 950;
       flex: 0 0 auto;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .summary-card {
-      border-radius: 22px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.055);
-      padding: 16px;
-    }
-
-    .summary-label {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 900;
-      line-height: 1.35;
-    }
-
-    .summary-value {
-      margin-top: 8px;
-      font-size: 30px;
-      font-weight: 950;
-      letter-spacing: -0.05em;
-      line-height: 1;
-    }
-
-    .summary-note {
-      margin-top: 9px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
     }
 
     .form-grid {
@@ -242,7 +233,7 @@
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 15px;
-      background: #ffffff;
+      background: #fff;
       color: var(--text);
       padding: 12px 13px;
       outline: none;
@@ -258,13 +249,19 @@
     .field input:focus,
     .field textarea:focus,
     .field select:focus {
-      border-color: rgba(37, 99, 235, 0.5);
+      border-color: rgba(37, 99, 235, 0.50);
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
     }
 
     .mini-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .three-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 10px;
     }
 
@@ -294,21 +291,27 @@
     }
 
     .btn-primary {
-      color: #ffffff;
+      color: #fff;
       background: linear-gradient(135deg, var(--main), var(--main-dark));
-      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.20);
     }
 
     .btn-sub {
-      color: #ffffff;
+      color: #fff;
       background: linear-gradient(135deg, var(--sub), #115e59);
       box-shadow: 0 12px 24px rgba(15, 118, 110, 0.17);
     }
 
     .btn-light {
       color: var(--text);
-      background: #ffffff;
+      background: #fff;
       border: 1px solid var(--border);
+    }
+
+    .btn-success {
+      color: #14532d;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
     }
 
     .btn-warning {
@@ -321,12 +324,6 @@
       color: #991b1b;
       background: #fff1f2;
       border: 1px solid #fecdd3;
-    }
-
-    .btn-success {
-      color: #14532d;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
     }
 
     .actions {
@@ -379,10 +376,9 @@
 
     .list-item {
       border: 1px solid var(--border);
-      background: #ffffff;
+      background: #fff;
       border-radius: 18px;
       padding: 14px;
-      transition: border-color 0.08s ease, box-shadow 0.08s ease, transform 0.08s ease;
     }
 
     .list-item.clickable {
@@ -390,9 +386,8 @@
     }
 
     .list-item.clickable:hover {
-      border-color: rgba(37, 99, 235, 0.4);
+      border-color: rgba(37, 99, 235, 0.40);
       box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-      transform: translateY(-1px);
     }
 
     .item-top {
@@ -429,13 +424,6 @@
       font-weight: 900;
     }
 
-    .item-text {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.65;
-      white-space: pre-wrap;
-    }
-
     .pill-row {
       display: flex;
       flex-wrap: wrap;
@@ -451,7 +439,7 @@
       padding: 7px 10px;
       font-size: 12px;
       font-weight: 900;
-      background: #ffffff;
+      background: #fff;
       color: var(--text);
       border: 1px solid var(--border);
     }
@@ -480,25 +468,13 @@
       border-color: #fecdd3;
     }
 
-    .empty-box {
-      border-radius: 18px;
-      background: #f8fafc;
-      border: 1px dashed var(--border);
-      padding: 18px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-      text-align: center;
-    }
-
     .patient-hero {
       position: relative;
       overflow: hidden;
       border-radius: 24px;
       border: 1px solid var(--border);
-      background: linear-gradient(135deg, #ffffff, #eef6ff);
+      background: linear-gradient(135deg, #fff, #eef6ff);
       padding: 20px;
-      margin-bottom: 16px;
     }
 
     .patient-hero::after {
@@ -506,10 +482,10 @@
       position: absolute;
       width: 190px;
       height: 190px;
-      right: -75px;
-      top: -85px;
+      right: -78px;
+      top: -88px;
       border-radius: 50%;
-      background: rgba(37, 99, 235, 0.1);
+      background: rgba(37, 99, 235, 0.10);
     }
 
     .patient-content {
@@ -546,7 +522,7 @@
       border: 1px solid var(--border);
       border-radius: 18px;
       overflow: hidden;
-      background: #ffffff;
+      background: #fff;
       margin-top: 14px;
     }
 
@@ -576,92 +552,54 @@
       white-space: pre-wrap;
     }
 
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .tab-button {
-      min-height: 38px;
-      border-radius: 999px;
+    .section {
+      margin-top: 16px;
+      border-radius: 22px;
       border: 1px solid var(--border);
-      background: #ffffff;
-      color: var(--muted);
-      padding: 8px 12px;
-      font-size: 13px;
-      font-weight: 900;
+      background: #fff;
+      padding: 18px;
     }
 
-    .tab-button.active {
-      background: var(--main);
-      color: #ffffff;
-      border-color: var(--main);
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 17px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
     }
 
-    .detail-section {
-      display: none;
-    }
-
-    .detail-section.active {
-      display: block;
-    }
-
-    .line-box {
+    .line-copy-box {
       border-radius: 18px;
       border: 1px solid #bfdbfe;
       background: #eff6ff;
       padding: 14px;
     }
 
-    .line-title {
+    .line-copy-title {
       font-weight: 950;
       color: #1e3a8a;
       margin-bottom: 8px;
     }
 
-    .line-text {
-      color: #1e3a8a;
+    .line-copy-text {
       font-size: 14px;
-      line-height: 1.75;
+      line-height: 1.7;
+      color: #1e3a8a;
       white-space: pre-wrap;
     }
 
-    .loading-line {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+    .empty-box {
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px dashed var(--border);
+      padding: 18px;
       color: var(--muted);
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 3px solid #dbeafe;
-      border-top-color: var(--main);
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: center;
     }
 
     .hidden {
       display: none !important;
-    }
-
-    .footer {
-      margin-top: 22px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.7;
     }
 
     .debug {
@@ -677,17 +615,25 @@
       white-space: pre-wrap;
     }
 
-    @media (max-width: 1050px) {
+    .footer {
+      margin-top: 22px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1180px) {
       .layout {
         grid-template-columns: 1fr;
       }
 
       .summary-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
       }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 760px) {
       .page {
         padding: 14px 12px 32px;
       }
@@ -710,19 +656,20 @@
       }
 
       .summary-value {
-        font-size: 26px;
+        font-size: 23px;
       }
 
-      .mini-grid {
+      .mini-grid,
+      .three-grid {
         grid-template-columns: 1fr;
-      }
-
-      .patient-name {
-        font-size: 27px;
       }
 
       .info-row {
         grid-template-columns: 96px 1fr;
+      }
+
+      .patient-name {
+        font-size: 27px;
       }
     }
   </style>
@@ -734,16 +681,15 @@
       <div>
         <div class="brand-kicker" id="systemName">DPRO SHOP</div>
         <div class="brand-title" id="pageTitle">歯科医院 管理画面</div>
-        <div class="brand-sub" id="clinicNameText">
-          DPRO歯科クリニック / 今日の受付・患者検索・来院履歴・フォロー管理
-        </div>
+        <div class="brand-sub" id="clinicNameText">DPRO歯科クリニック / 今日の受付・患者検索・来院履歴・LINEフォロー</div>
       </div>
 
       <div class="top-actions">
+        <a class="badge-link" id="adminLink" href="./admin.html">患者登録・医院設定</a>
         <a class="badge-link" id="scanLink" href="./scan.html">受付QR読取</a>
-        <a class="badge-link" id="adminLink" href="./admin.html">患者登録</a>
         <a class="badge-link" id="memberLink" href="./member.html?t=demo">患者画面</a>
-        <button class="badge" id="reloadAllButton" type="button">再読み込み</button>
+        <button class="badge" id="reloadSettingsButton" type="button">設定更新</button>
+        <button class="badge" id="demoButton" type="button">デモ表示</button>
       </div>
     </header>
 
@@ -751,46 +697,50 @@
       <div class="summary-card">
         <div class="summary-label">今日の受付</div>
         <div class="summary-value" id="todayCount">0</div>
-        <div class="summary-note">本日の来院・受付記録</div>
+        <div class="summary-note" id="todayDateLabel">本日</div>
       </div>
 
       <div class="summary-card">
-        <div class="summary-label">要フォロー</div>
+        <div class="summary-label">フォロー対象</div>
         <div class="summary-value" id="followupCount">0</div>
-        <div class="summary-note">LINE案内が必要な患者さん</div>
+        <div class="summary-note">LINE文面コピー待ち</div>
       </div>
 
       <div class="summary-card">
-        <div class="summary-label">検索結果</div>
-        <div class="summary-value" id="searchCount">0</div>
-        <div class="summary-note">現在表示中の患者件数</div>
+        <div class="summary-label">選択中患者</div>
+        <div class="summary-value" id="selectedMemberNo">---</div>
+        <div class="summary-note" id="selectedPatientNameMini">未選択</div>
       </div>
 
       <div class="summary-card">
-        <div class="summary-label">選択中</div>
-        <div class="summary-value" id="selectedPatientLabel">--</div>
-        <div class="summary-note">患者詳細を右側に表示</div>
+        <div class="summary-label">予約可能期間</div>
+        <div class="summary-value" id="rangeLabel">3か月</div>
+        <div class="summary-note">医院設定から反映</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-label">時間単位</div>
+        <div class="summary-value" id="slotLabel">15分</div>
+        <div class="summary-note">次回予約候補</div>
       </div>
     </section>
 
     <div class="layout">
-      <div class="left-stack">
+      <aside class="stack">
         <section class="card">
           <div class="card-header">
-            <h2 class="card-title">
+            <h1 class="card-title">
               <span class="icon">今</span>
               今日の受付
-            </h2>
+            </h1>
             <div class="card-subtitle">
-              本日受付・来院記録を残した患者さんを表示します。
+              QR読み取り・来院記録保存された本日の患者を確認します。
             </div>
           </div>
 
           <div class="card-body">
             <div class="actions" style="margin-top: 0;">
-              <button class="btn btn-primary" id="loadTodayButton" type="button">
-                今日の受付を更新
-              </button>
+              <button class="btn btn-primary" id="loadTodayButton" type="button">今日の受付を更新</button>
             </div>
 
             <div id="todayMessage" class="message"></div>
@@ -807,7 +757,7 @@
               患者検索
             </h2>
             <div class="card-subtitle">
-              氏名・ふりがな・電話番号・診察券番号で検索できます。
+              名前・かな・電話番号・診察券番号で検索できます。
             </div>
           </div>
 
@@ -815,21 +765,12 @@
             <div class="form-grid">
               <div class="field">
                 <label for="searchInput">検索キーワード</label>
-                <input
-                  id="searchInput"
-                  type="text"
-                  placeholder="例：山田 / ヤマダ / 090 / D2606"
-                  autocomplete="off"
-                />
+                <input id="searchInput" type="text" placeholder="例：山田 / D2606 / 090" autocomplete="off" />
               </div>
 
               <div class="mini-grid">
-                <button class="btn btn-sub" id="searchButton" type="button">
-                  患者を検索
-                </button>
-                <button class="btn btn-light" id="demoButton" type="button">
-                  デモ表示
-                </button>
+                <button class="btn btn-sub" id="searchButton" type="button">患者検索</button>
+                <button class="btn btn-light" id="clearSearchButton" type="button">クリア</button>
               </div>
             </div>
 
@@ -847,19 +788,17 @@
               フォロー対象
             </h2>
             <div class="card-subtitle">
-              定期検診・再来院案内など、LINEで連絡する患者さんを表示します。
+              定期検診・再来院案内など、LINEで送るべき文面を確認します。
             </div>
           </div>
 
           <div class="card-body">
             <div class="actions" style="margin-top: 0;">
-              <button class="btn btn-primary" id="loadFollowupsButton" type="button">
-                フォロー対象を更新
-              </button>
+              <button class="btn btn-primary" id="loadFollowupsButton" type="button">フォロー対象を更新</button>
             </div>
 
-            <div id="followupListMessage" class="message"></div>
-            <div id="followupList" class="list" style="margin-top: 12px;">
+            <div id="followupsMessage" class="message"></div>
+            <div id="followupsList" class="list" style="margin-top: 12px;">
               <div class="empty-box">まだ読み込んでいません。</div>
             </div>
           </div>
@@ -868,11 +807,11 @@
         <section class="card">
           <div class="card-header">
             <h2 class="card-title">
-              <span class="icon">設</span>
+              <span class="icon">鍵</span>
               管理設定
             </h2>
             <div class="card-subtitle">
-              管理コードはWorker側で確認します。秘密キーはこの画面に書きません。
+              管理コードはWorker側の認証に使います。Supabaseキーはここには入れません。
             </div>
           </div>
 
@@ -885,47 +824,45 @@
 
               <div class="field">
                 <label for="adminCodeInput">管理コード</label>
-                <input id="adminCodeInput" type="password" placeholder="Cloudflare Worker 側で確認する管理コード" />
+                <input id="adminCodeInput" type="password" placeholder="Cloudflare Worker側のADMIN_TOKEN" />
               </div>
 
-              <button class="btn btn-light" id="saveSettingsButton" type="button">
-                設定を保存
-              </button>
+              <button class="btn btn-light" id="saveAdminCodeButton" type="button">管理設定を保存</button>
             </div>
 
-            <div id="settingsMessage" class="message"></div>
+            <div id="adminCodeMessage" class="message"></div>
           </div>
         </section>
-      </div>
+      </aside>
 
-      <div class="right-stack">
-        <section id="emptyDetailCard" class="card">
+      <main class="stack">
+        <section id="emptyPatientCard" class="card">
           <div class="card-header">
             <h2 class="card-title">
               <span class="icon">患</span>
               患者詳細
             </h2>
             <div class="card-subtitle">
-              左側の患者一覧・今日の受付・フォロー対象から患者を選択してください。
+              今日の受付・患者検索・フォロー対象から患者を選ぶと、ここに詳細が表示されます。
             </div>
           </div>
 
           <div class="card-body">
             <div class="empty-box">
               まだ患者が選択されていません。<br />
-              検索結果や今日の受付から患者をクリックすると、ここに詳細が表示されます。
+              左側から患者を選択してください。
             </div>
           </div>
         </section>
 
-        <section id="patientDetailCard" class="card hidden">
+        <section id="patientCard" class="card hidden">
           <div class="card-header">
             <h2 class="card-title">
               <span class="icon">患</span>
               患者詳細
             </h2>
             <div class="card-subtitle">
-              患者情報・来院履歴・次回予約・フォロー文面を確認できます。
+              患者情報・来院履歴・次回予約・LINEフォロー文面を確認します。
             </div>
           </div>
 
@@ -933,219 +870,203 @@
             <div class="patient-hero">
               <div class="patient-content">
                 <div class="patient-label">PATIENT DETAIL</div>
-                <div class="patient-name" id="detailPatientName">---</div>
-                <div class="patient-kana" id="detailPatientKana"></div>
+                <div class="patient-name" id="patientName">---</div>
+                <div class="patient-kana" id="patientKana"></div>
 
                 <div class="pill-row">
-                  <div class="pill blue">
-                    <span>診察券番号</span>
-                    <strong id="detailMemberNo">---</strong>
-                  </div>
-                  <div class="pill" id="detailStatusPill">
-                    <span>状態</span>
-                    <strong id="detailStatus">---</strong>
-                  </div>
-                  <div class="pill green">
-                    <span>来院回数</span>
-                    <strong id="detailVisitCount">0</strong>
-                  </div>
+                  <span class="pill blue">診察券番号 <strong id="patientMemberNo">---</strong></span>
+                  <span class="pill green" id="patientStatus">通院中</span>
+                  <span class="pill" id="visitCount">来院 0回</span>
                 </div>
               </div>
             </div>
 
-            <div class="tabs">
-              <button class="tab-button active" data-tab="profile" type="button">基本情報</button>
-              <button class="tab-button" data-tab="visits" type="button">来院履歴</button>
-              <button class="tab-button" data-tab="newVisit" type="button">来院記録追加</button>
-              <button class="tab-button" data-tab="line" type="button">LINE文面</button>
+            <div class="info-list">
+              <div class="info-row">
+                <div class="info-key">電話</div>
+                <div class="info-value" id="patientPhone">---</div>
+              </div>
+
+              <div class="info-row">
+                <div class="info-key">LINE名</div>
+                <div class="info-value" id="lineDisplayName">---</div>
+              </div>
+
+              <div class="info-row">
+                <div class="info-key">前回来院</div>
+                <div class="info-value" id="lastVisit">---</div>
+              </div>
+
+              <div class="info-row">
+                <div class="info-key">次回予約</div>
+                <div class="info-value" id="nextAppointment">---</div>
+              </div>
+
+              <div class="info-row">
+                <div class="info-key">患者メモ</div>
+                <div class="info-value" id="patientMemo">---</div>
+              </div>
+
+              <div class="info-row">
+                <div class="info-key">院内メモ</div>
+                <div class="info-value" id="internalMemo">---</div>
+              </div>
             </div>
 
-            <section id="tab-profile" class="detail-section active">
-              <div class="info-list">
-                <div class="info-row">
-                  <div class="info-key">電話</div>
-                  <div class="info-value" id="detailPhone">---</div>
-                </div>
-                <div class="info-row">
-                  <div class="info-key">LINE名</div>
-                  <div class="info-value" id="detailLineName">---</div>
-                </div>
-                <div class="info-row">
-                  <div class="info-key">前回来院</div>
-                  <div class="info-value" id="detailLastVisit">---</div>
-                </div>
-                <div class="info-row">
-                  <div class="info-key">次回予約</div>
-                  <div class="info-value" id="detailNextAppointment">---</div>
-                </div>
-                <div class="info-row">
-                  <div class="info-key">患者メモ</div>
-                  <div class="info-value" id="detailPatientMemo">---</div>
-                </div>
-                <div class="info-row">
-                  <div class="info-key">院内メモ</div>
-                  <div class="info-value" id="detailInternalMemo">---</div>
-                </div>
+            <div class="actions">
+              <div class="mini-grid">
+                <button class="btn btn-primary" id="copyPatientNameButton" type="button">患者名コピー</button>
+                <button class="btn btn-light" id="openMemberButton" type="button">診察券を開く</button>
+              </div>
+            </div>
+
+            <div id="patientMessage" class="message"></div>
+
+            <div class="section">
+              <h3 class="section-title">来院履歴</h3>
+              <div id="visitsList" class="list">
+                <div class="empty-box">来院履歴はまだありません。</div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title">LINE文面</h3>
+              <div class="line-copy-box">
+                <div class="line-copy-title">コピー用文面</div>
+                <div id="lineCopyText" class="line-copy-text"></div>
               </div>
 
               <div class="actions">
                 <div class="mini-grid">
-                  <button class="btn btn-primary" id="copyNameButton" type="button">
-                    患者名コピー
-                  </button>
-                  <button class="btn btn-light" id="openMemberButton" type="button">
-                    診察券を開く
-                  </button>
-                </div>
-              </div>
-
-              <div id="profileMessage" class="message"></div>
-            </section>
-
-            <section id="tab-visits" class="detail-section">
-              <div id="detailVisitsList" class="list">
-                <div class="empty-box">来院履歴はまだありません。</div>
-              </div>
-            </section>
-
-            <section id="tab-newVisit" class="detail-section">
-              <div class="form-grid">
-                <div class="mini-grid">
-                  <div class="field">
-                    <label for="visitTypeInput">来院種別</label>
-                    <select id="visitTypeInput"></select>
-                  </div>
-
-                  <div class="field">
-                    <label for="visitStatusInput">来院ステータス</label>
-                    <select id="visitStatusInput"></select>
-                  </div>
-                </div>
-
-                <div class="field">
-                  <label for="chiefComplaintInput">来院理由・主訴</label>
-                  <textarea id="chiefComplaintInput" placeholder="例：定期検診、歯がしみる、クリーニング希望など"></textarea>
-                </div>
-
-                <div class="field">
-                  <label for="treatmentSummaryInput">処置内容メモ</label>
-                  <textarea id="treatmentSummaryInput" placeholder="例：検診、スケーリング、ブラッシング説明など"></textarea>
-                </div>
-
-                <div class="mini-grid">
-                  <div class="field">
-                    <label for="nextDateInput">次回予約日</label>
-                    <input id="nextDateInput" type="date" />
-                  </div>
-
-                  <div class="field">
-                    <label for="nextTimeInput">次回予約時間</label>
-                    <input id="nextTimeInput" type="time" />
-                  </div>
-                </div>
-
-                <div class="field">
-                  <label for="nextMemoInput">次回予約メモ</label>
-                  <textarea id="nextMemoInput" placeholder="例：3か月後の定期検診、右下治療の続きなど"></textarea>
-                </div>
-
-                <div class="mini-grid">
-                  <div class="field">
-                    <label for="needsFollowupInput">フォロー</label>
-                    <select id="needsFollowupInput">
-                      <option value="false">フォロー不要</option>
-                      <option value="true">フォロー予定を作る</option>
-                    </select>
-                  </div>
-
-                  <div class="field">
-                    <label for="followupDueDateInput">フォロー予定日</label>
-                    <input id="followupDueDateInput" type="date" />
-                  </div>
-                </div>
-
-                <div class="field">
-                  <label for="followupReasonInput">フォロー理由</label>
-                  <textarea id="followupReasonInput" placeholder="例：3か月後の定期検診案内、治療後の様子確認など"></textarea>
-                </div>
-
-                <div class="field">
-                  <label for="visitLineMessageInput">LINE送信用文面</label>
-                  <textarea id="visitLineMessageInput" placeholder="来院後にLINE公式へ貼り付ける文面"></textarea>
-                </div>
-
-                <div class="actions">
-                  <button class="btn btn-primary" id="saveVisitButton" type="button">
-                    来院記録を保存
-                  </button>
-
-                  <div class="mini-grid">
-                    <button class="btn btn-light" id="makeVisitLineMessageButton" type="button">
-                      文面を自動作成
-                    </button>
-                    <button class="btn btn-success" id="copyVisitLineMessageButton" type="button">
-                      LINE文面をコピー
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div id="visitMessage" class="message"></div>
-            </section>
-
-            <section id="tab-line" class="detail-section">
-              <div class="form-grid">
-                <div class="field">
-                  <label for="templateSelect">文面テンプレート</label>
-                  <select id="templateSelect"></select>
-                </div>
-
-                <div class="line-box">
-                  <div class="line-title">コピー用LINE文面</div>
-                  <div class="line-text" id="lineCopyPreview"></div>
-                </div>
-
-                <textarea id="lineCopyTextarea" class="hidden"></textarea>
-
-                <div class="actions">
-                  <button class="btn btn-success" id="copyLineTextButton" type="button">
-                    LINE文面をコピー
-                  </button>
+                  <button class="btn btn-success" id="copyLineTextButton" type="button">LINE文面コピー</button>
+                  <button class="btn btn-light" id="refreshLineTextButton" type="button">文面再作成</button>
                 </div>
               </div>
 
               <div id="lineMessage" class="message"></div>
-            </section>
+            </div>
           </div>
         </section>
 
-        <section id="templatesCard" class="card">
+        <section id="visitCreateCard" class="card hidden">
           <div class="card-header">
             <h2 class="card-title">
-              <span class="icon">文</span>
-              文面テンプレート
+              <span class="icon">記</span>
+              来院記録を追加
             </h2>
             <div class="card-subtitle">
-              DBから取得できない場合は、config.js のデフォルト文面を使います。
+              次回予約日は過去日不可、時間は医院設定に合わせた候補選択式です。
             </div>
           </div>
 
           <div class="card-body">
-            <div class="actions" style="margin-top: 0;">
-              <button class="btn btn-light" id="loadTemplatesButton" type="button">
-                テンプレートを更新
-              </button>
+            <div class="form-grid">
+              <div class="mini-grid">
+                <div class="field">
+                  <label for="visitTypeInput">来院種別</label>
+                  <select id="visitTypeInput"></select>
+                </div>
+
+                <div class="field">
+                  <label for="visitStatusInput">来院ステータス</label>
+                  <select id="visitStatusInput"></select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="chiefComplaintInput">来院理由・主訴</label>
+                <textarea id="chiefComplaintInput" placeholder="例：定期検診・クリーニング、歯がしみる、治療相談など"></textarea>
+              </div>
+
+              <div class="field">
+                <label for="treatmentSummaryInput">処置内容メモ</label>
+                <textarea id="treatmentSummaryInput" placeholder="例：口腔内チェック、スケーリング、ブラッシング説明など"></textarea>
+              </div>
+
+              <div class="mini-grid">
+                <div class="field">
+                  <label for="nextDateInput">次回予約日</label>
+                  <input id="nextDateInput" type="date" />
+                </div>
+
+                <div class="field">
+                  <label for="nextTimeInput">次回予約時間</label>
+                  <select id="nextTimeInput">
+                    <option value="">日付を選択してください</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="appointmentMessage" class="message"></div>
+
+              <div class="field">
+                <label for="nextMemoInput">次回予約メモ</label>
+                <textarea id="nextMemoInput" placeholder="例：3か月後の定期検診、右下治療の続きなど"></textarea>
+              </div>
+
+              <div class="mini-grid">
+                <div class="field">
+                  <label for="needsFollowupInput">フォロー</label>
+                  <select id="needsFollowupInput">
+                    <option value="false">フォロー不要</option>
+                    <option value="true">フォロー予定を作る</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="followupDueDateInput">フォロー予定日</label>
+                  <input id="followupDueDateInput" type="date" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="followupReasonInput">フォロー理由</label>
+                <textarea id="followupReasonInput" placeholder="例：3か月後の定期検診案内、治療後の様子確認など"></textarea>
+              </div>
+
+              <div class="field">
+                <label for="lineMessageInput">来院後LINE文面</label>
+                <textarea id="lineMessageInput" placeholder="LINE公式へ貼り付ける文面"></textarea>
+              </div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="saveVisitButton" type="button">来院記録を保存</button>
+                <div class="mini-grid">
+                  <button class="btn btn-light" id="fillLineMessageButton" type="button">文面を自動作成</button>
+                  <button class="btn btn-success" id="copyVisitLineButton" type="button">この文面をコピー</button>
+                </div>
+              </div>
             </div>
 
-            <div id="templatesMessage" class="message"></div>
-            <div id="templatesList" class="list" style="margin-top: 12px;">
-              <div class="empty-box">テンプレートはまだ読み込んでいません。</div>
+            <div id="visitMessage" class="message"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">設</span>
+              医院設定の反映状況
+            </h2>
+            <div class="card-subtitle">
+              `admin.html` で設定した営業時間・定休日・臨時休業を読み込んでいます。
             </div>
+          </div>
+
+          <div class="card-body">
+            <div id="settingsPreview" class="info-list" style="margin-top: 0;">
+              <div class="info-row">
+                <div class="info-key">状態</div>
+                <div class="info-value">未読み込み</div>
+              </div>
+            </div>
+
+            <div id="settingsLoadMessage" class="message"></div>
           </div>
         </section>
 
         <div id="debugBox" class="debug hidden"></div>
-      </div>
+      </main>
     </div>
 
     <footer class="footer">
@@ -1159,37 +1080,48 @@
     (function () {
       "use strict";
 
-      const CONFIG =
-        window.DPRO_DENTAL_QR_CONFIG ||
-        window.DPRO_CONFIG ||
-        {};
-
+      const CONFIG = window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
       const $ = (id) => document.getElementById(id);
+      const DAY_LABELS = ["日曜", "月曜", "火曜", "水曜", "木曜", "金曜", "土曜"];
 
       const state = {
-        todayVisits: [],
-        followups: [],
-        searchResults: [],
-        templates: [],
+        clinic: {},
+        settingsLoaded: false,
+        settings: {
+          appointment_max_months_ahead: 3,
+          appointment_slot_minutes: 15,
+          default_visit_duration_minutes: 30,
+          allow_same_day_appointment: true,
+          use_special_days: true
+        },
+        regularHours: [],
+        specialDays: [],
         selectedPatient: null,
         selectedVisits: [],
         selectedFollowups: [],
-        demoMode: false
+        templates: [],
+        todayVisits: [],
+        followups: []
       };
 
       const els = {
         systemName: $("systemName"),
         pageTitle: $("pageTitle"),
         clinicNameText: $("clinicNameText"),
-        scanLink: $("scanLink"),
+        footerClinicName: $("footerClinicName"),
         adminLink: $("adminLink"),
+        scanLink: $("scanLink"),
         memberLink: $("memberLink"),
-        reloadAllButton: $("reloadAllButton"),
+        reloadSettingsButton: $("reloadSettingsButton"),
+        demoButton: $("demoButton"),
 
         todayCount: $("todayCount"),
+        todayDateLabel: $("todayDateLabel"),
         followupCount: $("followupCount"),
-        searchCount: $("searchCount"),
-        selectedPatientLabel: $("selectedPatientLabel"),
+        selectedMemberNo: $("selectedMemberNo"),
+        selectedPatientNameMini: $("selectedPatientNameMini"),
+        rangeLabel: $("rangeLabel"),
+        slotLabel: $("slotLabel"),
 
         loadTodayButton: $("loadTodayButton"),
         todayMessage: $("todayMessage"),
@@ -1197,38 +1129,43 @@
 
         searchInput: $("searchInput"),
         searchButton: $("searchButton"),
-        demoButton: $("demoButton"),
+        clearSearchButton: $("clearSearchButton"),
         searchMessage: $("searchMessage"),
         searchList: $("searchList"),
 
         loadFollowupsButton: $("loadFollowupsButton"),
-        followupListMessage: $("followupListMessage"),
-        followupList: $("followupList"),
+        followupsMessage: $("followupsMessage"),
+        followupsList: $("followupsList"),
 
         staffNameInput: $("staffNameInput"),
         adminCodeInput: $("adminCodeInput"),
-        saveSettingsButton: $("saveSettingsButton"),
-        settingsMessage: $("settingsMessage"),
+        saveAdminCodeButton: $("saveAdminCodeButton"),
+        adminCodeMessage: $("adminCodeMessage"),
 
-        emptyDetailCard: $("emptyDetailCard"),
-        patientDetailCard: $("patientDetailCard"),
-        detailPatientName: $("detailPatientName"),
-        detailPatientKana: $("detailPatientKana"),
-        detailMemberNo: $("detailMemberNo"),
-        detailStatusPill: $("detailStatusPill"),
-        detailStatus: $("detailStatus"),
-        detailVisitCount: $("detailVisitCount"),
-        detailPhone: $("detailPhone"),
-        detailLineName: $("detailLineName"),
-        detailLastVisit: $("detailLastVisit"),
-        detailNextAppointment: $("detailNextAppointment"),
-        detailPatientMemo: $("detailPatientMemo"),
-        detailInternalMemo: $("detailInternalMemo"),
-        copyNameButton: $("copyNameButton"),
+        emptyPatientCard: $("emptyPatientCard"),
+        patientCard: $("patientCard"),
+        visitCreateCard: $("visitCreateCard"),
+
+        patientName: $("patientName"),
+        patientKana: $("patientKana"),
+        patientMemberNo: $("patientMemberNo"),
+        patientStatus: $("patientStatus"),
+        visitCount: $("visitCount"),
+        patientPhone: $("patientPhone"),
+        lineDisplayName: $("lineDisplayName"),
+        lastVisit: $("lastVisit"),
+        nextAppointment: $("nextAppointment"),
+        patientMemo: $("patientMemo"),
+        internalMemo: $("internalMemo"),
+        copyPatientNameButton: $("copyPatientNameButton"),
         openMemberButton: $("openMemberButton"),
-        profileMessage: $("profileMessage"),
+        patientMessage: $("patientMessage"),
 
-        detailVisitsList: $("detailVisitsList"),
+        visitsList: $("visitsList"),
+        lineCopyText: $("lineCopyText"),
+        copyLineTextButton: $("copyLineTextButton"),
+        refreshLineTextButton: $("refreshLineTextButton"),
+        lineMessage: $("lineMessage"),
 
         visitTypeInput: $("visitTypeInput"),
         visitStatusInput: $("visitStatusInput"),
@@ -1236,28 +1173,20 @@
         treatmentSummaryInput: $("treatmentSummaryInput"),
         nextDateInput: $("nextDateInput"),
         nextTimeInput: $("nextTimeInput"),
+        appointmentMessage: $("appointmentMessage"),
         nextMemoInput: $("nextMemoInput"),
         needsFollowupInput: $("needsFollowupInput"),
         followupDueDateInput: $("followupDueDateInput"),
         followupReasonInput: $("followupReasonInput"),
-        visitLineMessageInput: $("visitLineMessageInput"),
+        lineMessageInput: $("lineMessageInput"),
         saveVisitButton: $("saveVisitButton"),
-        makeVisitLineMessageButton: $("makeVisitLineMessageButton"),
-        copyVisitLineMessageButton: $("copyVisitLineMessageButton"),
+        fillLineMessageButton: $("fillLineMessageButton"),
+        copyVisitLineButton: $("copyVisitLineButton"),
         visitMessage: $("visitMessage"),
 
-        templateSelect: $("templateSelect"),
-        lineCopyPreview: $("lineCopyPreview"),
-        lineCopyTextarea: $("lineCopyTextarea"),
-        copyLineTextButton: $("copyLineTextButton"),
-        lineMessage: $("lineMessage"),
-
-        loadTemplatesButton: $("loadTemplatesButton"),
-        templatesMessage: $("templatesMessage"),
-        templatesList: $("templatesList"),
-
-        debugBox: $("debugBox"),
-        footerClinicName: $("footerClinicName")
+        settingsPreview: $("settingsPreview"),
+        settingsLoadMessage: $("settingsLoadMessage"),
+        debugBox: $("debugBox")
       };
 
       function getConfigValue(path, fallback) {
@@ -1289,209 +1218,29 @@
         return escapeHtml(value).replace(/\n/g, "<br>");
       }
 
-      function formatDate(dateText) {
-        if (CONFIG.utils && typeof CONFIG.utils.formatDate === "function") {
-          return CONFIG.utils.formatDate(dateText);
-        }
-
-        if (!dateText) return "未設定";
-        const date = new Date(`${dateText}T00:00:00+09:00`);
-        if (Number.isNaN(date.getTime())) return dateText;
-
-        return new Intl.DateTimeFormat("ja-JP", {
-          timeZone: "Asia/Tokyo",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          weekday: "short"
-        }).format(date);
+      function showMessage(target, type, text) {
+        if (!target) return;
+        target.className = `message ${type || "info"} show`;
+        target.innerHTML = nl2br(text || "");
       }
 
-      function formatDateShort(dateText) {
-        if (CONFIG.utils && typeof CONFIG.utils.formatDateShort === "function") {
-          return CONFIG.utils.formatDateShort(dateText);
-        }
-
-        if (!dateText) return "未設定";
-        const date = new Date(`${dateText}T00:00:00+09:00`);
-        if (Number.isNaN(date.getTime())) return dateText;
-
-        return new Intl.DateTimeFormat("ja-JP", {
-          timeZone: "Asia/Tokyo",
-          month: "numeric",
-          day: "numeric",
-          weekday: "short"
-        }).format(date);
+      function clearMessage(target) {
+        if (!target) return;
+        target.className = "message";
+        target.innerHTML = "";
       }
 
-      function formatDateTime(dateTimeText) {
-        if (CONFIG.utils && typeof CONFIG.utils.formatDateTime === "function") {
-          return CONFIG.utils.formatDateTime(dateTimeText);
+      function setButtonLoading(button, loading, text) {
+        if (!button) return;
+
+        if (loading) {
+          button.dataset.originalText = button.textContent;
+          button.textContent = text || "処理中...";
+          button.disabled = true;
+        } else {
+          button.textContent = button.dataset.originalText || button.textContent;
+          button.disabled = false;
         }
-
-        if (!dateTimeText) return "未設定";
-        const date = new Date(dateTimeText);
-        if (Number.isNaN(date.getTime())) return dateTimeText;
-
-        return new Intl.DateTimeFormat("ja-JP", {
-          timeZone: "Asia/Tokyo",
-          year: "numeric",
-          month: "numeric",
-          day: "numeric",
-          weekday: "short",
-          hour: "2-digit",
-          minute: "2-digit"
-        }).format(date);
-      }
-
-      function formatTime(timeText) {
-        if (CONFIG.utils && typeof CONFIG.utils.formatTime === "function") {
-          return CONFIG.utils.formatTime(timeText);
-        }
-
-        if (!timeText) return "";
-        const parts = String(timeText).split(":");
-        if (parts.length < 2) return timeText;
-        return `${parts[0]}:${parts[1]}`;
-      }
-
-      function getTodayJST() {
-        if (CONFIG.utils && typeof CONFIG.utils.getTodayJST === "function") {
-          return CONFIG.utils.getTodayJST();
-        }
-
-        const now = new Date();
-        const formatter = new Intl.DateTimeFormat("ja-JP", {
-          timeZone: "Asia/Tokyo",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit"
-        });
-
-        const parts = formatter.formatToParts(now);
-        const y = parts.find((p) => p.type === "year").value;
-        const m = parts.find((p) => p.type === "month").value;
-        const d = parts.find((p) => p.type === "day").value;
-        return `${y}-${m}-${d}`;
-      }
-
-      function addDays(dateText, days) {
-        const base = new Date(`${dateText}T00:00:00+09:00`);
-        base.setDate(base.getDate() + days);
-        const y = base.getFullYear();
-        const m = String(base.getMonth() + 1).padStart(2, "0");
-        const d = String(base.getDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
-      }
-
-      function getStatusLabel(status) {
-        if (CONFIG.utils && typeof CONFIG.utils.getStatusLabel === "function") {
-          return CONFIG.utils.getStatusLabel(status);
-        }
-
-        const map = getConfigValue("PATIENT_STATUS", {});
-        return map[status]?.label || status || "未設定";
-      }
-
-      function getVisitTypeLabel(type) {
-        if (CONFIG.utils && typeof CONFIG.utils.getVisitTypeLabel === "function") {
-          return CONFIG.utils.getVisitTypeLabel(type);
-        }
-
-        const map = getConfigValue("VISIT_TYPES", {});
-        return map[type]?.label || type || "未設定";
-      }
-
-      function getVisitStatusLabel(status) {
-        if (CONFIG.utils && typeof CONFIG.utils.getVisitStatusLabel === "function") {
-          return CONFIG.utils.getVisitStatusLabel(status);
-        }
-
-        const map = getConfigValue("VISIT_STATUS", {});
-        return map[status]?.label || status || "未設定";
-      }
-
-      function getFollowupTypeLabel(type) {
-        if (CONFIG.utils && typeof CONFIG.utils.getFollowupTypeLabel === "function") {
-          return CONFIG.utils.getFollowupTypeLabel(type);
-        }
-
-        const map = getConfigValue("FOLLOWUP_TYPES", {});
-        return map[type]?.label || type || "未設定";
-      }
-
-      function getFollowupStatusLabel(status) {
-        if (CONFIG.utils && typeof CONFIG.utils.getFollowupStatusLabel === "function") {
-          return CONFIG.utils.getFollowupStatusLabel(status);
-        }
-
-        const map = getConfigValue("FOLLOWUP_STATUS", {});
-        return map[status]?.label || status || "未設定";
-      }
-
-      function buildNextAppointmentText(dateText, timeText, memo) {
-        if (CONFIG.utils && typeof CONFIG.utils.buildNextAppointmentText === "function") {
-          return CONFIG.utils.buildNextAppointmentText(dateText, timeText, memo);
-        }
-
-        if (!dateText && !timeText && !memo) return "未設定";
-
-        return [
-          dateText ? formatDate(dateText) : "",
-          timeText ? formatTime(timeText) : "",
-          memo || ""
-        ].filter(Boolean).join(" ");
-      }
-
-      function replaceTemplateVariables(templateText, data) {
-        if (CONFIG.utils && typeof CONFIG.utils.replaceTemplateVariables === "function") {
-          return CONFIG.utils.replaceTemplateVariables(templateText, data);
-        }
-
-        const values = {
-          clinic_name: getConfigValue("CLINIC.NAME", "DPRO歯科クリニック"),
-          patient_name: data?.patient_name || "",
-          member_no: data?.member_no || "",
-          next_appointment: buildNextAppointmentText(
-            data?.next_appointment_date,
-            data?.next_appointment_time,
-            data?.next_appointment_memo
-          ),
-          followup_due_date: data?.followup_due_date ? formatDate(data.followup_due_date) : "",
-          last_visit_date: data?.last_visit_date ? formatDate(data.last_visit_date) : "",
-          today: formatDate(getTodayJST())
-        };
-
-        let text = String(templateText || "");
-        Object.keys(values).forEach((key) => {
-          text = text.replaceAll(`{{${key}}}`, values[key] || "");
-        });
-
-        return text;
-      }
-
-      async function copyText(text) {
-        if (CONFIG.utils && typeof CONFIG.utils.copyText === "function") {
-          return CONFIG.utils.copyText(text);
-        }
-
-        const value = String(text || "");
-
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(value);
-          return true;
-        }
-
-        const textarea = document.createElement("textarea");
-        textarea.value = value;
-        textarea.style.position = "fixed";
-        textarea.style.left = "-9999px";
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        const result = document.execCommand("copy");
-        document.body.removeChild(textarea);
-        return result;
       }
 
       async function apiFetch(endpoint, options) {
@@ -1552,360 +1301,229 @@
         }
       }
 
-      function showMessage(target, type, text) {
-        target.className = `message ${type || "info"} show`;
-        target.innerHTML = nl2br(text || "");
-      }
-
-      function clearMessage(target) {
-        target.className = "message";
-        target.innerHTML = "";
-      }
-
-      function setButtonLoading(button, loading, text) {
-        if (!button) return;
-
-        if (loading) {
-          button.dataset.originalText = button.textContent;
-          button.textContent = text || "処理中...";
-          button.disabled = true;
-        } else {
-          button.textContent = button.dataset.originalText || button.textContent;
-          button.disabled = false;
+      function todayJST() {
+        if (CONFIG.utils && typeof CONFIG.utils.getTodayJST === "function") {
+          return CONFIG.utils.getTodayJST();
         }
-      }
 
-      function getDefaultTemplates() {
-        const messages = getConfigValue("DEFAULT_MESSAGES", {});
-
-        return Object.entries(messages).map(([key, body], index) => {
-          const titles = {
-            regular_checkup_3months: "3か月定期検診のご案内",
-            revisit_followup: "再来院フォロー",
-            after_treatment_care: "治療後の様子確認",
-            missed_revisit: "次回予約未定の患者さん向け",
-            next_appointment_reminder: "次回予約リマインド"
-          };
-
-          return {
-            id: `default-${key}`,
-            template_key: key,
-            category: "default",
-            title: titles[key] || key,
-            body,
-            sort_order: (index + 1) * 10,
-            is_active: true
-          };
+        const now = new Date();
+        const formatter = new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
         });
+
+        const parts = formatter.formatToParts(now);
+        const y = parts.find((p) => p.type === "year").value;
+        const m = parts.find((p) => p.type === "month").value;
+        const d = parts.find((p) => p.type === "day").value;
+
+        return `${y}-${m}-${d}`;
       }
 
-      function getDemoData() {
-        const today = getTodayJST();
-        const yesterday = addDays(today, -1);
-        const next1 = addDays(today, 14);
-        const next2 = addDays(today, 21);
-        const followupDate = addDays(today, 90);
-
-        const patients = [
-          {
-            id: "demo-patient-1",
-            clinic_id: "demo-clinic",
-            qr_token: "demo-dental-patient-001",
-            member_no: "D260600001",
-            patient_name: "山田 太郎",
-            patient_name_kana: "ヤマダ タロウ",
-            phone: "090-0000-0000",
-            email: "",
-            line_display_name: "Taro Yamada",
-            status: "active",
-            card_enabled: true,
-            first_visit_date: addDays(today, -180),
-            last_visit_at: new Date().toISOString(),
-            last_visit_type: "cleaning",
-            next_appointment_date: next1,
-            next_appointment_time: "10:30",
-            next_appointment_memo: "定期検診・クリーニング予定",
-            patient_memo: "デモ用患者。QR診察券の流れを説明できます。",
-            internal_memo: "受付でQR読取 → 来院履歴 → LINEフォローの説明用。",
-            visit_count: 4
-          },
-          {
-            id: "demo-patient-2",
-            clinic_id: "demo-clinic",
-            qr_token: "demo-dental-patient-002",
-            member_no: "D260600002",
-            patient_name: "佐藤 花子",
-            patient_name_kana: "サトウ ハナコ",
-            phone: "080-1111-2222",
-            email: "",
-            line_display_name: "Hanako",
-            status: "needs_followup",
-            card_enabled: true,
-            first_visit_date: addDays(today, -120),
-            last_visit_at: new Date(Date.now() - 92 * 86400000).toISOString(),
-            last_visit_type: "checkup",
-            next_appointment_date: "",
-            next_appointment_time: "",
-            next_appointment_memo: "定期検診の案内が必要",
-            patient_memo: "定期検診フォロー対象。",
-            internal_memo: "LINE文面コピーを見せるデモに最適。",
-            visit_count: 2
-          },
-          {
-            id: "demo-patient-3",
-            clinic_id: "demo-clinic",
-            qr_token: "demo-dental-patient-003",
-            member_no: "D260600003",
-            patient_name: "田中 一郎",
-            patient_name_kana: "タナカ イチロウ",
-            phone: "070-3333-4444",
-            email: "",
-            line_display_name: "Ichiro",
-            status: "active",
-            card_enabled: true,
-            first_visit_date: addDays(today, -60),
-            last_visit_at: new Date(Date.now() - 86400000).toISOString(),
-            last_visit_type: "treatment",
-            next_appointment_date: next2,
-            next_appointment_time: "15:00",
-            next_appointment_memo: "右下治療の続き",
-            patient_memo: "治療継続中。",
-            internal_memo: "次回予約あり。",
-            visit_count: 3
-          }
-        ];
-
-        const visits = [
-          {
-            id: "demo-visit-1",
-            clinic_id: "demo-clinic",
-            patient_id: "demo-patient-1",
-            member_no: "D260600001",
-            patient_name: "山田 太郎",
-            patient_name_kana: "ヤマダ タロウ",
-            phone: "090-0000-0000",
-            visit_date: today,
-            visited_at: new Date().toISOString(),
-            visit_status: "visited",
-            visit_type: "cleaning",
-            chief_complaint: "定期検診・クリーニング",
-            treatment_summary: "口腔内チェック、スケーリング、ブラッシング説明",
-            next_appointment_date: next1,
-            next_appointment_time: "10:30",
-            next_appointment_memo: "3か月後の定期検診",
-            needs_followup: true,
-            followup_due_date: followupDate,
-            followup_reason: "3か月後の定期検診案内",
-            line_message_text: "",
-            created_by_staff: "受付スタッフ"
-          },
-          {
-            id: "demo-visit-2",
-            clinic_id: "demo-clinic",
-            patient_id: "demo-patient-3",
-            member_no: "D260600003",
-            patient_name: "田中 一郎",
-            patient_name_kana: "タナカ イチロウ",
-            phone: "070-3333-4444",
-            visit_date: yesterday,
-            visited_at: new Date(Date.now() - 86400000).toISOString(),
-            visit_status: "completed",
-            visit_type: "treatment",
-            chief_complaint: "右下の治療",
-            treatment_summary: "治療説明、次回予約設定",
-            next_appointment_date: next2,
-            next_appointment_time: "15:00",
-            next_appointment_memo: "右下治療の続き",
-            needs_followup: false,
-            followup_due_date: "",
-            followup_reason: "",
-            line_message_text: "",
-            created_by_staff: "受付スタッフ"
-          }
-        ];
-
-        const followups = [
-          {
-            id: "demo-followup-1",
-            clinic_id: "demo-clinic",
-            patient_id: "demo-patient-2",
-            visit_id: null,
-            member_no: "D260600002",
-            patient_name: "佐藤 花子",
-            patient_name_kana: "サトウ ハナコ",
-            phone: "080-1111-2222",
-            line_display_name: "Hanako",
-            followup_type: "regular_checkup",
-            due_date: today,
-            status: "todo",
-            priority: "high",
-            title: "3か月定期検診のご案内",
-            reason: "前回来院から約3か月経過",
-            message_template_key: "regular_checkup_3months",
-            message_text: "こんにちは。DPRO歯科クリニックです。\n\n前回のご来院からお日にちが経ちましたので、定期検診とクリーニングのご案内です。\n\nお口の状態を良い状態で保つために、そろそろ一度チェックにお越しください。\n\nご都合のよい日時がありましたら、このLINEにそのままご返信ください。"
-          }
-        ];
-
-        const patientDetails = {
-          "demo-patient-1": {
-            patient: patients[0],
-            visits: visits.filter((v) => v.patient_id === "demo-patient-1").concat([
-              {
-                id: "demo-visit-old-1",
-                clinic_id: "demo-clinic",
-                patient_id: "demo-patient-1",
-                visit_date: addDays(today, -92),
-                visited_at: new Date(Date.now() - 92 * 86400000).toISOString(),
-                visit_status: "completed",
-                visit_type: "checkup",
-                chief_complaint: "3か月定期検診",
-                treatment_summary: "問題なし。クリーニング実施。",
-                next_appointment_memo: "次回も3か月後"
-              }
-            ]),
-            followups: []
-          },
-          "demo-patient-2": {
-            patient: patients[1],
-            visits: [
-              {
-                id: "demo-visit-old-2",
-                clinic_id: "demo-clinic",
-                patient_id: "demo-patient-2",
-                visit_date: addDays(today, -92),
-                visited_at: new Date(Date.now() - 92 * 86400000).toISOString(),
-                visit_status: "completed",
-                visit_type: "cleaning",
-                chief_complaint: "定期検診・クリーニング",
-                treatment_summary: "次回も3か月後検診を案内。",
-                next_appointment_memo: "未予約"
-              }
-            ],
-            followups
-          },
-          "demo-patient-3": {
-            patient: patients[2],
-            visits: visits.filter((v) => v.patient_id === "demo-patient-3"),
-            followups: []
-          }
-        };
-
-        return {
-          patients,
-          visits,
-          followups,
-          patientDetails,
-          templates: getDefaultTemplates()
-        };
+      function toDateText(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
       }
 
-      function normalizePatient(raw) {
-        const patient = raw || {};
-
-        return {
-          id: patient.id || "",
-          clinic_id: patient.clinic_id || "",
-          qr_token: patient.qr_token || patient.token || "",
-          member_no: patient.member_no || patient.memberNo || patient.card_no || "---",
-          patient_name: patient.patient_name || patient.name || patient.patientName || "患者さま",
-          patient_name_kana: patient.patient_name_kana || patient.kana || patient.patientNameKana || "",
-          phone: patient.phone || "",
-          email: patient.email || "",
-          line_user_id: patient.line_user_id || "",
-          line_display_name: patient.line_display_name || patient.lineDisplayName || "",
-          status: patient.status || "active",
-          card_enabled: patient.card_enabled !== false,
-          first_visit_date: patient.first_visit_date || "",
-          last_visit_at: patient.last_visit_at || "",
-          last_visit_type: patient.last_visit_type || "",
-          next_appointment_date: patient.next_appointment_date || patient.nextAppointmentDate || "",
-          next_appointment_time: patient.next_appointment_time || patient.nextAppointmentTime || "",
-          next_appointment_memo: patient.next_appointment_memo || patient.nextAppointmentMemo || "",
-          patient_memo: patient.patient_memo || patient.patientMemo || "",
-          internal_memo: patient.internal_memo || patient.internalMemo || "",
-          visit_count: patient.visit_count ?? patient.visitCount ?? 0
-        };
+      function addDays(dateText, days) {
+        const base = new Date(`${dateText}T00:00:00+09:00`);
+        base.setDate(base.getDate() + Number(days || 0));
+        return toDateText(base);
       }
 
-      function normalizeVisit(raw) {
-        const visit = raw || {};
-
-        return {
-          id: visit.id || "",
-          clinic_id: visit.clinic_id || "",
-          patient_id: visit.patient_id || "",
-          member_no: visit.member_no || "",
-          patient_name: visit.patient_name || "",
-          patient_name_kana: visit.patient_name_kana || "",
-          phone: visit.phone || "",
-          visit_date: visit.visit_date || "",
-          visited_at: visit.visited_at || "",
-          visit_status: visit.visit_status || "visited",
-          visit_type: visit.visit_type || "checkup",
-          chief_complaint: visit.chief_complaint || "",
-          treatment_summary: visit.treatment_summary || "",
-          staff_memo: visit.staff_memo || "",
-          next_appointment_date: visit.next_appointment_date || "",
-          next_appointment_time: visit.next_appointment_time || "",
-          next_appointment_memo: visit.next_appointment_memo || "",
-          needs_followup: visit.needs_followup === true,
-          followup_due_date: visit.followup_due_date || "",
-          followup_reason: visit.followup_reason || "",
-          line_message_text: visit.line_message_text || "",
-          line_message_copied: visit.line_message_copied === true,
-          created_by_staff: visit.created_by_staff || ""
-        };
+      function addMonths(dateText, months) {
+        const base = new Date(`${dateText}T00:00:00+09:00`);
+        const originalDate = base.getDate();
+        base.setMonth(base.getMonth() + Number(months || 0));
+        if (base.getDate() < originalDate) base.setDate(0);
+        return toDateText(base);
       }
 
-      function normalizeFollowup(raw) {
-        const followup = raw || {};
-
-        return {
-          id: followup.id || "",
-          clinic_id: followup.clinic_id || "",
-          patient_id: followup.patient_id || "",
-          visit_id: followup.visit_id || "",
-          member_no: followup.member_no || "",
-          patient_name: followup.patient_name || "",
-          patient_name_kana: followup.patient_name_kana || "",
-          phone: followup.phone || "",
-          line_display_name: followup.line_display_name || "",
-          followup_type: followup.followup_type || "regular_checkup",
-          due_date: followup.due_date || "",
-          status: followup.status || "todo",
-          priority: followup.priority || "normal",
-          title: followup.title || "フォロー",
-          reason: followup.reason || "",
-          message_template_key: followup.message_template_key || "",
-          message_text: followup.message_text || "",
-          staff_memo: followup.staff_memo || ""
-        };
-      }
-
-      function normalizeTemplate(raw) {
-        const template = raw || {};
-
-        return {
-          id: template.id || template.template_key || "",
-          template_key: template.template_key || template.key || "",
-          category: template.category || "followup",
-          title: template.title || template.template_key || "テンプレート",
-          body: template.body || template.message || "",
-          sort_order: template.sort_order ?? 100,
-          is_active: template.is_active !== false
-        };
-      }
-
-      function updateSummary() {
-        els.todayCount.textContent = String(state.todayVisits.length);
-        els.followupCount.textContent = String(state.followups.length);
-        els.searchCount.textContent = String(state.searchResults.length);
-
-        if (state.selectedPatient) {
-          els.selectedPatientLabel.textContent = state.selectedPatient.member_no || "選択中";
-        } else {
-          els.selectedPatientLabel.textContent = "--";
+      function formatDate(dateText) {
+        if (CONFIG.utils && typeof CONFIG.utils.formatDate === "function") {
+          return CONFIG.utils.formatDate(dateText);
         }
+
+        if (!dateText) return "未設定";
+        const date = new Date(`${dateText}T00:00:00+09:00`);
+        if (Number.isNaN(date.getTime())) return dateText;
+
+        return new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          weekday: "short"
+        }).format(date);
+      }
+
+      function formatDateTime(dateTimeText) {
+        if (CONFIG.utils && typeof CONFIG.utils.formatDateTime === "function") {
+          return CONFIG.utils.formatDateTime(dateTimeText);
+        }
+
+        if (!dateTimeText) return "未設定";
+        const date = new Date(dateTimeText);
+        if (Number.isNaN(date.getTime())) return dateTimeText;
+
+        return new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+          weekday: "short",
+          hour: "2-digit",
+          minute: "2-digit"
+        }).format(date);
+      }
+
+      function formatTime(timeText) {
+        if (!timeText) return "";
+        const parts = String(timeText).split(":");
+        if (parts.length < 2) return timeText;
+        return `${String(parts[0]).padStart(2, "0")}:${parts[1]}`;
+      }
+
+      function timeToMinutes(value) {
+        const time = formatTime(value);
+        if (!time) return null;
+        const [h, m] = time.split(":").map(Number);
+        return h * 60 + m;
+      }
+
+      function minutesToTime(minutes) {
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+      }
+
+      function buildSlotsFromRow(row) {
+        const slots = [];
+        const step = Number(state.settings.appointment_slot_minutes || 15);
+        const duration = Number(state.settings.default_visit_duration_minutes || 30);
+
+        if (!row || row.is_closed) return slots;
+
+        [
+          [row.open_time_1, row.close_time_1],
+          [row.open_time_2, row.close_time_2]
+        ].forEach(([open, close]) => {
+          const start = timeToMinutes(open);
+          const end = timeToMinutes(close);
+          if (start === null || end === null || start >= end) return;
+
+          for (let t = start; t <= end - duration; t += step) {
+            slots.push(minutesToTime(t));
+          }
+        });
+
+        return slots;
+      }
+
+      function buildFallbackSlotsForDate(dateText) {
+        const special = state.specialDays.find((item) => item.special_date === dateText);
+
+        if (special && special.day_type !== "memo") {
+          if (special.is_closed || special.day_type === "closed") return [];
+          return buildSlotsFromRow(special);
+        }
+
+        const day = new Date(`${dateText}T00:00:00+09:00`).getDay();
+        const row = state.regularHours.find((item) => Number(item.day_of_week) === day);
+
+        return buildSlotsFromRow(row);
+      }
+
+      function buildNextAppointmentText(dateText, timeText, memo) {
+        if (!dateText && !timeText && !memo) return "未設定";
+
+        return [
+          dateText ? formatDate(dateText) : "",
+          timeText ? formatTime(timeText) : "",
+          memo || ""
+        ].filter(Boolean).join(" ");
+      }
+
+      function getStatusLabel(status) {
+        if (CONFIG.utils && typeof CONFIG.utils.getStatusLabel === "function") {
+          return CONFIG.utils.getStatusLabel(status);
+        }
+
+        const map = getConfigValue("PATIENT_STATUS", {});
+        return map[status]?.label || status || "未設定";
+      }
+
+      function getVisitTypeLabel(type) {
+        if (CONFIG.utils && typeof CONFIG.utils.getVisitTypeLabel === "function") {
+          return CONFIG.utils.getVisitTypeLabel(type);
+        }
+
+        const map = getConfigValue("VISIT_TYPES", {});
+        return map[type]?.label || type || "未設定";
+      }
+
+      function getVisitStatusLabel(status) {
+        if (CONFIG.utils && typeof CONFIG.utils.getVisitStatusLabel === "function") {
+          return CONFIG.utils.getVisitStatusLabel(status);
+        }
+
+        const map = getConfigValue("VISIT_STATUS", {});
+        return map[status]?.label || status || "未設定";
+      }
+
+      function replaceTemplateVariables(templateText, data) {
+        if (CONFIG.utils && typeof CONFIG.utils.replaceTemplateVariables === "function") {
+          return CONFIG.utils.replaceTemplateVariables(templateText, data);
+        }
+
+        const values = {
+          clinic_name: state.clinic?.clinic_name || getConfigValue("CLINIC.NAME", "DPRO歯科クリニック"),
+          patient_name: data?.patient_name || "",
+          member_no: data?.member_no || "",
+          next_appointment: buildNextAppointmentText(
+            data?.next_appointment_date,
+            data?.next_appointment_time,
+            data?.next_appointment_memo
+          ),
+          followup_due_date: data?.followup_due_date ? formatDate(data.followup_due_date) : "",
+          last_visit_date: data?.last_visit_date ? formatDate(data.last_visit_date) : "",
+          today: formatDate(todayJST())
+        };
+
+        let text = String(templateText || "");
+        Object.keys(values).forEach((key) => {
+          text = text.replaceAll(`{{${key}}}`, values[key] || "");
+        });
+
+        return text;
+      }
+
+      async function copyText(text) {
+        if (CONFIG.utils && typeof CONFIG.utils.copyText === "function") {
+          return CONFIG.utils.copyText(text);
+        }
+
+        const value = String(text || "");
+
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(value);
+          return true;
+        }
+
+        const textarea = document.createElement("textarea");
+        textarea.value = value;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        const result = document.execCommand("copy");
+        document.body.removeChild(textarea);
+        return result;
       }
 
       function buildMemberUrl(token) {
@@ -1915,372 +1533,53 @@
           return pages.getMemberUrl(token);
         }
 
-        const base = pages.BASE_PUBLIC_URL || window.location.origin + window.location.pathname.replace(/\/owner\.html.*$/, "");
+        const base =
+          pages.BASE_PUBLIC_URL ||
+          window.location.origin + window.location.pathname.replace(/\/owner\.html.*$/, "");
+
         return `${String(base).replace(/\/$/, "")}/member.html?t=${encodeURIComponent(token || "")}`;
       }
 
-      function patientListItemHtml(patient) {
-        const statusLabel = patient.card_enabled === false ? "利用停止" : getStatusLabel(patient.status);
-        const pillClass =
-          patient.card_enabled === false || patient.status === "blocked"
-            ? "red"
-            : patient.status === "needs_followup" || patient.status === "temporary"
-              ? "yellow"
-              : "green";
-
-        return `
-          <div class="item-top">
-            <div>
-              <div class="item-title">${escapeHtml(patient.patient_name)}</div>
-              <div class="item-sub">
-                ${escapeHtml(patient.patient_name_kana || "ふりがな未登録")} / ${escapeHtml(patient.phone || "電話未登録")}
-              </div>
-            </div>
-            <div class="item-meta">${escapeHtml(patient.member_no || "---")}</div>
-          </div>
-          <div class="pill-row">
-            <span class="pill ${pillClass}">${escapeHtml(statusLabel)}</span>
-            <span class="pill blue">来院 ${escapeHtml(patient.visit_count ?? 0)} 回</span>
-          </div>
-        `;
+      function getDefaultRegularHours() {
+        return [
+          { day_of_week: 0, is_closed: true, open_time_1: null, close_time_1: null, open_time_2: null, close_time_2: null },
+          { day_of_week: 1, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00" },
+          { day_of_week: 2, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00" },
+          { day_of_week: 3, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00" },
+          { day_of_week: 4, is_closed: true, open_time_1: null, close_time_1: null, open_time_2: null, close_time_2: null },
+          { day_of_week: 5, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00" },
+          { day_of_week: 6, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: null, close_time_2: null }
+        ];
       }
 
-      function renderSearchResults() {
-        if (!state.searchResults.length) {
-          els.searchList.innerHTML = '<div class="empty-box">該当する患者はいません。</div>';
-          updateSummary();
-          return;
-        }
-
-        els.searchList.innerHTML = state.searchResults.map((patient) => {
-          return `
-            <div class="list-item clickable" data-patient-id="${escapeHtml(patient.id)}">
-              ${patientListItemHtml(patient)}
-            </div>
-          `;
-        }).join("");
-
-        els.searchList.querySelectorAll("[data-patient-id]").forEach((item) => {
-          item.addEventListener("click", async () => {
-            await loadPatientDetail(item.dataset.patientId);
-          });
-        });
-
-        updateSummary();
+      function calculateLocalMinDate() {
+        return state.settings.allow_same_day_appointment === false ? addDays(todayJST(), 1) : todayJST();
       }
 
-      function renderTodayVisits() {
-        if (!state.todayVisits.length) {
-          els.todayList.innerHTML = '<div class="empty-box">今日の受付記録はまだありません。</div>';
-          updateSummary();
-          return;
-        }
+      function normalizePatient(raw) {
+        const patient = raw || {};
 
-        els.todayList.innerHTML = state.todayVisits.map((visit) => {
-          const time = visit.visited_at ? formatDateTime(visit.visited_at) : formatDateShort(visit.visit_date);
-          const title = visit.patient_name || "患者さま";
-          const summary =
-            visit.treatment_summary ||
-            visit.chief_complaint ||
-            visit.next_appointment_memo ||
-            "メモなし";
-
-          return `
-            <div class="list-item clickable" data-patient-id="${escapeHtml(visit.patient_id)}">
-              <div class="item-top">
-                <div>
-                  <div class="item-title">${escapeHtml(title)}</div>
-                  <div class="item-sub">${escapeHtml(time)} / ${escapeHtml(getVisitTypeLabel(visit.visit_type))}</div>
-                </div>
-                <div class="item-meta">${escapeHtml(getVisitStatusLabel(visit.visit_status))}</div>
-              </div>
-              <div class="item-text">${nl2br(summary)}</div>
-              <div class="pill-row">
-                <span class="pill blue">${escapeHtml(visit.member_no || "---")}</span>
-                ${
-                  visit.next_appointment_date
-                    ? `<span class="pill green">次回 ${escapeHtml(formatDateShort(visit.next_appointment_date))}</span>`
-                    : `<span class="pill yellow">次回未設定</span>`
-                }
-              </div>
-            </div>
-          `;
-        }).join("");
-
-        els.todayList.querySelectorAll("[data-patient-id]").forEach((item) => {
-          item.addEventListener("click", async () => {
-            await loadPatientDetail(item.dataset.patientId);
-          });
-        });
-
-        updateSummary();
-      }
-
-      function renderFollowups() {
-        if (!state.followups.length) {
-          els.followupList.innerHTML = '<div class="empty-box">現在、対応が必要なフォローはありません。</div>';
-          updateSummary();
-          return;
-        }
-
-        els.followupList.innerHTML = state.followups.map((followup) => {
-          const priorityClass =
-            followup.priority === "high"
-              ? "red"
-              : followup.priority === "low"
-                ? "blue"
-                : "yellow";
-
-          return `
-            <div class="list-item clickable" data-patient-id="${escapeHtml(followup.patient_id)}" data-followup-id="${escapeHtml(followup.id)}">
-              <div class="item-top">
-                <div>
-                  <div class="item-title">${escapeHtml(followup.patient_name || "患者さま")}</div>
-                  <div class="item-sub">
-                    ${escapeHtml(followup.title || getFollowupTypeLabel(followup.followup_type))}
-                  </div>
-                </div>
-                <div class="item-meta">${escapeHtml(formatDateShort(followup.due_date))}</div>
-              </div>
-              <div class="item-text">${nl2br(followup.reason || followup.message_text || "フォロー理由未入力")}</div>
-              <div class="pill-row">
-                <span class="pill ${priorityClass}">${escapeHtml(followup.priority || "normal")}</span>
-                <span class="pill blue">${escapeHtml(getFollowupStatusLabel(followup.status))}</span>
-                <button class="btn btn-success" style="min-height: 36px; padding: 7px 10px;" data-copy-followup="${escapeHtml(followup.id)}" type="button">文面コピー</button>
-                <button class="btn btn-light" style="min-height: 36px; padding: 7px 10px;" data-done-followup="${escapeHtml(followup.id)}" type="button">完了</button>
-              </div>
-            </div>
-          `;
-        }).join("");
-
-        els.followupList.querySelectorAll("[data-patient-id]").forEach((item) => {
-          item.addEventListener("click", async (event) => {
-            if (event.target.closest("button")) return;
-            await loadPatientDetail(item.dataset.patientId);
-          });
-        });
-
-        els.followupList.querySelectorAll("[data-copy-followup]").forEach((button) => {
-          button.addEventListener("click", async (event) => {
-            event.stopPropagation();
-            const id = button.dataset.copyFollowup;
-            const followup = state.followups.find((item) => item.id === id);
-            if (!followup) return;
-
-            const text = followup.message_text || buildLineMessageForPatient(null, followup.message_template_key);
-            await copyText(text);
-            showMessage(els.followupListMessage, "success", "フォロー文面をコピーしました。LINE公式チャットに貼り付けて送信してください。");
-            await updateFollowupStatus(id, "copied");
-          });
-        });
-
-        els.followupList.querySelectorAll("[data-done-followup]").forEach((button) => {
-          button.addEventListener("click", async (event) => {
-            event.stopPropagation();
-            const id = button.dataset.doneFollowup;
-            await updateFollowupStatus(id, "done");
-          });
-        });
-
-        updateSummary();
-      }
-
-      function renderTemplates() {
-        if (!state.templates.length) {
-          els.templatesList.innerHTML = '<div class="empty-box">利用できるテンプレートがありません。</div>';
-          els.templateSelect.innerHTML = '<option value="">テンプレートなし</option>';
-          return;
-        }
-
-        const sorted = [...state.templates].sort((a, b) => {
-          return Number(a.sort_order || 100) - Number(b.sort_order || 100);
-        });
-
-        els.templatesList.innerHTML = sorted.map((template) => {
-          return `
-            <div class="list-item">
-              <div class="item-top">
-                <div>
-                  <div class="item-title">${escapeHtml(template.title)}</div>
-                  <div class="item-sub">${escapeHtml(template.template_key)} / ${escapeHtml(template.category)}</div>
-                </div>
-                <div class="item-meta">${template.is_active ? "有効" : "無効"}</div>
-              </div>
-              <div class="item-text">${nl2br(template.body)}</div>
-            </div>
-          `;
-        }).join("");
-
-        els.templateSelect.innerHTML = sorted.map((template) => {
-          return `<option value="${escapeHtml(template.template_key)}">${escapeHtml(template.title)}</option>`;
-        }).join("");
-
-        updateLinePreview();
-      }
-
-      function renderPatientDetail() {
-        const patient = state.selectedPatient;
-
-        if (!patient) {
-          els.emptyDetailCard.classList.remove("hidden");
-          els.patientDetailCard.classList.add("hidden");
-          updateSummary();
-          return;
-        }
-
-        els.emptyDetailCard.classList.add("hidden");
-        els.patientDetailCard.classList.remove("hidden");
-
-        els.detailPatientName.textContent = patient.patient_name || "患者さま";
-        els.detailPatientKana.textContent = patient.patient_name_kana || "";
-        els.detailPatientKana.classList.toggle("hidden", !patient.patient_name_kana);
-
-        els.detailMemberNo.textContent = patient.member_no || "---";
-        els.detailVisitCount.textContent = String(patient.visit_count ?? state.selectedVisits.length ?? 0);
-
-        const statusText = patient.card_enabled === false ? "利用停止中" : getStatusLabel(patient.status);
-        els.detailStatus.textContent = statusText;
-        els.detailStatusPill.className = "pill";
-
-        if (patient.card_enabled === false || patient.status === "blocked") {
-          els.detailStatusPill.classList.add("red");
-        } else if (patient.status === "needs_followup" || patient.status === "temporary" || patient.status === "paused") {
-          els.detailStatusPill.classList.add("yellow");
-        } else {
-          els.detailStatusPill.classList.add("green");
-        }
-
-        els.detailPhone.textContent = patient.phone || "未登録";
-        els.detailLineName.textContent = patient.line_display_name || "未取得";
-
-        els.detailLastVisit.textContent = patient.last_visit_at
-          ? `${formatDateTime(patient.last_visit_at)} / ${getVisitTypeLabel(patient.last_visit_type)}`
-          : "来院履歴なし";
-
-        els.detailNextAppointment.textContent = buildNextAppointmentText(
-          patient.next_appointment_date,
-          patient.next_appointment_time,
-          patient.next_appointment_memo
-        );
-
-        els.detailPatientMemo.textContent = patient.patient_memo || "なし";
-        els.detailInternalMemo.textContent = patient.internal_memo || "なし";
-
-        els.nextDateInput.value = patient.next_appointment_date || "";
-        els.nextTimeInput.value = patient.next_appointment_time ? formatTime(patient.next_appointment_time) : "";
-        els.nextMemoInput.value = patient.next_appointment_memo || "";
-
-        renderDetailVisits();
-        updateLinePreview();
-        updateSummary();
-
-        const debug = {
-          selected_patient_id: patient.id,
-          member_no: patient.member_no,
-          qr_token: patient.qr_token,
-          visits: state.selectedVisits.length,
-          followups: state.selectedFollowups.length
+        return {
+          id: patient.id || patient.patient_id || "",
+          clinic_id: patient.clinic_id || "",
+          qr_token: patient.qr_token || patient.token || "",
+          member_no: patient.member_no || patient.memberNo || patient.card_no || "---",
+          patient_name: patient.patient_name || patient.name || patient.patientName || "患者さま",
+          patient_name_kana: patient.patient_name_kana || patient.kana || "",
+          phone: patient.phone || "",
+          line_user_id: patient.line_user_id || "",
+          line_display_name: patient.line_display_name || "",
+          status: patient.status || "active",
+          card_enabled: patient.card_enabled !== false,
+          last_visit_at: patient.last_visit_at || "",
+          last_visit_type: patient.last_visit_type || "",
+          next_appointment_date: patient.next_appointment_date || "",
+          next_appointment_time: patient.next_appointment_time || "",
+          next_appointment_memo: patient.next_appointment_memo || "",
+          patient_memo: patient.patient_memo || "",
+          internal_memo: patient.internal_memo || "",
+          visit_count: patient.visit_count ?? 0
         };
-
-        els.debugBox.textContent = JSON.stringify(debug, null, 2);
-      }
-
-      function renderDetailVisits() {
-        const visits = state.selectedVisits || [];
-
-        if (!visits.length) {
-          els.detailVisitsList.innerHTML = '<div class="empty-box">来院履歴はまだありません。</div>';
-          return;
-        }
-
-        els.detailVisitsList.innerHTML = visits.map((visit) => {
-          const date = visit.visit_date ? formatDate(visit.visit_date) : formatDateTime(visit.visited_at);
-          const summary = visit.treatment_summary || visit.chief_complaint || visit.staff_memo || "メモなし";
-          const next = buildNextAppointmentText(
-            visit.next_appointment_date,
-            visit.next_appointment_time,
-            visit.next_appointment_memo
-          );
-
-          return `
-            <div class="list-item">
-              <div class="item-top">
-                <div>
-                  <div class="item-title">${escapeHtml(date)}</div>
-                  <div class="item-sub">${escapeHtml(getVisitTypeLabel(visit.visit_type))} / ${escapeHtml(getVisitStatusLabel(visit.visit_status))}</div>
-                </div>
-                <div class="item-meta">${escapeHtml(visit.created_by_staff || "記録")}</div>
-              </div>
-              <div class="item-text">${nl2br(summary)}</div>
-              <div class="pill-row">
-                ${
-                  visit.next_appointment_date || visit.next_appointment_memo
-                    ? `<span class="pill green">次回：${escapeHtml(next)}</span>`
-                    : `<span class="pill yellow">次回未設定</span>`
-                }
-                ${
-                  visit.needs_followup
-                    ? `<span class="pill blue">フォロー ${escapeHtml(formatDateShort(visit.followup_due_date))}</span>`
-                    : ""
-                }
-              </div>
-            </div>
-          `;
-        }).join("");
-      }
-
-      function buildLineMessageForPatient(patientArg, templateKey) {
-        const patient = patientArg || state.selectedPatient;
-
-        if (!patient) {
-          return "";
-        }
-
-        const key = templateKey || els.templateSelect.value || "revisit_followup";
-
-        const template =
-          state.templates.find((item) => item.template_key === key) ||
-          state.templates[0] ||
-          getDefaultTemplates()[0];
-
-        return replaceTemplateVariables(template.body || "", {
-          patient_name: patient.patient_name,
-          member_no: patient.member_no,
-          next_appointment_date: patient.next_appointment_date,
-          next_appointment_time: patient.next_appointment_time,
-          next_appointment_memo: patient.next_appointment_memo,
-          followup_due_date: els.followupDueDateInput.value || "",
-          last_visit_date: patient.last_visit_at ? patient.last_visit_at.slice(0, 10) : ""
-        });
-      }
-
-      function updateLinePreview() {
-        const text = buildLineMessageForPatient(state.selectedPatient, els.templateSelect.value);
-
-        els.lineCopyPreview.textContent = text || "患者を選択すると文面が表示されます。";
-        els.lineCopyTextarea.value = text || "";
-
-        if (state.selectedPatient) {
-          els.visitLineMessageInput.value = text || "";
-        }
-      }
-
-      function fillDefaultFollowupByVisitType() {
-        const visitType = els.visitTypeInput.value || getConfigValue("SCAN.DEFAULT_VISIT_TYPE", "checkup");
-        const visitTypes = getConfigValue("VISIT_TYPES", {});
-        const days = visitTypes[visitType]?.followupDefaultDays || 90;
-
-        els.followupDueDateInput.value = addDays(getTodayJST(), days);
-
-        if (!els.followupReasonInput.value) {
-          if (visitType === "checkup" || visitType === "cleaning") {
-            els.followupReasonInput.value = "定期検診・クリーニングの再来院案内";
-          } else if (visitType === "treatment") {
-            els.followupReasonInput.value = "治療後の状態確認・次回案内";
-          } else {
-            els.followupReasonInput.value = "来院後の再来院フォロー";
-          }
-        }
       }
 
       function populateSelects() {
@@ -2295,305 +1594,541 @@
           return `<option value="${escapeHtml(key)}">${escapeHtml(item.label || key)}</option>`;
         }).join("");
 
+        if (!els.visitTypeInput.innerHTML) {
+          els.visitTypeInput.innerHTML = `
+            <option value="checkup">定期検診</option>
+            <option value="cleaning">クリーニング</option>
+            <option value="treatment">治療</option>
+            <option value="emergency">急患</option>
+            <option value="consultation">相談</option>
+            <option value="orthodontics">矯正</option>
+            <option value="whitening">ホワイトニング</option>
+            <option value="other">その他</option>
+          `;
+        }
+
+        if (!els.visitStatusInput.innerHTML) {
+          els.visitStatusInput.innerHTML = `
+            <option value="visited">来院済み</option>
+            <option value="completed">完了</option>
+            <option value="checked_in">受付済み</option>
+            <option value="cancelled">キャンセル</option>
+            <option value="no_show">無断キャンセル</option>
+          `;
+        }
+
         els.visitTypeInput.value = getConfigValue("SCAN.DEFAULT_VISIT_TYPE", "checkup");
         els.visitStatusInput.value = getConfigValue("SCAN.DEFAULT_VISIT_STATUS", "visited");
       }
 
-      async function loadToday() {
-        setButtonLoading(els.loadTodayButton, true, "読み込み中...");
-        clearMessage(els.todayMessage);
+      async function loadSettings() {
+        setButtonLoading(els.reloadSettingsButton, true, "更新中...");
+        clearMessage(els.settingsLoadMessage);
 
         try {
-          if (state.demoMode) {
-            const demo = getDemoData();
-            state.todayVisits = demo.visits.map(normalizeVisit).filter((visit) => visit.visit_date === getTodayJST());
-            renderTodayVisits();
-            showMessage(els.todayMessage, "success", "デモ用の今日の受付を表示しました。");
-            return;
-          }
-
-          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_TODAY", "/api/owner/today");
-
-          const result = await apiFetch(endpoint, {
+          const result = await apiFetch("/api/owner/settings", {
             method: "GET",
             params: {
-              date: getTodayJST(),
-              limit: getConfigValue("OWNER.DEFAULT_TODAY_LIMIT", 50)
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo")
             }
           });
 
-          const rows =
-            result?.data?.visits ||
-            result?.data ||
-            result?.visits ||
-            result?.today ||
-            [];
+          state.clinic = result.clinic || {};
+          state.settings = Object.assign({}, state.settings, result.settings || {});
+          state.regularHours = result.regular_hours || [];
+          state.specialDays = result.special_days || [];
+          state.settingsLoaded = true;
 
-          state.todayVisits = Array.isArray(rows) ? rows.map(normalizeVisit) : [];
-          renderTodayVisits();
+          const rules = result.appointment_rules || {};
+          els.nextDateInput.min = rules.min_date || calculateLocalMinDate();
+          els.nextDateInput.max = rules.max_date || addMonths(todayJST(), Number(state.settings.appointment_max_months_ahead || 3));
+
+          renderSettingsPreview();
+          updateSummary();
+          showMessage(els.settingsLoadMessage, "success", "医院設定を読み込みました。");
+          return true;
+        } catch (error) {
+          console.warn(error);
+          state.regularHours = state.regularHours.length ? state.regularHours : getDefaultRegularHours();
+          els.nextDateInput.min = calculateLocalMinDate();
+          els.nextDateInput.max = addMonths(todayJST(), Number(state.settings.appointment_max_months_ahead || 3));
+          renderSettingsPreview();
+          updateSummary();
+          showMessage(
+            els.settingsLoadMessage,
+            "warning",
+            "医院設定APIを取得できませんでした。代替設定で表示しています。\n\n詳細：" + (error.message || error)
+          );
+          return false;
+        } finally {
+          setButtonLoading(els.reloadSettingsButton, false);
+        }
+      }
+
+      function buildHoursText(row) {
+        if (!row || row.is_closed) return "休診";
+        const a = row.open_time_1 && row.close_time_1 ? `${formatTime(row.open_time_1)}〜${formatTime(row.close_time_1)}` : "";
+        const b = row.open_time_2 && row.close_time_2 ? `${formatTime(row.open_time_2)}〜${formatTime(row.close_time_2)}` : "";
+        return [a, b].filter(Boolean).join(" / ");
+      }
+
+      function renderSettingsPreview() {
+        const clinicName = state.clinic.clinic_name || getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
+        const rows = state.regularHours.map((row) => {
+          return `
+            <div class="info-row">
+              <div class="info-key">${escapeHtml(DAY_LABELS[Number(row.day_of_week)])}</div>
+              <div class="info-value">${escapeHtml(buildHoursText(row))}</div>
+            </div>
+          `;
+        }).join("");
+
+        const specialText = state.specialDays.length
+          ? `${state.specialDays.length}件 登録済み`
+          : "登録なし";
+
+        els.settingsPreview.innerHTML = `
+          <div class="info-row">
+            <div class="info-key">医院名</div>
+            <div class="info-value">${escapeHtml(clinicName)}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-key">予約ルール</div>
+            <div class="info-value">${escapeHtml(state.settings.appointment_max_months_ahead || 3)}か月先まで / ${escapeHtml(state.settings.appointment_slot_minutes || 15)}分単位</div>
+          </div>
+          <div class="info-row">
+            <div class="info-key">臨時設定</div>
+            <div class="info-value">${escapeHtml(specialText)}</div>
+          </div>
+          ${rows}
+        `;
+      }
+
+      async function loadAppointmentOptions(dateText, preferredTime) {
+        clearMessage(els.appointmentMessage);
+        els.nextTimeInput.innerHTML = '<option value="">読み込み中...</option>';
+
+        if (!dateText) {
+          els.nextTimeInput.innerHTML = '<option value="">日付を選択してください</option>';
+          return;
+        }
+
+        const min = els.nextDateInput.min || calculateLocalMinDate();
+        const max = els.nextDateInput.max || addMonths(todayJST(), Number(state.settings.appointment_max_months_ahead || 3));
+
+        if (dateText < min) {
+          els.nextTimeInput.innerHTML = '<option value="">過去日は選択できません</option>';
+          showMessage(els.appointmentMessage, "warning", "過去日、または予約可能開始日より前の日付です。");
+          return;
+        }
+
+        if (dateText > max) {
+          els.nextTimeInput.innerHTML = '<option value="">予約可能期間外です</option>';
+          showMessage(els.appointmentMessage, "warning", `予約可能期間は${state.settings.appointment_max_months_ahead || 3}か月先までです。`);
+          return;
+        }
+
+        try {
+          const result = await apiFetch("/api/owner/appointment-options", {
+            method: "GET",
+            params: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              date: dateText
+            }
+          });
+
+          const slots = result.slots || [];
+          populateTimeOptions(slots, preferredTime);
+
+          if (result.is_available) {
+            showMessage(els.appointmentMessage, "success", `${formatDate(dateText)} の予約可能時間を表示しています。`);
+          } else {
+            showMessage(els.appointmentMessage, "warning", result.reason || "この日は予約できません。");
+          }
+        } catch (error) {
+          console.error(error);
+          const slots = buildFallbackSlotsForDate(dateText);
+          populateTimeOptions(slots, preferredTime);
+
+          showMessage(
+            els.appointmentMessage,
+            slots.length ? "warning" : "error",
+            "予約候補APIを取得できなかったため、画面内の曜日設定で候補を表示しています。\n\n詳細：" + (error.message || error)
+          );
+        }
+      }
+
+      function populateTimeOptions(slots, preferredTime) {
+        const selected = preferredTime ? formatTime(preferredTime) : "";
+
+        if (!slots.length) {
+          els.nextTimeInput.innerHTML = '<option value="">選択できる時間がありません</option>';
+          return;
+        }
+
+        els.nextTimeInput.innerHTML =
+          '<option value="">時間を選択</option>' +
+          slots.map((slot) => `<option value="${escapeHtml(slot)}">${escapeHtml(slot)}</option>`).join("");
+
+        if (selected && slots.includes(selected)) {
+          els.nextTimeInput.value = selected;
+        } else if (slots.includes("10:30")) {
+          els.nextTimeInput.value = "10:30";
+        }
+      }
+
+      async function loadToday() {
+        setButtonLoading(els.loadTodayButton, true, "更新中...");
+        clearMessage(els.todayMessage);
+
+        try {
+          const result = await apiFetch("/api/owner/today", {
+            method: "GET",
+            params: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              date: todayJST(),
+              limit: 50
+            }
+          });
+
+          state.todayVisits = result.visits || [];
+          renderTodayList();
+          updateSummary();
           showMessage(els.todayMessage, "success", "今日の受付を更新しました。");
         } catch (error) {
           console.error(error);
-          showMessage(
-            els.todayMessage,
-            "error",
-            "今日の受付を取得できませんでした。\n\n" +
-            "まだWorker未作成の場合は、デモ表示で画面確認できます。\n\n" +
-            "詳細：" +
-            (error.message || error)
-          );
+          renderTodayList([]);
+          showMessage(els.todayMessage, "error", "今日の受付を取得できませんでした。\n\n詳細：" + (error.message || error));
         } finally {
           setButtonLoading(els.loadTodayButton, false);
         }
       }
 
-      async function loadFollowups() {
-        setButtonLoading(els.loadFollowupsButton, true, "読み込み中...");
-        clearMessage(els.followupListMessage);
+      function renderTodayList(rowsArg) {
+        const rows = rowsArg || state.todayVisits || [];
+        els.todayCount.textContent = String(rows.length);
+        els.todayDateLabel.textContent = formatDate(todayJST());
 
-        try {
-          if (state.demoMode) {
-            const demo = getDemoData();
-            state.followups = demo.followups.map(normalizeFollowup);
-            renderFollowups();
-            showMessage(els.followupListMessage, "success", "デモ用のフォロー対象を表示しました。");
-            return;
-          }
+        if (!rows.length) {
+          els.todayList.innerHTML = '<div class="empty-box">今日の受付はまだありません。</div>';
+          return;
+        }
 
-          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_FOLLOWUPS", "/api/owner/followups");
+        els.todayList.innerHTML = rows.map((row) => {
+          const patientName = row.patient_name || row.name || "患者さま";
+          const memberNo = row.member_no || "---";
+          const time = row.visited_at ? formatDateTime(row.visited_at) : formatDate(row.visit_date);
+          return `
+            <div class="list-item clickable" data-patient-id="${escapeHtml(row.patient_id || row.id || "")}">
+              <div class="item-top">
+                <div>
+                  <div class="item-title">${escapeHtml(patientName)}</div>
+                  <div class="item-sub">${escapeHtml(time)} / ${escapeHtml(getVisitTypeLabel(row.visit_type))}</div>
+                </div>
+                <div class="item-meta">${escapeHtml(memberNo)}</div>
+              </div>
+              <div class="pill-row">
+                <span class="pill green">${escapeHtml(getVisitStatusLabel(row.visit_status))}</span>
+                ${row.next_appointment_date ? `<span class="pill blue">次回 ${escapeHtml(formatDate(row.next_appointment_date))}</span>` : ""}
+              </div>
+            </div>
+          `;
+        }).join("");
 
-          const result = await apiFetch(endpoint, {
-            method: "GET",
-            params: {
-              status: "active",
-              limit: getConfigValue("OWNER.DEFAULT_FOLLOWUP_LIMIT", 50)
+        els.todayList.querySelectorAll("[data-patient-id]").forEach((item, index) => {
+          item.addEventListener("click", async () => {
+            const row = rows[index];
+            const patientId = row.patient_id || row.id;
+            if (patientId) {
+              await loadPatientDetail(patientId);
             }
           });
-
-          const rows =
-            result?.data?.followups ||
-            result?.data ||
-            result?.followups ||
-            [];
-
-          state.followups = Array.isArray(rows) ? rows.map(normalizeFollowup) : [];
-          renderFollowups();
-          showMessage(els.followupListMessage, "success", "フォロー対象を更新しました。");
-        } catch (error) {
-          console.error(error);
-          showMessage(
-            els.followupListMessage,
-            "error",
-            "フォロー対象を取得できませんでした。\n\n" +
-            "まだWorker未作成の場合は、デモ表示で画面確認できます。\n\n" +
-            "詳細：" +
-            (error.message || error)
-          );
-        } finally {
-          setButtonLoading(els.loadFollowupsButton, false);
-        }
+        });
       }
 
       async function searchPatients() {
         const q = els.searchInput.value.trim();
-
         setButtonLoading(els.searchButton, true, "検索中...");
         clearMessage(els.searchMessage);
 
         try {
-          if (state.demoMode || !q) {
-            const demo = getDemoData();
-            const lower = q.toLowerCase();
-
-            state.searchResults = demo.patients
-              .filter((patient) => {
-                if (!q) return true;
-
-                return [
-                  patient.patient_name,
-                  patient.patient_name_kana,
-                  patient.phone,
-                  patient.member_no,
-                  patient.line_display_name
-                ].some((value) => String(value || "").toLowerCase().includes(lower));
-              })
-              .map(normalizePatient);
-
-            renderSearchResults();
-            showMessage(els.searchMessage, "success", "デモ用の患者検索結果を表示しました。");
-            return;
-          }
-
-          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_PATIENT_SEARCH", "/api/owner/patients/search");
-
-          const result = await apiFetch(endpoint, {
+          const result = await apiFetch("/api/owner/patients/search", {
             method: "GET",
             params: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
               q,
-              limit: getConfigValue("OWNER.DEFAULT_SEARCH_LIMIT", 20)
+              limit: 30
             }
           });
 
-          const rows =
-            result?.data?.patients ||
-            result?.data ||
-            result?.patients ||
-            [];
-
-          state.searchResults = Array.isArray(rows) ? rows.map(normalizePatient) : [];
-          renderSearchResults();
+          const rows = result.patients || result.data?.patients || [];
+          renderSearchList(rows);
           showMessage(els.searchMessage, "success", "患者検索が完了しました。");
         } catch (error) {
           console.error(error);
-          showMessage(
-            els.searchMessage,
-            "error",
-            "患者検索に失敗しました。\n\n" +
-            "まだWorker未作成の場合は、デモ表示を使ってください。\n\n" +
-            "詳細：" +
-            (error.message || error)
-          );
+          renderSearchList([]);
+          showMessage(els.searchMessage, "error", "患者検索に失敗しました。\n\n詳細：" + (error.message || error));
         } finally {
           setButtonLoading(els.searchButton, false);
         }
       }
 
+      function renderSearchList(rows) {
+        if (!rows || !rows.length) {
+          els.searchList.innerHTML = '<div class="empty-box">該当する患者はいません。</div>';
+          return;
+        }
+
+        els.searchList.innerHTML = rows.map((row) => {
+          const patient = normalizePatient(row);
+          return `
+            <div class="list-item clickable" data-patient-id="${escapeHtml(patient.id)}">
+              <div class="item-top">
+                <div>
+                  <div class="item-title">${escapeHtml(patient.patient_name)}</div>
+                  <div class="item-sub">${escapeHtml(patient.patient_name_kana || "ふりがな未登録")} / ${escapeHtml(patient.phone || "電話未登録")}</div>
+                </div>
+                <div class="item-meta">${escapeHtml(patient.member_no)}</div>
+              </div>
+              <div class="pill-row">
+                <span class="pill blue">${escapeHtml(getStatusLabel(patient.status))}</span>
+                ${patient.next_appointment_date ? `<span class="pill green">次回 ${escapeHtml(formatDate(patient.next_appointment_date))}</span>` : ""}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        els.searchList.querySelectorAll("[data-patient-id]").forEach((item) => {
+          item.addEventListener("click", async () => {
+            await loadPatientDetail(item.dataset.patientId);
+          });
+        });
+      }
+
       async function loadPatientDetail(patientId) {
         if (!patientId) return;
 
-        clearMessage(els.profileMessage);
+        clearMessage(els.patientMessage);
 
         try {
-          if (state.demoMode || patientId.startsWith("demo-")) {
-            const demo = getDemoData();
-            const detail = demo.patientDetails[patientId];
-
-            if (!detail) {
-              throw new Error("デモ患者情報が見つかりません。");
-            }
-
-            state.selectedPatient = normalizePatient(detail.patient);
-            state.selectedVisits = (detail.visits || []).map(normalizeVisit);
-            state.selectedFollowups = (detail.followups || []).map(normalizeFollowup);
-            renderPatientDetail();
-            return;
-          }
-
-          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_PATIENT_DETAIL", "/api/owner/patients/detail");
-
-          const result = await apiFetch(endpoint, {
+          const result = await apiFetch("/api/owner/patients/detail", {
             method: "GET",
             params: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
               patient_id: patientId
             }
           });
 
-          const root = result?.data || result || {};
+          const patient = normalizePatient(result.patient || result.data?.patient || {});
+          const visits = result.visits || result.data?.visits || [];
+          const followups = result.followups || result.data?.followups || [];
 
-          state.selectedPatient = normalizePatient(root.patient || root);
-          state.selectedVisits = Array.isArray(root.visits) ? root.visits.map(normalizeVisit) : [];
-          state.selectedFollowups = Array.isArray(root.followups) ? root.followups.map(normalizeFollowup) : [];
-
-          renderPatientDetail();
+          renderPatientDetail(patient, visits, followups);
+          showMessage(els.patientMessage, "success", "患者詳細を表示しました。");
         } catch (error) {
           console.error(error);
-          showMessage(
-            els.profileMessage,
-            "error",
-            "患者詳細を取得できませんでした。\n\n詳細：" + (error.message || error)
-          );
+          showMessage(els.patientMessage, "error", "患者詳細を取得できませんでした。\n\n詳細：" + (error.message || error));
         }
       }
 
-      async function loadTemplates() {
-        setButtonLoading(els.loadTemplatesButton, true, "読み込み中...");
-        clearMessage(els.templatesMessage);
+      async function loadFollowups() {
+        setButtonLoading(els.loadFollowupsButton, true, "更新中...");
+        clearMessage(els.followupsMessage);
 
         try {
-          if (state.demoMode) {
-            state.templates = getDefaultTemplates();
-            renderTemplates();
-            showMessage(els.templatesMessage, "success", "デモ用テンプレートを表示しました。");
-            return;
-          }
-
-          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_TEMPLATES", "/api/owner/templates");
-
-          const result = await apiFetch(endpoint, {
+          const result = await apiFetch("/api/owner/followups", {
             method: "GET",
             params: {
-              active: "true"
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              status: "active",
+              limit: 50
             }
           });
 
-          const rows =
-            result?.data?.templates ||
-            result?.data ||
-            result?.templates ||
-            [];
-
-          state.templates = Array.isArray(rows) && rows.length
-            ? rows.map(normalizeTemplate)
-            : getDefaultTemplates();
-
-          renderTemplates();
-          showMessage(els.templatesMessage, "success", "テンプレートを更新しました。");
+          state.followups = result.followups || [];
+          renderFollowupsList();
+          updateSummary();
+          showMessage(els.followupsMessage, "success", "フォロー対象を更新しました。");
         } catch (error) {
-          console.warn(error);
-          state.templates = getDefaultTemplates();
-          renderTemplates();
-          showMessage(
-            els.templatesMessage,
-            "warning",
-            "DBテンプレートを取得できなかったため、config.js のデフォルト文面を表示しています。"
-          );
+          console.error(error);
+          state.followups = [];
+          renderFollowupsList();
+          showMessage(els.followupsMessage, "error", "フォロー対象を取得できませんでした。\n\n詳細：" + (error.message || error));
         } finally {
-          setButtonLoading(els.loadTemplatesButton, false);
+          setButtonLoading(els.loadFollowupsButton, false);
         }
       }
 
-      async function updateFollowupStatus(followupId, status) {
-        const followup = state.followups.find((item) => item.id === followupId);
+      function renderFollowupsList() {
+        const rows = state.followups || [];
+        els.followupCount.textContent = String(rows.length);
 
-        if (!followup) return;
+        if (!rows.length) {
+          els.followupsList.innerHTML = '<div class="empty-box">フォロー対象はありません。</div>';
+          return;
+        }
 
-        try {
-          if (state.demoMode || followupId.startsWith("demo-")) {
-            followup.status = status;
+        els.followupsList.innerHTML = rows.map((row) => {
+          const patientName = row.patient_name || row.name || "患者さま";
+          const memberNo = row.member_no || "---";
+          const due = row.due_date ? formatDate(row.due_date) : "未設定";
+          return `
+            <div class="list-item clickable" data-followup-id="${escapeHtml(row.id || "")}" data-patient-id="${escapeHtml(row.patient_id || "")}">
+              <div class="item-top">
+                <div>
+                  <div class="item-title">${escapeHtml(patientName)}</div>
+                  <div class="item-sub">${escapeHtml(row.title || row.reason || "フォロー予定")} / 予定日 ${escapeHtml(due)}</div>
+                </div>
+                <div class="item-meta">${escapeHtml(memberNo)}</div>
+              </div>
+              <div class="pill-row">
+                <span class="pill yellow">${escapeHtml(row.status || "todo")}</span>
+                ${row.priority ? `<span class="pill red">${escapeHtml(row.priority)}</span>` : ""}
+              </div>
+            </div>
+          `;
+        }).join("");
 
-            if (status === "done" || status === "sent" || status === "cancelled") {
-              state.followups = state.followups.filter((item) => item.id !== followupId);
-            }
-
-            renderFollowups();
-            showMessage(els.followupListMessage, "success", `フォローを「${getFollowupStatusLabel(status)}」にしました。`);
-            return;
-          }
-
-          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_FOLLOWUP_UPDATE", "/api/owner/followups/update");
-
-          const result = await apiFetch(endpoint, {
-            method: "POST",
-            body: {
-              followup_id: followupId,
-              status,
-              staff_name: getStaffName()
+        els.followupsList.querySelectorAll("[data-patient-id]").forEach((item, index) => {
+          item.addEventListener("click", async () => {
+            const row = rows[index];
+            if (row.patient_id) {
+              await loadPatientDetail(row.patient_id);
             }
           });
+        });
+      }
 
-          if (result && result.ok === false) {
-            throw new Error(result.message || result.error || "フォロー更新に失敗しました。");
-          }
+      function renderPatientDetail(patient, visits, followups) {
+        state.selectedPatient = patient;
+        state.selectedVisits = visits || [];
+        state.selectedFollowups = followups || [];
 
-          await loadFollowups();
-          showMessage(els.followupListMessage, "success", `フォローを「${getFollowupStatusLabel(status)}」にしました。`);
-        } catch (error) {
-          console.error(error);
-          showMessage(
-            els.followupListMessage,
-            "error",
-            "フォロー状態を更新できませんでした。\n\n詳細：" + (error.message || error)
+        els.emptyPatientCard.classList.add("hidden");
+        els.patientCard.classList.remove("hidden");
+        els.visitCreateCard.classList.remove("hidden");
+
+        els.patientName.textContent = patient.patient_name || "患者さま";
+        els.patientKana.textContent = patient.patient_name_kana || "";
+        els.patientKana.classList.toggle("hidden", !patient.patient_name_kana);
+        els.patientMemberNo.textContent = patient.member_no || "---";
+        els.patientStatus.textContent = getStatusLabel(patient.status);
+        els.visitCount.textContent = `来院 ${patient.visit_count || visits.length || 0}回`;
+        els.patientPhone.textContent = patient.phone || "未登録";
+        els.lineDisplayName.textContent = patient.line_display_name || "未取得";
+        els.lastVisit.textContent = patient.last_visit_at
+          ? `${formatDateTime(patient.last_visit_at)} / ${getVisitTypeLabel(patient.last_visit_type)}`
+          : "来院履歴なし";
+        els.nextAppointment.textContent = buildNextAppointmentText(
+          patient.next_appointment_date,
+          patient.next_appointment_time,
+          patient.next_appointment_memo
+        );
+        els.patientMemo.textContent = patient.patient_memo || "なし";
+        els.internalMemo.textContent = patient.internal_memo || "なし";
+
+        els.nextDateInput.value = patient.next_appointment_date || "";
+        els.nextMemoInput.value = patient.next_appointment_memo || "";
+
+        if (patient.next_appointment_date) {
+          loadAppointmentOptions(patient.next_appointment_date, patient.next_appointment_time || "");
+        } else {
+          els.nextTimeInput.innerHTML = '<option value="">日付を選択してください</option>';
+        }
+
+        renderVisits(visits);
+        renderLineText();
+        fillDefaultFollowup();
+
+        updateSummary();
+
+        els.debugBox.textContent = JSON.stringify({
+          patient_id: patient.id,
+          member_no: patient.member_no,
+          qr_token: patient.qr_token
+        }, null, 2);
+      }
+
+      function renderVisits(visits) {
+        if (!visits || !visits.length) {
+          els.visitsList.innerHTML = '<div class="empty-box">来院履歴はまだありません。</div>';
+          return;
+        }
+
+        els.visitsList.innerHTML = visits.slice(0, 12).map((visit) => {
+          const date = visit.visit_date ? formatDate(visit.visit_date) : formatDateTime(visit.visited_at);
+          const summary = visit.treatment_summary || visit.chief_complaint || visit.staff_memo || "メモなし";
+          const next = buildNextAppointmentText(
+            visit.next_appointment_date,
+            visit.next_appointment_time,
+            visit.next_appointment_memo
           );
+
+          return `
+            <div class="list-item">
+              <div class="item-top">
+                <div>
+                  <div class="item-title">${escapeHtml(date)}</div>
+                  <div class="item-sub">${escapeHtml(summary)}</div>
+                </div>
+                <div class="item-meta">${escapeHtml(getVisitTypeLabel(visit.visit_type))}</div>
+              </div>
+              <div class="pill-row">
+                <span class="pill green">${escapeHtml(getVisitStatusLabel(visit.visit_status))}</span>
+                <span class="pill blue">次回 ${escapeHtml(next)}</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function renderLineText() {
+        if (!state.selectedPatient) {
+          els.lineCopyText.textContent = "";
+          return;
+        }
+
+        const patient = Object.assign({}, state.selectedPatient, {
+          next_appointment_date: els.nextDateInput.value || state.selectedPatient.next_appointment_date,
+          next_appointment_time: els.nextTimeInput.value || state.selectedPatient.next_appointment_time,
+          next_appointment_memo: els.nextMemoInput.value || state.selectedPatient.next_appointment_memo
+        });
+
+        const followup = state.selectedFollowups && state.selectedFollowups.length
+          ? state.selectedFollowups[0]
+          : null;
+
+        let text = "";
+
+        if (followup && followup.message_text) {
+          text = followup.message_text;
+        } else {
+          const template =
+            getConfigValue("DEFAULT_MESSAGES.revisit_followup", "") ||
+            "こんにちは。{{clinic_name}}です。\n\n先日はご来院ありがとうございました。\n\nその後、お口の状態はいかがでしょうか。\n気になることがありましたら、いつでもLINEでご相談ください。\n\n次回のご来院目安：\n{{next_appointment}}\n\nご都合がよろしければ、ご希望日時をこのLINEにご返信ください。";
+
+          text = replaceTemplateVariables(template, patient);
+        }
+
+        els.lineCopyText.textContent = text;
+        els.lineMessageInput.value = text;
+      }
+
+      function fillDefaultFollowup() {
+        const visitType = els.visitTypeInput.value || "checkup";
+        const visitTypes = getConfigValue("VISIT_TYPES", {});
+        const days = visitTypes[visitType]?.followupDefaultDays || 90;
+
+        els.followupDueDateInput.value = addDays(todayJST(), days);
+
+        if (!els.followupReasonInput.value) {
+          if (visitType === "checkup" || visitType === "cleaning") {
+            els.followupReasonInput.value = "定期検診・クリーニングの再来院案内";
+          } else if (visitType === "treatment") {
+            els.followupReasonInput.value = "治療後の状態確認・次回案内";
+          } else {
+            els.followupReasonInput.value = "来院後の再来院フォロー";
+          }
         }
       }
 
@@ -2605,110 +2140,40 @@
           return;
         }
 
-        const body = {
-          clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-          clinic_id: patient.clinic_id || null,
-          patient_id: patient.id,
+        if (els.nextTimeInput.value && !els.nextDateInput.value) {
+          showMessage(els.visitMessage, "warning", "次回予約時間を入れる場合は、次回予約日も選択してください。");
+          return;
+        }
 
-          visit_date: getTodayJST(),
-          visit_status: els.visitStatusInput.value,
-          visit_type: els.visitTypeInput.value,
-
-          chief_complaint: els.chiefComplaintInput.value.trim(),
-          treatment_summary: els.treatmentSummaryInput.value.trim(),
-          staff_memo: "",
-
-          next_appointment_date: els.nextDateInput.value || null,
-          next_appointment_time: els.nextTimeInput.value || null,
-          next_appointment_memo: els.nextMemoInput.value.trim(),
-
-          needs_followup: els.needsFollowupInput.value === "true",
-          followup_due_date: els.needsFollowupInput.value === "true" ? els.followupDueDateInput.value || null : null,
-          followup_reason: els.followupReasonInput.value.trim(),
-
-          line_message_text: els.visitLineMessageInput.value.trim(),
-
-          created_by_staff: getStaffName()
-        };
+        if (els.nextDateInput.value && !els.nextTimeInput.value) {
+          showMessage(els.visitMessage, "warning", "次回予約日を入れる場合は、次回予約時間も選択してください。");
+          return;
+        }
 
         setButtonLoading(els.saveVisitButton, true, "保存中...");
         clearMessage(els.visitMessage);
 
+        const body = {
+          clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+          patient_id: patient.id,
+          visit_date: todayJST(),
+          visit_status: els.visitStatusInput.value,
+          visit_type: els.visitTypeInput.value,
+          chief_complaint: els.chiefComplaintInput.value.trim(),
+          treatment_summary: els.treatmentSummaryInput.value.trim(),
+          staff_memo: "",
+          next_appointment_date: els.nextDateInput.value || null,
+          next_appointment_time: els.nextTimeInput.value || null,
+          next_appointment_memo: els.nextMemoInput.value.trim(),
+          needs_followup: els.needsFollowupInput.value === "true",
+          followup_due_date: els.needsFollowupInput.value === "true" ? els.followupDueDateInput.value || null : null,
+          followup_reason: els.followupReasonInput.value.trim(),
+          line_message_text: els.lineMessageInput.value.trim(),
+          created_by_staff: getStaffName()
+        };
+
         try {
-          if (state.demoMode || patient.id.startsWith("demo-")) {
-            const newVisit = normalizeVisit({
-              id: `demo-new-visit-${Date.now()}`,
-              clinic_id: patient.clinic_id,
-              patient_id: patient.id,
-              visit_date: body.visit_date,
-              visited_at: new Date().toISOString(),
-              visit_status: body.visit_status,
-              visit_type: body.visit_type,
-              chief_complaint: body.chief_complaint,
-              treatment_summary: body.treatment_summary,
-              next_appointment_date: body.next_appointment_date,
-              next_appointment_time: body.next_appointment_time,
-              next_appointment_memo: body.next_appointment_memo,
-              needs_followup: body.needs_followup,
-              followup_due_date: body.followup_due_date,
-              followup_reason: body.followup_reason,
-              line_message_text: body.line_message_text,
-              created_by_staff: body.created_by_staff
-            });
-
-            state.selectedVisits = [newVisit].concat(state.selectedVisits);
-            state.selectedPatient.last_visit_at = newVisit.visited_at;
-            state.selectedPatient.last_visit_type = newVisit.visit_type;
-            state.selectedPatient.next_appointment_date = body.next_appointment_date || "";
-            state.selectedPatient.next_appointment_time = body.next_appointment_time || "";
-            state.selectedPatient.next_appointment_memo = body.next_appointment_memo || "";
-            state.selectedPatient.visit_count = Number(state.selectedPatient.visit_count || 0) + 1;
-
-            state.todayVisits = [Object.assign({}, newVisit, {
-              patient_name: patient.patient_name,
-              patient_name_kana: patient.patient_name_kana,
-              member_no: patient.member_no,
-              phone: patient.phone
-            })].concat(state.todayVisits);
-
-            if (body.needs_followup && body.followup_due_date) {
-              const newFollowup = normalizeFollowup({
-                id: `demo-followup-${Date.now()}`,
-                clinic_id: patient.clinic_id,
-                patient_id: patient.id,
-                member_no: patient.member_no,
-                patient_name: patient.patient_name,
-                patient_name_kana: patient.patient_name_kana,
-                phone: patient.phone,
-                line_display_name: patient.line_display_name,
-                followup_type: "revisit",
-                due_date: body.followup_due_date,
-                status: "todo",
-                priority: "normal",
-                title: "再来院フォロー",
-                reason: body.followup_reason,
-                message_text: body.line_message_text
-              });
-
-              state.followups = [newFollowup].concat(state.followups);
-              state.selectedFollowups = [newFollowup].concat(state.selectedFollowups);
-            }
-
-            renderPatientDetail();
-            renderTodayVisits();
-            renderFollowups();
-
-            showMessage(
-              els.visitMessage,
-              "success",
-              "デモ用の来院記録を画面上に追加しました。\n実データ保存はWorker作成後に動作します。"
-            );
-            return;
-          }
-
-          const endpoint = getConfigValue("API.ENDPOINTS.OWNER_VISIT_CREATE", "/api/owner/visits/create");
-
-          const result = await apiFetch(endpoint, {
+          const result = await apiFetch("/api/owner/visits/create", {
             method: "POST",
             body
           });
@@ -2718,7 +2183,6 @@
           }
 
           showMessage(els.visitMessage, "success", "来院記録を保存しました。");
-
           await loadPatientDetail(patient.id);
           await loadToday();
           await loadFollowups();
@@ -2728,31 +2192,110 @@
             els.visitMessage,
             "error",
             "来院記録を保存できませんでした。\n\n" +
-            "まだWorker未作成の場合は保存APIがないため、このエラーで正常です。\n\n" +
-            "詳細：" +
-            (error.message || error)
+            "休診日・営業時間外・予約可能期間外の次回予約は保存できません。\n\n" +
+            "詳細：" + (error.message || error)
           );
         } finally {
           setButtonLoading(els.saveVisitButton, false);
         }
       }
 
-      function switchTab(tabName) {
-        document.querySelectorAll(".tab-button").forEach((button) => {
-          button.classList.toggle("active", button.dataset.tab === tabName);
+      function getDemoData() {
+        const today = todayJST();
+        const next = findFirstAvailableDate(today);
+
+        const patient = normalizePatient({
+          id: "demo-patient-id",
+          qr_token: "demo-dental-patient-001",
+          member_no: "D260600001",
+          patient_name: "山田 太郎",
+          patient_name_kana: "ヤマダ タロウ",
+          phone: "090-0000-0000",
+          line_display_name: "Taro Yamada",
+          status: "active",
+          last_visit_at: new Date().toISOString(),
+          last_visit_type: "cleaning",
+          next_appointment_date: next,
+          next_appointment_time: "10:30",
+          next_appointment_memo: "定期検診・クリーニング予定",
+          patient_memo: "デモ用患者。QR診察券の流れを説明できます。",
+          internal_memo: "受付でQR読取 → 来院履歴 → LINEフォローの説明用。",
+          visit_count: 3
         });
 
-        document.querySelectorAll(".detail-section").forEach((section) => {
-          section.classList.remove("active");
-        });
+        const visits = [
+          {
+            id: "visit-demo-1",
+            visit_date: today,
+            visited_at: new Date().toISOString(),
+            visit_status: "visited",
+            visit_type: "cleaning",
+            chief_complaint: "定期検診・クリーニング",
+            treatment_summary: "口腔内チェック、スケーリング、ブラッシング説明",
+            next_appointment_date: next,
+            next_appointment_time: "10:30",
+            next_appointment_memo: "3か月後の定期検診"
+          },
+          {
+            id: "visit-demo-2",
+            visit_date: addDays(today, -92),
+            visited_at: new Date(Date.now() - 92 * 86400000).toISOString(),
+            visit_status: "completed",
+            visit_type: "checkup",
+            chief_complaint: "3か月定期検診",
+            treatment_summary: "問題なし。次回も定期検診予定。",
+            next_appointment_memo: "3か月後に案内"
+          }
+        ];
 
-        const target = $(`tab-${tabName}`);
-        if (target) {
-          target.classList.add("active");
-        }
+        const followups = [
+          {
+            id: "followup-demo-1",
+            patient_id: patient.id,
+            patient_name: patient.patient_name,
+            member_no: patient.member_no,
+            title: "3か月定期検診のご案内",
+            due_date: addMonths(today, 3),
+            status: "todo",
+            priority: "high",
+            message_text: "こんにちは。DPRO歯科クリニックです。\n\n前回のご来院からお日にちが経ちましたので、定期検診とクリーニングのご案内です。\n\nご都合のよい日時がありましたら、このLINEにそのままご返信ください。"
+          }
+        ];
+
+        return { patient, visits, followups };
       }
 
-      function saveSettings() {
+      function findFirstAvailableDate(startDate) {
+        const min = els.nextDateInput.min || startDate;
+        const max = els.nextDateInput.max || addMonths(startDate, Number(state.settings.appointment_max_months_ahead || 3));
+        let date = min;
+
+        for (let i = 0; i < 100; i += 1) {
+          if (date > max) break;
+          const slots = buildFallbackSlotsForDate(date);
+          if (slots.length) return date;
+          date = addDays(date, 1);
+        }
+
+        return min;
+      }
+
+      function showDemo() {
+        const demo = getDemoData();
+        renderPatientDetail(demo.patient, demo.visits, demo.followups);
+        state.todayVisits = demo.visits.map((visit) => Object.assign({}, visit, {
+          patient_id: demo.patient.id,
+          patient_name: demo.patient.patient_name,
+          member_no: demo.patient.member_no
+        }));
+        state.followups = demo.followups;
+        renderTodayList();
+        renderFollowupsList();
+        updateSummary();
+        showMessage(els.patientMessage, "success", "デモ患者を表示しました。");
+      }
+
+      function saveAdminSettings() {
         const staffName = els.staffNameInput.value.trim() || getConfigValue("ADMIN.DEFAULT_STAFF_NAME", "受付スタッフ");
         const adminCode = els.adminCodeInput.value.trim();
 
@@ -2760,90 +2303,98 @@
         setAdminCode(adminCode);
 
         showMessage(
-          els.settingsMessage,
+          els.adminCodeMessage,
           "success",
           "管理設定を保存しました。\n管理コードはWorker側の認証で使用します。"
         );
       }
 
-      async function loadDemo() {
-        state.demoMode = true;
+      async function copyPatientName() {
+        if (!state.selectedPatient) return;
 
-        const demo = getDemoData();
-
-        state.searchResults = demo.patients.map(normalizePatient);
-        state.todayVisits = demo.visits.map(normalizeVisit).filter((visit) => {
-          return visit.visit_date === getTodayJST();
-        });
-        state.followups = demo.followups.map(normalizeFollowup);
-        state.templates = demo.templates.map(normalizeTemplate);
-
-        renderSearchResults();
-        renderTodayVisits();
-        renderFollowups();
-        renderTemplates();
-
-        await loadPatientDetail("demo-patient-1");
-
-        showMessage(
-          els.searchMessage,
-          "success",
-          "デモ表示に切り替えました。Worker未作成でも画面の流れを確認できます。"
-        );
+        await copyText(state.selectedPatient.patient_name || "");
+        showMessage(els.patientMessage, "success", "患者名をコピーしました。");
       }
 
-      async function reloadAll() {
-        await loadTemplates();
+      function openMemberPage() {
+        if (!state.selectedPatient) return;
+        const url = buildMemberUrl(state.selectedPatient.qr_token || "");
+        window.open(url, "_blank", "noopener");
+      }
 
-        if (state.demoMode) {
-          await loadDemo();
+      async function copyLineText() {
+        const text = els.lineCopyText.textContent.trim();
+
+        if (!text) {
+          showMessage(els.lineMessage, "warning", "コピーする文面がありません。");
           return;
         }
 
-        await Promise.allSettled([
-          loadToday(),
-          loadFollowups()
-        ]);
+        await copyText(text);
+        showMessage(els.lineMessage, "success", "LINE文面をコピーしました。LINE公式のチャットへ貼り付けて送信してください。");
+      }
+
+      async function copyVisitLineText() {
+        const text = els.lineMessageInput.value.trim();
+
+        if (!text) {
+          showMessage(els.visitMessage, "warning", "コピーする文面がありません。");
+          return;
+        }
+
+        await copyText(text);
+        showMessage(els.visitMessage, "success", "LINE文面をコピーしました。LINE公式のチャットへ貼り付けて送信してください。");
+      }
+
+      function updateSummary() {
+        const clinicName = state.clinic.clinic_name || getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
+        els.clinicNameText.textContent = `${clinicName} / 今日の受付・患者検索・来院履歴・LINEフォロー`;
+        els.footerClinicName.textContent = clinicName;
+        els.rangeLabel.textContent = `${state.settings.appointment_max_months_ahead || 3}か月`;
+        els.slotLabel.textContent = `${state.settings.appointment_slot_minutes || 15}分`;
+        els.todayCount.textContent = String((state.todayVisits || []).length);
+        els.followupCount.textContent = String((state.followups || []).length);
+        els.selectedMemberNo.textContent = state.selectedPatient?.member_no || "---";
+        els.selectedPatientNameMini.textContent = state.selectedPatient?.patient_name || "未選択";
       }
 
       function applyInitialConfig() {
         const systemName = getConfigValue("SYSTEM_NAME", "DPRO SHOP");
-        const title = getConfigValue("OWNER.TITLE", "歯科医院 管理画面");
         const clinicName = getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
 
-        document.title = `${systemName} | ${title}`;
-
+        document.title = `${systemName} | 歯科医院 管理画面`;
         els.systemName.textContent = systemName;
-        els.pageTitle.textContent = title;
-        els.clinicNameText.textContent = `${clinicName} / 今日の受付・患者検索・来院履歴・フォロー管理`;
+        els.clinicNameText.textContent = `${clinicName} / 今日の受付・患者検索・来院履歴・LINEフォロー`;
         els.footerClinicName.textContent = clinicName;
+        els.todayDateLabel.textContent = formatDate(todayJST());
 
         const pages = CONFIG.PAGES || {};
-
-        els.scanLink.href = pages.SCAN ? `./${pages.SCAN}` : "./scan.html";
         els.adminLink.href = pages.ADMIN ? `./${pages.ADMIN}` : "./admin.html";
+        els.scanLink.href = pages.SCAN ? `./${pages.SCAN}` : "./scan.html";
         els.memberLink.href = pages.MEMBER ? `./${pages.MEMBER}?t=demo` : "./member.html?t=demo";
 
         els.staffNameInput.value = getStaffName();
         els.adminCodeInput.value = getAdminCode();
 
+        state.regularHours = getDefaultRegularHours();
+
         populateSelects();
+        fillDefaultFollowup();
 
-        state.templates = getDefaultTemplates();
-        renderTemplates();
+        els.nextDateInput.min = calculateLocalMinDate();
+        els.nextDateInput.max = addMonths(todayJST(), Number(state.settings.appointment_max_months_ahead || 3));
 
-        fillDefaultFollowupByVisitType();
         updateSummary();
       }
 
       function bindEvents() {
-        els.reloadAllButton.addEventListener("click", reloadAll);
+        els.reloadSettingsButton.addEventListener("click", loadSettings);
+        els.demoButton.addEventListener("click", showDemo);
+
         els.loadTodayButton.addEventListener("click", loadToday);
         els.loadFollowupsButton.addEventListener("click", loadFollowups);
+
         els.searchButton.addEventListener("click", searchPatients);
-        els.demoButton.addEventListener("click", loadDemo);
-        els.saveSettingsButton.addEventListener("click", saveSettings);
-        els.loadTemplatesButton.addEventListener("click", loadTemplates);
 
         els.searchInput.addEventListener("keydown", async (event) => {
           if (event.key === "Enter") {
@@ -2852,90 +2403,50 @@
           }
         });
 
-        document.querySelectorAll(".tab-button").forEach((button) => {
-          button.addEventListener("click", () => {
-            switchTab(button.dataset.tab);
-          });
+        els.clearSearchButton.addEventListener("click", () => {
+          els.searchInput.value = "";
+          els.searchList.innerHTML = '<div class="empty-box">検索すると患者一覧が表示されます。</div>';
+          clearMessage(els.searchMessage);
         });
 
-        els.copyNameButton.addEventListener("click", async () => {
-          if (!state.selectedPatient) return;
+        els.saveAdminCodeButton.addEventListener("click", saveAdminSettings);
 
-          await copyText(state.selectedPatient.patient_name || "");
-          showMessage(els.profileMessage, "success", "患者名をコピーしました。");
-        });
+        els.copyPatientNameButton.addEventListener("click", copyPatientName);
+        els.openMemberButton.addEventListener("click", openMemberPage);
 
-        els.openMemberButton.addEventListener("click", () => {
-          if (!state.selectedPatient) return;
-
-          const url = buildMemberUrl(state.selectedPatient.qr_token || "");
-          window.open(url, "_blank", "noopener");
+        els.copyLineTextButton.addEventListener("click", copyLineText);
+        els.refreshLineTextButton.addEventListener("click", () => {
+          renderLineText();
+          showMessage(els.lineMessage, "success", "文面を再作成しました。");
         });
 
         els.visitTypeInput.addEventListener("change", () => {
-          fillDefaultFollowupByVisitType();
-          updateLinePreview();
+          fillDefaultFollowup();
+          renderLineText();
         });
 
-        els.needsFollowupInput.addEventListener("change", () => {
-          if (els.needsFollowupInput.value === "true") {
-            fillDefaultFollowupByVisitType();
-          }
+        els.nextDateInput.addEventListener("change", async () => {
+          await loadAppointmentOptions(els.nextDateInput.value, "");
         });
 
-        els.makeVisitLineMessageButton.addEventListener("click", () => {
-          if (!state.selectedPatient) {
-            showMessage(els.visitMessage, "warning", "先に患者を選択してください。");
-            return;
-          }
+        els.nextTimeInput.addEventListener("change", renderLineText);
+        els.nextMemoInput.addEventListener("input", renderLineText);
 
-          const text = buildLineMessageForPatient(state.selectedPatient, els.templateSelect.value);
-          els.visitLineMessageInput.value = text;
+        els.fillLineMessageButton.addEventListener("click", () => {
+          renderLineText();
           showMessage(els.visitMessage, "success", "LINE文面を自動作成しました。");
         });
 
-        els.copyVisitLineMessageButton.addEventListener("click", async () => {
-          const text = els.visitLineMessageInput.value.trim();
-
-          if (!text) {
-            showMessage(els.visitMessage, "warning", "コピーするLINE文面がありません。");
-            return;
-          }
-
-          await copyText(text);
-          showMessage(
-            els.visitMessage,
-            "success",
-            "LINE文面をコピーしました。LINE公式のチャットに貼り付けて送信してください。"
-          );
-        });
-
+        els.copyVisitLineButton.addEventListener("click", copyVisitLineText);
         els.saveVisitButton.addEventListener("click", saveVisit);
-
-        els.templateSelect.addEventListener("change", updateLinePreview);
-
-        els.copyLineTextButton.addEventListener("click", async () => {
-          const text = els.lineCopyTextarea.value.trim();
-
-          if (!text) {
-            showMessage(els.lineMessage, "warning", "コピーするLINE文面がありません。");
-            return;
-          }
-
-          await copyText(text);
-          showMessage(
-            els.lineMessage,
-            "success",
-            "LINE文面をコピーしました。LINE公式のチャットに貼り付けて送信してください。"
-          );
-        });
       }
 
       document.addEventListener("DOMContentLoaded", async () => {
         applyInitialConfig();
         bindEvents();
-
-        await loadTemplates();
+        await loadSettings();
+        await loadToday();
+        await loadFollowups();
       });
     })();
   </script>
