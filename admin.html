@@ -1,1308 +1,2140 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPRO DENTAL - オーナー管理画面</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #f4f7fb;
-            --panel: #ffffff;
-            --panel-soft: #f8fafc;
-            --line: #dfe7f1;
-            --line-strong: #cbd8e6;
-            --text: #102033;
-            --muted: #66758a;
-            --muted-2: #8a98aa;
-            --blue: #2563eb;
-            --blue-soft: #eff6ff;
-            --cyan: #06b6d4;
-            --green: #16a34a;
-            --green-soft: #ecfdf5;
-            --yellow: #d97706;
-            --yellow-soft: #fffbeb;
-            --orange: #ea580c;
-            --orange-soft: #fff7ed;
-            --red: #dc2626;
-            --red-soft: #fef2f2;
-            --gray: #64748b;
-            --gray-soft: #f1f5f9;
-            --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
-            --radius: 22px;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>DPRO SHOP | 患者登録・QR診察券発行</title>
 
-        * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            margin: 0;
-            background:
-                radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 32%),
-                radial-gradient(circle at 80% 0%, rgba(6, 182, 212, 0.08), transparent 28%),
-                var(--bg);
-            color: var(--text);
-            font-family: 'Noto Sans JP', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            min-height: 100vh;
-        }
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
-        button, input, select, textarea { font-family: inherit; }
-        button { cursor: pointer; }
+  <style>
+    :root {
+      --main: #2563eb;
+      --main-dark: #1d4ed8;
+      --sub: #0f766e;
+      --accent: #f59e0b;
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #dc2626;
+      --info: #2563eb;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    }
 
-        .app-shell {
-            width: min(1440px, 100%);
-            margin: 0 auto;
-            padding: 22px;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        .hero {
-            display: grid;
-            grid-template-columns: 1.1fr auto;
-            gap: 18px;
-            align-items: stretch;
-            margin-bottom: 18px;
-        }
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
 
-        .hero-main, .hero-side, .panel {
-            background: rgba(255,255,255,0.92);
-            border: 1px solid rgba(203, 216, 230, 0.8);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(12px);
-        }
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34%),
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.1), transparent 30%),
+        var(--bg);
+    }
 
-        .hero-main {
-            padding: 22px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 18px;
-        }
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
 
-        .brand-kicker {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 900;
-            letter-spacing: .11em;
-            color: var(--blue);
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-        .brand-dot { width: 10px; height: 10px; border-radius: 999px; background: linear-gradient(135deg, var(--blue), var(--cyan)); }
-        h1 { margin: 0; font-size: clamp(24px, 3vw, 38px); letter-spacing: -.04em; line-height: 1.1; }
-        .hero-sub { margin: 10px 0 0; color: var(--muted); font-weight: 500; line-height: 1.7; }
+    button {
+      cursor: pointer;
+    }
 
-        .date-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-        .date-title {
-            min-width: 220px;
-            text-align: center;
-            background: var(--panel-soft);
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            padding: 13px 16px;
-            font-weight: 900;
-            font-size: 20px;
-            color: var(--text);
-        }
+    a {
+      color: inherit;
+    }
 
-        .hero-side {
-            padding: 18px;
-            min-width: 300px;
-            display: grid;
-            gap: 10px;
-        }
-        .side-title { font-weight: 900; font-size: 14px; color: var(--muted); }
-        .side-note {
-            margin: 0;
-            font-size: 13px;
-            line-height: 1.7;
-            color: var(--muted);
-        }
+    .page {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px 18px 42px;
+    }
 
-        .btn {
-            border: 0;
-            border-radius: 999px;
-            padding: 11px 15px;
-            font-weight: 900;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
-            white-space: nowrap;
-        }
-        .btn:hover { transform: translateY(-1px); }
-        .btn-primary { background: linear-gradient(135deg, var(--blue), #1d4ed8); color: #fff; box-shadow: 0 12px 22px rgba(37,99,235,.22); }
-        .btn-soft { background: var(--panel-soft); color: var(--text); border: 1px solid var(--line); }
-        .btn-blue-soft { background: var(--blue-soft); color: var(--blue); border: 1px solid #bfdbfe; }
-        .btn-green { background: var(--green); color: #fff; }
-        .btn-yellow { background: #f59e0b; color: #fff; }
-        .btn-orange { background: var(--orange); color: #fff; }
-        .btn-red { background: var(--red); color: #fff; }
-        .btn-gray { background: var(--gray); color: #fff; }
-        .btn-mini { padding: 8px 10px; font-size: 12px; border-radius: 12px; }
-        .btn-full { width: 100%; }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
 
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(6, minmax(140px, 1fr));
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-        .summary-card {
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 20px;
-            padding: 16px;
-            box-shadow: 0 10px 28px rgba(15,23,42,.05);
-        }
-        .summary-label { font-size: 12px; color: var(--muted); font-weight: 900; margin-bottom: 8px; }
-        .summary-number { font-size: 32px; font-weight: 900; letter-spacing: -.04em; line-height: 1; }
-        .summary-caption { margin-top: 8px; font-size: 12px; color: var(--muted-2); }
-        .summary-card.blue { background: var(--blue-soft); border-color: #bfdbfe; }
-        .summary-card.green { background: var(--green-soft); border-color: #bbf7d0; }
-        .summary-card.yellow { background: var(--yellow-soft); border-color: #fde68a; }
-        .summary-card.orange { background: var(--orange-soft); border-color: #fed7aa; }
-        .summary-card.red { background: var(--red-soft); border-color: #fecaca; }
+    .brand-kicker {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 330px minmax(0, 1fr) 360px;
-            gap: 18px;
-            align-items: start;
-        }
+    .brand-title {
+      margin-top: 4px;
+      font-size: 28px;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+      line-height: 1.22;
+    }
 
-        .panel { overflow: hidden; }
-        .panel-header {
-            padding: 18px 18px 14px;
-            border-bottom: 1px solid var(--line);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .panel-title { margin: 0; font-size: 18px; font-weight: 900; letter-spacing: -.02em; }
-        .panel-caption { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
-        .panel-body { padding: 16px; }
+    .brand-sub {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
 
-        .task-list { display: grid; gap: 10px; }
-        .task-card {
-            border: 1px solid var(--line);
-            background: var(--panel-soft);
-            border-radius: 18px;
-            padding: 12px;
-            display: grid;
-            gap: 9px;
-        }
-        .task-card.urgent { border-color: #fed7aa; background: var(--orange-soft); }
-        .task-card.follow { border-color: #bfdbfe; background: var(--blue-soft); }
-        .task-top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
-        .task-name { font-weight: 900; font-size: 14px; }
-        .task-meta { color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 999px;
-            padding: 5px 9px;
-            font-size: 11px;
-            font-weight: 900;
-            white-space: nowrap;
-        }
-        .badge.scheduled { background: var(--blue-soft); color: var(--blue); border: 1px solid #bfdbfe; }
-        .badge.waiting { background: var(--yellow-soft); color: var(--yellow); border: 1px solid #fde68a; }
-        .badge.in_treatment { background: var(--green-soft); color: var(--green); border: 1px solid #bbf7d0; }
-        .badge.completed { background: var(--gray-soft); color: var(--gray); border: 1px solid #dbe3ed; }
-        .badge.canceled { background: var(--red-soft); color: var(--red); border: 1px solid #fecaca; }
-        .badge.line { background: #ecfeff; color: #0891b2; border: 1px solid #a5f3fc; }
+    .badge-link,
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+      white-space: nowrap;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--main-dark);
+      border: 1px solid rgba(37, 99, 235, 0.16);
+    }
 
-        .timeline-wrap { display: grid; gap: 8px; }
-        .time-row {
-            display: grid;
-            grid-template-columns: 72px minmax(0, 1fr);
-            gap: 10px;
-            align-items: stretch;
-        }
-        .time-label {
-            border: 1px solid var(--line);
-            background: var(--panel-soft);
-            border-radius: 16px;
-            min-height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--muted);
-            font-weight: 900;
-            font-size: 13px;
-        }
-        .slot {
-            min-height: 64px;
-            border: 1px dashed var(--line-strong);
-            background: rgba(248,250,252,.72);
-            border-radius: 18px;
-            padding: 8px;
-            display: grid;
-            gap: 8px;
-            align-items: center;
-        }
-        .slot.empty:hover { border-color: var(--blue); background: var(--blue-soft); }
-        .slot-lunch {
-            min-height: 60px;
-            border: 1px solid var(--line);
-            background: #eef2f7;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--muted);
-            font-weight: 900;
-            letter-spacing: .08em;
-        }
-        .empty-add {
-            border: 0;
-            width: 100%;
-            height: 100%;
-            min-height: 48px;
-            background: transparent;
-            color: var(--muted-2);
-            font-weight: 900;
-            border-radius: 14px;
-        }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
 
-        .appointment-card {
-            position: relative;
-            border: 1px solid var(--line);
-            background: var(--panel);
-            border-radius: 17px;
-            padding: 12px;
-            display: grid;
-            gap: 10px;
-            box-shadow: 0 8px 20px rgba(15,23,42,.05);
-        }
-        .appointment-card.selected { outline: 3px solid rgba(37,99,235,.18); border-color: #93c5fd; }
-        .appointment-card.scheduled { border-left: 7px solid var(--blue); }
-        .appointment-card.waiting { border-left: 7px solid #f59e0b; }
-        .appointment-card.in_treatment { border-left: 7px solid var(--green); }
-        .appointment-card.completed { border-left: 7px solid var(--gray); opacity: .9; }
-        .appointment-card.canceled { border-left: 7px solid var(--red); opacity: .65; }
-        .app-main { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-        .app-name { font-size: 17px; font-weight: 900; letter-spacing: -.02em; }
-        .app-note { color: var(--muted); font-size: 13px; margin-top: 4px; line-height: 1.5; }
-        .app-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+    .summary-card {
+      border-radius: 22px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.055);
+      padding: 16px;
+    }
 
-        .patient-box { display: grid; gap: 14px; }
-        .patient-empty {
-            border: 1px dashed var(--line-strong);
-            border-radius: 18px;
-            padding: 26px 18px;
-            text-align: center;
-            color: var(--muted);
-            background: var(--panel-soft);
-        }
-        .patient-name { font-size: 25px; font-weight: 900; letter-spacing: -.04em; margin: 0; }
-        .patient-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .meta-card { border: 1px solid var(--line); background: var(--panel-soft); border-radius: 16px; padding: 12px; }
-        .meta-label { color: var(--muted); font-size: 11px; font-weight: 900; margin-bottom: 5px; }
-        .meta-value { font-size: 14px; font-weight: 900; word-break: break-all; }
-        .memo-box {
-            width: 100%;
-            min-height: 92px;
-            border: 1px solid var(--line);
-            background: var(--panel-soft);
-            border-radius: 16px;
-            padding: 12px;
-            resize: vertical;
-            color: var(--text);
-            font-size: 14px;
-            line-height: 1.7;
-        }
-        .line-template-box {
-            border: 1px solid #a5f3fc;
-            background: #ecfeff;
-            border-radius: 18px;
-            padding: 14px;
-            display: grid;
-            gap: 10px;
-        }
-        .line-template-title { color: #0891b2; font-weight: 900; font-size: 13px; }
-        .line-text-preview {
-            white-space: pre-wrap;
-            background: #fff;
-            border: 1px solid #cffafe;
-            border-radius: 14px;
-            padding: 12px;
-            font-size: 13px;
-            line-height: 1.7;
-            color: var(--text);
-            max-height: 170px;
-            overflow: auto;
-        }
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
 
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            background: rgba(15, 23, 42, .42);
-            backdrop-filter: blur(9px);
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-        }
-        .modal {
-            width: min(560px, 100%);
-            max-height: 92vh;
-            overflow: auto;
-            background: var(--panel);
-            border-radius: 24px;
-            box-shadow: 0 35px 80px rgba(15,23,42,.24);
-            border: 1px solid var(--line);
-        }
-        .modal-header { padding: 20px 22px 14px; border-bottom: 1px solid var(--line); }
-        .modal-title { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -.03em; }
-        .modal-body { padding: 18px 22px 22px; display: grid; gap: 14px; }
-        .form-grid { display: grid; gap: 13px; }
-        .form-group { display: grid; gap: 7px; }
-        .form-group label { color: var(--muted); font-weight: 900; font-size: 12px; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            border: 1px solid var(--line-strong);
-            background: var(--panel-soft);
-            color: var(--text);
-            border-radius: 14px;
-            padding: 13px 14px;
-            font-size: 16px;
-            outline: none;
-        }
-        .form-group textarea { min-height: 86px; resize: vertical; line-height: 1.7; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 9px; flex-wrap: wrap; margin-top: 4px; }
-        .search-result-list { display: grid; gap: 8px; }
-        .search-result {
-            border: 1px solid var(--line);
-            background: var(--panel-soft);
-            border-radius: 14px;
-            padding: 11px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-        }
+    .summary-value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
 
-        .toast {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            z-index: 2000;
-            background: #0f172a;
-            color: #fff;
-            padding: 13px 16px;
-            border-radius: 999px;
-            box-shadow: 0 18px 42px rgba(15,23,42,.25);
-            display: none;
-            font-weight: 900;
-        }
+    .summary-note {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
 
-        .loading-line {
-            padding: 18px;
-            color: var(--muted);
-            font-weight: 900;
-            text-align: center;
-        }
-        .error-box {
-            background: var(--red-soft);
-            color: var(--red);
-            border: 1px solid #fecaca;
-            border-radius: 18px;
-            padding: 14px;
-            font-size: 13px;
-            line-height: 1.7;
-            display: none;
-            margin-bottom: 14px;
-        }
-        .holiday-msg {
-            display: none;
-            border: 1px solid var(--line);
-            background: var(--panel);
-            border-radius: var(--radius);
-            padding: 38px 22px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            color: var(--muted);
-            font-weight: 900;
-            margin-bottom: 18px;
-        }
+    .layout {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+      align-items: start;
+    }
 
-        @media (max-width: 1180px) {
-            .dashboard-grid { grid-template-columns: 320px minmax(0, 1fr); }
-            .right-panel { grid-column: 1 / -1; }
-            .summary-grid { grid-template-columns: repeat(3, minmax(150px, 1fr)); }
-        }
-        @media (max-width: 820px) {
-            .app-shell { padding: 14px; }
-            .hero { grid-template-columns: 1fr; }
-            .hero-main { flex-direction: column; align-items: flex-start; }
-            .date-controls { justify-content: flex-start; }
-            .date-title { min-width: 190px; }
-            .hero-side { min-width: 0; }
-            .summary-grid { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
-            .dashboard-grid { grid-template-columns: 1fr; }
-            .time-row { grid-template-columns: 62px minmax(0, 1fr); }
-            .app-main { flex-direction: column; }
-        }
-        @media (max-width: 520px) {
-            .summary-grid { grid-template-columns: 1fr; }
-            .patient-meta-grid { grid-template-columns: 1fr; }
-            .date-title { width: 100%; }
-        }
-    </style>
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 17px 19px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.78), #ffffff);
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-subtitle {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .card-body {
+      padding: 18px 19px 20px;
+    }
+
+    .icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--main-dark);
+      font-weight: 950;
+      flex: 0 0 auto;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: #ffffff;
+      color: var(--text);
+      padding: 12px 13px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .field textarea {
+      min-height: 88px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: rgba(37, 99, 235, 0.5);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .required {
+      color: var(--danger);
+      font-weight: 950;
+      margin-left: 3px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .three-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 46px;
+      border: none;
+      border-radius: 15px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-weight: 950;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      text-decoration: none;
+      transition: transform 0.08s ease, opacity 0.08s ease;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      opacity: 0.92;
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--main), var(--main-dark));
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-sub {
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--sub), #115e59);
+      box-shadow: 0 12px 24px rgba(15, 118, 110, 0.17);
+    }
+
+    .btn-light {
+      color: var(--text);
+      background: #ffffff;
+      border: 1px solid var(--border);
+    }
+
+    .btn-warning {
+      color: #78350f;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+    }
+
+    .btn-danger {
+      color: #991b1b;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+    }
+
+    .btn-success {
+      color: #14532d;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 13px;
+    }
+
+    .message {
+      margin-top: 12px;
+      border-radius: 16px;
+      padding: 13px 14px;
+      font-size: 14px;
+      line-height: 1.65;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.info {
+      background: #eff6ff;
+      color: #1e3a8a;
+      border: 1px solid #bfdbfe;
+    }
+
+    .message.success {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .message.warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .message.error {
+      background: #fff1f2;
+      color: #991b1b;
+      border: 1px solid #fecdd3;
+    }
+
+    .result-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, #ffffff, #eef6ff);
+      padding: 20px;
+    }
+
+    .result-card::after {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      right: -78px;
+      top: -88px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.1);
+    }
+
+    .result-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .result-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      letter-spacing: 0.07em;
+    }
+
+    .result-name {
+      margin-top: 7px;
+      font-size: 30px;
+      line-height: 1.18;
+      letter-spacing: -0.05em;
+      font-weight: 950;
+      word-break: break-word;
+    }
+
+    .result-kana {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .pill.blue {
+      background: #eff6ff;
+      color: #1e3a8a;
+      border-color: #bfdbfe;
+    }
+
+    .pill.green {
+      background: #f0fdf4;
+      color: #14532d;
+      border-color: #bbf7d0;
+    }
+
+    .pill.yellow {
+      background: #fffbeb;
+      color: #78350f;
+      border-color: #fde68a;
+    }
+
+    .pill.red {
+      background: #fff1f2;
+      color: #991b1b;
+      border-color: #fecdd3;
+    }
+
+    .qr-area {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .qr-box {
+      width: 230px;
+      min-height: 230px;
+      border-radius: 22px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      padding: 14px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    #qrCanvas {
+      width: 200px;
+      height: 200px;
+    }
+
+    .qr-info {
+      display: grid;
+      gap: 10px;
+    }
+
+    .url-box {
+      border-radius: 16px;
+      border: 1px dashed var(--border);
+      background: #f8fafc;
+      padding: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      word-break: break-all;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #ffffff;
+      margin-top: 14px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .info-row:last-child {
+      border-bottom: 0;
+    }
+
+    .info-key {
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .info-value {
+      color: var(--text);
+      font-weight: 750;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-item {
+      border: 1px solid var(--border);
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 14px;
+      transition: border-color 0.08s ease, box-shadow 0.08s ease, transform 0.08s ease;
+    }
+
+    .list-item.clickable {
+      cursor: pointer;
+    }
+
+    .list-item.clickable:hover {
+      border-color: rgba(37, 99, 235, 0.4);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .item-title {
+      font-size: 15px;
+      font-weight: 950;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .item-sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .item-meta {
+      white-space: nowrap;
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      color: var(--main-dark);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .empty-box {
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px dashed var(--border);
+      padding: 18px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .footer {
+      margin-top: 22px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .debug {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: #f8fafc;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 1050px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .qr-area {
+        grid-template-columns: 1fr;
+      }
+
+      .qr-box {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 14px 12px 32px;
+      }
+
+      .top-bar {
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .brand-title {
+        font-size: 24px;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .summary-value {
+        font-size: 24px;
+      }
+
+      .mini-grid,
+      .three-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-name {
+        font-size: 26px;
+      }
+
+      .info-row {
+        grid-template-columns: 96px 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .page {
+        max-width: 920px;
+      }
+
+      .top-actions,
+      .summary-grid,
+      .layout > .stack:first-child,
+      .actions,
+      .message,
+      .footer,
+      .debug {
+        display: none !important;
+      }
+
+      .layout {
+        display: block;
+      }
+
+      .card {
+        box-shadow: none;
+      }
+
+      .result-card {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="app-shell">
-        <section class="hero">
-            <div class="hero-main">
-                <div>
-                    <div class="brand-kicker"><span class="brand-dot"></span>DPRO DENTAL / LINE公式連携デモ</div>
-                    <h1>今日やることが見える<br>オーナー管理画面</h1>
-                    <p class="hero-sub">予約・受付・診療状況・会計後フォローを一画面に集約。LINE公式で送る文面もワンタップでコピーできます。</p>
-                </div>
-                <div class="date-controls">
-                    <button class="btn btn-soft" onclick="changeDate(-1)">← 前日</button>
-                    <div class="date-title" id="current-date-display">----/--/--</div>
-                    <button class="btn btn-soft" onclick="changeDate(1)">翌日 →</button>
-                    <button class="btn btn-primary" onclick="changeDate(0)">今日</button>
-                </div>
+  <main class="page">
+    <header class="top-bar">
+      <div>
+        <div class="brand-kicker" id="systemName">DPRO SHOP</div>
+        <div class="brand-title" id="pageTitle">患者登録・QR診察券発行</div>
+        <div class="brand-sub" id="clinicNameText">
+          DPRO歯科クリニック / 新規患者登録・デジタルQR診察券URL発行
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <a class="badge-link" id="ownerLink" href="./owner.html">管理画面</a>
+        <a class="badge-link" id="scanLink" href="./scan.html">受付QR読取</a>
+        <a class="badge-link" id="memberLink" href="./member.html?t=demo">患者画面</a>
+        <button class="badge" id="demoModeButton" type="button">デモ登録</button>
+      </div>
+    </header>
+
+    <section class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-label">登録モード</div>
+        <div class="summary-value" id="modeLabel">本番</div>
+        <div class="summary-note">Worker接続後は実データ登録</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-label">今回の診察券番号</div>
+        <div class="summary-value" id="currentMemberNo">---</div>
+        <div class="summary-note">自動採番または手入力</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-label">ローカル登録</div>
+        <div class="summary-value" id="localCount">0</div>
+        <div class="summary-note">Worker未作成時の確認用</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-label">最終発行</div>
+        <div class="summary-value" id="lastIssuedLabel">--</div>
+        <div class="summary-note">直近で発行した診察券</div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <div class="stack">
+        <section class="card">
+          <div class="card-header">
+            <h1 class="card-title">
+              <span class="icon">登</span>
+              新規患者登録
+            </h1>
+            <div class="card-subtitle">
+              患者情報を登録し、デジタルQR診察券を発行します。必須は患者名と診察券番号です。
             </div>
-            <div class="hero-side">
-                <div class="side-title">受付スタッフ向けの使い方</div>
-                <p class="side-note">①来院したら「受付済」 ②診療室へ案内 ③会計完了 ④次回予約が未設定ならLINE案内をコピー。毎日の流れが迷わない画面です。</p>
-                <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <button class="btn btn-blue-soft" onclick="openBookingModal()">＋ 予約追加</button>
-                    <button class="btn btn-soft" onclick="openCheckInModal()">QR/カルテ受付</button>
+          </div>
+
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="mini-grid">
+                <div class="field">
+                  <label for="memberNoInput">診察券番号 <span class="required">*</span></label>
+                  <input id="memberNoInput" type="text" placeholder="例：D260600001" autocomplete="off" />
                 </div>
+
+                <div class="field">
+                  <label for="statusInput">患者ステータス</label>
+                  <select id="statusInput"></select>
+                </div>
+              </div>
+
+              <div class="actions" style="margin-top: 0;">
+                <button class="btn btn-light" id="generateMemberNoButton" type="button">
+                  診察券番号を自動作成
+                </button>
+              </div>
+
+              <div class="mini-grid">
+                <div class="field">
+                  <label for="patientNameInput">患者名 <span class="required">*</span></label>
+                  <input id="patientNameInput" type="text" placeholder="例：山田 太郎" autocomplete="name" />
+                </div>
+
+                <div class="field">
+                  <label for="patientKanaInput">ふりがな</label>
+                  <input id="patientKanaInput" type="text" placeholder="例：ヤマダ タロウ" />
+                </div>
+              </div>
+
+              <div class="three-grid">
+                <div class="field">
+                  <label for="phoneInput">電話番号</label>
+                  <input id="phoneInput" type="tel" placeholder="例：090-0000-0000" autocomplete="tel" />
+                </div>
+
+                <div class="field">
+                  <label for="birthDateInput">生年月日</label>
+                  <input id="birthDateInput" type="date" />
+                </div>
+
+                <div class="field">
+                  <label for="genderInput">性別</label>
+                  <select id="genderInput">
+                    <option value="">未選択</option>
+                    <option value="male">男性</option>
+                    <option value="female">女性</option>
+                    <option value="other">その他</option>
+                    <option value="no_answer">回答しない</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mini-grid">
+                <div class="field">
+                  <label for="lineUserIdInput">LINEユーザーID</label>
+                  <input id="lineUserIdInput" type="text" placeholder="通常はLIFF連携後に自動取得" />
+                </div>
+
+                <div class="field">
+                  <label for="lineDisplayNameInput">LINE表示名</label>
+                  <input id="lineDisplayNameInput" type="text" placeholder="例：Taro Yamada" />
+                </div>
+              </div>
+
+              <div class="mini-grid">
+                <div class="field">
+                  <label for="nextDateInput">次回予約日</label>
+                  <input id="nextDateInput" type="date" />
+                </div>
+
+                <div class="field">
+                  <label for="nextTimeInput">次回予約時間</label>
+                  <input id="nextTimeInput" type="time" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="nextMemoInput">次回予約メモ</label>
+                <textarea id="nextMemoInput" placeholder="例：3か月後の定期検診、右下治療の続きなど"></textarea>
+              </div>
+
+              <div class="field">
+                <label for="patientMemoInput">患者さん向けメモ</label>
+                <textarea id="patientMemoInput" placeholder="患者さんに見せてもよい補足メモ"></textarea>
+              </div>
+
+              <div class="field">
+                <label for="internalMemoInput">院内メモ</label>
+                <textarea id="internalMemoInput" placeholder="スタッフだけが確認するメモ。患者画面には表示しません。"></textarea>
+              </div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="createPatientButton" type="button">
+                  患者登録してQR診察券を発行
+                </button>
+
+                <div class="mini-grid">
+                  <button class="btn btn-light" id="clearFormButton" type="button">
+                    入力をクリア
+                  </button>
+                  <button class="btn btn-warning" id="fillDemoFormButton" type="button">
+                    デモ入力
+                  </button>
+                </div>
+              </div>
             </div>
+
+            <div id="createMessage" class="message"></div>
+          </div>
         </section>
 
-        <div class="error-box" id="errorBox"></div>
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">検</span>
+              登録済み患者を検索
+            </h2>
+            <div class="card-subtitle">
+              Worker接続後はDB検索、未接続時はこの画面でローカル登録した患者を検索します。
+            </div>
+          </div>
 
-        <section class="summary-grid" id="summaryGrid"></section>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="searchInput">検索キーワード</label>
+                <input id="searchInput" type="text" placeholder="例：山田 / D2606 / 090" autocomplete="off" />
+              </div>
 
-        <div class="holiday-msg" id="holidayMsg">
-            本日は休診日です。必要な場合は、上部の「翌日」または「前日」で予約状況を確認してください。
-        </div>
+              <div class="mini-grid">
+                <button class="btn btn-sub" id="searchButton" type="button">
+                  患者検索
+                </button>
+                <button class="btn btn-light" id="showLocalButton" type="button">
+                  ローカル一覧
+                </button>
+              </div>
+            </div>
 
-        <section class="dashboard-grid" id="dashboardGrid">
-            <aside class="panel">
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title">今日やること</h2>
-                        <p class="panel-caption">未受付・会計後フォロー・キャンセル対応を優先表示</p>
-                    </div>
-                    <span class="badge line" id="taskCountBadge">0件</span>
-                </div>
-                <div class="panel-body">
-                    <div class="task-list" id="taskList"><div class="loading-line">読み込み中...</div></div>
-                </div>
-            </aside>
-
-            <main class="panel">
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title">予約タイムライン</h2>
-                        <p class="panel-caption">空き枠を押すと予約追加。予約カードを押すと右側に詳細表示。</p>
-                    </div>
-                    <button class="btn btn-soft btn-mini" onclick="loadDashboard()">更新</button>
-                </div>
-                <div class="panel-body">
-                    <div class="timeline-wrap" id="timeline"><div class="loading-line">読み込み中...</div></div>
-                </div>
-            </main>
-
-            <aside class="panel right-panel">
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title">患者詳細・LINE文面</h2>
-                        <p class="panel-caption">患者を選択すると、再来院につながる文面をすぐコピーできます</p>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div class="patient-box" id="patientPanel">
-                        <div class="patient-empty">予約カードを選択してください。<br>患者情報とLINE文面がここに表示されます。</div>
-                    </div>
-                </div>
-            </aside>
+            <div id="searchMessage" class="message"></div>
+            <div id="patientList" class="list" style="margin-top: 12px;">
+              <div class="empty-box">検索すると患者一覧が表示されます。</div>
+            </div>
+          </div>
         </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">設</span>
+              管理設定
+            </h2>
+            <div class="card-subtitle">
+              管理コードはWorker側で確認します。秘密キーやSupabaseキーはこの画面には保存しません。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="staffNameInput">スタッフ名</label>
+                <input id="staffNameInput" type="text" placeholder="受付スタッフ" />
+              </div>
+
+              <div class="field">
+                <label for="adminCodeInput">管理コード</label>
+                <input id="adminCodeInput" type="password" placeholder="Cloudflare Worker 側で確認する管理コード" />
+              </div>
+
+              <button class="btn btn-light" id="saveSettingsButton" type="button">
+                設定を保存
+              </button>
+            </div>
+
+            <div id="settingsMessage" class="message"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">発</span>
+              発行結果
+            </h2>
+            <div class="card-subtitle">
+              登録後に、患者さん用のQR診察券URLとQRコードを表示します。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div id="emptyResultBox" class="empty-box">
+              まだQR診察券は発行されていません。<br />
+              左側のフォームから患者登録を行ってください。
+            </div>
+
+            <div id="resultArea" class="hidden">
+              <div class="result-card">
+                <div class="result-content">
+                  <div class="result-label">DIGITAL QR PATIENT CARD</div>
+                  <div class="result-name" id="resultPatientName">---</div>
+                  <div class="result-kana" id="resultPatientKana"></div>
+
+                  <div class="pill-row">
+                    <span class="pill blue">診察券番号 <strong id="resultMemberNo">---</strong></span>
+                    <span class="pill green" id="resultStatus">通院中</span>
+                    <span class="pill" id="resultClinicName">DPRO歯科クリニック</span>
+                  </div>
+
+                  <div class="qr-area">
+                    <div class="qr-box">
+                      <canvas id="qrCanvas" width="200" height="200"></canvas>
+                    </div>
+
+                    <div class="qr-info">
+                      <div class="field">
+                        <label>患者さん用 診察券URL</label>
+                        <div class="url-box" id="memberUrlText">---</div>
+                      </div>
+
+                      <div class="field">
+                        <label>QRトークン</label>
+                        <div class="url-box" id="qrTokenText">---</div>
+                      </div>
+
+                      <div class="actions">
+                        <button class="btn btn-success" id="copyMemberUrlButton" type="button">
+                          診察券URLをコピー
+                        </button>
+
+                        <div class="mini-grid">
+                          <button class="btn btn-primary" id="openMemberPageButton" type="button">
+                            患者画面を開く
+                          </button>
+                          <button class="btn btn-light" id="printCardButton" type="button">
+                            印刷
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-list">
+                <div class="info-row">
+                  <div class="info-key">電話</div>
+                  <div class="info-value" id="resultPhone">---</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-key">次回予約</div>
+                  <div class="info-value" id="resultNextAppointment">---</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-key">院内メモ</div>
+                  <div class="info-value" id="resultInternalMemo">---</div>
+                </div>
+              </div>
+
+              <div id="resultMessage" class="message"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">編</span>
+              選択中の患者情報
+            </h2>
+            <div class="card-subtitle">
+              検索結果から選択した患者の情報を確認し、診察券URLを再発行・コピーできます。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div id="emptySelectedBox" class="empty-box">
+              まだ患者が選択されていません。
+            </div>
+
+            <div id="selectedArea" class="hidden">
+              <div class="info-list" style="margin-top: 0;">
+                <div class="info-row">
+                  <div class="info-key">患者名</div>
+                  <div class="info-value" id="selectedPatientName">---</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-key">診察券番号</div>
+                  <div class="info-value" id="selectedMemberNo">---</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-key">電話</div>
+                  <div class="info-value" id="selectedPhone">---</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-key">診察券URL</div>
+                  <div class="info-value" id="selectedMemberUrl">---</div>
+                </div>
+              </div>
+
+              <div class="actions">
+                <div class="mini-grid">
+                  <button class="btn btn-success" id="copySelectedUrlButton" type="button">
+                    URLコピー
+                  </button>
+                  <button class="btn btn-primary" id="openSelectedMemberButton" type="button">
+                    患者画面を開く
+                  </button>
+                </div>
+
+                <button class="btn btn-light" id="loadSelectedIntoFormButton" type="button">
+                  フォームに読み込む
+                </button>
+              </div>
+
+              <div id="selectedMessage" class="message"></div>
+            </div>
+          </div>
+        </section>
+
+        <div id="debugBox" class="debug hidden"></div>
+      </div>
     </div>
 
-    <div class="modal-overlay" id="bookingModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title" id="bookingModalTitle">予約を追加</h3>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="selected-time">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>予約時間</label>
-                        <select id="input-time"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>カルテ番号</label>
-                        <div style="display:flex; gap:8px;">
-                            <input type="text" id="input-chart" placeholder="例：1166">
-                            <button class="btn btn-soft" style="border-radius:14px;" onclick="searchPatient()">検索</button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>患者氏名</label>
-                        <input type="text" id="input-name" placeholder="例：山田 太郎">
-                    </div>
-                    <div class="form-group">
-                        <label>生年月日</label>
-                        <input type="text" id="input-birth" placeholder="例：19740206">
-                    </div>
-                    <div class="form-group">
-                        <label>処置・予約内容</label>
-                        <textarea id="input-treatment" placeholder="例：定期健診、クリーニング、右上CR など"></textarea>
-                    </div>
-                </div>
-                <div class="search-result-list" id="searchResults"></div>
-                <div class="modal-actions">
-                    <button class="btn btn-soft" onclick="closeBookingModal()">閉じる</button>
-                    <button class="btn btn-primary" onclick="saveAppointment()">予約を保存</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <footer class="footer">
+      <strong id="footerClinicName">DPRO歯科クリニック</strong><br />
+      DPRO SHOP 歯科デジタルQR診察券 / admin.html<br />
+      この画面には Supabase Service Role Key や ADMIN_TOKEN は直書きしていません。
+    </footer>
+  </main>
 
-    <div class="modal-overlay" id="checkInModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">QR/カルテ番号で受付</h3>
-            </div>
-            <div class="modal-body">
-                <p class="side-note">実機QR読み取り前のデモ用です。診察券QRに入っているカルテ番号を入力すると、本日の予約を「受付済」にできます。</p>
-                <div class="form-group">
-                    <label>カルテ番号</label>
-                    <input type="text" id="checkin-chart" placeholder="例：1166">
-                </div>
-                <div id="checkInResult"></div>
-                <div class="modal-actions">
-                    <button class="btn btn-soft" onclick="closeCheckInModal()">閉じる</button>
-                    <button class="btn btn-primary" onclick="checkInByChartNo()">受付済にする</button>
-                </div>
-            </div>
-        </div>
-    </div>
+  <script>
+    (function () {
+      "use strict";
 
-    <div class="toast" id="toast">コピーしました</div>
+      const CONFIG =
+        window.DPRO_DENTAL_QR_CONFIG ||
+        window.DPRO_CONFIG ||
+        {};
 
-    <script>
-        const SUPABASE_URL = "https://ropwvdnohadwxfbkcopx.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_0Z9TNjw_B-eLInBFWNW5Ug_X4ymbN6v";
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const $ = (id) => document.getElementById(id);
 
-        const CLINIC_NAME = "ひまわり歯科";
-        const ACTIVE_STATUSES = ['scheduled', 'waiting', 'in_treatment'];
-        const STATUS = {
-            scheduled: { label: '予約中', badge: 'scheduled' },
-            waiting: { label: '受付済', badge: 'waiting' },
-            in_treatment: { label: '診療中', badge: 'in_treatment' },
-            completed: { label: '会計完了', badge: 'completed' },
-            canceled: { label: 'キャンセル', badge: 'canceled' }
-        };
+      const state = {
+        demoMode: false,
+        lastIssuedPatient: null,
+        selectedPatient: null,
+        localPatients: []
+      };
 
-        const TIME_SLOTS = generateTimeSlots();
-        let currentDate = new Date();
-        let dayAppointments = [];
-        let selectedAppointmentId = null;
-        let currentPatientId = null;
-        let followNeededIds = new Set();
-        let lastPatientSearchResults = [];
+      const els = {
+        systemName: $("systemName"),
+        pageTitle: $("pageTitle"),
+        clinicNameText: $("clinicNameText"),
+        ownerLink: $("ownerLink"),
+        scanLink: $("scanLink"),
+        memberLink: $("memberLink"),
+        demoModeButton: $("demoModeButton"),
 
-        window.onload = () => {
-            fillTimeSelect();
-            loadDashboard();
-        };
+        modeLabel: $("modeLabel"),
+        currentMemberNo: $("currentMemberNo"),
+        localCount: $("localCount"),
+        lastIssuedLabel: $("lastIssuedLabel"),
 
-        function generateTimeSlots() {
-            const slots = [];
-            for (let h = 9; h < 13; h++) {
-                for (let m = 0; m < 60; m += 15) slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
-            }
-            slots.push('LUNCH');
-            slots.push('14:30', '14:45');
-            for (let h = 15; h < 18; h++) {
-                for (let m = 0; m < 60; m += 15) slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
-            }
-            slots.push('18:00', '18:15', '18:30');
-            return slots;
+        memberNoInput: $("memberNoInput"),
+        statusInput: $("statusInput"),
+        generateMemberNoButton: $("generateMemberNoButton"),
+        patientNameInput: $("patientNameInput"),
+        patientKanaInput: $("patientKanaInput"),
+        phoneInput: $("phoneInput"),
+        birthDateInput: $("birthDateInput"),
+        genderInput: $("genderInput"),
+        lineUserIdInput: $("lineUserIdInput"),
+        lineDisplayNameInput: $("lineDisplayNameInput"),
+        nextDateInput: $("nextDateInput"),
+        nextTimeInput: $("nextTimeInput"),
+        nextMemoInput: $("nextMemoInput"),
+        patientMemoInput: $("patientMemoInput"),
+        internalMemoInput: $("internalMemoInput"),
+        createPatientButton: $("createPatientButton"),
+        clearFormButton: $("clearFormButton"),
+        fillDemoFormButton: $("fillDemoFormButton"),
+        createMessage: $("createMessage"),
+
+        searchInput: $("searchInput"),
+        searchButton: $("searchButton"),
+        showLocalButton: $("showLocalButton"),
+        searchMessage: $("searchMessage"),
+        patientList: $("patientList"),
+
+        staffNameInput: $("staffNameInput"),
+        adminCodeInput: $("adminCodeInput"),
+        saveSettingsButton: $("saveSettingsButton"),
+        settingsMessage: $("settingsMessage"),
+
+        emptyResultBox: $("emptyResultBox"),
+        resultArea: $("resultArea"),
+        resultPatientName: $("resultPatientName"),
+        resultPatientKana: $("resultPatientKana"),
+        resultMemberNo: $("resultMemberNo"),
+        resultStatus: $("resultStatus"),
+        resultClinicName: $("resultClinicName"),
+        qrCanvas: $("qrCanvas"),
+        memberUrlText: $("memberUrlText"),
+        qrTokenText: $("qrTokenText"),
+        copyMemberUrlButton: $("copyMemberUrlButton"),
+        openMemberPageButton: $("openMemberPageButton"),
+        printCardButton: $("printCardButton"),
+        resultPhone: $("resultPhone"),
+        resultNextAppointment: $("resultNextAppointment"),
+        resultInternalMemo: $("resultInternalMemo"),
+        resultMessage: $("resultMessage"),
+
+        emptySelectedBox: $("emptySelectedBox"),
+        selectedArea: $("selectedArea"),
+        selectedPatientName: $("selectedPatientName"),
+        selectedMemberNo: $("selectedMemberNo"),
+        selectedPhone: $("selectedPhone"),
+        selectedMemberUrl: $("selectedMemberUrl"),
+        copySelectedUrlButton: $("copySelectedUrlButton"),
+        openSelectedMemberButton: $("openSelectedMemberButton"),
+        loadSelectedIntoFormButton: $("loadSelectedIntoFormButton"),
+        selectedMessage: $("selectedMessage"),
+
+        debugBox: $("debugBox"),
+        footerClinicName: $("footerClinicName")
+      };
+
+      function getConfigValue(path, fallback) {
+        try {
+          return path.split(".").reduce((obj, key) => obj && obj[key], CONFIG) ?? fallback;
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function escapeHtml(value) {
+        if (CONFIG.utils && typeof CONFIG.utils.escapeHtml === "function") {
+          return CONFIG.utils.escapeHtml(value);
         }
 
-        function fillTimeSelect() {
-            const select = document.getElementById('input-time');
-            select.innerHTML = TIME_SLOTS
-                .filter(t => t !== 'LUNCH')
-                .map(t => `<option value="${t}">${t}</option>`)
-                .join('');
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function nl2br(value) {
+        if (CONFIG.utils && typeof CONFIG.utils.nl2br === "function") {
+          return CONFIG.utils.nl2br(value);
         }
 
-        function getDayRange(date) {
-            const start = new Date(date);
-            start.setHours(0, 0, 0, 0);
-            const end = new Date(date);
-            end.setHours(23, 59, 59, 999);
-            return { start, end };
+        return escapeHtml(value).replace(/\n/g, "<br>");
+      }
+
+      function formatDate(dateText) {
+        if (CONFIG.utils && typeof CONFIG.utils.formatDate === "function") {
+          return CONFIG.utils.formatDate(dateText);
         }
 
-        function formatDateDisplay(date) {
-            const y = date.getFullYear();
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const d = String(date.getDate()).padStart(2, '0');
-            const days = ['日', '月', '火', '水', '木', '金', '土'];
-            return `${y}/${m}/${d} (${days[date.getDay()]})`;
+        if (!dateText) return "未設定";
+        const date = new Date(`${dateText}T00:00:00+09:00`);
+        if (Number.isNaN(date.getTime())) return dateText;
+
+        return new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          weekday: "short"
+        }).format(date);
+      }
+
+      function formatTime(timeText) {
+        if (CONFIG.utils && typeof CONFIG.utils.formatTime === "function") {
+          return CONFIG.utils.formatTime(timeText);
         }
 
-        function formatTime(iso) {
-            const d = new Date(iso);
-            return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        if (!timeText) return "";
+        const parts = String(timeText).split(":");
+        if (parts.length < 2) return timeText;
+        return `${parts[0]}:${parts[1]}`;
+      }
+
+      function getTodayJST() {
+        if (CONFIG.utils && typeof CONFIG.utils.getTodayJST === "function") {
+          return CONFIG.utils.getTodayJST();
         }
 
-        function formatDateTime(iso) {
-            if (!iso) return '--';
-            const d = new Date(iso);
-            return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-        }
-
-        function escapeHtml(value) {
-            return String(value ?? '')
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#039;');
-        }
-
-        function getPatient(app) {
-            if (!app) return null;
-            if (Array.isArray(app.patients)) return app.patients[0] || null;
-            return app.patients || null;
-        }
-
-        function statusLabel(status) {
-            return STATUS[status]?.label || status || '未設定';
-        }
-
-        function showError(message) {
-            const box = document.getElementById('errorBox');
-            box.textContent = message || '';
-            box.style.display = message ? 'block' : 'none';
-        }
-
-        function showToast(message = 'コピーしました') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.display = 'block';
-            clearTimeout(window.__toastTimer);
-            window.__toastTimer = setTimeout(() => toast.style.display = 'none', 1800);
-        }
-
-        function changeDate(days) {
-            if (days === 0) currentDate = new Date();
-            else currentDate.setDate(currentDate.getDate() + days);
-            selectedAppointmentId = null;
-            loadDashboard();
-        }
-
-        async function loadDashboard() {
-            showError('');
-            document.getElementById('current-date-display').textContent = formatDateDisplay(currentDate);
-            document.getElementById('timeline').innerHTML = '<div class="loading-line">予約を読み込み中...</div>';
-            document.getElementById('taskList').innerHTML = '<div class="loading-line">今日やることを整理中...</div>';
-            document.getElementById('patientPanel').innerHTML = '<div class="patient-empty">予約カードを選択してください。<br>患者情報とLINE文面がここに表示されます。</div>';
-
-            const isHoliday = currentDate.getDay() === 0;
-            document.getElementById('holidayMsg').style.display = isHoliday ? 'block' : 'none';
-
-            const { start, end } = getDayRange(currentDate);
-            try {
-                const { data, error } = await supabaseClient
-                    .from('appointments')
-                    .select(`id, patient_id, appointment_at, status, treatment_notes, patients(id, chart_no, patient_name, birth_date)`)
-                    .gte('appointment_at', start.toISOString())
-                    .lte('appointment_at', end.toISOString())
-                    .order('appointment_at', { ascending: true });
-
-                if (error) throw error;
-                dayAppointments = (data || []).map(app => ({ ...app, status: app.status || 'scheduled' }));
-                await buildFollowNeededSet(end);
-
-                renderSummary();
-                renderTasks();
-                renderTimeline();
-                renderPatientPanel();
-            } catch (err) {
-                console.error(err);
-                showError('データの読み込みに失敗しました。Supabaseのテーブル名・RLS・APIキーを確認してください。詳細: ' + err.message);
-                document.getElementById('timeline').innerHTML = '<div class="loading-line">読み込みに失敗しました</div>';
-                document.getElementById('taskList').innerHTML = '<div class="loading-line">読み込みに失敗しました</div>';
-            }
-        }
-
-        async function buildFollowNeededSet(endOfDay) {
-            followNeededIds = new Set();
-            const completedPatientIds = [...new Set(dayAppointments
-                .filter(a => a.status === 'completed' && a.patient_id)
-                .map(a => a.patient_id))];
-
-            if (completedPatientIds.length === 0) return;
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('appointments')
-                    .select('patient_id')
-                    .in('patient_id', completedPatientIds)
-                    .in('status', ACTIVE_STATUSES)
-                    .gt('appointment_at', endOfDay.toISOString())
-                    .limit(500);
-
-                if (error) throw error;
-                const hasFuture = new Set((data || []).map(a => a.patient_id));
-                completedPatientIds.forEach(id => {
-                    if (!hasFuture.has(id)) followNeededIds.add(id);
-                });
-            } catch (err) {
-                console.warn('未来予約確認をスキップ:', err.message);
-            }
-        }
-
-        function renderSummary() {
-            const counts = {
-                total: dayAppointments.filter(a => a.status !== 'canceled').length,
-                scheduled: dayAppointments.filter(a => a.status === 'scheduled').length,
-                waiting: dayAppointments.filter(a => a.status === 'waiting').length,
-                in_treatment: dayAppointments.filter(a => a.status === 'in_treatment').length,
-                completed: dayAppointments.filter(a => a.status === 'completed').length,
-                follow: followNeededIds.size
-            };
-
-            document.getElementById('summaryGrid').innerHTML = `
-                <div class="summary-card blue">
-                    <div class="summary-label">本日の予約</div>
-                    <div class="summary-number">${counts.total}</div>
-                    <div class="summary-caption">キャンセル除く</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-label">未受付</div>
-                    <div class="summary-number">${counts.scheduled}</div>
-                    <div class="summary-caption">来院待ち</div>
-                </div>
-                <div class="summary-card yellow">
-                    <div class="summary-label">受付済</div>
-                    <div class="summary-number">${counts.waiting}</div>
-                    <div class="summary-caption">待合・案内待ち</div>
-                </div>
-                <div class="summary-card green">
-                    <div class="summary-label">診療中</div>
-                    <div class="summary-number">${counts.in_treatment}</div>
-                    <div class="summary-caption">診療室に案内済</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-label">会計完了</div>
-                    <div class="summary-number">${counts.completed}</div>
-                    <div class="summary-caption">本日の完了</div>
-                </div>
-                <div class="summary-card orange">
-                    <div class="summary-label">次回予約未設定</div>
-                    <div class="summary-number">${counts.follow}</div>
-                    <div class="summary-caption">LINE案内推奨</div>
-                </div>
-            `;
-        }
-
-        function renderTasks() {
-            const taskList = document.getElementById('taskList');
-            const tasks = [];
-
-            dayAppointments
-                .filter(a => ['scheduled', 'waiting', 'in_treatment'].includes(a.status))
-                .forEach(a => {
-                    const p = getPatient(a);
-                    tasks.push({
-                        type: a.status === 'scheduled' ? 'urgent' : '',
-                        title: p?.patient_name || '患者データなし',
-                        meta: `${formatTime(a.appointment_at)} / ${statusLabel(a.status)} / ${a.treatment_notes || '内容未入力'}`,
-                        app: a,
-                        badge: statusLabel(a.status)
-                    });
-                });
-
-            dayAppointments
-                .filter(a => a.status === 'completed' && followNeededIds.has(a.patient_id))
-                .forEach(a => {
-                    const p = getPatient(a);
-                    tasks.push({
-                        type: 'follow',
-                        title: p?.patient_name || '患者データなし',
-                        meta: `会計完了済 / 次回予約が未設定 / LINEで次回案内`,
-                        app: a,
-                        badge: '次回案内'
-                    });
-                });
-
-            dayAppointments
-                .filter(a => a.status === 'canceled')
-                .forEach(a => {
-                    const p = getPatient(a);
-                    tasks.push({
-                        type: 'urgent',
-                        title: p?.patient_name || '患者データなし',
-                        meta: `${formatTime(a.appointment_at)} キャンセル / 再予約案内がおすすめ`,
-                        app: a,
-                        badge: '再予約'
-                    });
-                });
-
-            document.getElementById('taskCountBadge').textContent = `${tasks.length}件`;
-
-            if (tasks.length === 0) {
-                taskList.innerHTML = `<div class="patient-empty">今すぐ対応が必要な項目はありません。<br>予約タイムラインを確認してください。</div>`;
-                return;
-            }
-
-            taskList.innerHTML = tasks.map((task, index) => `
-                <div class="task-card ${task.type}">
-                    <div class="task-top">
-                        <div>
-                            <div class="task-name">${escapeHtml(task.title)} 様</div>
-                            <div class="task-meta">${escapeHtml(task.meta)}</div>
-                        </div>
-                        <span class="badge line">${escapeHtml(task.badge)}</span>
-                    </div>
-                    <div style="display:flex; gap:7px; flex-wrap:wrap;">
-                        <button class="btn btn-blue-soft btn-mini" onclick="selectAppointment('${task.app.id}')">詳細</button>
-                        ${task.app.status === 'scheduled' ? `<button class="btn btn-yellow btn-mini" onclick="updateStatus('${task.app.id}', 'waiting')">受付済</button>` : ''}
-                        ${task.app.status === 'waiting' ? `<button class="btn btn-green btn-mini" onclick="updateStatus('${task.app.id}', 'in_treatment')">診療へ</button>` : ''}
-                        ${task.app.status === 'in_treatment' ? `<button class="btn btn-gray btn-mini" onclick="updateStatus('${task.app.id}', 'completed')">会計完了</button>` : ''}
-                        ${task.app.status === 'completed' ? `<button class="btn btn-primary btn-mini" onclick="copyLineText('next', '${task.app.id}')">LINE文面コピー</button>` : ''}
-                        ${task.app.status === 'canceled' ? `<button class="btn btn-primary btn-mini" onclick="copyLineText('rebook', '${task.app.id}')">再予約文面</button>` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderTimeline() {
-            const timeline = document.getElementById('timeline');
-            const rows = TIME_SLOTS.map(slot => {
-                if (slot === 'LUNCH') {
-                    return `
-                        <div class="time-row">
-                            <div class="time-label">13:00</div>
-                            <div class="slot-lunch">昼休み / LUNCH BREAK</div>
-                        </div>
-                    `;
-                }
-
-                const apps = dayAppointments.filter(a => formatTime(a.appointment_at) === slot);
-                const content = apps.length
-                    ? apps.map(renderAppointmentCard).join('')
-                    : `<button class="empty-add" onclick="openBookingModal('${slot}')">＋ ${slot} に予約追加</button>`;
-
-                return `
-                    <div class="time-row">
-                        <div class="time-label">${slot}</div>
-                        <div class="slot ${apps.length ? '' : 'empty'}">${content}</div>
-                    </div>
-                `;
-            }).join('');
-
-            timeline.innerHTML = rows;
-        }
-
-        function renderAppointmentCard(app) {
-            const p = getPatient(app);
-            const status = app.status || 'scheduled';
-            const selectedClass = app.id === selectedAppointmentId ? 'selected' : '';
-            return `
-                <article class="appointment-card ${escapeHtml(status)} ${selectedClass}" onclick="selectAppointment('${app.id}')">
-                    <div class="app-main">
-                        <div>
-                            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:4px;">
-                                <span class="badge ${STATUS[status]?.badge || 'scheduled'}">${escapeHtml(statusLabel(status))}</span>
-                                <span class="badge line">No.${escapeHtml(p?.chart_no || '--')}</span>
-                            </div>
-                            <div class="app-name">${escapeHtml(p?.patient_name || '患者データなし')} 様</div>
-                            <div class="app-note">${escapeHtml(app.treatment_notes || '処置内容なし')}</div>
-                        </div>
-                        <div style="font-weight:900; color:var(--muted);">${formatTime(app.appointment_at)}</div>
-                    </div>
-                    <div class="app-actions" onclick="event.stopPropagation();">
-                        ${status === 'scheduled' ? `<button class="btn btn-yellow btn-mini" onclick="updateStatus('${app.id}', 'waiting')">受付済</button>` : ''}
-                        ${status === 'waiting' ? `<button class="btn btn-green btn-mini" onclick="updateStatus('${app.id}', 'in_treatment')">診療へ</button>` : ''}
-                        ${status === 'in_treatment' ? `<button class="btn btn-gray btn-mini" onclick="updateStatus('${app.id}', 'completed')">会計完了</button>` : ''}
-                        ${status !== 'canceled' && status !== 'completed' ? `<button class="btn btn-red btn-mini" onclick="updateStatus('${app.id}', 'canceled')">キャンセル</button>` : ''}
-                        <button class="btn btn-blue-soft btn-mini" onclick="copyLineText('${status === 'completed' ? 'next' : status === 'canceled' ? 'rebook' : 'reminder'}', '${app.id}')">LINE文面</button>
-                    </div>
-                </article>
-            `;
-        }
-
-        function selectAppointment(id) {
-            selectedAppointmentId = id;
-            renderTimeline();
-            renderPatientPanel();
-        }
-
-        function renderPatientPanel() {
-            const panel = document.getElementById('patientPanel');
-            const app = dayAppointments.find(a => a.id === selectedAppointmentId);
-            if (!app) {
-                panel.innerHTML = `<div class="patient-empty">予約カードを選択してください。<br>患者情報とLINE文面がここに表示されます。</div>`;
-                return;
-            }
-
-            const p = getPatient(app) || {};
-            const selectedLineType = app.status === 'completed' ? 'next' : app.status === 'canceled' ? 'rebook' : 'reminder';
-            const lineText = createLineText(selectedLineType, app);
-
-            panel.innerHTML = `
-                <div>
-                    <h3 class="patient-name">${escapeHtml(p.patient_name || '患者データなし')} 様</h3>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-                        <span class="badge ${STATUS[app.status]?.badge || 'scheduled'}">${escapeHtml(statusLabel(app.status))}</span>
-                        ${followNeededIds.has(app.patient_id) ? '<span class="badge line">次回予約未設定</span>' : ''}
-                    </div>
-                </div>
-
-                <div class="patient-meta-grid">
-                    <div class="meta-card">
-                        <div class="meta-label">カルテ番号</div>
-                        <div class="meta-value">No.${escapeHtml(p.chart_no || '--')}</div>
-                    </div>
-                    <div class="meta-card">
-                        <div class="meta-label">予約日時</div>
-                        <div class="meta-value">${escapeHtml(formatDateTime(app.appointment_at))}</div>
-                    </div>
-                    <div class="meta-card">
-                        <div class="meta-label">生年月日</div>
-                        <div class="meta-value">${escapeHtml(p.birth_date || '--')}</div>
-                    </div>
-                    <div class="meta-card">
-                        <div class="meta-label">予約内容</div>
-                        <div class="meta-value">${escapeHtml(app.treatment_notes || '未入力')}</div>
-                    </div>
-                </div>
-
-                <div style="display:grid; gap:8px;">
-                    <div class="meta-label">受付ステータスを変更</div>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <button class="btn btn-blue-soft btn-mini" onclick="updateStatus('${app.id}', 'scheduled')">予約中</button>
-                        <button class="btn btn-yellow btn-mini" onclick="updateStatus('${app.id}', 'waiting')">受付済</button>
-                        <button class="btn btn-green btn-mini" onclick="updateStatus('${app.id}', 'in_treatment')">診療中</button>
-                        <button class="btn btn-gray btn-mini" onclick="updateStatus('${app.id}', 'completed')">会計完了</button>
-                        <button class="btn btn-red btn-mini" onclick="updateStatus('${app.id}', 'canceled')">キャンセル</button>
-                    </div>
-                </div>
-
-                <div class="line-template-box">
-                    <div class="line-template-title">LINE公式で送る文面</div>
-                    <div style="display:flex; gap:7px; flex-wrap:wrap;">
-                        <button class="btn btn-soft btn-mini" onclick="previewLineText('reminder', '${app.id}')">予約確認</button>
-                        <button class="btn btn-soft btn-mini" onclick="previewLineText('next', '${app.id}')">次回予約案内</button>
-                        <button class="btn btn-soft btn-mini" onclick="previewLineText('rebook', '${app.id}')">再予約案内</button>
-                        <button class="btn btn-soft btn-mini" onclick="previewLineText('thanks', '${app.id}')">来院お礼</button>
-                    </div>
-                    <div class="line-text-preview" id="linePreview">${escapeHtml(lineText)}</div>
-                    <button class="btn btn-primary btn-full" onclick="copyPreviewLineText()">表示中のLINE文面をコピー</button>
-                </div>
-            `;
-        }
-
-        function previewLineText(type, appId) {
-            const app = dayAppointments.find(a => a.id === appId);
-            if (!app) return;
-            document.getElementById('linePreview').textContent = createLineText(type, app);
-        }
-
-        async function copyPreviewLineText() {
-            const text = document.getElementById('linePreview')?.textContent || '';
-            await copyToClipboard(text);
-        }
-
-        async function copyLineText(type, appId) {
-            const app = dayAppointments.find(a => a.id === appId);
-            if (!app) return;
-            await copyToClipboard(createLineText(type, app));
-        }
-
-        function createLineText(type, app) {
-            const p = getPatient(app) || {};
-            const name = p.patient_name || 'お客様';
-            const dateText = formatDateTime(app.appointment_at);
-
-            if (type === 'next') {
-                return `${name}様\n本日はご来院ありがとうございました。\n\n次回のご予約がまだの場合は、LINEにてご希望日時をお送りください。\n受付側で空き状況を確認してご案内いたします。\n\n${CLINIC_NAME}`;
-            }
-            if (type === 'rebook') {
-                return `${name}様\nご予約の変更・再予約についてご案内です。\n\nご都合の良い候補日を2〜3つ、このLINEにご返信ください。\n空き状況を確認してご案内いたします。\n\n${CLINIC_NAME}`;
-            }
-            if (type === 'thanks') {
-                return `${name}様\n本日はご来院ありがとうございました。\n\n気になることや次回のご相談がありましたら、このLINEからお気軽にご連絡ください。\n\n${CLINIC_NAME}`;
-            }
-            return `${name}様\nご予約の確認です。\n\n日時：${dateText}\n内容：${app.treatment_notes || 'ご予約'}\n\nご来院の際は、LINE診察券のQRコードをご提示ください。\n変更やキャンセルの場合は、このLINEへご返信ください。\n\n${CLINIC_NAME}`;
-        }
-
-        async function copyToClipboard(text) {
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(text);
-                } else {
-                    const textarea = document.createElement('textarea');
-                    textarea.value = text;
-                    textarea.style.position = 'fixed';
-                    textarea.style.left = '-9999px';
-                    document.body.appendChild(textarea);
-                    textarea.focus();
-                    textarea.select();
-                    document.execCommand('copy');
-                    textarea.remove();
-                }
-                showToast('LINE文面をコピーしました');
-            } catch (err) {
-                alert('コピーに失敗しました。手動で選択してコピーしてください。');
-            }
-        }
-
-        async function updateStatus(appointmentId, newStatus) {
-            try {
-                const { error } = await supabaseClient
-                    .from('appointments')
-                    .update({ status: newStatus })
-                    .eq('id', appointmentId);
-                if (error) throw error;
-                selectedAppointmentId = appointmentId;
-                await loadDashboard();
-                showToast('ステータスを更新しました');
-            } catch (err) {
-                console.error(err);
-                alert('ステータス更新に失敗しました。詳細: ' + err.message);
-            }
-        }
-
-        function openBookingModal(slot = '') {
-            currentPatientId = null;
-            document.getElementById('bookingModalTitle').textContent = slot ? `${slot} の予約を追加` : '予約を追加';
-            document.getElementById('input-time').value = slot && slot !== 'LUNCH' ? slot : '09:00';
-            document.getElementById('selected-time').value = slot || document.getElementById('input-time').value;
-            document.getElementById('input-chart').value = '';
-            document.getElementById('input-name').value = '';
-            document.getElementById('input-birth').value = '';
-            document.getElementById('input-treatment').value = '';
-            document.getElementById('searchResults').innerHTML = '';
-            document.getElementById('bookingModal').style.display = 'flex';
-        }
-
-        function closeBookingModal() {
-            document.getElementById('bookingModal').style.display = 'none';
-        }
-
-        async function searchPatient() {
-            const chartNo = document.getElementById('input-chart').value.trim();
-            const name = document.getElementById('input-name').value.trim();
-            const box = document.getElementById('searchResults');
-            box.innerHTML = '<div class="loading-line">患者を検索中...</div>';
-
-            if (!chartNo && !name) {
-                box.innerHTML = '<div class="patient-empty">カルテ番号、または患者氏名を入力してください。</div>';
-                return;
-            }
-
-            try {
-                let query = supabaseClient.from('patients').select('id, chart_no, patient_name, birth_date').limit(8);
-                if (chartNo) query = query.eq('chart_no', chartNo.toString());
-                else query = query.ilike('patient_name', `%${name}%`);
-                const { data, error } = await query;
-                if (error) throw error;
-
-                lastPatientSearchResults = data || [];
-
-                if (!lastPatientSearchResults.length) {
-                    currentPatientId = null;
-                    box.innerHTML = '<div class="patient-empty">該当患者が見つかりません。新規患者として登録できます。</div>';
-                    return;
-                }
-
-                box.innerHTML = lastPatientSearchResults.map((p, index) => `
-                    <div class="search-result">
-                        <div>
-                            <div style="font-weight:900;">${escapeHtml(p.patient_name)} 様</div>
-                            <div class="task-meta">No.${escapeHtml(p.chart_no)} / ${escapeHtml(p.birth_date || '--')}</div>
-                        </div>
-                        <button class="btn btn-blue-soft btn-mini" onclick="applyPatientFromSearch(${index})">選択</button>
-                    </div>
-                `).join('');
-
-                if (lastPatientSearchResults.length === 1) {
-                    const p = lastPatientSearchResults[0];
-                    applyPatient(p.id, p.chart_no, p.patient_name, p.birth_date || '');
-                }
-            } catch (err) {
-                console.error(err);
-                box.innerHTML = '<div class="patient-empty">検索に失敗しました。</div>';
-            }
-        }
-
-        function applyPatientFromSearch(index) {
-            const patient = lastPatientSearchResults[index];
-            if (!patient) return;
-            applyPatient(patient.id, patient.chart_no, patient.patient_name, patient.birth_date || '');
-        }
-
-        function applyPatient(id, chartNo, name, birth) {
-            currentPatientId = id;
-            document.getElementById('input-chart').value = chartNo || '';
-            document.getElementById('input-name').value = name || '';
-            document.getElementById('input-birth').value = birth || '';
-            showToast('患者を選択しました');
-        }
-
-        async function saveAppointment() {
-            const time = document.getElementById('input-time').value;
-            const chartNo = document.getElementById('input-chart').value.trim();
-            const name = document.getElementById('input-name').value.trim();
-            const birth = document.getElementById('input-birth').value.trim();
-            const treatment = document.getElementById('input-treatment').value.trim();
-
-            if (!time || !chartNo || !name) {
-                alert('予約時間・カルテ番号・患者氏名は必須です。');
-                return;
-            }
-
-            const [h, m] = time.split(':');
-            const targetDate = new Date(currentDate);
-            targetDate.setHours(Number(h), Number(m), 0, 0);
-
-            try {
-                const sameSlot = dayAppointments.find(a => formatTime(a.appointment_at) === time && a.status !== 'canceled');
-                if (sameSlot) {
-                    const ok = confirm(`${time} は既に予約があります。重複して登録しますか？`);
-                    if (!ok) return;
-                }
-
-                const patientPayload = {
-                    chart_no: chartNo.toString(),
-                    patient_name: name,
-                    birth_date: birth || null
-                };
-                if (currentPatientId) patientPayload.id = currentPatientId;
-
-                const { data: patientData, error: patientError } = await supabaseClient
-                    .from('patients')
-                    .upsert(patientPayload, { onConflict: 'chart_no' })
-                    .select()
-                    .single();
-                if (patientError) throw patientError;
-
-                const { error: appError } = await supabaseClient
-                    .from('appointments')
-                    .insert({
-                        patient_id: patientData.id,
-                        appointment_at: targetDate.toISOString(),
-                        treatment_notes: treatment || null,
-                        status: 'scheduled'
-                    });
-                if (appError) throw appError;
-
-                closeBookingModal();
-                await loadDashboard();
-                showToast('予約を保存しました');
-            } catch (err) {
-                console.error(err);
-                alert('保存に失敗しました。詳細: ' + err.message);
-            }
-        }
-
-        function openCheckInModal() {
-            document.getElementById('checkin-chart').value = '';
-            document.getElementById('checkInResult').innerHTML = '';
-            document.getElementById('checkInModal').style.display = 'flex';
-        }
-
-        function closeCheckInModal() {
-            document.getElementById('checkInModal').style.display = 'none';
-        }
-
-        async function checkInByChartNo() {
-            const chartNo = document.getElementById('checkin-chart').value.trim();
-            const result = document.getElementById('checkInResult');
-            if (!chartNo) {
-                result.innerHTML = '<div class="patient-empty">カルテ番号を入力してください。</div>';
-                return;
-            }
-
-            result.innerHTML = '<div class="loading-line">本日の予約を確認中...</div>';
-            const { start, end } = getDayRange(currentDate);
-
-            try {
-                const { data: patient, error: pError } = await supabaseClient
-                    .from('patients')
-                    .select('id, chart_no, patient_name')
-                    .eq('chart_no', chartNo.toString())
-                    .maybeSingle();
-                if (pError) throw pError;
-                if (!patient) {
-                    result.innerHTML = '<div class="patient-empty">該当する患者が見つかりません。</div>';
-                    return;
-                }
-
-                const { data: apps, error: aError } = await supabaseClient
-                    .from('appointments')
-                    .select('id, appointment_at, status, treatment_notes')
-                    .eq('patient_id', patient.id)
-                    .gte('appointment_at', start.toISOString())
-                    .lte('appointment_at', end.toISOString())
-                    .in('status', ACTIVE_STATUSES)
-                    .order('appointment_at', { ascending: true })
-                    .limit(1);
-                if (aError) throw aError;
-
-                if (!apps || apps.length === 0) {
-                    result.innerHTML = `<div class="patient-empty">${escapeHtml(patient.patient_name)} 様の本日の有効な予約がありません。</div>`;
-                    return;
-                }
-
-                const app = apps[0];
-                const { error: uError } = await supabaseClient
-                    .from('appointments')
-                    .update({ status: 'waiting' })
-                    .eq('id', app.id);
-                if (uError) throw uError;
-
-                selectedAppointmentId = app.id;
-                result.innerHTML = `<div class="task-card follow"><strong>${escapeHtml(patient.patient_name)} 様を受付済にしました。</strong><div class="task-meta">${formatTime(app.appointment_at)} / ${escapeHtml(app.treatment_notes || '')}</div></div>`;
-                await loadDashboard();
-                showToast('受付済にしました');
-            } catch (err) {
-                console.error(err);
-                result.innerHTML = `<div class="patient-empty">受付処理に失敗しました。${escapeHtml(err.message)}</div>`;
-            }
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                closeBookingModal();
-                closeCheckInModal();
-            }
+        const now = new Date();
+        const formatter = new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
         });
-    </script>
+
+        const parts = formatter.formatToParts(now);
+        const y = parts.find((p) => p.type === "year").value;
+        const m = parts.find((p) => p.type === "month").value;
+        const d = parts.find((p) => p.type === "day").value;
+
+        return `${y}-${m}-${d}`;
+      }
+
+      function buildNextAppointmentText(dateText, timeText, memo) {
+        if (CONFIG.utils && typeof CONFIG.utils.buildNextAppointmentText === "function") {
+          return CONFIG.utils.buildNextAppointmentText(dateText, timeText, memo);
+        }
+
+        if (!dateText && !timeText && !memo) return "未設定";
+
+        return [
+          dateText ? formatDate(dateText) : "",
+          timeText ? formatTime(timeText) : "",
+          memo || ""
+        ].filter(Boolean).join(" ");
+      }
+
+      function normalizePhone(value) {
+        if (CONFIG.utils && typeof CONFIG.utils.normalizePhone === "function") {
+          return CONFIG.utils.normalizePhone(value);
+        }
+
+        return String(value || "").replace(/[^\d]/g, "").trim();
+      }
+
+      function getStatusLabel(status) {
+        if (CONFIG.utils && typeof CONFIG.utils.getStatusLabel === "function") {
+          return CONFIG.utils.getStatusLabel(status);
+        }
+
+        const map = getConfigValue("PATIENT_STATUS", {});
+        return map[status]?.label || status || "未設定";
+      }
+
+      async function copyText(text) {
+        if (CONFIG.utils && typeof CONFIG.utils.copyText === "function") {
+          return CONFIG.utils.copyText(text);
+        }
+
+        const value = String(text || "");
+
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(value);
+          return true;
+        }
+
+        const textarea = document.createElement("textarea");
+        textarea.value = value;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        const result = document.execCommand("copy");
+        document.body.removeChild(textarea);
+        return result;
+      }
+
+      async function apiFetch(endpoint, options) {
+        if (CONFIG.utils && typeof CONFIG.utils.apiFetch === "function") {
+          return CONFIG.utils.apiFetch(endpoint, options);
+        }
+
+        throw new Error("API設定がまだ読み込まれていません。");
+      }
+
+      function getAdminCode() {
+        if (CONFIG.utils && typeof CONFIG.utils.getAdminCode === "function") {
+          return CONFIG.utils.getAdminCode();
+        }
+
+        try {
+          return localStorage.getItem(getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code")) || "";
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function setAdminCode(code) {
+        if (CONFIG.utils && typeof CONFIG.utils.setAdminCode === "function") {
+          CONFIG.utils.setAdminCode(code);
+          return;
+        }
+
+        try {
+          localStorage.setItem(getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code"), code || "");
+        } catch (error) {
+          console.warn(error);
+        }
+      }
+
+      function getStaffName() {
+        if (CONFIG.utils && typeof CONFIG.utils.getStaffName === "function") {
+          return CONFIG.utils.getStaffName();
+        }
+
+        try {
+          return localStorage.getItem(getConfigValue("STORAGE_KEYS.STAFF_NAME", "dpro_dental_qr_staff_name")) || "受付スタッフ";
+        } catch (error) {
+          return "受付スタッフ";
+        }
+      }
+
+      function setStaffName(name) {
+        if (CONFIG.utils && typeof CONFIG.utils.setStaffName === "function") {
+          CONFIG.utils.setStaffName(name);
+          return;
+        }
+
+        try {
+          localStorage.setItem(getConfigValue("STORAGE_KEYS.STAFF_NAME", "dpro_dental_qr_staff_name"), name || "受付スタッフ");
+        } catch (error) {
+          console.warn(error);
+        }
+      }
+
+      function showMessage(target, type, text) {
+        target.className = `message ${type || "info"} show`;
+        target.innerHTML = nl2br(text || "");
+      }
+
+      function clearMessage(target) {
+        target.className = "message";
+        target.innerHTML = "";
+      }
+
+      function setButtonLoading(button, loading, text) {
+        if (!button) return;
+
+        if (loading) {
+          button.dataset.originalText = button.textContent;
+          button.textContent = text || "処理中...";
+          button.disabled = true;
+        } else {
+          button.textContent = button.dataset.originalText || button.textContent;
+          button.disabled = false;
+        }
+      }
+
+      function randomToken() {
+        const array = new Uint8Array(24);
+
+        if (window.crypto && window.crypto.getRandomValues) {
+          window.crypto.getRandomValues(array);
+          return Array.from(array)
+            .map((n) => n.toString(16).padStart(2, "0"))
+            .join("");
+        }
+
+        return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      }
+
+      function generateMemberNo() {
+        const prefix = getConfigValue("ADMIN_SCREEN.MEMBER_NO_PREFIX", "D");
+        const length = getConfigValue("ADMIN_SCREEN.AUTO_MEMBER_NO_LENGTH", 5);
+
+        if (CONFIG.utils && typeof CONFIG.utils.generateTempMemberNo === "function") {
+          return CONFIG.utils.generateTempMemberNo(prefix, length);
+        }
+
+        const now = new Date();
+        const y = String(now.getFullYear()).slice(-2);
+        const m = String(now.getMonth() + 1).padStart(2, "0");
+        const d = String(now.getDate()).padStart(2, "0");
+        const rand = String(Math.floor(Math.random() * 10 ** length)).padStart(length, "0");
+
+        return `${prefix}${y}${m}${d}${rand}`;
+      }
+
+      function buildMemberUrl(token) {
+        const pages = CONFIG.PAGES || {};
+
+        if (pages && typeof pages.getMemberUrl === "function") {
+          return pages.getMemberUrl(token);
+        }
+
+        const base =
+          pages.BASE_PUBLIC_URL ||
+          window.location.origin + window.location.pathname.replace(/\/admin\.html.*$/, "");
+
+        return `${String(base).replace(/\/$/, "")}/member.html?t=${encodeURIComponent(token || "")}`;
+      }
+
+      function getLocalPatients() {
+        try {
+          const key = "dpro_dental_qr_local_patients";
+          const text = localStorage.getItem(key);
+          const rows = text ? JSON.parse(text) : [];
+          return Array.isArray(rows) ? rows : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function saveLocalPatients(rows) {
+        try {
+          const key = "dpro_dental_qr_local_patients";
+          localStorage.setItem(key, JSON.stringify(rows || []));
+        } catch (error) {
+          console.warn("ローカル患者保存に失敗しました。", error);
+        }
+      }
+
+      function normalizePatient(raw) {
+        const patient = raw || {};
+
+        return {
+          id: patient.id || `local-${Date.now()}`,
+          clinic_id: patient.clinic_id || "",
+          qr_token: patient.qr_token || patient.token || randomToken(),
+          member_no: patient.member_no || patient.memberNo || patient.card_no || "---",
+          patient_name: patient.patient_name || patient.name || patient.patientName || "患者さま",
+          patient_name_kana: patient.patient_name_kana || patient.kana || patient.patientNameKana || "",
+          phone: patient.phone || "",
+          email: patient.email || "",
+          birth_date: patient.birth_date || "",
+          gender: patient.gender || "",
+          line_user_id: patient.line_user_id || "",
+          line_display_name: patient.line_display_name || patient.lineDisplayName || "",
+          status: patient.status || "active",
+          card_enabled: patient.card_enabled !== false,
+          first_visit_date: patient.first_visit_date || "",
+          last_visit_at: patient.last_visit_at || "",
+          last_visit_type: patient.last_visit_type || "",
+          next_appointment_date: patient.next_appointment_date || patient.nextAppointmentDate || "",
+          next_appointment_time: patient.next_appointment_time || patient.nextAppointmentTime || "",
+          next_appointment_memo: patient.next_appointment_memo || patient.nextAppointmentMemo || "",
+          patient_memo: patient.patient_memo || patient.patientMemo || "",
+          internal_memo: patient.internal_memo || patient.internalMemo || "",
+          visit_count: patient.visit_count ?? patient.visitCount ?? 0,
+          created_at: patient.created_at || new Date().toISOString(),
+          updated_at: patient.updated_at || new Date().toISOString()
+        };
+      }
+
+      function getFormData() {
+        return {
+          clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+
+          member_no: els.memberNoInput.value.trim(),
+          patient_name: els.patientNameInput.value.trim(),
+          patient_name_kana: els.patientKanaInput.value.trim(),
+
+          phone: els.phoneInput.value.trim(),
+          birth_date: els.birthDateInput.value || null,
+          gender: els.genderInput.value || null,
+
+          line_user_id: els.lineUserIdInput.value.trim() || null,
+          line_display_name: els.lineDisplayNameInput.value.trim(),
+
+          status: els.statusInput.value || getConfigValue("ADMIN_SCREEN.DEFAULT_STATUS", "active"),
+
+          next_appointment_date: els.nextDateInput.value || null,
+          next_appointment_time: els.nextTimeInput.value || null,
+          next_appointment_memo: els.nextMemoInput.value.trim(),
+
+          patient_memo: els.patientMemoInput.value.trim(),
+          internal_memo: els.internalMemoInput.value.trim(),
+
+          card_enabled: true,
+          created_by_staff: getStaffName()
+        };
+      }
+
+      function validateForm(data) {
+        if (!data.member_no) {
+          return "診察券番号を入力してください。";
+        }
+
+        if (!data.patient_name) {
+          return "患者名を入力してください。";
+        }
+
+        return "";
+      }
+
+      function setFormData(patient) {
+        els.memberNoInput.value = patient.member_no || "";
+        els.statusInput.value = patient.status || "active";
+        els.patientNameInput.value = patient.patient_name || "";
+        els.patientKanaInput.value = patient.patient_name_kana || "";
+        els.phoneInput.value = patient.phone || "";
+        els.birthDateInput.value = patient.birth_date || "";
+        els.genderInput.value = patient.gender || "";
+        els.lineUserIdInput.value = patient.line_user_id || "";
+        els.lineDisplayNameInput.value = patient.line_display_name || "";
+        els.nextDateInput.value = patient.next_appointment_date || "";
+        els.nextTimeInput.value = patient.next_appointment_time ? formatTime(patient.next_appointment_time) : "";
+        els.nextMemoInput.value = patient.next_appointment_memo || "";
+        els.patientMemoInput.value = patient.patient_memo || "";
+        els.internalMemoInput.value = patient.internal_memo || "";
+
+        updateCurrentMemberNo();
+      }
+
+      function clearForm() {
+        els.memberNoInput.value = generateMemberNo();
+        els.statusInput.value = getConfigValue("ADMIN_SCREEN.DEFAULT_STATUS", "active");
+        els.patientNameInput.value = "";
+        els.patientKanaInput.value = "";
+        els.phoneInput.value = "";
+        els.birthDateInput.value = "";
+        els.genderInput.value = "";
+        els.lineUserIdInput.value = "";
+        els.lineDisplayNameInput.value = "";
+        els.nextDateInput.value = "";
+        els.nextTimeInput.value = "";
+        els.nextMemoInput.value = "";
+        els.patientMemoInput.value = "";
+        els.internalMemoInput.value = "";
+
+        clearMessage(els.createMessage);
+        updateCurrentMemberNo();
+      }
+
+      function fillDemoForm() {
+        const today = getTodayJST();
+        const base = new Date(`${today}T00:00:00+09:00`);
+        base.setDate(base.getDate() + 14);
+
+        const y = base.getFullYear();
+        const m = String(base.getMonth() + 1).padStart(2, "0");
+        const d = String(base.getDate()).padStart(2, "0");
+
+        els.memberNoInput.value = generateMemberNo();
+        els.statusInput.value = "active";
+        els.patientNameInput.value = "山田 太郎";
+        els.patientKanaInput.value = "ヤマダ タロウ";
+        els.phoneInput.value = "090-0000-0000";
+        els.birthDateInput.value = "1985-06-01";
+        els.genderInput.value = "male";
+        els.lineUserIdInput.value = "";
+        els.lineDisplayNameInput.value = "Taro Yamada";
+        els.nextDateInput.value = `${y}-${m}-${d}`;
+        els.nextTimeInput.value = "10:30";
+        els.nextMemoInput.value = "定期検診・クリーニング予定";
+        els.patientMemoInput.value = "次回来院時はQR診察券を受付でご提示ください。";
+        els.internalMemoInput.value = "デモ登録用の患者です。受付QR読み取りとLINE文面コピーの説明に使えます。";
+
+        updateCurrentMemberNo();
+        showMessage(els.createMessage, "info", "デモ入力を反映しました。登録ボタンでQR診察券を発行できます。");
+      }
+
+      function populateStatusSelect() {
+        const statuses = getConfigValue("PATIENT_STATUS", {});
+
+        els.statusInput.innerHTML = Object.entries(statuses).map(([key, item]) => {
+          return `<option value="${escapeHtml(key)}">${escapeHtml(item.label || key)}</option>`;
+        }).join("");
+
+        if (!els.statusInput.innerHTML) {
+          els.statusInput.innerHTML = `
+            <option value="active">通院中</option>
+            <option value="temporary">仮登録</option>
+            <option value="needs_followup">要フォロー</option>
+            <option value="paused">一時停止</option>
+            <option value="inactive">休眠</option>
+            <option value="blocked">利用停止</option>
+          `;
+        }
+
+        els.statusInput.value = getConfigValue("ADMIN_SCREEN.DEFAULT_STATUS", "active");
+      }
+
+      function updateCurrentMemberNo() {
+        els.currentMemberNo.textContent = els.memberNoInput.value.trim() || "---";
+      }
+
+      function updateSummary() {
+        state.localPatients = getLocalPatients();
+        els.localCount.textContent = String(state.localPatients.length);
+
+        els.modeLabel.textContent = state.demoMode ? "デモ" : "本番";
+
+        if (state.lastIssuedPatient) {
+          els.lastIssuedLabel.textContent = state.lastIssuedPatient.member_no || "--";
+        } else {
+          els.lastIssuedLabel.textContent = "--";
+        }
+
+        updateCurrentMemberNo();
+      }
+
+      async function generateQrForPatient(patient) {
+        const token = patient.qr_token || "";
+        const url = buildMemberUrl(token);
+
+        if (!token) return;
+
+        if (window.QRCode && typeof window.QRCode.toCanvas === "function") {
+          await window.QRCode.toCanvas(els.qrCanvas, url, {
+            width: 200,
+            margin: 2,
+            errorCorrectionLevel: "M"
+          });
+        }
+      }
+
+      async function renderIssuedPatient(patientArg, modeText) {
+        const patient = normalizePatient(patientArg);
+        const memberUrl = buildMemberUrl(patient.qr_token);
+
+        state.lastIssuedPatient = patient;
+
+        els.emptyResultBox.classList.add("hidden");
+        els.resultArea.classList.remove("hidden");
+
+        els.resultPatientName.textContent = patient.patient_name || "患者さま";
+        els.resultPatientKana.textContent = patient.patient_name_kana || "";
+        els.resultPatientKana.classList.toggle("hidden", !patient.patient_name_kana);
+
+        els.resultMemberNo.textContent = patient.member_no || "---";
+        els.resultStatus.textContent = getStatusLabel(patient.status);
+        els.resultClinicName.textContent = getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
+
+        els.memberUrlText.textContent = memberUrl;
+        els.qrTokenText.textContent = patient.qr_token || "---";
+        els.resultPhone.textContent = patient.phone || "未登録";
+
+        els.resultNextAppointment.textContent = buildNextAppointmentText(
+          patient.next_appointment_date,
+          patient.next_appointment_time,
+          patient.next_appointment_memo
+        );
+
+        els.resultInternalMemo.textContent = patient.internal_memo || "なし";
+
+        await generateQrForPatient(patient);
+
+        showMessage(
+          els.resultMessage,
+          "success",
+          `${modeText || "QR診察券"}を発行しました。\n患者さんには「診察券URL」をLINEで送るか、QRコードを読み取ってもらってください。`
+        );
+
+        updateSummary();
+        renderSelectedPatient(patient);
+      }
+
+      function renderSelectedPatient(patientArg) {
+        const patient = normalizePatient(patientArg);
+        const memberUrl = buildMemberUrl(patient.qr_token);
+
+        state.selectedPatient = patient;
+
+        els.emptySelectedBox.classList.add("hidden");
+        els.selectedArea.classList.remove("hidden");
+
+        els.selectedPatientName.textContent =
+          `${patient.patient_name}${patient.patient_name_kana ? "（" + patient.patient_name_kana + "）" : ""}`;
+
+        els.selectedMemberNo.textContent = patient.member_no || "---";
+        els.selectedPhone.textContent = patient.phone || "未登録";
+        els.selectedMemberUrl.textContent = memberUrl;
+
+        els.debugBox.textContent = JSON.stringify(
+          {
+            selected_patient_id: patient.id,
+            member_no: patient.member_no,
+            qr_token: patient.qr_token,
+            member_url: memberUrl
+          },
+          null,
+          2
+        );
+      }
+
+      function renderPatientList(rows) {
+        if (!rows || !rows.length) {
+          els.patientList.innerHTML = '<div class="empty-box">該当する患者はいません。</div>';
+          return;
+        }
+
+        els.patientList.innerHTML = rows.map((row) => {
+          const patient = normalizePatient(row);
+
+          return `
+            <div class="list-item clickable" data-patient-id="${escapeHtml(patient.id)}">
+              <div class="item-top">
+                <div>
+                  <div class="item-title">${escapeHtml(patient.patient_name)}</div>
+                  <div class="item-sub">
+                    ${escapeHtml(patient.patient_name_kana || "ふりがな未登録")} / ${escapeHtml(patient.phone || "電話未登録")}
+                  </div>
+                </div>
+                <div class="item-meta">${escapeHtml(patient.member_no || "---")}</div>
+              </div>
+              <div class="pill-row">
+                <span class="pill blue">${escapeHtml(getStatusLabel(patient.status))}</span>
+                <span class="pill green">QR発行済み</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        els.patientList.querySelectorAll("[data-patient-id]").forEach((item) => {
+          item.addEventListener("click", () => {
+            const id = item.dataset.patientId;
+            const found = rows.map(normalizePatient).find((patient) => patient.id === id);
+
+            if (found) {
+              renderSelectedPatient(found);
+              showMessage(els.selectedMessage, "success", "患者を選択しました。");
+            }
+          });
+        });
+      }
+
+      async function createPatient() {
+        const data = getFormData();
+        const error = validateForm(data);
+
+        clearMessage(els.createMessage);
+
+        if (error) {
+          showMessage(els.createMessage, "warning", error);
+          return;
+        }
+
+        setButtonLoading(els.createPatientButton, true, "登録中...");
+
+        try {
+          if (state.demoMode) {
+            const patient = normalizePatient(Object.assign({}, data, {
+              id: `local-${Date.now()}`,
+              qr_token: randomToken(),
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }));
+
+            const rows = getLocalPatients();
+
+            const exists = rows.some((item) => item.member_no === patient.member_no);
+            if (exists) {
+              throw new Error("同じ診察券番号のローカル患者が既にあります。診察券番号を変更してください。");
+            }
+
+            rows.unshift(patient);
+            saveLocalPatients(rows);
+
+            await renderIssuedPatient(patient, "デモ用QR診察券");
+            showMessage(
+              els.createMessage,
+              "success",
+              "デモ登録が完了しました。\nWorker未作成でも、この画面上でQR診察券URLの発行確認ができます。"
+            );
+
+            renderPatientList(rows);
+            return;
+          }
+
+          const endpoint = getConfigValue("API.ENDPOINTS.ADMIN_PATIENT_CREATE", "/api/admin/patients/create");
+
+          const result = await apiFetch(endpoint, {
+            method: "POST",
+            body: data
+          });
+
+          if (result && result.ok === false) {
+            throw new Error(result.message || result.error || "患者登録に失敗しました。");
+          }
+
+          const root = result?.data || result || {};
+          const patient = normalizePatient(root.patient || root);
+
+          await renderIssuedPatient(patient, "QR診察券");
+
+          showMessage(
+            els.createMessage,
+            "success",
+            getConfigValue("ADMIN_SCREEN.CREATED_MESSAGE", "患者登録が完了しました。QR診察券を発行できます。")
+          );
+        } catch (error) {
+          console.error(error);
+
+          showMessage(
+            els.createMessage,
+            "error",
+            "患者登録に失敗しました。\n\n" +
+            "まだWorker未作成の場合は、右上の「デモ登録」を押してから登録してください。\n\n" +
+            "詳細：" +
+            (error.message || error)
+          );
+        } finally {
+          setButtonLoading(els.createPatientButton, false);
+        }
+      }
+
+      async function searchPatients() {
+        const q = els.searchInput.value.trim();
+
+        setButtonLoading(els.searchButton, true, "検索中...");
+        clearMessage(els.searchMessage);
+
+        try {
+          if (state.demoMode) {
+            const rows = getLocalPatients();
+            const lower = q.toLowerCase();
+
+            const filtered = rows.filter((patient) => {
+              if (!q) return true;
+
+              return [
+                patient.patient_name,
+                patient.patient_name_kana,
+                patient.member_no,
+                patient.phone,
+                patient.line_display_name
+              ].some((value) => String(value || "").toLowerCase().includes(lower));
+            });
+
+            renderPatientList(filtered);
+            showMessage(els.searchMessage, "success", "ローカル登録患者を検索しました。");
+            return;
+          }
+
+          const endpoint = getConfigValue("API.ENDPOINTS.ADMIN_PATIENTS", "/api/admin/patients");
+
+          const result = await apiFetch(endpoint, {
+            method: "GET",
+            params: {
+              q,
+              limit: 30
+            }
+          });
+
+          const rows =
+            result?.data?.patients ||
+            result?.data ||
+            result?.patients ||
+            [];
+
+          renderPatientList(Array.isArray(rows) ? rows : []);
+          showMessage(els.searchMessage, "success", "患者検索が完了しました。");
+        } catch (error) {
+          console.error(error);
+
+          const localRows = getLocalPatients();
+
+          if (localRows.length) {
+            renderPatientList(localRows);
+            showMessage(
+              els.searchMessage,
+              "warning",
+              "DB検索に失敗したため、この画面でローカル登録した患者を表示しています。\n\n" +
+              "詳細：" +
+              (error.message || error)
+            );
+            return;
+          }
+
+          showMessage(
+            els.searchMessage,
+            "error",
+            "患者検索に失敗しました。\n\n" +
+            "まだWorker未作成の場合は、デモ登録を使ってください。\n\n" +
+            "詳細：" +
+            (error.message || error)
+          );
+        } finally {
+          setButtonLoading(els.searchButton, false);
+        }
+      }
+
+      function showLocalPatients() {
+        state.demoMode = true;
+        const rows = getLocalPatients();
+        renderPatientList(rows);
+
+        if (rows.length) {
+          showMessage(els.searchMessage, "success", "ローカル登録患者を表示しました。");
+        } else {
+          showMessage(els.searchMessage, "info", "ローカル登録患者はまだありません。デモ登録で作成できます。");
+        }
+
+        updateSummary();
+      }
+
+      function toggleDemoMode() {
+        state.demoMode = !state.demoMode;
+
+        if (state.demoMode) {
+          showMessage(
+            els.createMessage,
+            "info",
+            "デモ登録モードになりました。\nWorker未作成でも、ローカル保存でQR診察券発行の見た目を確認できます。"
+          );
+        } else {
+          showMessage(
+            els.createMessage,
+            "info",
+            "本番登録モードに戻しました。\n登録時はWorker APIに送信します。"
+          );
+        }
+
+        updateSummary();
+      }
+
+      function saveSettings() {
+        const staffName = els.staffNameInput.value.trim() || getConfigValue("ADMIN.DEFAULT_STAFF_NAME", "受付スタッフ");
+        const adminCode = els.adminCodeInput.value.trim();
+
+        setStaffName(staffName);
+        setAdminCode(adminCode);
+
+        showMessage(
+          els.settingsMessage,
+          "success",
+          "管理設定を保存しました。\n管理コードはWorker側の認証で使用します。"
+        );
+      }
+
+      function loadSelectedIntoForm() {
+        if (!state.selectedPatient) {
+          showMessage(els.selectedMessage, "warning", "先に患者を選択してください。");
+          return;
+        }
+
+        setFormData(state.selectedPatient);
+        showMessage(els.selectedMessage, "success", "選択中の患者情報をフォームに読み込みました。");
+      }
+
+      async function copyIssuedUrl() {
+        if (!state.lastIssuedPatient) {
+          showMessage(els.resultMessage, "warning", "先にQR診察券を発行してください。");
+          return;
+        }
+
+        await copyText(buildMemberUrl(state.lastIssuedPatient.qr_token));
+        showMessage(els.resultMessage, "success", "診察券URLをコピーしました。");
+      }
+
+      async function copySelectedUrl() {
+        if (!state.selectedPatient) {
+          showMessage(els.selectedMessage, "warning", "先に患者を選択してください。");
+          return;
+        }
+
+        await copyText(buildMemberUrl(state.selectedPatient.qr_token));
+        showMessage(els.selectedMessage, "success", "診察券URLをコピーしました。");
+      }
+
+      function openIssuedMemberPage() {
+        if (!state.lastIssuedPatient) {
+          showMessage(els.resultMessage, "warning", "先にQR診察券を発行してください。");
+          return;
+        }
+
+        window.open(buildMemberUrl(state.lastIssuedPatient.qr_token), "_blank", "noopener");
+      }
+
+      function openSelectedMemberPage() {
+        if (!state.selectedPatient) {
+          showMessage(els.selectedMessage, "warning", "先に患者を選択してください。");
+          return;
+        }
+
+        window.open(buildMemberUrl(state.selectedPatient.qr_token), "_blank", "noopener");
+      }
+
+      function applyInitialConfig() {
+        const systemName = getConfigValue("SYSTEM_NAME", "DPRO SHOP");
+        const title = getConfigValue("ADMIN_SCREEN.TITLE", "患者登録・QR診察券発行");
+        const clinicName = getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
+
+        document.title = `${systemName} | ${title}`;
+
+        els.systemName.textContent = systemName;
+        els.pageTitle.textContent = title;
+        els.clinicNameText.textContent = `${clinicName} / 新規患者登録・デジタルQR診察券URL発行`;
+        els.footerClinicName.textContent = clinicName;
+        els.resultClinicName.textContent = clinicName;
+
+        const pages = CONFIG.PAGES || {};
+
+        els.ownerLink.href = pages.OWNER ? `./${pages.OWNER}` : "./owner.html";
+        els.scanLink.href = pages.SCAN ? `./${pages.SCAN}` : "./scan.html";
+        els.memberLink.href = pages.MEMBER ? `./${pages.MEMBER}?t=demo` : "./member.html?t=demo";
+
+        populateStatusSelect();
+
+        els.staffNameInput.value = getStaffName();
+        els.adminCodeInput.value = getAdminCode();
+
+        if (!els.memberNoInput.value) {
+          els.memberNoInput.value = generateMemberNo();
+        }
+
+        state.localPatients = getLocalPatients();
+
+        updateSummary();
+      }
+
+      function bindEvents() {
+        els.memberNoInput.addEventListener("input", updateCurrentMemberNo);
+
+        els.generateMemberNoButton.addEventListener("click", () => {
+          els.memberNoInput.value = generateMemberNo();
+          updateCurrentMemberNo();
+        });
+
+        els.createPatientButton.addEventListener("click", createPatient);
+        els.clearFormButton.addEventListener("click", clearForm);
+        els.fillDemoFormButton.addEventListener("click", fillDemoForm);
+        els.demoModeButton.addEventListener("click", toggleDemoMode);
+
+        els.searchButton.addEventListener("click", searchPatients);
+        els.showLocalButton.addEventListener("click", showLocalPatients);
+
+        els.searchInput.addEventListener("keydown", async (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            await searchPatients();
+          }
+        });
+
+        els.saveSettingsButton.addEventListener("click", saveSettings);
+
+        els.copyMemberUrlButton.addEventListener("click", copyIssuedUrl);
+        els.openMemberPageButton.addEventListener("click", openIssuedMemberPage);
+        els.printCardButton.addEventListener("click", () => window.print());
+
+        els.copySelectedUrlButton.addEventListener("click", copySelectedUrl);
+        els.openSelectedMemberButton.addEventListener("click", openSelectedMemberPage);
+        els.loadSelectedIntoFormButton.addEventListener("click", loadSelectedIntoForm);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        applyInitialConfig();
+        bindEvents();
+      });
+    })();
+  </script>
 </body>
 </html>
