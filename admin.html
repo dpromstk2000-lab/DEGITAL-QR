@@ -528,6 +528,28 @@
       object-fit: contain;
     }
 
+    #qrImage {
+      width: 210px;
+      height: 210px;
+      display: block;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .qr-text-fallback {
+      width: 100%;
+      min-height: 160px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 14px;
+      color: var(--main-dark);
+      font-size: 13px;
+      line-height: 1.7;
+      word-break: break-all;
+    }
+
     .url-box {
       border-radius: 16px;
       border: 1px dashed var(--border);
@@ -1116,8 +1138,10 @@
 
                   <div class="qr-area">
                     <div class="qr-box">
-                      <canvas id="qrCanvas" width="200" height="200"></canvas>
-                      <img id="qrFallbackImage" class="hidden" alt="QR診察券コード" />
+                      <img id="qrImage" alt="QR診察券コード" />
+                      <canvas id="qrCanvas" class="hidden" width="200" height="200"></canvas>
+                      <img id="qrFallbackImage" class="hidden" alt="QR診察券コード fallback" />
+                      <div id="qrTextFallback" class="qr-text-fallback hidden"></div>
                     </div>
 
                     <div class="form-grid">
@@ -1362,8 +1386,10 @@
         resultMemberNo: $("resultMemberNo"),
         resultStatus: $("resultStatus"),
         resultClinicName: $("resultClinicName"),
+        qrImage: $("qrImage"),
         qrCanvas: $("qrCanvas"),
         qrFallbackImage: $("qrFallbackImage"),
+        qrTextFallback: $("qrTextFallback"),
         memberUrlText: $("memberUrlText"),
         qrTokenText: $("qrTokenText"),
         copyMemberUrlButton: $("copyMemberUrlButton"),
@@ -2447,55 +2473,60 @@
 
         if (!token || !url) return;
 
+        const qrImage = els.qrImage;
         const canvas = els.qrCanvas;
         const fallbackImage = els.qrFallbackImage;
+        const textFallback = els.qrTextFallback;
 
-        function showFallbackImage() {
-          const qrImageUrl =
-            "https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=12&data=" +
-            encodeURIComponent(url);
+        function hideAllQrDisplays() {
+          if (qrImage) qrImage.classList.add("hidden");
+          if (canvas) canvas.classList.add("hidden");
+          if (fallbackImage) fallbackImage.classList.add("hidden");
+          if (textFallback) textFallback.classList.add("hidden");
+        }
 
-          if (fallbackImage) {
-            fallbackImage.src = qrImageUrl;
-            fallbackImage.classList.remove("hidden");
-          }
+        function showTextFallback() {
+          hideAllQrDisplays();
 
-          if (canvas) {
-            canvas.classList.add("hidden");
+          if (textFallback) {
+            textFallback.innerHTML =
+              '<div><strong>QR画像を表示できませんでした。</strong><br>' +
+              '下の「診察券URLをコピー」または「患者画面を開く」を使ってください。<br><br>' +
+              escapeHtml(url) +
+              '</div>';
+            textFallback.classList.remove("hidden");
           }
         }
 
-        function showCanvas() {
-          if (canvas) {
-            canvas.classList.remove("hidden");
-          }
+        function setImageWithFallbacks() {
+          hideAllQrDisplays();
 
-          if (fallbackImage) {
-            fallbackImage.classList.add("hidden");
-          }
+          const sources = [
+            "https://quickchart.io/qr?size=220&margin=2&text=" + encodeURIComponent(url),
+            "https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=12&data=" + encodeURIComponent(url)
+          ];
+
+          let index = 0;
+
+          qrImage.onload = function () {
+            qrImage.classList.remove("hidden");
+          };
+
+          qrImage.onerror = function () {
+            index += 1;
+
+            if (index < sources.length) {
+              qrImage.src = sources[index];
+              return;
+            }
+
+            showTextFallback();
+          };
+
+          qrImage.src = sources[index];
         }
 
-        try {
-          if (window.QRCode && typeof window.QRCode.toCanvas === "function") {
-            await window.QRCode.toCanvas(canvas, url, {
-              width: 200,
-              margin: 2,
-              errorCorrectionLevel: "M",
-              color: {
-                dark: "#0f172a",
-                light: "#ffffff"
-              }
-            });
-
-            showCanvas();
-            return;
-          }
-
-          showFallbackImage();
-        } catch (error) {
-          console.warn("QRコード生成に失敗したため、画像方式で表示します。", error);
-          showFallbackImage();
-        }
+        setImageWithFallbacks();
       }
 
       async function renderIssuedPatient(patientArg, modeText) {
