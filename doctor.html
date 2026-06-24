@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | 歯医者さん用 今日やること 操作反応改善</title>
+  <title>DPRO SHOP | 歯医者さん用 今日やること / DB受付連動 操作反応改善</title>
 
   <script src="./config.js"></script>
 
@@ -1123,7 +1123,10 @@
         selectedToken: "",
         lastLinePreviewText: "",
         examDone: [],
-        receptions: []
+        receptions: [],
+        dbStatuses: [],
+        dbAvailable: false,
+        isLoadingDb: false
       };
 
       const $ = (id) => document.getElementById(id);
@@ -1186,6 +1189,179 @@
 
         return current === undefined || current === null ? fallback : current;
       }
+
+      function getApiBaseUrl() {
+        return String(
+          getConfigValue("API.BASE_URL",
+            getConfigValue("API_BASE_URL", "https://dpro-dental-qr-api.dpromstk2000.workers.dev")
+          ) || ""
+        ).replace(/\/+$/, "");
+      }
+
+      function getClinicCode() {
+        return getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo");
+      }
+
+      function normalizeApiPath(path) {
+        const value = String(path || "");
+        return value.startsWith("/") ? value : "/" + value;
+      }
+
+      async function apiFetch(path, options = {}) {
+        const baseUrl = getApiBaseUrl();
+        if (!baseUrl) throw new Error("API URLが設定されていません。config.jsを確認してください。");
+
+        const method = (options.method || "GET").toUpperCase();
+        const params = new URLSearchParams(options.params || {});
+        const url = new URL(baseUrl + normalizeApiPath(path));
+
+        params.forEach((value, key) => {
+          if (value !== undefined && value !== null && value !== "") {
+            url.searchParams.set(key, value);
+          }
+        });
+
+        const headers = {
+          "Content-Type": "application/json"
+        };
+
+        const adminCode = getAdminCode();
+        if (adminCode) {
+          headers["x-admin-code"] = adminCode;
+          headers["Authorization"] = `Bearer ${adminCode}`;
+        }
+
+        const response = await fetch(url.toString(), {
+          method,
+          headers,
+          body: method === "GET" ? undefined : JSON.stringify(options.body || {})
+        });
+
+        const contentType = response.headers.get("content-type") || "";
+        const data = contentType.includes("application/json")
+          ? await response.json()
+          : { ok: response.ok, message: await response.text() };
+
+        if (!response.ok || data.ok === false) {
+          throw new Error(data.message || data.error || `API Error ${response.status}`);
+        }
+
+        return data;
+      }
+
+      function normalizeDailyStatusRow(row) {
+        const raw = row || {};
+        const time = String(raw.scheduled_time || "").slice(0, 5);
+        const lineUserId = raw.family_line_user_id || raw.line_user_id_snapshot || "";
+        const lineStatus = raw.family_line_link_status || raw.line_link_status_snapshot || "";
+        const linked = Boolean(lineUserId) && lineStatus !== "unlinked" && lineStatus !== "not_linked";
+
+        return {
+          raw,
+          daily_status_id: raw.daily_status_id || raw.id || "",
+          patient_id: raw.patient_id || "",
+          token: raw.qr_token || raw.token || "",
+          qr_token: raw.qr_token || raw.token || "",
+          member_no: raw.member_no || "",
+          patient_name: raw.patient_name || "患者さま",
+          patient_name_kana: raw.patient_name_kana || "",
+          patient_kind: raw.patient_kind || "adult",
+          school_grade: raw.school_grade || "",
+          guardian_name: raw.guardian_name || raw.primary_guardian_name || "",
+          time: time || "--:--",
+          treatment: raw.scheduled_label || raw.task_summary || "本日の診療",
+          doctor_note: raw.doctor_memo || raw.task_summary || raw.patient_memo || raw.internal_memo || "",
+          reception_note: raw.reception_memo || raw.handoff_memo || "",
+          after_follow: raw.line_follow_message || "",
+          follow_required: raw.line_follow_status === "needed" || raw.line_follow_status === "copied",
+          line_follow_status: raw.line_follow_status || "none",
+          line_linked: linked,
+          line_display_name: raw.family_line_display_name || raw.line_display_name_snapshot || "",
+          line_user_id: lineUserId,
+          family_name: raw.family_name || "山田家",
+          reception_status: raw.reception_status || "scheduled",
+          exam_status: raw.exam_status || "waiting",
+          received_at: raw.received_at || "",
+          received_by_staff: raw.received_by_staff || "",
+          exam_completed_at: raw.exam_completed_at || "",
+          exam_completed_by: raw.exam_completed_by || "",
+          attention: raw.task_summary || raw.handoff_memo || ""
+        };
+      }
+
+      function getAllPatients() {
+        if (state.dbAvailable && Array.isArray(state.dbStatuses) && state.dbStatuses.length) {
+          return state.dbStatuses.map(normalizeDailyStatusRow);
+        }
+
+        return DEMO_PATIENTS;
+      }
+
+      async function loadDailyStatuses(showResultMessage = false) {
+        if (!getAdminCode()) {
+          state.dbAvailable = false;
+          if (showResultMessage) {
+            showMessage(els.mainMessage, "warning", "DB受付状態の読込には管理コードが必要です。右下の設定で管理コードを保存してください。");
+          }
+          renderAllLocalOnly();
+          return;
+        }
+
+        state.isLoadingDb = true;
+
+        try {
+          const result = await apiFetch("/api/doctor/today", {
+            method: "GET",
+            params: {
+              clinic_code: getClinicCode(),
+              date: getTodayJST(),
+              limit: 100
+            }
+          });
+
+          const rows = Array.isArray(result.statuses)
+            ? result.statuses
+            : Array.isArray(result.daily_statuses)
+              ? result.daily_statuses
+              : [];
+
+          state.dbStatuses = rows;
+          state.dbAvailable = true;
+
+          renderAllLocalOnly();
+
+          if (!state.selectedToken && getAllPatients()[0]) {
+            state.selectedToken = getAllPatients()[0].token;
+          }
+
+          if (state.selectedToken) renderSelectedPatient();
+
+          if (showResultMessage) {
+            showMessage(els.mainMessage, "success", "DBから今日の受付・診療状態を読み込みました。");
+          }
+        } catch (error) {
+          console.error(error);
+          state.dbAvailable = false;
+
+          renderAllLocalOnly();
+
+          if (showResultMessage) {
+            showMessage(
+              els.mainMessage,
+              "error",
+              "DB状態の読み込みに失敗しました。\n\n" +
+              "確認すること：\n" +
+              "・STEP 30-23A SQLが完了しているか\n" +
+              "・Workerが step-30-23b か\n" +
+              "・管理コードが正しいか\n\n" +
+              "詳細：" + (error.message || error)
+            );
+          }
+        } finally {
+          state.isLoadingDb = false;
+        }
+      }
+
 
       function getTodayJST() {
         const now = new Date();
@@ -1282,15 +1458,28 @@
       }
 
       function isReceived(token) {
+        const patient = getAllPatients().find((p) => p.token === token || p.member_no === token);
+
+        if (patient && state.dbAvailable) {
+          return patient.reception_status === "checked_in";
+        }
+
         return state.receptions.some((item) => item.qr_token === token || item.member_no === token);
       }
 
       function isExamDone(token) {
+        const patient = getAllPatients().find((p) => p.token === token || p.member_no === token);
+
+        if (patient && state.dbAvailable) {
+          return patient.exam_status === "completed";
+        }
+
         return state.examDone.includes(token);
       }
 
       function getPatient(token) {
-        return DEMO_PATIENTS.find((p) => p.token === token) || DEMO_PATIENTS[0];
+        const patients = getAllPatients();
+        return patients.find((p) => p.token === token || p.member_no === token) || patients[0] || DEMO_PATIENTS[0];
       }
 
       function showMessage(element, type, text) {
@@ -1310,7 +1499,11 @@
 
         tags.push(`<span class="pill">${escapeHtml(patient.member_no)}</span>`);
         tags.push(`<span class="pill ${patient.patient_kind === "child" ? "orange" : ""}">${patient.patient_kind === "child" ? "子ども診察券" : "本人診察券"}</span>`);
-        tags.push(`<span class="pill green">${patient.line_linked ? "LINE連携済み" : "LINE未連携"}</span>`);
+        tags.push(`<span class="pill ${patient.line_linked ? "green" : "red"}">${patient.line_linked ? "LINE連携済み" : "LINE未連携"}</span>`);
+
+        if (isReceived(patient.token)) {
+          tags.push('<span class="pill green">受付済み</span>');
+        }
 
         if (patient.follow_required) {
           tags.push('<span class="pill purple">LINEフォロー必要</span>');
@@ -1324,7 +1517,7 @@
       }
 
       function getFilteredPatients() {
-        return DEMO_PATIENTS.filter((patient) => {
+        return getAllPatients().filter((patient) => {
           if (state.filter === "received") return isReceived(patient.token);
           if (state.filter === "waiting") return !isReceived(patient.token);
           if (state.filter === "follow") return patient.follow_required;
@@ -1333,10 +1526,11 @@
       }
 
       function renderStats() {
-        const schedule = DEMO_PATIENTS.length;
-        const received = DEMO_PATIENTS.filter((p) => isReceived(p.token)).length;
-        const follow = DEMO_PATIENTS.filter((p) => p.follow_required).length;
-        const unlinked = DEMO_PATIENTS.filter((p) => !p.line_linked).length;
+        const patients = getAllPatients();
+        const schedule = patients.length;
+        const received = patients.filter((p) => isReceived(p.token)).length;
+        const follow = patients.filter((p) => p.follow_required).length;
+        const unlinked = patients.filter((p) => !p.line_linked).length;
 
         els.statSchedule.textContent = String(schedule);
         els.statReceived.textContent = String(received);
@@ -1419,7 +1613,7 @@
         }
       }
 
-      function saveDoctorMemo() {
+      async function saveDoctorMemo() {
         const patient = getPatient(state.selectedToken);
 
         if (!patient) {
@@ -1429,7 +1623,26 @@
 
         try {
           localStorage.setItem(getDoctorMemoStorageKey(patient.token), els.doctorMemoInput.value || "");
-          showMessage(els.selectedMessage, "success", "先生用メモを保存しました。");
+
+          if (getAdminCode()) {
+            await apiFetch("/api/doctor/memo-save", {
+              method: "POST",
+              body: {
+                clinic_code: getClinicCode(),
+                visit_date: getTodayJST(),
+                qr_token: patient.token,
+                member_no: patient.member_no,
+                doctor_memo: els.doctorMemoInput.value || "",
+                doctor_name: getDoctorName(),
+                source_screen: "doctor.html"
+              }
+            });
+
+            await loadDailyStatuses(false);
+            showMessage(els.selectedMessage, "success", "先生用メモをDBに保存しました。");
+          } else {
+            showMessage(els.selectedMessage, "success", "先生用メモをこの端末に保存しました。DB保存には管理コードが必要です。");
+          }
         } catch (error) {
           showMessage(els.selectedMessage, "error", "メモ保存に失敗しました。" + (error.message || error));
         }
@@ -1456,16 +1669,23 @@
 
         els.selectedTodayMemo.textContent = [
           `${patient.time} / ${patient.treatment}`,
-          patient.doctor_note
-        ].join("\n");
+          patient.doctor_note,
+          patient.reception_note ? `受付メモ：${patient.reception_note}` : ""
+        ].filter(Boolean).join("\n");
 
         els.selectedReception.textContent = [
           received ? "受付済み" : "未受付",
-          done ? "診療済み" : "未診療"
-        ].join("\n");
+          patient.received_at ? `受付時刻：${new Date(patient.received_at).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}` : "",
+          patient.received_by_staff ? `受付担当：${patient.received_by_staff}` : "",
+          done ? "診療済み" : patient.exam_status === "in_treatment" ? "診療中" : "未診療"
+        ].filter(Boolean).join("\n");
 
         els.selectedLine.textContent = patient.line_linked
-          ? "LINE連携済み\n山田花子（お母さん）\ndemo-line-mother-yamada"
+          ? [
+              "LINE連携済み",
+              patient.line_display_name || "山田花子（お母さん）",
+              patient.line_user_id || "demo-line-mother-yamada"
+            ].join("\n")
           : "LINE未連携\n受付でLINE登録QRを案内";
 
         els.selectedFamily.textContent = [
@@ -1479,7 +1699,7 @@
       }
 
       function renderFollowList() {
-        const followPatients = DEMO_PATIENTS.filter((p) => p.follow_required);
+        const followPatients = getAllPatients().filter((p) => p.follow_required);
 
         if (!followPatients.length) {
           els.followList.innerHTML = '<div class="empty">今日のLINEフォローはありません。</div>';
@@ -1515,7 +1735,7 @@
           {
             name: "LINE未連携の確認",
             text: "未連携の患者さんがいれば、受付でLINE登録QRを案内します。",
-            type: DEMO_PATIENTS.some((p) => !p.line_linked) ? "red" : "green"
+            type: getAllPatients().some((p) => !p.line_linked) ? "red" : "green"
           },
           {
             name: "子ども診察券",
@@ -1576,6 +1796,28 @@
         scrollToSelectedPatient();
 
         await copyText(text, els.selectedMessage, `${patient.patient_name} 様へのLINE文面をコピーしました。自動送信はしていません。`);
+
+        if (getAdminCode()) {
+          try {
+            await apiFetch("/api/doctor/line-follow-copied", {
+              method: "POST",
+              body: {
+                clinic_code: getClinicCode(),
+                visit_date: getTodayJST(),
+                qr_token: patient.token,
+                member_no: patient.member_no,
+                line_follow_message: text,
+                doctor_name: getDoctorName(),
+                source_screen: "doctor.html"
+              }
+            });
+
+            await loadDailyStatuses(false);
+            showMessage(els.selectedMessage, "success", `${patient.patient_name} 様へのLINE文面コピーをDBに記録しました。自動送信はしていません。`);
+          } catch (error) {
+            showMessage(els.selectedMessage, "warning", "LINE文面はコピーしましたが、DB記録に失敗しました。" + (error.message || error));
+          }
+        }
       }
 
       function copyDoctorMemo() {
@@ -1631,13 +1873,13 @@
         showActionFeedback(
           "確",
           `${patient.patient_name} 様を確認中`,
-          `${patient.time} / ${patient.treatment}。下の詳細で診療前メモ・LINE連携・家族情報を確認できます。`
+          `${patient.time} / ${patient.treatment}。受付状態：${isReceived(patient.token) ? "受付済み" : "未受付"}。下の詳細で診療前メモ・LINE連携・家族情報を確認できます。`
         );
 
         scrollToSelectedPatient();
       }
 
-      function markExamDone() {
+      async function markExamDone() {
         const patient = getPatient(state.selectedToken);
 
         if (!patient) {
@@ -1645,21 +1887,60 @@
           return;
         }
 
-        if (!state.examDone.includes(patient.token)) {
-          state.examDone.push(patient.token);
-          saveExamDone();
+        if (!getAdminCode()) {
+          showMessage(els.selectedMessage, "warning", "診療済みをDB保存するには管理コードが必要です。右下の設定で管理コードを保存してください。");
+          return;
         }
 
-        showMessage(els.selectedMessage, "success", `${patient.patient_name} 様を診療済みにしました。`);
-        showActionFeedback(
-          "済",
-          `${patient.patient_name} 様を診療済みにしました`,
-          "診療後に必要な場合は「診療後LINE文面コピー」を押して、コピーした文面をLINE公式に貼り付けてください。"
-        );
-        renderAll();
-        state.selectedToken = patient.token;
-        renderSelectedPatient();
-        scrollToSelectedPatient();
+        showMessage(els.selectedMessage, "info", "診療済みをDBに保存しています...");
+
+        try {
+          await apiFetch("/api/doctor/exam-complete", {
+            method: "POST",
+            body: {
+              clinic_code: getClinicCode(),
+              visit_date: getTodayJST(),
+              qr_token: patient.token,
+              member_no: patient.member_no,
+              doctor_memo: els.doctorMemoInput.value || patient.doctor_note || "",
+              doctor_name: getDoctorName(),
+              staff_name: getDoctorName(),
+              source_screen: "doctor.html"
+            }
+          });
+
+          if (!state.examDone.includes(patient.token)) {
+            state.examDone.push(patient.token);
+            saveExamDone();
+          }
+
+          await loadDailyStatuses(false);
+
+          state.selectedToken = patient.token;
+
+          showMessage(els.selectedMessage, "success", `${patient.patient_name} 様を診療済みにしました。DBに保存しました。`);
+          showActionFeedback(
+            "済",
+            `${patient.patient_name} 様を診療済みにしました`,
+            "診療済み状態をDBに保存しました。診療後に必要な場合は「診療後LINE文面コピー」を押して、コピーした文面をLINE公式に貼り付けてください。"
+          );
+
+          renderAllLocalOnly();
+          renderSelectedPatient();
+          scrollToSelectedPatient();
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.selectedMessage,
+            "error",
+            "診療済みのDB保存に失敗しました。\n\n" +
+            "確認すること：\n" +
+            "・STEP 30-23A SQLが完了しているか\n" +
+            "・Workerが step-30-23b か\n" +
+            "・管理コードが正しいか\n\n" +
+            "詳細：" + (error.message || error)
+          );
+        }
       }
 
       function openPatientCard() {
@@ -1679,15 +1960,19 @@
           renderSelectedPatient();
         }
 
-        showMessage(els.settingsMessage, "success", "診療済み状態をリセットしました。");
+        showMessage(els.settingsMessage, "success", "この端末内の診療済み状態をリセットしました。DB側は営業前デモリセットで戻してください。");
       }
 
-      function renderAll() {
-        loadState();
+      function renderAllLocalOnly() {
         renderStats();
         renderTaskList();
         renderFollowList();
         renderAttentionList();
+      }
+
+      function renderAll() {
+        loadState();
+        renderAllLocalOnly();
       }
 
       function bindEvents() {
@@ -1727,7 +2012,8 @@
         els.saveAdminCodeButton.addEventListener("click", () => {
           setAdminCode(els.adminCodeInput.value.trim());
           setDoctorName(els.doctorNameInput.value.trim() || "院長");
-          showMessage(els.settingsMessage, "success", "管理コードと先生名を保存しました。");
+          showMessage(els.settingsMessage, "success", "管理コードと先生名を保存しました。DB状態を読み込みます。");
+          loadDailyStatuses(true);
         });
 
         els.doctorNameInput.addEventListener("change", () => {
@@ -1737,9 +2023,7 @@
         els.demoResetButton.addEventListener("click", resetDemoState);
 
         els.reloadButton.addEventListener("click", () => {
-          renderAll();
-          if (state.selectedToken) renderSelectedPatient();
-          showMessage(els.mainMessage, "success", "今日の状態を再読み込みしました。");
+          loadDailyStatuses(true);
         });
       }
 
@@ -1759,7 +2043,7 @@
           "左の来院予定から「確認」を押すと、この患者詳細まで自動で移動します。LINE文面は自動送信ではなくコピーのみです。"
         );
 
-        showMessage(els.mainMessage, "info", "歯医者さん用の今日やること画面を開きました。患者さんを選んで診療前メモを確認できます。");
+        showMessage(els.mainMessage, "info", "歯医者さん用の今日やること画面を開きました。受付iPadの受付済み状態をDBから読み込み、診療済み・LINE文面コピーも記録できます。");
       }
 
       document.addEventListener("DOMContentLoaded", init);
