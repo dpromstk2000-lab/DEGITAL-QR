@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | 歯医者さん用 今日やること</title>
+  <title>DPRO SHOP | 歯医者さん用 今日やること 操作反応改善</title>
 
   <script src="./config.js"></script>
 
@@ -729,6 +729,116 @@
         min-width: 0;
       }
     }
+  
+    .action-feedback {
+      margin-bottom: 14px;
+      border-radius: 24px;
+      border: 1px solid #bfdbfe;
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 13px;
+      align-items: center;
+      box-shadow: 0 12px 26px rgba(37, 99, 235, 0.08);
+    }
+
+    .action-feedback.hidden {
+      display: none !important;
+    }
+
+    .action-feedback-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 950;
+    }
+
+    .action-feedback-title {
+      color: #0f172a;
+      font-size: 22px;
+      line-height: 1.25;
+      font-weight: 950;
+      letter-spacing: -0.055em;
+    }
+
+    .action-feedback-text {
+      margin-top: 5px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.65;
+      font-weight: 780;
+    }
+
+    .line-preview-panel {
+      margin-top: 14px;
+      border-radius: 24px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      padding: 16px;
+    }
+
+    .line-preview-panel.hidden {
+      display: none !important;
+    }
+
+    .line-preview-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .line-preview-title {
+      color: #064e3b;
+      font-size: 17px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .line-preview-sub {
+      margin-top: 4px;
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 780;
+    }
+
+    .line-preview-body {
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid #86efac;
+      padding: 14px;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.85;
+      font-weight: 780;
+      white-space: pre-wrap;
+    }
+
+    .copy-only-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #ffffff;
+      border: 1px solid #86efac;
+      color: #047857;
+      font-size: 11px;
+      line-height: 1.3;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+
   </style>
 </head>
 
@@ -737,7 +847,7 @@
     <header class="topbar">
       <div>
         <div class="kicker">DPRO SHOP / 歯医者さん・院長用</div>
-        <div class="title">今日やることが、朝すぐ分かる画面</div>
+        <div class="title">今日やることと操作結果が、すぐ分かる画面</div>
         <div class="subtitle">
           今日の来院予定、受付済み、未受付、診療前メモ、診療後LINEフォローを1画面で確認します。
         </div>
@@ -805,13 +915,23 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="selectedPatientCard">
           <div class="card-head">
             <div class="card-title"><span class="icon">患</span>選択中の患者</div>
             <button class="btn btn-light" id="openPatientCardButton" type="button">患者診察券を開く</button>
           </div>
 
           <div class="card-body">
+            <div class="action-feedback hidden" id="actionFeedback">
+              <div class="action-feedback-icon" id="actionFeedbackIcon">確</div>
+              <div>
+                <div class="action-feedback-title" id="actionFeedbackTitle">患者さんを確認中</div>
+                <div class="action-feedback-text" id="actionFeedbackText">
+                  今日の来院予定から患者さんを選ぶと、ここに操作結果が表示されます。
+                </div>
+              </div>
+            </div>
+
             <div class="empty" id="selectedEmpty">
               まだ患者さんを選択していません。<br>
               今日の来院予定から患者さんを選んでください。
@@ -863,6 +983,25 @@
               </div>
 
               <div class="message" id="selectedMessage"></div>
+
+              <div class="line-preview-panel hidden" id="linePreviewPanel">
+                <div class="line-preview-head">
+                  <div>
+                    <div class="line-preview-title" id="linePreviewTitle">LINE文面プレビュー</div>
+                    <div class="line-preview-sub">
+                      これは自動送信ではありません。文面をコピーして、LINE公式のチャットに貼り付けて使います。
+                    </div>
+                  </div>
+                  <span class="copy-only-badge">コピーのみ・自動送信なし</span>
+                </div>
+
+                <div class="line-preview-body" id="linePreviewBody"></div>
+
+                <div class="action-grid">
+                  <button class="btn btn-line" id="copyPreviewAgainButton" type="button">この文面をもう一度コピー</button>
+                  <button class="btn btn-light" id="hideLinePreviewButton" type="button">プレビューを閉じる</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -982,6 +1121,7 @@
       const state = {
         filter: "all",
         selectedToken: "",
+        lastLinePreviewText: "",
         examDone: [],
         receptions: []
       };
@@ -1012,6 +1152,16 @@
         markExamDoneButton: $("markExamDoneButton"),
         copyAfterVisitLineButton: $("copyAfterVisitLineButton"),
         selectedMessage: $("selectedMessage"),
+        actionFeedback: $("actionFeedback"),
+        actionFeedbackIcon: $("actionFeedbackIcon"),
+        actionFeedbackTitle: $("actionFeedbackTitle"),
+        actionFeedbackText: $("actionFeedbackText"),
+        linePreviewPanel: $("linePreviewPanel"),
+        linePreviewTitle: $("linePreviewTitle"),
+        linePreviewBody: $("linePreviewBody"),
+        copyPreviewAgainButton: $("copyPreviewAgainButton"),
+        hideLinePreviewButton: $("hideLinePreviewButton"),
+        selectedPatientCard: $("selectedPatientCard"),
         openPatientCardButton: $("openPatientCardButton"),
 
         followList: $("followList"),
@@ -1409,10 +1559,23 @@
         }
       }
 
-      function copyAfterVisitMessage(token) {
+      async function copyAfterVisitMessage(token) {
         const patient = getPatient(token || state.selectedToken);
         const text = makeAfterVisitMessage(patient);
-        copyText(text, els.selectedMessage, `${patient.patient_name} 様へのLINE文面をコピーしました。`);
+
+        state.selectedToken = patient.token;
+        renderSelectedPatient();
+
+        showActionFeedback(
+          "文",
+          `${patient.patient_name} 様のLINE文面を表示しました`,
+          "自動送信はしていません。文面をコピーして、LINE公式のチャットに貼り付けて使います。"
+        );
+
+        showLinePreview(patient, text);
+        scrollToSelectedPatient();
+
+        await copyText(text, els.selectedMessage, `${patient.patient_name} 様へのLINE文面をコピーしました。自動送信はしていません。`);
       }
 
       function copyDoctorMemo() {
@@ -1425,9 +1588,53 @@
         copyText(text, els.selectedMessage, "先生用メモをコピーしました。");
       }
 
+      function showActionFeedback(icon, title, message) {
+        if (!els.actionFeedback) return;
+
+        els.actionFeedback.classList.remove("hidden");
+        els.actionFeedbackIcon.textContent = icon || "確";
+        els.actionFeedbackTitle.textContent = title || "操作しました";
+        els.actionFeedbackText.textContent = message || "";
+      }
+
+      function scrollToSelectedPatient() {
+        if (!els.selectedPatientCard) return;
+
+        try {
+          els.selectedPatientCard.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        } catch (error) {
+          els.selectedPatientCard.scrollIntoView();
+        }
+      }
+
+      function showLinePreview(patient, text) {
+        state.lastLinePreviewText = text || "";
+
+        if (!els.linePreviewPanel) return;
+
+        els.linePreviewPanel.classList.remove("hidden");
+        els.linePreviewTitle.textContent = `${patient.patient_name} 様へのLINE文面プレビュー`;
+        els.linePreviewBody.textContent = text || "";
+      }
+
+
       function selectPatient(token) {
         state.selectedToken = token || DEMO_PATIENTS[0].token;
+
+        const patient = getPatient(state.selectedToken);
+
         renderSelectedPatient();
+
+        showActionFeedback(
+          "確",
+          `${patient.patient_name} 様を確認中`,
+          `${patient.time} / ${patient.treatment}。下の詳細で診療前メモ・LINE連携・家族情報を確認できます。`
+        );
+
+        scrollToSelectedPatient();
       }
 
       function markExamDone() {
@@ -1444,8 +1651,15 @@
         }
 
         showMessage(els.selectedMessage, "success", `${patient.patient_name} 様を診療済みにしました。`);
+        showActionFeedback(
+          "済",
+          `${patient.patient_name} 様を診療済みにしました`,
+          "診療後に必要な場合は「診療後LINE文面コピー」を押して、コピーした文面をLINE公式に貼り付けてください。"
+        );
         renderAll();
-        selectPatient(patient.token);
+        state.selectedToken = patient.token;
+        renderSelectedPatient();
+        scrollToSelectedPatient();
       }
 
       function openPatientCard() {
@@ -1492,6 +1706,24 @@
         els.copyAfterVisitLineButton.addEventListener("click", () => copyAfterVisitMessage(state.selectedToken));
         els.openPatientCardButton.addEventListener("click", openPatientCard);
 
+        if (els.copyPreviewAgainButton) {
+          els.copyPreviewAgainButton.addEventListener("click", () => {
+            if (!state.lastLinePreviewText) {
+              showMessage(els.selectedMessage, "warning", "コピーするLINE文面がありません。");
+              return;
+            }
+
+            copyText(state.lastLinePreviewText, els.selectedMessage, "LINE文面をもう一度コピーしました。自動送信はしていません。");
+          });
+        }
+
+        if (els.hideLinePreviewButton) {
+          els.hideLinePreviewButton.addEventListener("click", () => {
+            els.linePreviewPanel.classList.add("hidden");
+            showMessage(els.selectedMessage, "info", "LINE文面プレビューを閉じました。");
+          });
+        }
+
         els.saveAdminCodeButton.addEventListener("click", () => {
           setAdminCode(els.adminCodeInput.value.trim());
           setDoctorName(els.doctorNameInput.value.trim() || "院長");
@@ -1518,7 +1750,14 @@
 
         bindEvents();
         renderAll();
-        selectPatient(DEMO_PATIENTS[0].token);
+
+        state.selectedToken = DEMO_PATIENTS[0].token;
+        renderSelectedPatient();
+        showActionFeedback(
+          "朝",
+          "今日の確認を開始できます",
+          "左の来院予定から「確認」を押すと、この患者詳細まで自動で移動します。LINE文面は自動送信ではなくコピーのみです。"
+        );
 
         showMessage(els.mainMessage, "info", "歯医者さん用の今日やること画面を開きました。患者さんを選んで診療前メモを確認できます。");
       }
