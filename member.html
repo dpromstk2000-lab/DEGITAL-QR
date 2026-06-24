@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DPRO SHOP | デジタルQR診察券</title>
+  <title>DPRO SHOP | デジタルQR診察券 LINE連携対応</title>
 
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="./config.js"></script>
 
   <style>
@@ -662,6 +663,155 @@
         grid-template-columns: 1fr 260px;
       }
     }
+
+    .line-link-panel {
+      margin: 0 0 14px;
+      border-radius: 22px;
+      border: 1px solid #bbf7d0;
+      background:
+        radial-gradient(circle at 10% 15%, rgba(6, 199, 85, 0.14), transparent 34%),
+        linear-gradient(135deg, #f0fdf4, #ffffff);
+      padding: 15px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .line-link-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .line-link-title {
+      color: #064e3b;
+      font-size: 15px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      line-height: 1.45;
+    }
+
+    .line-link-sub {
+      margin-top: 4px;
+      color: #334155;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 750;
+    }
+
+    .line-link-status {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 8px 10px;
+      background: #ffffff;
+      border: 1px solid #bbf7d0;
+      color: #064e3b;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .line-link-status.warning {
+      border-color: #fde68a;
+      color: #92400e;
+      background: #fffbeb;
+    }
+
+    .line-link-status.error {
+      border-color: #fecaca;
+      color: #991b1b;
+      background: #fef2f2;
+    }
+
+    .line-link-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(187, 247, 208, 0.8);
+      padding: 10px;
+    }
+
+    .line-link-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: #dcfce7;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: #064e3b;
+      font-weight: 950;
+      flex: 0 0 auto;
+    }
+
+    .line-link-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .line-link-profile-main {
+      min-width: 0;
+    }
+
+    .line-link-profile-name {
+      font-size: 13px;
+      font-weight: 950;
+      color: #0f172a;
+      line-height: 1.4;
+    }
+
+    .line-link-profile-meta {
+      margin-top: 2px;
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.45;
+      font-weight: 750;
+      word-break: break-all;
+    }
+
+    .line-link-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .line-link-button {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 13px;
+      background: var(--line-green);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .line-link-button.secondary {
+      background: #ffffff;
+      color: #064e3b;
+      border: 1px solid #bbf7d0;
+    }
+
+    .line-link-note {
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 750;
+    }
+
+    @media print {
+      .line-link-panel {
+        display: none !important;
+      }
+    }
+
+
   </style>
 </head>
 <body>
@@ -700,6 +850,39 @@
           LINE公式から開くと、家族の診察券をまとめて表示できます。
         </div>
       </div>
+
+
+      <section id="lineLinkPanel" class="line-link-panel">
+        <div class="line-link-head">
+          <div>
+            <div class="line-link-title">LINE公式との連携</div>
+            <div class="line-link-sub" id="lineLinkText">
+              LINE公式から開くと、このLINEアカウントと家族診察券を紐づけできます。
+            </div>
+          </div>
+          <div class="line-link-status warning" id="lineLinkStatus">確認中</div>
+        </div>
+
+        <div class="line-link-profile" id="lineProfileBox">
+          <div class="line-link-avatar" id="lineAvatar">L</div>
+          <div class="line-link-profile-main">
+            <div class="line-link-profile-name" id="lineProfileName">LINEプロフィール未取得</div>
+            <div class="line-link-profile-meta" id="lineProfileMeta">
+              LIFF設定後、LINE公式のリッチメニューから開くと自動取得します。
+            </div>
+          </div>
+        </div>
+
+        <div class="line-link-actions">
+          <button class="line-link-button" id="lineLinkButton" type="button">LINE診察券を紐づける</button>
+          <button class="line-link-button secondary" id="lineLoginButton" type="button">LINEログイン</button>
+        </div>
+
+        <div class="line-link-note" id="lineLinkNote">
+          本番では、ここで取得したLINE userIdを「山田家」などの家族アカウントに保存します。
+          次回からLINEを開くだけで、家族診察券が自動表示されます。
+        </div>
+      </section>
 
       <section id="familyPanel" class="family-panel hidden">
         <div class="family-title-row">
@@ -801,7 +984,11 @@
       family: null,
       cards: [],
       selectedToken: "",
-      selectedCard: null
+      selectedCard: null,
+      liffReady: false,
+      liffInClient: false,
+      lineProfile: null,
+      lineLinkStatus: "checking"
     };
 
     const $ = (id) => document.getElementById(id);
@@ -835,6 +1022,16 @@
       clinicHours: $("clinicHours"),
       clinicClosed: $("clinicClosed"),
       lineBadge: $("lineBadge"),
+      lineLinkPanel: $("lineLinkPanel"),
+      lineLinkStatus: $("lineLinkStatus"),
+      lineLinkText: $("lineLinkText"),
+      lineProfileBox: $("lineProfileBox"),
+      lineAvatar: $("lineAvatar"),
+      lineProfileName: $("lineProfileName"),
+      lineProfileMeta: $("lineProfileMeta"),
+      lineLinkButton: $("lineLinkButton"),
+      lineLoginButton: $("lineLoginButton"),
+      lineLinkNote: $("lineLinkNote"),
       copyMemberUrlButton: $("copyMemberUrlButton"),
       printButton: $("printButton"),
       message: $("message")
@@ -890,6 +1087,45 @@
       ).trim();
     }
 
+    function getLinkToken() {
+      return (
+        getParam("link_token") ||
+        getParam("line_link_token") ||
+        getParam("lt") ||
+        ""
+      ).trim();
+    }
+
+    function getFamilyCodeParam() {
+      return (
+        getParam("family_code") ||
+        getParam("familyCode") ||
+        ""
+      ).trim();
+    }
+
+    function getMemberNoParam() {
+      return (
+        getParam("member_no") ||
+        getParam("memberNo") ||
+        ""
+      ).trim();
+    }
+
+    function getLiffId() {
+      return (
+        getConfigValue("LINE.LIFF_ID", "") ||
+        getConfigValue("LIFF_ID", "") ||
+        getConfigValue("LIFF.ID", "") ||
+        ""
+      ).trim();
+    }
+
+    function shouldUseLiff() {
+      const value = getConfigValue("LINE.USE_LIFF", false);
+      return Boolean(value === true || value === "true" || getLiffId());
+    }
+
     function getApiBase() {
       return String(getConfigValue("API.BASE_URL", "https://dpro-dental-qr-api.dpromstk2000.workers.dev")).replace(/\/+$/, "");
     }
@@ -931,6 +1167,299 @@
 
       return data;
     }
+
+    async function apiPost(path, body = {}) {
+      const url = new URL(getApiBase() + path);
+      url.searchParams.set("clinic_code", getClinicCode());
+      url.searchParams.set("_t", String(Date.now()));
+
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        cache: "no-store",
+        mode: "cors",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(Object.assign({
+          clinic_code: getClinicCode()
+        }, body))
+      });
+
+      const raw = await response.text();
+      let data = null;
+
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch (error) {
+        throw new Error("API応答をJSONとして読めませんでした：" + raw.slice(0, 300));
+      }
+
+      if (!response.ok || data.ok === false) {
+        throw new Error(data.message || data.error || ("HTTP " + response.status));
+      }
+
+      return data;
+    }
+
+
+    function setLineStatus(status, text, subText = "") {
+      state.lineLinkStatus = status;
+
+      if (!els.lineLinkStatus) return;
+
+      els.lineLinkStatus.classList.remove("warning", "error");
+
+      if (status === "linked") {
+        els.lineLinkStatus.textContent = "LINE連携済み";
+      } else if (status === "ready") {
+        els.lineLinkStatus.textContent = "連携できます";
+      } else if (status === "disabled") {
+        els.lineLinkStatus.textContent = "LIFF未設定";
+        els.lineLinkStatus.classList.add("warning");
+      } else if (status === "error") {
+        els.lineLinkStatus.textContent = "連携エラー";
+        els.lineLinkStatus.classList.add("error");
+      } else {
+        els.lineLinkStatus.textContent = "確認中";
+        els.lineLinkStatus.classList.add("warning");
+      }
+
+      if (text && els.lineLinkText) els.lineLinkText.textContent = text;
+      if (subText && els.lineLinkNote) els.lineLinkNote.textContent = subText;
+    }
+
+    function renderLineProfile() {
+      const profile = state.lineProfile;
+
+      if (!profile) {
+        els.lineProfileName.textContent = "LINEプロフィール未取得";
+        els.lineProfileMeta.textContent = getLiffId()
+          ? "LINE公式のリッチメニューから開くと、自動でLINEプロフィールを取得します。"
+          : "config.js に LIFF ID を設定すると、本番のLINE連携が使えます。";
+
+        els.lineAvatar.innerHTML = "L";
+        return;
+      }
+
+      els.lineProfileName.textContent = profile.displayName || "LINEユーザー";
+      els.lineProfileMeta.textContent = `LINE userId：${profile.userId || "---"}`;
+
+      if (profile.pictureUrl) {
+        els.lineAvatar.innerHTML = `<img src="${escapeHtml(profile.pictureUrl)}" alt="LINEプロフィール画像">`;
+      } else {
+        els.lineAvatar.textContent = "L";
+      }
+    }
+
+    async function initLiffProfile() {
+      renderLineProfile();
+
+      if (!shouldUseLiff()) {
+        setLineStatus(
+          "disabled",
+          "現在はLIFF ID未設定のため、デモ用診察券として表示しています。",
+          "本番ではLINE DevelopersでLIFF IDを発行し、config.jsに設定します。"
+        );
+        return null;
+      }
+
+      const liffId = getLiffId();
+
+      if (!liffId) {
+        setLineStatus(
+          "disabled",
+          "LIFF IDが未設定です。",
+          "config.js の LINE.LIFF_ID にLIFF IDを設定すると、LINE userIdを取得できます。"
+        );
+        return null;
+      }
+
+      if (!window.liff) {
+        setLineStatus(
+          "error",
+          "LIFF SDKを読み込めませんでした。",
+          "ネットワーク状況、またはLIFF SDKの読み込みを確認してください。"
+        );
+        return null;
+      }
+
+      try {
+        await window.liff.init({ liffId });
+
+        state.liffReady = true;
+        state.liffInClient = typeof window.liff.isInClient === "function" ? window.liff.isInClient() : false;
+
+        if (!window.liff.isLoggedIn()) {
+          setLineStatus(
+            "ready",
+            "LINEログインすると、診察券とLINEアカウントを紐づけできます。",
+            "LINE公式のリッチメニューから開いた場合は、通常そのままLINEプロフィールを取得できます。"
+          );
+          renderLineProfile();
+          return null;
+        }
+
+        const profile = await window.liff.getProfile();
+
+        state.lineProfile = {
+          userId: profile.userId || "",
+          displayName: profile.displayName || "",
+          pictureUrl: profile.pictureUrl || "",
+          statusMessage: profile.statusMessage || ""
+        };
+
+        renderLineProfile();
+        setLineStatus(
+          "ready",
+          "LINEプロフィールを取得しました。診察券との紐づけを確認しています。",
+          "このLINEアカウントを家族診察券に紐づけると、次回からLINEだけで診察券を開けます。"
+        );
+
+        return state.lineProfile;
+      } catch (error) {
+        console.error(error);
+        setLineStatus(
+          "error",
+          "LIFF連携に失敗しました。",
+          "LIFF ID、エンドポイントURL、LINE Developers側の設定を確認してください。"
+        );
+        return null;
+      }
+    }
+
+    function loginWithLine() {
+      if (!window.liff || !getLiffId()) {
+        showMessage("error", "LIFF IDが未設定です。config.js を確認してください。");
+        return;
+      }
+
+      try {
+        if (window.liff.isLoggedIn && window.liff.isLoggedIn()) {
+          showMessage("info", "すでにLINEログイン済みです。");
+          return;
+        }
+
+        window.liff.login({
+          redirectUri: window.location.href
+        });
+      } catch (error) {
+        console.error(error);
+        showMessage("error", "LINEログインを開始できませんでした。");
+      }
+    }
+
+    async function checkLineLinkStatus() {
+      const profile = state.lineProfile;
+
+      if (!profile?.userId) return null;
+
+      try {
+        const params = {
+          line_user_id: profile.userId,
+          t: state.selectedToken || getInitialToken(),
+          link_token: getLinkToken(),
+          family_code: getFamilyCodeParam(),
+          member_no: getMemberNoParam()
+        };
+
+        const result = await apiGet("/api/member/line-link/status", params);
+
+        if (result.line_link_status === "linked") {
+          setLineStatus(
+            "linked",
+            "このLINEアカウントは、家族診察券と紐づいています。",
+            "次回からLINE公式のリッチメニューを押すだけで、家族診察券を表示できます。"
+          );
+        } else {
+          setLineStatus(
+            "ready",
+            "このLINEアカウントを、表示中の家族診察券に紐づけできます。",
+            "下の「LINE診察券を紐づける」を押すと、このLINEで家族診察券を開けるようになります。"
+          );
+        }
+
+        return result;
+      } catch (error) {
+        console.warn("LINE連携状態の確認に失敗しました。", error);
+        setLineStatus(
+          "ready",
+          "LINEプロフィールは取得済みです。必要に応じて診察券と紐づけできます。",
+          "紐づけ確認APIに失敗しましたが、診察券の表示は継続できます。"
+        );
+        return null;
+      }
+    }
+
+    async function completeLineLink(showSuccess = true) {
+      const profile = state.lineProfile;
+
+      if (!profile?.userId) {
+        showMessage("warning", "LINEプロフィールが取得できていません。LINE公式のリッチメニューから開くか、LINEログインしてください。");
+        return null;
+      }
+
+      const token = state.selectedToken || getInitialToken();
+
+      if (!token && !getLinkToken() && !getFamilyCodeParam() && !getMemberNoParam()) {
+        showMessage("warning", "紐づけ先の診察券情報がありません。医院から案内された診察券URLで開いてください。");
+        return null;
+      }
+
+      try {
+        const result = await apiPost("/api/member/line-link/complete", {
+          line_user_id: profile.userId,
+          line_display_name: profile.displayName || "",
+          line_picture_url: profile.pictureUrl || "",
+          t: token,
+          link_token: getLinkToken(),
+          family_code: getFamilyCodeParam(),
+          member_no: getMemberNoParam()
+        });
+
+        if (result.family) state.family = result.family;
+        if (Array.isArray(result.cards) && result.cards.length) {
+          state.cards = result.cards.map((card) => normalizePatientCard(state.patient, card)).sort((a, b) => {
+            if (a.display_order !== b.display_order) return a.display_order - b.display_order;
+            return String(a.patient_name).localeCompare(String(b.patient_name), "ja");
+          });
+
+          state.selectedCard =
+            state.cards.find((card) => card.qr_token === token) ||
+            state.cards[0];
+
+          state.selectedToken = state.selectedCard?.qr_token || token;
+
+          renderFamilyTabs();
+          renderSelectedCard();
+        }
+
+        setLineStatus(
+          "linked",
+          "このLINEアカウントと家族診察券を紐づけました。",
+          "次回からLINE公式のリッチメニューを押すだけで、家族診察券を表示できます。"
+        );
+
+        if (showSuccess) {
+          showMessage("success", "LINEアカウントと家族診察券を紐づけました。");
+        }
+
+        return result;
+      } catch (error) {
+        console.error(error);
+        setLineStatus(
+          "error",
+          "LINE診察券の紐づけに失敗しました。",
+          "医院から案内された登録用QR、または診察券URLで開いているか確認してください。"
+        );
+
+        if (showSuccess) {
+          showMessage("error", error.message || "LINE診察券の紐づけに失敗しました。");
+        }
+
+        return null;
+      }
+    }
+
 
     function normalizePatientCard(patient, familyCard = null) {
       const source = familyCard || patient || {};
@@ -1143,8 +1672,10 @@
 
       if (state.family?.line_user_id) {
         lineText.push("LINE連携済み");
+      } else if (state.lineProfile?.userId) {
+        lineText.push("LINEプロフィール取得済み");
       } else {
-        lineText.push("LINE連携デモ");
+        lineText.push(getLiffId() ? "LINE連携待ち" : "LINE連携デモ");
       }
 
       els.lineInfo.textContent = lineText.join("\n");
@@ -1163,14 +1694,38 @@
 
     async function loadCard() {
       const token = getInitialToken();
-
-      if (!token) {
-        throw new Error("QRトークンがありません。医院から案内された診察券URL、またはデモ診察券URLから開いてください。");
-      }
+      const linkToken = getLinkToken();
+      const lineUserId = state.lineProfile?.userId || "";
 
       state.selectedToken = token;
 
-      const data = await apiGet("/api/member/card", { t: token });
+      let data = null;
+
+      if (token) {
+        data = await apiGet("/api/member/card", { t: token });
+      } else if (lineUserId) {
+        const familyData = await apiGet("/api/member/family-cards", {
+          line_user_id: lineUserId,
+          link_token: linkToken,
+          family_code: getFamilyCodeParam(),
+          member_no: getMemberNoParam()
+        });
+
+        data = {
+          ok: true,
+          clinic: familyData.clinic,
+          patient: familyData.cards?.[0] || null,
+          family: {
+            account: familyData.family,
+            cards: familyData.cards || []
+          }
+        };
+      } else if (linkToken) {
+        throw new Error("LINE登録用リンクです。LINE公式のリッチメニュー、またはLINEログイン後に開いてください。");
+      } else {
+        throw new Error("QRトークンがありません。医院から案内された診察券URL、またはLINE公式のリッチメニューから開いてください。");
+      }
+
       applyClinic(data.clinic);
 
       state.patient = data.patient || null;
@@ -1182,7 +1737,7 @@
         cards = data.family.cards.map((card) => normalizePatientCard(data.patient, card));
       }
 
-      if (!cards.length) {
+      if (!cards.length && token) {
         try {
           const familyData = await apiGet("/api/member/family-cards", { t: token });
           if (familyData.family) state.family = familyData.family;
@@ -1191,6 +1746,18 @@
           }
         } catch (error) {
           console.warn("家族診察券一覧は取得できませんでした。単体診察券として表示します。", error);
+        }
+      }
+
+      if (!cards.length && lineUserId) {
+        try {
+          const familyData = await apiGet("/api/member/family-cards", { line_user_id: lineUserId });
+          if (familyData.family) state.family = familyData.family;
+          if (Array.isArray(familyData.cards)) {
+            cards = familyData.cards.map((card) => normalizePatientCard(data.patient, card));
+          }
+        } catch (error) {
+          console.warn("LINE userIdから家族診察券一覧を取得できませんでした。", error);
         }
       }
 
@@ -1205,9 +1772,10 @@
 
       state.selectedCard =
         state.cards.find((card) => card.qr_token === token) ||
+        state.cards[0] ||
         normalizePatientCard(data.patient);
 
-      state.selectedToken = state.selectedCard.qr_token || token;
+      state.selectedToken = state.selectedCard?.qr_token || token;
 
       renderFamilyTabs();
       renderSelectedCard();
@@ -1227,6 +1795,22 @@
     function bindEvents() {
       els.copyMemberUrlButton.addEventListener("click", copyMemberUrl);
       els.printButton.addEventListener("click", () => window.print());
+
+      if (els.lineLoginButton) {
+        els.lineLoginButton.addEventListener("click", loginWithLine);
+      }
+
+      if (els.lineLinkButton) {
+        els.lineLinkButton.addEventListener("click", async () => {
+          clearMessage();
+
+          if (!state.lineProfile?.userId && shouldUseLiff()) {
+            await initLiffProfile();
+          }
+
+          await completeLineLink(true);
+        });
+      }
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
@@ -1234,7 +1818,16 @@
       bindEvents();
 
       try {
+        await initLiffProfile();
         await loadCard();
+
+        if (state.lineProfile?.userId) {
+          await checkLineLinkStatus();
+
+          if (getInitialToken() || getLinkToken() || getFamilyCodeParam() || getMemberNoParam()) {
+            await completeLineLink(false);
+          }
+        }
       } catch (error) {
         console.error(error);
         setLoading(false);
