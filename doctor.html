@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | 歯医者さん用 今日やること / 受付iPad連動 操作反応改善</title>
+  <title>DPRO SHOP | STEP 30-26 先生用 左メニュー型 今日やること</title>
 
   <script src="./config.js"></script>
 
@@ -891,11 +891,671 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-26 DOCTOR LEFT MENU COMPACT
+       先生用：左メニュー型 今日やること
+    ========================================================= */
+
+    body.doctor-left-optimized {
+      background:
+        radial-gradient(circle at 8% 5%, rgba(37, 99, 235, 0.12), transparent 30%),
+        radial-gradient(circle at 92% 8%, rgba(124, 58, 237, 0.09), transparent 30%),
+        linear-gradient(135deg, #edf4ff 0%, #f8fbff 55%, #f5f3ff 100%);
+    }
+
+    body.doctor-left-optimized .summary-grid,
+    body.doctor-left-optimized .layout {
+      display: none !important;
+    }
+
+    .doctor-left-app {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      min-height: calc(100vh - 34px);
+    }
+
+    .doctor-left-sidebar {
+      position: sticky;
+      top: 14px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid #dbeafe;
+      box-shadow: 0 18px 44px rgba(15,23,42,0.09);
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .doctor-left-brand {
+      padding: 12px 10px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 10px;
+    }
+
+    .doctor-left-kicker {
+      color: #1d4ed8;
+      font-size: 11px;
+      line-height: 1.35;
+      letter-spacing: 0.1em;
+      font-weight: 950;
+    }
+
+    .doctor-left-title {
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: -0.06em;
+      font-weight: 950;
+    }
+
+    .doctor-left-date {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #dbeafe;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .doctor-left-menu {
+      display: grid;
+      gap: 7px;
+    }
+
+    .doctor-menu-button,
+    .doctor-menu-link {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 18px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #334155;
+      padding: 10px 11px;
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 9px;
+      align-items: center;
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+      transition: 0.14s ease;
+    }
+
+    .doctor-menu-button:hover,
+    .doctor-menu-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(15,23,42,0.06);
+    }
+
+    .doctor-menu-button.is-active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 12px 24px rgba(37,99,235,0.16);
+    }
+
+    .doctor-menu-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .doctor-menu-button.is-active .doctor-menu-icon {
+      background: rgba(255,255,255,0.18);
+      color: #ffffff;
+    }
+
+    .doctor-menu-main {
+      display: block;
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .doctor-menu-sub {
+      margin-top: 2px;
+      display: block;
+      color: #64748b;
+      font-size: 10px;
+      line-height: 1.35;
+      font-weight: 760;
+    }
+
+    .doctor-menu-button.is-active .doctor-menu-sub {
+      color: rgba(255,255,255,0.78);
+    }
+
+    .doctor-menu-count {
+      min-width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      padding: 0 7px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .doctor-menu-button.is-active .doctor-menu-count {
+      background: rgba(255,255,255,0.2);
+      color: #ffffff;
+    }
+
+    .doctor-left-content {
+      min-width: 0;
+    }
+
+    .doctor-left-panel {
+      display: none;
+      border-radius: 32px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid #dbeafe;
+      box-shadow: 0 18px 44px rgba(15,23,42,0.09);
+      overflow: hidden;
+    }
+
+    .doctor-left-panel.is-active {
+      display: block;
+    }
+
+    .doctor-panel-head {
+      padding: 18px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      background: linear-gradient(135deg, #ffffff, #f8fbff);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .doctor-panel-kicker {
+      color: #1d4ed8;
+      font-size: 11px;
+      line-height: 1.35;
+      letter-spacing: 0.09em;
+      font-weight: 950;
+    }
+
+    .doctor-panel-title {
+      margin-top: 5px;
+      color: #0f172a;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.1;
+      letter-spacing: -0.065em;
+      font-weight: 950;
+    }
+
+    .doctor-panel-sub {
+      margin-top: 8px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.75;
+      font-weight: 760;
+    }
+
+    .doctor-panel-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .doctor-panel-link,
+    .doctor-panel-action {
+      min-height: 40px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      color: #1d4ed8;
+      padding: 9px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .doctor-panel-link.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .doctor-panel-body {
+      padding: 18px 20px 20px;
+    }
+
+    .doctor-compact-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .doctor-compact-kpi {
+      border-radius: 20px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.055);
+      padding: 13px;
+    }
+
+    .doctor-compact-label {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .doctor-compact-value {
+      margin-top: 5px;
+      color: #0f172a;
+      font-size: 25px;
+      line-height: 1.1;
+      font-weight: 950;
+      letter-spacing: -0.055em;
+    }
+
+    .doctor-compact-note {
+      margin-top: 5px;
+      color: #475569;
+      font-size: 11px;
+      line-height: 1.45;
+      font-weight: 740;
+    }
+
+    .doctor-task-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .doctor-task-item {
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      padding: 13px;
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 11px;
+      align-items: center;
+    }
+
+    .doctor-task-item.warning {
+      border-color: #fde68a;
+      background: #fffbeb;
+    }
+
+    .doctor-task-item.done {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }
+
+    .doctor-task-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 14px;
+      font-weight: 950;
+    }
+
+    .doctor-task-item.warning .doctor-task-icon {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .doctor-task-item.done .doctor-task-icon {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .doctor-task-title {
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .doctor-task-text {
+      margin-top: 3px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 740;
+    }
+
+    .doctor-task-tag {
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 11px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .doctor-panel-mount {
+      display: grid;
+      gap: 14px;
+    }
+
+    .doctor-panel-mount > * {
+      margin: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .doctor-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .doctor-info-card {
+      border-radius: 22px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      padding: 15px;
+    }
+
+    .doctor-info-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .doctor-info-card span {
+      margin-top: 5px;
+      display: block;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 740;
+    }
+
+    .doctor-info-card a {
+      margin-top: 11px;
+      min-height: 38px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 8px 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    body.doctor-left-optimized .card {
+      box-shadow: none;
+    }
+
+    @media (max-width: 1040px) {
+      .doctor-left-app {
+        grid-template-columns: 1fr;
+      }
+
+      .doctor-left-sidebar {
+        position: static;
+      }
+
+      .doctor-left-menu {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .doctor-compact-kpis,
+      .doctor-info-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .doctor-panel-head {
+        grid-template-columns: 1fr;
+      }
+
+      .doctor-panel-actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .doctor-left-sidebar,
+      .doctor-left-panel {
+        border-radius: 24px;
+      }
+
+      .doctor-left-menu,
+      .doctor-compact-kpis,
+      .doctor-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .doctor-panel-body,
+      .doctor-panel-head {
+        padding: 16px;
+      }
+
+      .doctor-task-item {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
   </style>
 </head>
 
 <body>
   <main class="page">
+
+    <section class="doctor-left-app" id="doctorLeftApp">
+      <aside class="doctor-left-sidebar">
+        <div class="doctor-left-brand">
+          <div class="doctor-left-kicker">DPRO SHOP / DOCTOR</div>
+          <div class="doctor-left-title">先生用<br>今日やること</div>
+          <div class="doctor-left-date" id="doctorTodayDate">本日</div>
+        </div>
+
+        <nav class="doctor-left-menu" aria-label="先生用メニュー">
+          <button class="doctor-menu-button is-active" type="button" data-doctor-tab="today">
+            <span class="doctor-menu-icon">今</span>
+            <span>
+              <span class="doctor-menu-main">今日の診療</span>
+              <span class="doctor-menu-sub">最初に見る</span>
+            </span>
+            <span class="doctor-menu-count" id="doctorMenuTodayCount">3</span>
+          </button>
+
+          <button class="doctor-menu-button" type="button" data-doctor-tab="patients">
+            <span class="doctor-menu-icon">患</span>
+            <span>
+              <span class="doctor-menu-main">患者確認</span>
+              <span class="doctor-menu-sub">メモ/診療済み</span>
+            </span>
+            <span class="doctor-menu-count">選</span>
+          </button>
+
+          <button class="doctor-menu-button" type="button" data-doctor-tab="follow">
+            <span class="doctor-menu-icon">L</span>
+            <span>
+              <span class="doctor-menu-main">LINEフォロー</span>
+              <span class="doctor-menu-sub">診療後文面</span>
+            </span>
+            <span class="doctor-menu-count" id="doctorMenuFollowCount">0</span>
+          </button>
+
+          <button class="doctor-menu-button" type="button" data-doctor-tab="notice">
+            <span class="doctor-menu-icon">注</span>
+            <span>
+              <span class="doctor-menu-main">注意・設定</span>
+              <span class="doctor-menu-sub">管理コード等</span>
+            </span>
+            <span class="doctor-menu-count">奥</span>
+          </button>
+
+          <a class="doctor-menu-link" href="./scan-ipad.html?v=3023h2">
+            <span class="doctor-menu-icon">受</span>
+            <span>
+              <span class="doctor-menu-main">受付iPadへ</span>
+              <span class="doctor-menu-sub">受付済み操作</span>
+            </span>
+            <span class="doctor-menu-count">開</span>
+          </a>
+
+          <a class="doctor-menu-link" href="./owner.html?v=3025b">
+            <span class="doctor-menu-icon">管</span>
+            <span>
+              <span class="doctor-menu-main">管理トップへ</span>
+              <span class="doctor-menu-sub">オーナー画面</span>
+            </span>
+            <span class="doctor-menu-count">開</span>
+          </a>
+        </nav>
+      </aside>
+
+      <section class="doctor-left-content">
+        <section class="doctor-left-panel is-active" data-doctor-panel="today">
+          <div class="doctor-panel-head">
+            <div>
+              <div class="doctor-panel-kicker">TODAY</div>
+              <div class="doctor-panel-title">今日の診療</div>
+              <div class="doctor-panel-sub">受付済みの患者さんから確認し、診療後は必要なLINE文面をコピーします。</div>
+            </div>
+            <div class="doctor-panel-actions">
+              <button class="doctor-panel-action" id="doctorCompactReloadButton" type="button">受付状態を更新</button>
+              <a class="doctor-panel-link primary" href="./scan-ipad.html?v=3023h2">受付iPad</a>
+            </div>
+          </div>
+
+          <div class="doctor-panel-body">
+            <div class="doctor-compact-kpis">
+              <div class="doctor-compact-kpi">
+                <div class="doctor-compact-label">来院予定</div>
+                <div class="doctor-compact-value" id="doctor26Schedule">3</div>
+                <div class="doctor-compact-note">今日の患者さん</div>
+              </div>
+
+              <div class="doctor-compact-kpi">
+                <div class="doctor-compact-label">受付済み</div>
+                <div class="doctor-compact-value" id="doctor26Received">0</div>
+                <div class="doctor-compact-note">診療待ち</div>
+              </div>
+
+              <div class="doctor-compact-kpi">
+                <div class="doctor-compact-label">LINEフォロー</div>
+                <div class="doctor-compact-value" id="doctor26Follow">0</div>
+                <div class="doctor-compact-note">文面コピー対象</div>
+              </div>
+
+              <div class="doctor-compact-kpi">
+                <div class="doctor-compact-label">LINE未連携</div>
+                <div class="doctor-compact-value" id="doctor26Unlinked">0</div>
+                <div class="doctor-compact-note">管理画面で確認</div>
+              </div>
+            </div>
+
+            <div class="doctor-task-list" id="doctor26TaskList">
+              <div class="doctor-task-item warning">
+                <div class="doctor-task-icon">受</div>
+                <div>
+                  <div class="doctor-task-title">受付状態を更新してください</div>
+                  <div class="doctor-task-text">受付iPadの最新状態を反映して、診療待ちの患者さんを確認します。</div>
+                </div>
+                <span class="doctor-task-tag">最初に確認</span>
+              </div>
+            </div>
+
+            <div class="doctor-panel-mount" id="doctor26TodayMount" style="margin-top: 14px;"></div>
+          </div>
+        </section>
+
+        <section class="doctor-left-panel" data-doctor-panel="patients">
+          <div class="doctor-panel-head">
+            <div>
+              <div class="doctor-panel-kicker">PATIENT</div>
+              <div class="doctor-panel-title">患者確認</div>
+              <div class="doctor-panel-sub">選択中の患者さん、診療前メモ、診療済み操作をここにまとめます。</div>
+            </div>
+            <div class="doctor-panel-actions">
+              <a class="doctor-panel-link" href="./owner.html?v=3025b">管理トップ</a>
+            </div>
+          </div>
+          <div class="doctor-panel-body">
+            <div class="doctor-panel-mount" id="doctor26PatientMount"></div>
+          </div>
+        </section>
+
+        <section class="doctor-left-panel" data-doctor-panel="follow">
+          <div class="doctor-panel-head">
+            <div>
+              <div class="doctor-panel-kicker">LINE FOLLOW</div>
+              <div class="doctor-panel-title">LINEフォロー</div>
+              <div class="doctor-panel-sub">診療後に送るLINE文面コピー対象をまとめます。</div>
+            </div>
+            <div class="doctor-panel-actions">
+              <button class="doctor-panel-action" id="doctorCompactCopyButton" type="button">表示中の文面をコピー</button>
+            </div>
+          </div>
+          <div class="doctor-panel-body">
+            <div class="doctor-panel-mount" id="doctor26FollowMount"></div>
+          </div>
+        </section>
+
+        <section class="doctor-left-panel" data-doctor-panel="notice">
+          <div class="doctor-panel-head">
+            <div>
+              <div class="doctor-panel-kicker">NOTICE / SETTINGS</div>
+              <div class="doctor-panel-title">注意・設定</div>
+              <div class="doctor-panel-sub">今日の注意、管理コード、先生名など、毎回は触らない項目です。</div>
+            </div>
+            <div class="doctor-panel-actions">
+              <a class="doctor-panel-link" href="./owner.html?v=3025b">管理トップ</a>
+            </div>
+          </div>
+          <div class="doctor-panel-body">
+            <div class="doctor-info-grid" style="margin-bottom: 14px;">
+              <div class="doctor-info-card">
+                <strong>先生用の使い方</strong>
+                <span>受付済みの患者さんを選択 → メモ確認 → 診療済みにする → 必要ならLINE文面をコピーします。</span>
+              </div>
+              <div class="doctor-info-card">
+                <strong>患者登録は別画面</strong>
+                <span>新規登録・家族追加・LINE連携確認は患者管理画面で行います。</span>
+                <a href="./admin.html?v=3024b">患者管理へ</a>
+              </div>
+            </div>
+            <div class="doctor-panel-mount" id="doctor26NoticeMount"></div>
+          </div>
+        </section>
+      </section>
+    </section>
+
     <header class="topbar">
       <div>
         <div class="kicker">DPRO SHOP / 歯医者さん・院長用</div>
@@ -906,10 +1566,10 @@
       </div>
 
       <div class="top-actions">
-        <a href="./scan-ipad.html">受付iPad</a>
+        <a href="./scan-ipad.html?v=3023h2">受付iPad</a>
         <a href="./scan.html">通常受付</a>
-        <a href="./owner.html">管理画面</a>
-        <a href="./admin.html">患者登録</a>
+        <a href="./owner.html?v=3025b">管理画面</a>
+        <a href="./admin.html?v=3024b">患者登録</a>
         <button type="button" id="reloadButton">受付状態を更新</button>
         <span class="reload-status" id="reloadStatus">未更新</span>
       </div>
@@ -2149,5 +2809,182 @@
       document.addEventListener("DOMContentLoaded", init);
     })();
   </script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      function setText(id, value) {
+        const el = $(id);
+        if (el) el.textContent = String(value);
+      }
+
+      function numberFrom(id, fallback) {
+        const el = $(id);
+        if (!el) return fallback || 0;
+        const n = parseInt(String(el.textContent || "").replace(/[^0-9]/g, ""), 10);
+        return Number.isFinite(n) ? n : (fallback || 0);
+      }
+
+      function findCardByTitle(keyword) {
+        const cards = Array.from(document.querySelectorAll(".card"));
+        return cards.find(function (card) {
+          return card.textContent && card.textContent.indexOf(keyword) !== -1;
+        });
+      }
+
+      function moveInto(element, mountId) {
+        const mount = $(mountId);
+        if (!element || !mount || mount.contains(element)) return;
+        mount.appendChild(element);
+      }
+
+      function switchDoctorTab(tabName) {
+        document.querySelectorAll("[data-doctor-tab]").forEach(function (button) {
+          button.classList.toggle("is-active", button.getAttribute("data-doctor-tab") === tabName);
+        });
+
+        document.querySelectorAll("[data-doctor-panel]").forEach(function (panel) {
+          panel.classList.toggle("is-active", panel.getAttribute("data-doctor-panel") === tabName);
+        });
+      }
+
+      function updateDoctorDate() {
+        const el = $("doctorTodayDate");
+        if (!el) return;
+        const now = new Date();
+        el.textContent = now.toLocaleDateString("ja-JP", {
+          month: "long",
+          day: "numeric",
+          weekday: "short"
+        });
+      }
+
+      function updateDoctorCompactKpis() {
+        const schedule = numberFrom("statSchedule", 3);
+        const received = numberFrom("statReceived", 0);
+        const follow = numberFrom("statFollow", 0);
+        const unlinked = numberFrom("statUnlinked", 0);
+
+        setText("doctor26Schedule", schedule || 3);
+        setText("doctor26Received", received);
+        setText("doctor26Follow", follow);
+        setText("doctor26Unlinked", unlinked);
+        setText("doctorMenuTodayCount", schedule || 3);
+        setText("doctorMenuFollowCount", follow);
+
+        const taskList = $("doctor26TaskList");
+        if (!taskList) return;
+
+        const tasks = [];
+
+        if (received > 0) {
+          tasks.push({
+            type: "",
+            icon: "診",
+            title: "受付済みの患者さんがいます",
+            text: "患者さんを選択し、診療前メモを確認してから診療へ進みます。",
+            tag: received + "件"
+          });
+        } else {
+          tasks.push({
+            type: "warning",
+            icon: "受",
+            title: "受付済みの患者さんを確認してください",
+            text: "受付iPad側で受付済みにすると、ここに反映されます。",
+            tag: "確認"
+          });
+        }
+
+        if (follow > 0) {
+          tasks.push({
+            type: "warning",
+            icon: "L",
+            title: "診療後LINEフォローがあります",
+            text: "必要な患者さんのLINE文面をコピーして、LINE公式チャットへ貼り付けます。",
+            tag: follow + "件"
+          });
+        }
+
+        if (!tasks.length) {
+          tasks.push({
+            type: "done",
+            icon: "✓",
+            title: "大きな未対応はありません",
+            text: "受付状態を更新して、最新の状況を確認してください。",
+            tag: "OK"
+          });
+        }
+
+        taskList.innerHTML = tasks.map(function (task) {
+          return '' +
+            '<div class="doctor-task-item ' + task.type + '">' +
+              '<div class="doctor-task-icon">' + task.icon + '</div>' +
+              '<div>' +
+                '<div class="doctor-task-title">' + task.title + '</div>' +
+                '<div class="doctor-task-text">' + task.text + '</div>' +
+              '</div>' +
+              '<span class="doctor-task-tag">' + task.tag + '</span>' +
+            '</div>';
+        }).join("");
+      }
+
+      function setupDoctorLeftMenu() {
+        document.body.classList.add("doctor-left-optimized");
+        updateDoctorDate();
+
+        const scheduleCard = findCardByTitle("今日の来院予定");
+        const patientCard = $("selectedPatientCard");
+        const followCard = findCardByTitle("診療後LINEフォロー");
+        const noticeCard = findCardByTitle("今日の注意");
+        const settingsCard = findCardByTitle("管理設定");
+
+        moveInto(scheduleCard, "doctor26TodayMount");
+        moveInto(patientCard, "doctor26PatientMount");
+        moveInto(followCard, "doctor26FollowMount");
+        moveInto(noticeCard, "doctor26NoticeMount");
+        moveInto(settingsCard, "doctor26NoticeMount");
+
+        document.querySelectorAll("[data-doctor-tab]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            switchDoctorTab(button.getAttribute("data-doctor-tab"));
+          });
+        });
+
+        const reloadButton = $("doctorCompactReloadButton");
+        if (reloadButton) {
+          reloadButton.addEventListener("click", function () {
+            const original = $("reloadButton");
+            if (original) original.click();
+            setTimeout(updateDoctorCompactKpis, 500);
+            setTimeout(updateDoctorCompactKpis, 1300);
+            setTimeout(updateDoctorCompactKpis, 2400);
+          });
+        }
+
+        const copyButton = $("doctorCompactCopyButton");
+        if (copyButton) {
+          copyButton.addEventListener("click", function () {
+            const original = $("copyPreviewAgainButton") || $("copyAfterVisitLineButton");
+            if (original) original.click();
+          });
+        }
+
+        setTimeout(updateDoctorCompactKpis, 400);
+        setTimeout(updateDoctorCompactKpis, 1200);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupDoctorLeftMenu);
+      } else {
+        setupDoctorLeftMenu();
+      }
+    })();
+  </script>
+
 </body>
 </html>
