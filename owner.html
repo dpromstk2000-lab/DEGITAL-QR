@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | 現場画面導線追加 | 歯科医院 管理画面</title>
+  <title>DPRO SHOP | STEP 30-23E 受付・診療状況連動 | 歯科医院 管理画面</title>
 
   <script src="./config.js"></script>
 
@@ -1165,6 +1165,294 @@
     }
 
 
+  
+    .daily-status-panel {
+      margin: 14px 0 16px;
+      border-radius: 28px;
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .daily-status-head {
+      padding: 18px;
+      border-bottom: 1px solid #e2e8f0;
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .daily-status-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #0f172a;
+      font-size: 20px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .daily-status-sub {
+      margin-top: 6px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.75;
+      font-weight: 780;
+    }
+
+    .daily-status-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .daily-status-actions .btn {
+      min-height: 42px;
+      border-radius: 999px;
+      padding: 10px 13px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .daily-status-version {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 8px 11px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .daily-status-body {
+      padding: 16px 18px 18px;
+    }
+
+    .daily-status-stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .daily-status-stat {
+      border-radius: 20px;
+      background: #f8fbff;
+      border: 1px solid #dbeafe;
+      padding: 13px;
+    }
+
+    .daily-status-stat-label {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .daily-status-stat-value {
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+    }
+
+    .daily-status-stat-note {
+      margin-top: 7px;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.45;
+      font-weight: 760;
+    }
+
+    .daily-status-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .daily-status-row {
+      border-radius: 22px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 13px;
+      display: grid;
+      grid-template-columns: 76px 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .daily-status-time {
+      color: #1d4ed8;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .daily-status-name {
+      color: #0f172a;
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .daily-status-detail {
+      margin-top: 4px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 760;
+    }
+
+    .daily-status-pills {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .daily-status-pill {
+      border-radius: 999px;
+      padding: 6px 8px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 11px;
+      line-height: 1.3;
+      font-weight: 950;
+    }
+
+    .daily-status-pill.green {
+      background: #dcfce7;
+      color: #14532d;
+      border-color: #86efac;
+    }
+
+    .daily-status-pill.orange {
+      background: #fffbeb;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .daily-status-pill.red {
+      background: #fef2f2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+
+    .daily-status-pill.purple {
+      background: #f5f3ff;
+      color: #5b21b6;
+      border-color: #ddd6fe;
+    }
+
+    .daily-status-side {
+      min-width: 132px;
+      display: grid;
+      gap: 7px;
+      justify-items: stretch;
+    }
+
+    .daily-status-side .btn {
+      min-height: 38px;
+      padding: 8px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+    }
+
+    .daily-status-empty {
+      border-radius: 22px;
+      border: 2px dashed #bfdbfe;
+      background: #f8fbff;
+      padding: 20px;
+      color: #475569;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.8;
+      font-weight: 820;
+    }
+
+    .daily-status-message {
+      display: none;
+      margin-top: 12px;
+      border-radius: 18px;
+      padding: 13px 14px;
+      font-size: 13px;
+      line-height: 1.65;
+      font-weight: 780;
+      white-space: pre-wrap;
+    }
+
+    .daily-status-message.show {
+      display: block;
+    }
+
+    .daily-status-message.info {
+      background: #eff6ff;
+      color: #1e3a8a;
+      border: 1px solid #bfdbfe;
+    }
+
+    .daily-status-message.success {
+      background: #f0fdf4;
+      color: #14532d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .daily-status-message.warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .daily-status-message.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    @media (max-width: 980px) {
+      .daily-status-head {
+        grid-template-columns: 1fr;
+      }
+
+      .daily-status-actions {
+        justify-content: flex-start;
+      }
+
+      .daily-status-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .daily-status-row {
+        grid-template-columns: 1fr;
+      }
+
+      .daily-status-side {
+        min-width: 0;
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .daily-status-stats,
+      .daily-status-side {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -1320,6 +1608,73 @@
         <div class="summary-note">次回予約候補</div>
       </div>
     </section>
+
+    <section class="daily-status-panel" id="dailyStatusPanel">
+      <div class="daily-status-head">
+        <div>
+          <div class="daily-status-title">
+            <span class="icon">連</span>
+            今日の受付・診療状況
+          </div>
+          <div class="daily-status-sub">
+            受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。
+          </div>
+          <div class="daily-status-version">
+            STEP 30-23E：受付iPad・先生用と連動する管理表示
+          </div>
+        </div>
+
+        <div class="daily-status-actions">
+          <button class="btn btn-primary" id="dailyStatusReloadButton" type="button">受付・診療状況を更新</button>
+          <a class="btn btn-light" href="./scan-ipad.html">受付iPadを開く</a>
+          <a class="btn btn-light" href="./doctor.html">先生用を開く</a>
+        </div>
+      </div>
+
+      <div class="daily-status-body">
+        <div class="daily-status-stats">
+          <div class="daily-status-stat">
+            <div class="daily-status-stat-label">今日の予定</div>
+            <div class="daily-status-stat-value" id="dailyStatusTotal">0</div>
+            <div class="daily-status-stat-note">来院予定</div>
+          </div>
+
+          <div class="daily-status-stat">
+            <div class="daily-status-stat-label">受付済み</div>
+            <div class="daily-status-stat-value" id="dailyStatusCheckedIn">0</div>
+            <div class="daily-status-stat-note">受付iPadから反映</div>
+          </div>
+
+          <div class="daily-status-stat">
+            <div class="daily-status-stat-label">未受付</div>
+            <div class="daily-status-stat-value" id="dailyStatusWaitingReception">0</div>
+            <div class="daily-status-stat-note">受付待ち</div>
+          </div>
+
+          <div class="daily-status-stat">
+            <div class="daily-status-stat-label">診療済み</div>
+            <div class="daily-status-stat-value" id="dailyStatusCompleted">0</div>
+            <div class="daily-status-stat-note">先生用から反映</div>
+          </div>
+
+          <div class="daily-status-stat">
+            <div class="daily-status-stat-label">LINEフォロー</div>
+            <div class="daily-status-stat-value" id="dailyStatusFollow">0</div>
+            <div class="daily-status-stat-note">文面コピー対象</div>
+          </div>
+        </div>
+
+        <div id="dailyStatusMessage" class="daily-status-message"></div>
+
+        <div class="daily-status-list" id="dailyStatusList">
+          <div class="daily-status-empty">
+            まだ読み込んでいません。<br>
+            「受付・診療状況を更新」を押してください。
+          </div>
+        </div>
+      </div>
+    </section>
+
 
     <div class="layout">
       <aside class="stack">
