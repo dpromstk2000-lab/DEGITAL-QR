@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | 患者登録・医院設定 現場画面導線追加</title>
+  <title>DPRO SHOP | STEP 30-24 オーナー実運用向け 患者管理メイン</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1146,22 +1146,760 @@
     }
 
 
+  
+    .latest-shortcut-panel {
+      margin: 14px 0 16px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid #dbeafe;
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .latest-shortcut-head {
+      padding: 17px 19px;
+      border-bottom: 1px solid #e2e8f0;
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .latest-shortcut-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+      font-size: 19px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+    }
+
+    .latest-shortcut-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 13px;
+      font-weight: 950;
+      flex: 0 0 auto;
+    }
+
+    .latest-shortcut-sub {
+      margin-top: 6px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.75;
+      font-weight: 780;
+    }
+
+    .latest-shortcut-version {
+      margin-top: 9px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 8px 11px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .latest-shortcut-body {
+      padding: 16px 19px 18px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .latest-shortcut-link {
+      min-height: 76px;
+      border-radius: 20px;
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      padding: 12px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      transition: 0.15s ease;
+    }
+
+    .latest-shortcut-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+    }
+
+    .latest-shortcut-link strong {
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .latest-shortcut-link span {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.45;
+      font-weight: 760;
+      word-break: break-all;
+    }
+
+    .latest-shortcut-link.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .latest-shortcut-link.primary strong,
+    .latest-shortcut-link.primary span {
+      color: #ffffff;
+    }
+
+    .latest-shortcut-link.green {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+
+    .latest-shortcut-link.purple {
+      background: #f5f3ff;
+      border-color: #ddd6fe;
+    }
+
+    .latest-shortcut-link.orange {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    @media (max-width: 980px) {
+      .latest-shortcut-head {
+        grid-template-columns: 1fr;
+      }
+
+      .latest-shortcut-body {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .latest-shortcut-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
+  
+    /* =========================================================
+       STEP 30-24 OWNER OPERATION OPTIMIZE
+       オーナー実運用向け：患者管理メイン / 初期設定は歯車へ
+    ========================================================= */
+
+    body.owner-optimized .latest-shortcut-panel,
+    body.owner-optimized .role-shortcut-bar {
+      display: none !important;
+    }
+
+    .owner-main-hero {
+      margin: 0 0 16px;
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.12), transparent 32%),
+        linear-gradient(135deg, #ffffff, #f8fbff);
+      border: 1px solid #dbeafe;
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+      padding: 22px;
+      overflow: hidden;
+    }
+
+    .owner-main-hero-top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .owner-main-kicker {
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.1em;
+    }
+
+    .owner-main-title {
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: clamp(28px, 3vw, 42px);
+      line-height: 1.08;
+      letter-spacing: -0.065em;
+      font-weight: 950;
+    }
+
+    .owner-main-sub {
+      margin-top: 10px;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.75;
+      font-weight: 780;
+    }
+
+    .owner-mode-badge {
+      margin-top: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .owner-gear-area {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      min-width: 260px;
+    }
+
+    .owner-gear-button,
+    .owner-mini-link {
+      min-height: 42px;
+      border-radius: 999px;
+      padding: 10px 13px;
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      color: #1d4ed8;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 950;
+      text-decoration: none;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+    }
+
+    .owner-gear-button {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    .owner-main-actions {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .owner-action-card {
+      min-height: 96px;
+      border-radius: 22px;
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      padding: 13px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      text-decoration: none;
+      transition: 0.15s ease;
+    }
+
+    .owner-action-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .owner-action-card strong {
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .owner-action-card span {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.55;
+      font-weight: 760;
+    }
+
+    .owner-action-card.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .owner-action-card.primary strong,
+    .owner-action-card.primary span {
+      color: #ffffff;
+    }
+
+    .owner-action-card.green {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+
+    .owner-action-card.purple {
+      background: #f5f3ff;
+      border-color: #ddd6fe;
+    }
+
+    .owner-action-card.orange {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .owner-daily-summary {
+      margin: 0 0 16px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .owner-daily-card {
+      border-radius: 22px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+      padding: 14px;
+    }
+
+    .owner-daily-label {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .owner-daily-value {
+      margin-top: 5px;
+      color: #0f172a;
+      font-size: 24px;
+      line-height: 1.15;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+    }
+
+    .owner-daily-note {
+      margin-top: 5px;
+      color: #475569;
+      font-size: 11px;
+      line-height: 1.45;
+      font-weight: 740;
+    }
+
+    .owner-csv-card {
+      margin: 0 0 16px;
+      border-radius: 28px;
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      box-shadow: 0 16px 38px rgba(15, 23, 42, 0.07);
+      overflow: hidden;
+    }
+
+    .owner-csv-head {
+      padding: 17px 19px;
+      border-bottom: 1px solid #e2e8f0;
+      background: linear-gradient(135deg, #fffbeb, #ffffff);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .owner-csv-title {
+      color: #0f172a;
+      font-size: 19px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .owner-csv-sub {
+      margin-top: 5px;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 760;
+    }
+
+    .owner-csv-body {
+      padding: 16px 19px 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .owner-csv-box {
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      padding: 13px;
+    }
+
+    .owner-csv-box strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .owner-csv-box span {
+      margin-top: 4px;
+      display: block;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 740;
+    }
+
+    .owner-setting-drawer {
+      margin: 0 0 16px;
+      border-radius: 30px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      display: none;
+    }
+
+    .owner-setting-drawer.is-open {
+      display: block;
+    }
+
+    .owner-setting-drawer-head {
+      padding: 17px 19px;
+      border-bottom: 1px solid #e2e8f0;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .owner-setting-drawer-title {
+      color: #ffffff;
+      font-size: 19px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .owner-setting-drawer-sub {
+      margin-top: 4px;
+      color: #cbd5e1;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 760;
+    }
+
+    .owner-setting-close {
+      min-height: 38px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.10);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .owner-setting-drawer-body {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .owner-setting-drawer-body > .card {
+      margin: 0 !important;
+      box-shadow: none !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    body.owner-optimized .top-bar {
+      display: none !important;
+    }
+
+    body.owner-optimized .summary-grid {
+      display: none !important;
+    }
+
+    body.owner-optimized .layout {
+      grid-template-columns: 1fr 0.88fr;
+    }
+
+    body.owner-optimized .card[data-owner-section="patient-create"] {
+      order: 1;
+      border: 2px solid #bfdbfe;
+    }
+
+    body.owner-optimized .card[data-owner-section="family"] {
+      order: 2;
+    }
+
+    body.owner-optimized .card[data-owner-section="search"] {
+      order: 1;
+      border: 2px solid #bbf7d0;
+    }
+
+    body.owner-optimized .card[data-owner-section="result"] {
+      order: 2;
+    }
+
+    body.owner-optimized .card[data-owner-section="selected"] {
+      order: 3;
+    }
+
+    body.owner-optimized .card[data-owner-section="settings-preview"] {
+      display: none;
+    }
+
+    body.owner-optimized .card[data-owner-section="settings"],
+    body.owner-optimized .card[data-owner-section="special"],
+    body.owner-optimized .card[data-owner-section="admin-code"] {
+      display: block;
+    }
+
+    @media (max-width: 1100px) {
+      .owner-main-hero-top,
+      .owner-csv-head {
+        grid-template-columns: 1fr;
+      }
+
+      .owner-gear-area {
+        justify-content: flex-start;
+        min-width: 0;
+      }
+
+      .owner-main-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .owner-daily-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .owner-csv-body {
+        grid-template-columns: 1fr;
+      }
+
+      body.owner-optimized .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .owner-main-hero {
+        padding: 18px;
+      }
+
+      .owner-main-actions,
+      .owner-daily-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
   </style>
 </head>
 
 <body>
   <main class="page">
+
+    <section class="owner-main-hero" id="ownerMainHero">
+      <div class="owner-main-hero-top">
+        <div>
+          <div class="owner-main-kicker">STEP 30-24 / オーナー実運用向け</div>
+          <div class="owner-main-title">患者管理をメインにした<br>医院スタッフ用画面</div>
+          <div class="owner-main-sub">
+            毎日使う「患者登録・検索・家族診察券・LINE連携」を前面に出しました。
+            医院設定や診療時間など、最初だけ使うものは右上の歯車にまとめています。
+          </div>
+          <div class="owner-mode-badge">患者管理メイン / 初期設定は歯車へ格納</div>
+        </div>
+
+        <div class="owner-gear-area">
+          <button class="owner-gear-button" id="ownerSettingsToggleButton" type="button">⚙ 初期設定</button>
+          <a class="owner-mini-link" href="./owner.html?v=3023g">管理画面</a>
+          <a class="owner-mini-link" href="./scan-ipad.html?v=3023h2">受付iPad</a>
+          <a class="owner-mini-link" href="./doctor.html?v=3023d4">先生用</a>
+        </div>
+      </div>
+
+      <div class="owner-main-actions">
+        <a class="owner-action-card primary" href="#patientCreateCard">
+          <strong>新規患者登録</strong>
+          <span>診察券番号・氏名・次回予定を登録</span>
+        </a>
+
+        <a class="owner-action-card green" href="#patientSearchCard">
+          <strong>既存患者検索</strong>
+          <span>名前・電話番号・診察券番号で検索</span>
+        </a>
+
+        <a class="owner-action-card" href="#familyCardSection">
+          <strong>家族診察券</strong>
+          <span>お母さんのLINEに家族分をまとめる</span>
+        </a>
+
+        <a class="owner-action-card purple" href="#lineLinkStatusList">
+          <strong>LINE連携確認</strong>
+          <span>連携済み・未連携を確認</span>
+        </a>
+
+        <a class="owner-action-card orange" href="#csvImportPlan">
+          <strong>CSV一括取込</strong>
+          <span>導入時の既存顧客取込入口</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="owner-daily-summary" id="ownerOperationSummary">
+      <div class="owner-daily-card">
+        <div class="owner-daily-label">今日の主な作業</div>
+        <div class="owner-daily-value">患者管理</div>
+        <div class="owner-daily-note">日常業務はここから開始</div>
+      </div>
+
+      <div class="owner-daily-card">
+        <div class="owner-daily-label">LINE連携</div>
+        <div class="owner-daily-value">後からOK</div>
+        <div class="owner-daily-note">既存患者は未連携で先に登録可能</div>
+      </div>
+
+      <div class="owner-daily-card">
+        <div class="owner-daily-label">医院設定</div>
+        <div class="owner-daily-value">⚙</div>
+        <div class="owner-daily-note">初回設定・変更時だけ開く</div>
+      </div>
+
+      <div class="owner-daily-card">
+        <div class="owner-daily-label">営業デモ</div>
+        <div class="owner-daily-value">裏導線</div>
+        <div class="owner-daily-note">通常業務では目立たせない</div>
+      </div>
+    </section>
+
+    <section class="owner-setting-drawer" id="ownerSettingDrawer">
+      <div class="owner-setting-drawer-head">
+        <div>
+          <div class="owner-setting-drawer-title">⚙ 初期設定・医院設定</div>
+          <div class="owner-setting-drawer-sub">
+            医院名・診療時間・休診日・管理コードなど、最初だけ使う設定をここにまとめています。
+          </div>
+        </div>
+        <button class="owner-setting-close" id="ownerSettingsCloseButton" type="button">閉じる</button>
+      </div>
+      <div class="owner-setting-drawer-body" id="ownerSettingDrawerBody"></div>
+    </section>
+
+    <section class="owner-csv-card" id="csvImportPlan">
+      <div class="owner-csv-head">
+        <div>
+          <div class="owner-csv-title">導入時：既存患者CSV一括取込</div>
+          <div class="owner-csv-sub">
+            実際の導入では、既存患者を1人ずつ登録するのではなく、CSVでまとめて取り込める入口を用意します。
+            取り込んだ患者は、最初はLINE未連携のまま保存し、後からLINE診察券で本人確認して紐づけます。
+          </div>
+        </div>
+        <a class="owner-mini-link" href="#patientCreateCard">まずは手入力登録へ</a>
+      </div>
+
+      <div class="owner-csv-body">
+        <div class="owner-csv-box">
+          <strong>取込する主な項目</strong>
+          <span>診察券番号、患者名、フリガナ、生年月日、電話番号、保護者名、家族グループ、最終来院日、次回予定、メモ。</span>
+        </div>
+
+        <div class="owner-csv-box">
+          <strong>LINE連携は後から</strong>
+          <span>CSV登録時は未連携で保存。患者さんがLINE公式から診察券を開き、診察券番号＋生年月日で本人確認してLINEと紐づけます。</span>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="latest-shortcut-panel" id="latestShortcutPanel">
+      <div class="latest-shortcut-head">
+        <div>
+          <div class="latest-shortcut-title">
+            <span class="latest-shortcut-icon">新</span>
+            最新版の画面へすぐ移動
+          </div>
+          <div class="latest-shortcut-sub">
+            患者登録中でも、営業デモで使う画面へすぐ移動できます。受付iPad・先生用・管理画面は最新版の確認URLで開きます。
+          </div>
+          <div class="latest-shortcut-version">
+            STEP 30-23L：admin.html 最新ショートカット対応
+          </div>
+        </div>
+      </div>
+
+      <div class="latest-shortcut-body">
+        <a class="latest-shortcut-link primary" href="./demo-guide.html?v=3023i">
+          <strong>営業ガイド</strong>
+          <span>demo-guide.html?v=3023i</span>
+        </a>
+
+        <a class="latest-shortcut-link" href="./index-list.html?v=3023j">
+          <strong>画面一覧</strong>
+          <span>index-list.html?v=3023j</span>
+        </a>
+
+        <a class="latest-shortcut-link" href="./index.html?v=3023k">
+          <strong>トップページ</strong>
+          <span>index.html?v=3023k</span>
+        </a>
+
+        <a class="latest-shortcut-link green" href="./member.html?t=demo-dental-patient-001">
+          <strong>患者さん診察券</strong>
+          <span>member.html?t=demo-dental-patient-001</span>
+        </a>
+
+        <a class="latest-shortcut-link" href="./scan-ipad.html?v=3023h2">
+          <strong>受付iPad</strong>
+          <span>scan-ipad.html?v=3023h2</span>
+        </a>
+
+        <a class="latest-shortcut-link" href="./doctor.html?v=3023d4">
+          <strong>先生用画面</strong>
+          <span>doctor.html?v=3023d4</span>
+        </a>
+
+        <a class="latest-shortcut-link purple" href="./owner.html?v=3023g">
+          <strong>管理画面</strong>
+          <span>owner.html?v=3023g</span>
+        </a>
+
+        <a class="latest-shortcut-link orange" href="https://dpro-dental-qr-api.dpromstk2000.workers.dev/api/health">
+          <strong>API確認</strong>
+          <span>Worker health</span>
+        </a>
+      </div>
+    </section>
+
     <header class="top-bar">
       <div>
         <div class="brand-kicker" id="systemName">DPRO SHOP</div>
-        <div class="brand-title" id="pageTitle">患者登録・医院設定</div>
+        <div class="brand-title" id="pageTitle">患者管理・LINE診察券登録</div>
         <div class="brand-sub" id="clinicNameText">
-          DPRO歯科クリニック / 医院設定・患者登録・QR診察券発行
+          患者登録・家族診察券・LINE連携をまとめて管理
         </div>
       </div>
 
       <div class="top-actions">
-        <a class="badge-link" id="ownerLink" href="./owner.html">管理画面</a>
+        <a class="badge-link" id="ownerLink" href="./owner.html?v=3023g">管理画面</a>
         <a class="badge-link" id="scanLink" href="./scan.html">受付QR読取</a>
         <a class="badge-link" id="memberLink" href="./member.html?t=demo">患者画面</a>
         <button class="badge" id="demoModeButton" type="button">デモ登録</button>
@@ -1177,7 +1915,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./scan-ipad.html">
+      <a class="role-shortcut" href="./scan-ipad.html?v=3023h2">
         <span class="role-shortcut-icon">受</span>
         <span>
           <span class="role-shortcut-title">受付iPad用</span>
@@ -1185,7 +1923,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./doctor.html">
+      <a class="role-shortcut" href="./doctor.html?v=3023d4">
         <span class="role-shortcut-icon doctor">医</span>
         <span>
           <span class="role-shortcut-title">先生・院長用</span>
@@ -1193,7 +1931,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./owner.html">
+      <a class="role-shortcut" href="./owner.html?v=3023g">
         <span class="role-shortcut-icon">管</span>
         <span>
           <span class="role-shortcut-title">管理画面</span>
@@ -1201,7 +1939,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./index-list.html">
+      <a class="role-shortcut" href="./index-list.html?v=3023j">
         <span class="role-shortcut-icon admin">覧</span>
         <span>
           <span class="role-shortcut-title">画面一覧</span>
@@ -1239,14 +1977,14 @@
 
     <div class="layout">
       <div class="stack">
-        <section class="card">
+        <section class="card" data-owner-section="settings">
           <div class="card-header">
             <h1 class="card-title">
               <span class="icon">設</span>
               医院設定
             </h1>
             <div class="card-subtitle">
-              最初に定休日・営業時間・臨時休業・特別営業を設定します。次回予約の日付と時間候補に反映されます。
+              医院名・診療時間・休診日など、初回だけ使う設定です。通常業務では閉じておいて大丈夫です。
             </div>
           </div>
 
@@ -1444,14 +2182,14 @@
           </div>
         </section>
 
-        <section class="card">
+        <section class="card" id="patientCreateCard" data-owner-section="patient-create">
           <div class="card-header">
             <h1 class="card-title">
               <span class="icon">登</span>
               新規患者登録
             </h1>
             <div class="card-subtitle">
-              医院設定に合わせて、次回予約日は過去日・休診日を選べず、時間は診療時間内の候補から選びます。
+              毎日の中心業務です。新規患者・家族診察券・LINE連携の起点になります。
             </div>
           </div>
 
@@ -1566,7 +2304,7 @@
         </section>
 
 
-        <section class="card">
+        <section class="card" id="familyCardSection" data-owner-section="family">
           <div class="card-header">
             <h2 class="card-title">
               <span class="icon">家</span>
@@ -1712,14 +2450,14 @@
           </div>
         </section>
 
-        <section class="card">
+        <section class="card" id="patientSearchCard" data-owner-section="search">
           <div class="card-header">
             <h2 class="card-title">
               <span class="icon">検</span>
               登録済み患者を検索
             </h2>
             <div class="card-subtitle">
-              Worker接続後はDB検索、未接続時はこの画面でローカル登録した患者を検索します。
+              登録済み患者を名前・電話番号・診察券番号で検索します。来院時の確認やLINE連携状況の確認に使います。
             </div>
           </div>
 
@@ -1743,14 +2481,14 @@
           </div>
         </section>
 
-        <section class="card">
+        <section class="card" data-owner-section="admin-code">
           <div class="card-header">
             <h2 class="card-title">
               <span class="icon">鍵</span>
               管理設定
             </h2>
             <div class="card-subtitle">
-              管理コードはWorker側で確認します。秘密キーやSupabaseキーはこの画面には保存しません。
+              管理コードやスタッフ名など、初期設定・管理者向けの項目です。普段は歯車の中に入れています。
             </div>
           </div>
 
@@ -1775,7 +2513,7 @@
       </div>
 
       <div class="stack">
-        <section class="card">
+        <section class="card" data-owner-section="result">
           <div class="card-header">
             <h2 class="card-title">
               <span class="icon">発</span>
@@ -1857,7 +2595,7 @@
           </div>
         </section>
 
-        <section class="card">
+        <section class="card" data-owner-section="selected">
           <div class="card-header">
             <h2 class="card-title">
               <span class="icon">編</span>
@@ -1907,7 +2645,7 @@
           </div>
         </section>
 
-        <section class="card">
+        <section class="card" data-owner-section="settings-preview">
           <div class="card-header">
             <h2 class="card-title">
               <span class="icon">確</span>
@@ -4011,7 +4749,7 @@
 
       function applyInitialConfig() {
         const systemName = getConfigValue("SYSTEM_NAME", "DPRO SHOP");
-        const title = "患者登録・医院設定";
+        const title = "患者管理・LINE診察券登録";
         const clinicName = getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
 
         document.title = `${systemName} | ${title}`;
@@ -4024,7 +4762,7 @@
 
         const pages = CONFIG.PAGES || {};
 
-        els.ownerLink.href = pages.OWNER ? `./${pages.OWNER}` : "./owner.html";
+        els.ownerLink.href = pages.OWNER ? `./${pages.OWNER}` : "./owner.html?v=3023g";
         els.scanLink.href = pages.SCAN ? `./${pages.SCAN}` : "./scan.html";
         els.memberLink.href = pages.MEMBER ? `./${pages.MEMBER}?t=demo` : "./member.html?t=demo";
 
@@ -4148,5 +4886,81 @@
       });
     })();
   </script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      function moveSectionToDrawer(selector, drawerBody) {
+        const section = document.querySelector(selector);
+        if (!section || !drawerBody) return;
+        drawerBody.appendChild(section);
+      }
+
+      function smoothTo(id) {
+        const el = $(id);
+        if (!el) return;
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function setupOwnerOptimizedAdmin() {
+        document.body.classList.add("owner-optimized");
+
+        const params = new URLSearchParams(location.search);
+        if (params.get("demo") === "1") {
+          const latest = $("latestShortcutPanel");
+          const roleBar = document.querySelector(".role-shortcut-bar");
+          if (latest) latest.style.display = "block";
+          if (roleBar) roleBar.style.display = "grid";
+        }
+
+        const drawer = $("ownerSettingDrawer");
+        const drawerBody = $("ownerSettingDrawerBody");
+        const openButton = $("ownerSettingsToggleButton");
+        const closeButton = $("ownerSettingsCloseButton");
+
+        moveSectionToDrawer('[data-owner-section="settings"]', drawerBody);
+        moveSectionToDrawer('[data-owner-section="special"]', drawerBody);
+        moveSectionToDrawer('[data-owner-section="admin-code"]', drawerBody);
+        moveSectionToDrawer('[data-owner-section="settings-preview"]', drawerBody);
+
+        function openDrawer() {
+          if (!drawer) return;
+          drawer.classList.add("is-open");
+          drawer.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        function closeDrawer() {
+          if (!drawer) return;
+          drawer.classList.remove("is-open");
+          const hero = $("ownerMainHero");
+          if (hero) hero.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        if (openButton) openButton.addEventListener("click", openDrawer);
+        if (closeButton) closeButton.addEventListener("click", closeDrawer);
+
+        document.querySelectorAll('a[href="#patientCreateCard"], a[href="#patientSearchCard"], a[href="#familyCardSection"], a[href="#csvImportPlan"]').forEach(function (a) {
+          a.addEventListener("click", function (event) {
+            const target = a.getAttribute("href").replace("#", "");
+            if (!target) return;
+            event.preventDefault();
+            smoothTo(target);
+          });
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupOwnerOptimizedAdmin);
+      } else {
+        setupOwnerOptimizedAdmin();
+      }
+    })();
+  </script>
+
 </body>
 </html>
