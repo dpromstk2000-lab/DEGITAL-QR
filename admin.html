@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | 患者登録・医院設定 LINE登録状況ボタン改善</title>
+  <title>DPRO SHOP | 患者登録・医院設定 現場画面導線追加</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1063,6 +1063,89 @@
     }
 
 
+  
+    .role-shortcut-bar {
+      margin: 14px 0 16px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .role-shortcut {
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
+      padding: 13px;
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 10px;
+      align-items: center;
+      color: #0f172a;
+      text-decoration: none;
+      min-height: 78px;
+    }
+
+    .role-shortcut:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 34px rgba(15, 23, 42, 0.10);
+    }
+
+    .role-shortcut-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .role-shortcut-icon.patient {
+      background: #dcfce7;
+      color: #064e3b;
+    }
+
+    .role-shortcut-icon.doctor {
+      background: #f5f3ff;
+      color: #5b21b6;
+    }
+
+    .role-shortcut-icon.admin {
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .role-shortcut-title {
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+    }
+
+    .role-shortcut-sub {
+      margin-top: 3px;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.45;
+      font-weight: 760;
+    }
+
+    @media (max-width: 980px) {
+      .role-shortcut-bar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .role-shortcut-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -1084,6 +1167,49 @@
         <button class="badge" id="demoModeButton" type="button">デモ登録</button>
       </div>
     </header>
+
+    <section class="role-shortcut-bar" aria-label="画面ショートカット">
+      <a class="role-shortcut" href="./member.html?t=demo-dental-patient-001">
+        <span class="role-shortcut-icon patient">患</span>
+        <span>
+          <span class="role-shortcut-title">患者さん画面</span>
+          <span class="role-shortcut-sub">LINE家族診察券</span>
+        </span>
+      </a>
+
+      <a class="role-shortcut" href="./scan-ipad.html">
+        <span class="role-shortcut-icon">受</span>
+        <span>
+          <span class="role-shortcut-title">受付iPad用</span>
+          <span class="role-shortcut-sub">QR受付・受付済み</span>
+        </span>
+      </a>
+
+      <a class="role-shortcut" href="./doctor.html">
+        <span class="role-shortcut-icon doctor">医</span>
+        <span>
+          <span class="role-shortcut-title">先生・院長用</span>
+          <span class="role-shortcut-sub">今日やること</span>
+        </span>
+      </a>
+
+      <a class="role-shortcut" href="./owner.html">
+        <span class="role-shortcut-icon">管</span>
+        <span>
+          <span class="role-shortcut-title">管理画面</span>
+          <span class="role-shortcut-sub">来院・LINE連携確認</span>
+        </span>
+      </a>
+
+      <a class="role-shortcut" href="./index-list.html">
+        <span class="role-shortcut-icon admin">覧</span>
+        <span>
+          <span class="role-shortcut-title">画面一覧</span>
+          <span class="role-shortcut-sub">全画面への入口</span>
+        </span>
+      </a>
+    </section>
+
 
     <section class="summary-grid">
       <div class="summary-card">
