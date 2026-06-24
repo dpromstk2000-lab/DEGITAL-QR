@@ -998,6 +998,95 @@
       box-shadow: 0 10px 22px rgba(37, 99, 235, 0.12);
     }
 
+  
+    .owner-line-link-box {
+      margin: 12px 0 0;
+      border-radius: 18px;
+      border: 1px solid #bbf7d0;
+      background:
+        radial-gradient(circle at 8% 14%, rgba(6, 199, 85, 0.14), transparent 34%),
+        linear-gradient(135deg, #f0fdf4, #ffffff);
+      padding: 12px;
+    }
+
+    .owner-line-link-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 9px;
+    }
+
+    .owner-line-link-title {
+      color: #064e3b;
+      font-size: 14px;
+      font-weight: 950;
+      line-height: 1.45;
+    }
+
+    .owner-line-link-sub {
+      margin-top: 3px;
+      color: #334155;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 750;
+    }
+
+    .owner-line-link-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 7px 9px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #064e3b;
+      font-size: 11px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .owner-line-link-pill.warning {
+      background: #fffbeb;
+      border-color: #fde68a;
+      color: #92400e;
+    }
+
+    .owner-line-link-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .owner-line-link-mini {
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(187, 247, 208, 0.8);
+      padding: 9px;
+    }
+
+    .owner-line-link-mini-label {
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 850;
+      line-height: 1.4;
+    }
+
+    .owner-line-link-mini-value {
+      margin-top: 3px;
+      color: #0f172a;
+      font-size: 12px;
+      font-weight: 950;
+      line-height: 1.45;
+      word-break: break-all;
+    }
+
+    @media (max-width: 860px) {
+      .owner-line-link-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -1354,6 +1443,34 @@
                 お母さん・保護者様のLINEに、子どもの診察券もまとめて表示できます。
               </div>
 
+
+              <div id="ownerLineLinkBox" class="owner-line-link-box">
+                <div class="owner-line-link-head">
+                  <div>
+                    <div class="owner-line-link-title" id="ownerLineLinkTitle">LINE公式との連携状態</div>
+                    <div class="owner-line-link-sub" id="ownerLineLinkSub">
+                      LINE公式から診察券を開くと、LINEアカウントと家族診察券が紐づきます。
+                    </div>
+                  </div>
+                  <div class="owner-line-link-pill warning" id="ownerLineLinkPill">確認中</div>
+                </div>
+
+                <div class="owner-line-link-grid">
+                  <div class="owner-line-link-mini">
+                    <div class="owner-line-link-mini-label">LINE名</div>
+                    <div class="owner-line-link-mini-value" id="ownerLineDisplayName">---</div>
+                  </div>
+                  <div class="owner-line-link-mini">
+                    <div class="owner-line-link-mini-label">LINE userId</div>
+                    <div class="owner-line-link-mini-value" id="ownerLineUserId">---</div>
+                  </div>
+                  <div class="owner-line-link-mini">
+                    <div class="owner-line-link-mini-label">診察券枚数</div>
+                    <div class="owner-line-link-mini-value" id="ownerLineCardCount">---</div>
+                  </div>
+                </div>
+              </div>
+
               <div class="family-demo-force-grid" id="familyDemoForceGrid"></div>
 
               <div class="family-demo-force-note">
@@ -1616,6 +1733,13 @@
         familyDemoForceSub: $("familyDemoForceSub"),
         familyDemoForceCount: $("familyDemoForceCount"),
         familyDemoForceGrid: $("familyDemoForceGrid"),
+        ownerLineLinkBox: $("ownerLineLinkBox"),
+        ownerLineLinkTitle: $("ownerLineLinkTitle"),
+        ownerLineLinkSub: $("ownerLineLinkSub"),
+        ownerLineLinkPill: $("ownerLineLinkPill"),
+        ownerLineDisplayName: $("ownerLineDisplayName"),
+        ownerLineUserId: $("ownerLineUserId"),
+        ownerLineCardCount: $("ownerLineCardCount"),
         lastVisit: $("lastVisit"),
         nextAppointment: $("nextAppointment"),
         patientMemo: $("patientMemo"),
@@ -2468,7 +2592,11 @@
             primary_guardian_name: "山田 花子",
             primary_guardian_phone: "090-0000-0000",
             line_user_id: "demo-line-mother-yamada",
-            line_display_name: "山田花子（お母さん）"
+            line_display_name: "山田花子（お母さん）",
+            line_link_status: "linked",
+            line_link_source: "demo",
+            line_linked_at: new Date().toISOString(),
+            line_last_seen_at: new Date().toISOString()
           },
           cards: [
             {
@@ -2570,6 +2698,7 @@
           active ? `選択中：${getFamilyCardLabel(active)} / ${active.patient_name}` : "",
           guardianName ? `保護者：${guardianName}` : "",
           family?.line_display_name ? `LINE名：${family.line_display_name}` : "",
+          family?.line_user_id ? `LINE連携：済み` : "LINE連携：未連携",
           `登録診察券：${safeCards.length}枚`
         ].filter(Boolean).join("\n");
       }
@@ -2828,6 +2957,38 @@
       window.__dproSwitchFamilyDemoPatient = switchFamilyDemoPatient;
 
 
+      function renderOwnerLineLinkStatus(family, cards) {
+        if (!els.ownerLineLinkBox) return;
+
+        const safeCards = Array.isArray(cards) ? cards : [];
+        const lineUserId = family?.line_user_id || "";
+        const lineDisplayName = family?.line_display_name || "";
+        const status = family?.line_link_status || (lineUserId ? "linked" : "unlinked");
+
+        els.ownerLineLinkBox.classList.remove("hidden");
+
+        if (status === "linked" || lineUserId) {
+          els.ownerLineLinkPill.textContent = "LINE連携済み";
+          els.ownerLineLinkPill.classList.remove("warning");
+
+          els.ownerLineLinkTitle.textContent = "LINE公式と家族診察券が紐づいています";
+          els.ownerLineLinkSub.textContent =
+            `${family?.family_name || "この家族"}は、${lineDisplayName || "保護者様"}のLINEから家族診察券を開けます。`;
+        } else {
+          els.ownerLineLinkPill.textContent = "LINE未連携";
+          els.ownerLineLinkPill.classList.add("warning");
+
+          els.ownerLineLinkTitle.textContent = "まだLINE公式とは未連携です";
+          els.ownerLineLinkSub.textContent =
+            "患者さんがLINE公式のリッチメニューから診察券を開くと、LINE userId と家族診察券を紐づけできます。";
+        }
+
+        els.ownerLineDisplayName.textContent = lineDisplayName || "未取得";
+        els.ownerLineUserId.textContent = lineUserId || "未連携";
+        els.ownerLineCardCount.textContent = `${safeCards.length || 0}枚`;
+      }
+
+
       function renderFamilyDemoForceBlock(patient) {
         if (!els.familyDemoForceBox || !els.familyDemoForceGrid) return;
 
@@ -2855,6 +3016,8 @@
           ? `保護者：${guardianName} 様のLINEに、家族の診察券がまとまっています。`
           : "保護者様のLINEに、家族の診察券がまとまっています。";
         els.familyDemoForceCount.textContent = `${cards.length}枚`;
+
+        renderOwnerLineLinkStatus(family, cards);
 
         els.familyDemoForceGrid.innerHTML = cards.map((card, index) => {
           const isActive =
