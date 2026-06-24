@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-24 オーナー実運用向け 患者管理メイン</title>
+  <title>DPRO SHOP | STEP 30-24B 患者管理メイン完成版 / 初期設定・休日設定</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1296,7 +1296,7 @@
   
     /* =========================================================
        STEP 30-24 OWNER OPERATION OPTIMIZE
-       オーナー実運用向け：患者管理メイン / 初期設定は歯車へ
+       オーナー実運用向け：患者管理メイン / 初期設定・休日設定は歯車へ
     ========================================================= */
 
     body.owner-optimized .latest-shortcut-panel,
@@ -1711,6 +1711,132 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-24B
+       患者管理メイン完成版：検索 → 選択中患者 → 新規登録 → 家族/LINE
+    ========================================================= */
+
+    .owner-work-grid {
+      margin: 0 0 16px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .owner-work-grid .card {
+      margin: 0 !important;
+    }
+
+    .owner-work-grid #patientSearchCard {
+      grid-column: 1 / -1;
+      border: 2px solid #86efac;
+      box-shadow: 0 18px 44px rgba(22, 163, 74, 0.10);
+    }
+
+    .owner-work-grid #selectedPatientCard {
+      grid-column: 1 / 2;
+      border: 2px solid #bfdbfe;
+    }
+
+    .owner-work-grid #patientCreateCard {
+      grid-column: 2 / 3;
+      border: 1px solid #dbeafe;
+    }
+
+    .owner-work-grid [data-owner-section="result"] {
+      grid-column: 2 / 3;
+    }
+
+    .owner-work-grid #familyCardSection {
+      grid-column: 1 / -1;
+      border: 1px solid #ddd6fe;
+    }
+
+    .owner-work-section-title {
+      grid-column: 1 / -1;
+      border-radius: 24px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 16px 18px;
+      display: grid;
+      gap: 5px;
+      box-shadow: 0 16px 38px rgba(15, 23, 42, 0.14);
+    }
+
+    .owner-work-section-title strong {
+      font-size: 20px;
+      line-height: 1.35;
+      letter-spacing: -0.045em;
+      font-weight: 950;
+    }
+
+    .owner-work-section-title span {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.65;
+      font-weight: 760;
+    }
+
+    .owner-flow-hint {
+      margin: 0 0 12px;
+      border-radius: 18px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 12px 13px;
+      font-size: 13px;
+      line-height: 1.75;
+      font-weight: 800;
+    }
+
+    .owner-setting-drawer-body #csvImportPlan {
+      margin: 0 !important;
+      box-shadow: none !important;
+      border-color: #fde68a !important;
+    }
+
+    .owner-setting-drawer-body #csvImportPlan .owner-csv-head {
+      background: linear-gradient(135deg, #fffbeb, #ffffff);
+    }
+
+    body.owner-optimized #csvImportPlan:not(.in-settings-drawer) {
+      display: none !important;
+    }
+
+    body.owner-optimized .layout {
+      display: none !important;
+    }
+
+    .owner-gear-button::after {
+      content: "初回・変更時";
+      margin-left: 4px;
+      border-radius: 999px;
+      padding: 3px 7px;
+      background: rgba(255,255,255,0.16);
+      color: #ffffff;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    @media (max-width: 980px) {
+      .owner-work-grid,
+      .owner-work-grid #patientSearchCard,
+      .owner-work-grid #selectedPatientCard,
+      .owner-work-grid #patientCreateCard,
+      .owner-work-grid [data-owner-section="result"],
+      .owner-work-grid #familyCardSection {
+        grid-column: auto;
+      }
+
+      .owner-work-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -1720,17 +1846,17 @@
     <section class="owner-main-hero" id="ownerMainHero">
       <div class="owner-main-hero-top">
         <div>
-          <div class="owner-main-kicker">STEP 30-24 / オーナー実運用向け</div>
-          <div class="owner-main-title">患者管理をメインにした<br>医院スタッフ用画面</div>
+          <div class="owner-main-kicker">STEP 30-24B / 患者管理メイン完成版</div>
+          <div class="owner-main-title">毎日使う<br>患者管理画面</div>
           <div class="owner-main-sub">
-            毎日使う「患者登録・検索・家族診察券・LINE連携」を前面に出しました。
-            医院設定や診療時間など、最初だけ使うものは右上の歯車にまとめています。
+            毎日使う「患者検索・選択中の患者確認・新規登録・家族診察券・LINE連携」を前面に出しました。
+            医院設定・休日設定・CSV一括取込など、最初だけ使うものは右上の歯車にまとめています。
           </div>
-          <div class="owner-mode-badge">患者管理メイン / 初期設定は歯車へ格納</div>
+          <div class="owner-mode-badge">患者管理メイン / 初期設定・休日設定は歯車へ格納</div>
         </div>
 
         <div class="owner-gear-area">
-          <button class="owner-gear-button" id="ownerSettingsToggleButton" type="button">⚙ 初期設定</button>
+          <button class="owner-gear-button" id="ownerSettingsToggleButton" type="button">⚙ 初期設定・休日設定</button>
           <a class="owner-mini-link" href="./owner.html?v=3023g">管理画面</a>
           <a class="owner-mini-link" href="./scan-ipad.html?v=3023h2">受付iPad</a>
           <a class="owner-mini-link" href="./doctor.html?v=3023d4">先生用</a>
@@ -1738,65 +1864,65 @@
       </div>
 
       <div class="owner-main-actions">
-        <a class="owner-action-card primary" href="#patientCreateCard">
+        <a class="owner-action-card primary" href="#patientSearchCard">
+          <strong>登録済み患者を検索</strong>
+          <span>来院時はまず患者さんを検索</span>
+        </a>
+
+        <a class="owner-action-card green" href="#selectedPatientCard">
+          <strong>選択中の患者情報</strong>
+          <span>診察券URL・LINE連携を確認</span>
+        </a>
+
+        <a class="owner-action-card" href="#patientCreateCard">
           <strong>新規患者登録</strong>
-          <span>診察券番号・氏名・次回予定を登録</span>
+          <span>初めての患者さんを登録</span>
         </a>
 
-        <a class="owner-action-card green" href="#patientSearchCard">
-          <strong>既存患者検索</strong>
-          <span>名前・電話番号・診察券番号で検索</span>
+        <a class="owner-action-card purple" href="#familyCardSection">
+          <strong>家族・LINE連携</strong>
+          <span>家族診察券と登録QRを確認</span>
         </a>
 
-        <a class="owner-action-card" href="#familyCardSection">
-          <strong>家族診察券</strong>
-          <span>お母さんのLINEに家族分をまとめる</span>
-        </a>
-
-        <a class="owner-action-card purple" href="#lineLinkStatusList">
-          <strong>LINE連携確認</strong>
-          <span>連携済み・未連携を確認</span>
-        </a>
-
-        <a class="owner-action-card orange" href="#csvImportPlan">
-          <strong>CSV一括取込</strong>
-          <span>導入時の既存顧客取込入口</span>
+        <a class="owner-action-card orange" href="#ownerSettingDrawer" id="ownerSettingsCardButton">
+          <strong>初期設定・休日設定</strong>
+          <span>医院設定・休日・CSV取込</span>
         </a>
       </div>
     </section>
 
     <section class="owner-daily-summary" id="ownerOperationSummary">
       <div class="owner-daily-card">
-        <div class="owner-daily-label">今日の主な作業</div>
-        <div class="owner-daily-value">患者管理</div>
-        <div class="owner-daily-note">日常業務はここから開始</div>
+        <div class="owner-daily-label">最初に使う</div>
+        <div class="owner-daily-value">検索</div>
+        <div class="owner-daily-note">来院時は登録済み患者の確認から</div>
       </div>
 
       <div class="owner-daily-card">
-        <div class="owner-daily-label">LINE連携</div>
-        <div class="owner-daily-value">後からOK</div>
-        <div class="owner-daily-note">既存患者は未連携で先に登録可能</div>
+        <div class="owner-daily-label">次に見る</div>
+        <div class="owner-daily-value">患者情報</div>
+        <div class="owner-daily-note">診察券URL・LINE連携を確認</div>
       </div>
 
       <div class="owner-daily-card">
-        <div class="owner-daily-label">医院設定</div>
+        <div class="owner-daily-label">新患対応</div>
+        <div class="owner-daily-value">登録</div>
+        <div class="owner-daily-note">初めての患者さんだけ登録</div>
+      </div>
+
+      <div class="owner-daily-card">
+        <div class="owner-daily-label">たまに使う</div>
         <div class="owner-daily-value">⚙</div>
-        <div class="owner-daily-note">初回設定・変更時だけ開く</div>
-      </div>
-
-      <div class="owner-daily-card">
-        <div class="owner-daily-label">営業デモ</div>
-        <div class="owner-daily-value">裏導線</div>
-        <div class="owner-daily-note">通常業務では目立たせない</div>
+        <div class="owner-daily-note">休日・CSV・医院設定は歯車へ</div>
       </div>
     </section>
 
     <section class="owner-setting-drawer" id="ownerSettingDrawer">
       <div class="owner-setting-drawer-head">
         <div>
-          <div class="owner-setting-drawer-title">⚙ 初期設定・医院設定</div>
+          <div class="owner-setting-drawer-title">⚙ 初期設定・休日設定</div>
           <div class="owner-setting-drawer-sub">
-            医院名・診療時間・休診日・管理コードなど、最初だけ使う設定をここにまとめています。
+            医院名・診療時間・通常休診日・臨時休業・特別営業日・管理コード・CSV一括取込をここにまとめています。
           </div>
         </div>
         <button class="owner-setting-close" id="ownerSettingsCloseButton" type="button">閉じる</button>
@@ -1807,7 +1933,7 @@
     <section class="owner-csv-card" id="csvImportPlan">
       <div class="owner-csv-head">
         <div>
-          <div class="owner-csv-title">導入時：既存患者CSV一括取込</div>
+          <div class="owner-csv-title">初期導入：既存患者CSV一括取込</div>
           <div class="owner-csv-sub">
             実際の導入では、既存患者を1人ずつ登録するのではなく、CSVでまとめて取り込める入口を用意します。
             取り込んだ患者は、最初はLINE未連携のまま保存し、後からLINE診察券で本人確認して紐づけます。
@@ -1894,7 +2020,7 @@
         <div class="brand-kicker" id="systemName">DPRO SHOP</div>
         <div class="brand-title" id="pageTitle">患者管理・LINE診察券登録</div>
         <div class="brand-sub" id="clinicNameText">
-          患者登録・家族診察券・LINE連携をまとめて管理
+          患者検索・登録・家族診察券・LINE連携をまとめて管理
         </div>
       </div>
 
@@ -2110,7 +2236,7 @@
               臨時休業・特別営業
             </h2>
             <div class="card-subtitle">
-              年末年始、研修休み、普段休みの日の午前だけ営業などを登録します。
+              臨時休業・特別営業日・午前だけ営業などを登録します。日常業務ではなく、必要な時だけ使います。
             </div>
           </div>
 
@@ -2189,7 +2315,7 @@
               新規患者登録
             </h1>
             <div class="card-subtitle">
-              毎日の中心業務です。新規患者・家族診察券・LINE連携の起点になります。
+              初めて来院した患者さんを登録します。登録後に診察券URLとLINE登録用QRを発行できます。
             </div>
           </div>
 
@@ -2311,7 +2437,7 @@
               家族・子ども診察券の追加
             </h2>
             <div class="card-subtitle">
-              お母さん・保護者様のLINEに、本人用と子ども用のデジタル診察券をまとめて追加する見せ場です。
+              先に患者さんを検索・選択してから、この患者さんの家族・子ども診察券やLINE登録QRを確認します。
             </div>
           </div>
 
@@ -2595,7 +2721,7 @@
           </div>
         </section>
 
-        <section class="card" data-owner-section="selected">
+        <section class="card" id="selectedPatientCard" data-owner-section="selected">
           <div class="card-header">
             <h2 class="card-title">
               <span class="icon">編</span>
@@ -2681,2216 +2807,6 @@
     (function () {
       "use strict";
 
-      const CONFIG = window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
-      const $ = (id) => document.getElementById(id);
-
-      const DAY_LABELS = ["日曜", "月曜", "火曜", "水曜", "木曜", "金曜", "土曜"];
-
-      const state = {
-        demoMode: false,
-        settingsLoaded: false,
-        clinic: {},
-        settings: {
-          appointment_max_months_ahead: 3,
-          appointment_min_days_ahead: 0,
-          appointment_slot_minutes: 15,
-          default_visit_duration_minutes: 30,
-          allow_same_day_appointment: true,
-          use_regular_hours: true,
-          use_special_days: true,
-          timezone: "Asia/Tokyo"
-        },
-        regularHours: [],
-        specialDays: [],
-        lastIssuedPatient: null,
-        selectedPatient: null,
-        lastLineLinkUrl: "",
-        lastLineLinkToken: "",
-        localPatients: []
-      };
-
-      const els = {
-        systemName: $("systemName"),
-        pageTitle: $("pageTitle"),
-        clinicNameText: $("clinicNameText"),
-        ownerLink: $("ownerLink"),
-        scanLink: $("scanLink"),
-        memberLink: $("memberLink"),
-        demoModeButton: $("demoModeButton"),
-
-        modeLabel: $("modeLabel"),
-        appointmentRangeLabel: $("appointmentRangeLabel"),
-        slotLabel: $("slotLabel"),
-        currentMemberNo: $("currentMemberNo"),
-
-        clinicNameInput: $("clinicNameInput"),
-        clinicKanaInput: $("clinicKanaInput"),
-        clinicPhoneInput: $("clinicPhoneInput"),
-        clinicAddressInput: $("clinicAddressInput"),
-        businessHoursNoteInput: $("businessHoursNoteInput"),
-        closedDaysNoteInput: $("closedDaysNoteInput"),
-        noticeTitleInput: $("noticeTitleInput"),
-        noticeBodyInput: $("noticeBodyInput"),
-        maxMonthsInput: $("maxMonthsInput"),
-        slotMinutesInput: $("slotMinutesInput"),
-        durationMinutesInput: $("durationMinutesInput"),
-        sameDayInput: $("sameDayInput"),
-        useSpecialDaysInput: $("useSpecialDaysInput"),
-        regularHoursBox: $("regularHoursBox"),
-        saveSettingsButton: $("saveSettingsButton"),
-        loadSettingsButton: $("loadSettingsButton"),
-        settingsMessage: $("settingsMessage"),
-        settingsPreview: $("settingsPreview"),
-
-        specialDateInput: $("specialDateInput"),
-        specialTypeInput: $("specialTypeInput"),
-        specialTitleInput: $("specialTitleInput"),
-        specialNoteInput: $("specialNoteInput"),
-        specialOpen1Input: $("specialOpen1Input"),
-        specialClose1Input: $("specialClose1Input"),
-        specialOpen2Input: $("specialOpen2Input"),
-        specialClose2Input: $("specialClose2Input"),
-        saveSpecialDayButton: $("saveSpecialDayButton"),
-        loadSpecialDaysButton: $("loadSpecialDaysButton"),
-        deleteSpecialDayButton: $("deleteSpecialDayButton"),
-        specialMessage: $("specialMessage"),
-        specialDaysList: $("specialDaysList"),
-
-        memberNoInput: $("memberNoInput"),
-        statusInput: $("statusInput"),
-        generateMemberNoButton: $("generateMemberNoButton"),
-        patientNameInput: $("patientNameInput"),
-        patientKanaInput: $("patientKanaInput"),
-        phoneInput: $("phoneInput"),
-        birthDateInput: $("birthDateInput"),
-        genderInput: $("genderInput"),
-        lineUserIdInput: $("lineUserIdInput"),
-        lineDisplayNameInput: $("lineDisplayNameInput"),
-        nextDateInput: $("nextDateInput"),
-        nextTimeInput: $("nextTimeInput"),
-        appointmentMessage: $("appointmentMessage"),
-        nextMemoInput: $("nextMemoInput"),
-        patientMemoInput: $("patientMemoInput"),
-        internalMemoInput: $("internalMemoInput"),
-        createPatientButton: $("createPatientButton"),
-        clearFormButton: $("clearFormButton"),
-        fillDemoFormButton: $("fillDemoFormButton"),
-        createMessage: $("createMessage"),
-
-        familyGuardianNameInput: $("familyGuardianNameInput"),
-        familyNameInput: $("familyNameInput"),
-        familyDemoResetButton: $("familyDemoResetButton"),
-        familyLoadButton: $("familyLoadButton"),
-        familyOpenMemberButton: $("familyOpenMemberButton"),
-        familyMessage: $("familyMessage"),
-        familyResultBox: $("familyResultBox"),
-        lineLinkIssueButton: $("lineLinkIssueButton"),
-        lineLinkCopyButton: $("lineLinkCopyButton"),
-        lineLinkOpenButton: $("lineLinkOpenButton"),
-        lineLinkMessage: $("lineLinkMessage"),
-        lineLinkResult: $("lineLinkResult"),
-        lineLinkQrBox: $("lineLinkQrBox"),
-        lineLinkUrlText: $("lineLinkUrlText"),
-        lineLinkTokenText: $("lineLinkTokenText"),
-        lineLinkStatusLoadButton: $("lineLinkStatusLoadButton"),
-        lineLinkStatusList: $("lineLinkStatusList"),
-
-        searchInput: $("searchInput"),
-        searchButton: $("searchButton"),
-        showLocalButton: $("showLocalButton"),
-        searchMessage: $("searchMessage"),
-        patientList: $("patientList"),
-
-        staffNameInput: $("staffNameInput"),
-        adminCodeInput: $("adminCodeInput"),
-        saveAdminCodeButton: $("saveAdminCodeButton"),
-        adminCodeMessage: $("adminCodeMessage"),
-
-        emptyResultBox: $("emptyResultBox"),
-        resultArea: $("resultArea"),
-        resultPatientName: $("resultPatientName"),
-        resultPatientKana: $("resultPatientKana"),
-        resultMemberNo: $("resultMemberNo"),
-        resultStatus: $("resultStatus"),
-        resultClinicName: $("resultClinicName"),
-        qrImage: $("qrImage"),
-        qrCanvas: $("qrCanvas"),
-        qrFallbackImage: $("qrFallbackImage"),
-        qrTextFallback: $("qrTextFallback"),
-        memberUrlText: $("memberUrlText"),
-        qrTokenText: $("qrTokenText"),
-        copyMemberUrlButton: $("copyMemberUrlButton"),
-        openMemberPageButton: $("openMemberPageButton"),
-        printCardButton: $("printCardButton"),
-        resultPhone: $("resultPhone"),
-        resultNextAppointment: $("resultNextAppointment"),
-        resultInternalMemo: $("resultInternalMemo"),
-        resultMessage: $("resultMessage"),
-
-        emptySelectedBox: $("emptySelectedBox"),
-        selectedArea: $("selectedArea"),
-        selectedPatientName: $("selectedPatientName"),
-        selectedMemberNo: $("selectedMemberNo"),
-        selectedPhone: $("selectedPhone"),
-        selectedMemberUrl: $("selectedMemberUrl"),
-        copySelectedUrlButton: $("copySelectedUrlButton"),
-        openSelectedMemberButton: $("openSelectedMemberButton"),
-        loadSelectedIntoFormButton: $("loadSelectedIntoFormButton"),
-        selectedMessage: $("selectedMessage"),
-
-        debugBox: $("debugBox"),
-        footerClinicName: $("footerClinicName")
-      };
-
-      function getConfigValue(path, fallback) {
-        try {
-          return path.split(".").reduce((obj, key) => obj && obj[key], CONFIG) ?? fallback;
-        } catch (error) {
-          return fallback;
-        }
-      }
-
-      function escapeHtml(value) {
-        if (CONFIG.utils && typeof CONFIG.utils.escapeHtml === "function") {
-          return CONFIG.utils.escapeHtml(value);
-        }
-
-        return String(value ?? "")
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
-      }
-
-      function nl2br(value) {
-        if (CONFIG.utils && typeof CONFIG.utils.nl2br === "function") {
-          return CONFIG.utils.nl2br(value);
-        }
-
-        return escapeHtml(value).replace(/\n/g, "<br>");
-      }
-
-      function showMessage(target, type, text) {
-        target.className = `message ${type || "info"} show`;
-        target.innerHTML = nl2br(text || "");
-      }
-
-      function clearMessage(target) {
-        target.className = "message";
-        target.innerHTML = "";
-      }
-
-      function setButtonLoading(button, loading, text) {
-        if (!button) return;
-
-        if (loading) {
-          button.dataset.originalText = button.textContent;
-          button.textContent = text || "処理中...";
-          button.disabled = true;
-        } else {
-          button.textContent = button.dataset.originalText || button.textContent;
-          button.disabled = false;
-        }
-      }
-
-      function getTodayJST() {
-        if (CONFIG.utils && typeof CONFIG.utils.getTodayJST === "function") {
-          return CONFIG.utils.getTodayJST();
-        }
-
-        const now = new Date();
-        const formatter = new Intl.DateTimeFormat("ja-JP", {
-          timeZone: "Asia/Tokyo",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit"
-        });
-
-        const parts = formatter.formatToParts(now);
-        const y = parts.find((p) => p.type === "year").value;
-        const m = parts.find((p) => p.type === "month").value;
-        const d = parts.find((p) => p.type === "day").value;
-        return `${y}-${m}-${d}`;
-      }
-
-      function addMonths(dateText, months) {
-        const base = new Date(`${dateText}T00:00:00+09:00`);
-        const originalDate = base.getDate();
-        base.setMonth(base.getMonth() + Number(months || 0));
-        if (base.getDate() < originalDate) base.setDate(0);
-        return toDateText(base);
-      }
-
-      function addDays(dateText, days) {
-        const base = new Date(`${dateText}T00:00:00+09:00`);
-        base.setDate(base.getDate() + Number(days || 0));
-        return toDateText(base);
-      }
-
-      function toDateText(date) {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, "0");
-        const d = String(date.getDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
-      }
-
-      function formatDate(dateText) {
-        if (CONFIG.utils && typeof CONFIG.utils.formatDate === "function") {
-          return CONFIG.utils.formatDate(dateText);
-        }
-
-        if (!dateText) return "未設定";
-        const date = new Date(`${dateText}T00:00:00+09:00`);
-        if (Number.isNaN(date.getTime())) return dateText;
-
-        return new Intl.DateTimeFormat("ja-JP", {
-          timeZone: "Asia/Tokyo",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          weekday: "short"
-        }).format(date);
-      }
-
-      function formatTime(timeText) {
-        if (!timeText) return "";
-        const parts = String(timeText).split(":");
-        if (parts.length < 2) return timeText;
-        return `${parts[0].padStart(2, "0")}:${parts[1]}`;
-      }
-
-      function timeToMinutes(time) {
-        if (!time) return null;
-        const parts = String(time).split(":");
-        if (parts.length < 2) return null;
-        return Number(parts[0]) * 60 + Number(parts[1]);
-      }
-
-      function minutesToTime(minutes) {
-        const h = Math.floor(minutes / 60);
-        const m = minutes % 60;
-        return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-      }
-
-      function buildTimeOptions(stepMinutes) {
-        const step = Number(stepMinutes || state.settings.appointment_slot_minutes || 15);
-        const safeStep = [5, 10, 15, 20, 30, 60].includes(step) ? step : 15;
-        const options = [];
-
-        for (let minutes = 0; minutes < 24 * 60; minutes += safeStep) {
-          options.push(minutesToTime(minutes));
-        }
-
-        return options;
-      }
-
-      function populateSpecialTimeSelects() {
-        const step = Number(els.slotMinutesInput?.value || state.settings.appointment_slot_minutes || 15);
-        const options = buildTimeOptions(step);
-        const targets = [
-          els.specialOpen1Input,
-          els.specialClose1Input,
-          els.specialOpen2Input,
-          els.specialClose2Input
-        ];
-
-        targets.forEach((select) => {
-          if (!select) return;
-
-          const current = formatTime(select.value || "");
-          select.innerHTML =
-            '<option value="">未設定</option>' +
-            options.map((time) => `<option value="${escapeHtml(time)}">${escapeHtml(time)}</option>`).join("");
-
-          if (current && options.includes(current)) {
-            select.value = current;
-          }
-        });
-      }
-
-      function buildFallbackSlotsForDate(dateText) {
-        const day = new Date(`${dateText}T00:00:00+09:00`).getDay();
-        const row = state.regularHours.find((item) => Number(item.day_of_week) === day);
-        const slots = [];
-        const step = Number(state.settings.appointment_slot_minutes || 15);
-        const duration = Number(state.settings.default_visit_duration_minutes || 30);
-
-        if (!row || row.is_closed) return slots;
-
-        [
-          [row.open_time_1, row.close_time_1],
-          [row.open_time_2, row.close_time_2]
-        ].forEach(([open, close]) => {
-          const start = timeToMinutes(open);
-          const end = timeToMinutes(close);
-          if (start === null || end === null || start >= end) return;
-
-          for (let t = start; t <= end - duration; t += step) {
-            slots.push(minutesToTime(t));
-          }
-        });
-
-        return slots;
-      }
-
-      function buildNextAppointmentText(dateText, timeText, memo) {
-        if (CONFIG.utils && typeof CONFIG.utils.buildNextAppointmentText === "function") {
-          return CONFIG.utils.buildNextAppointmentText(dateText, timeText, memo);
-        }
-
-        if (!dateText && !timeText && !memo) return "未設定";
-
-        return [
-          dateText ? formatDate(dateText) : "",
-          timeText ? formatTime(timeText) : "",
-          memo || ""
-        ].filter(Boolean).join(" ");
-      }
-
-      function normalizePhone(value) {
-        if (CONFIG.utils && typeof CONFIG.utils.normalizePhone === "function") {
-          return CONFIG.utils.normalizePhone(value);
-        }
-
-        return String(value || "").replace(/[^\d]/g, "").trim();
-      }
-
-      function getStatusLabel(status) {
-        if (CONFIG.utils && typeof CONFIG.utils.getStatusLabel === "function") {
-          return CONFIG.utils.getStatusLabel(status);
-        }
-
-        const map = getConfigValue("PATIENT_STATUS", {});
-        return map[status]?.label || status || "未設定";
-      }
-
-      async function copyText(text) {
-        if (CONFIG.utils && typeof CONFIG.utils.copyText === "function") {
-          return CONFIG.utils.copyText(text);
-        }
-
-        const value = String(text || "");
-
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(value);
-          return true;
-        }
-
-        const textarea = document.createElement("textarea");
-        textarea.value = value;
-        textarea.style.position = "fixed";
-        textarea.style.left = "-9999px";
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        const result = document.execCommand("copy");
-        document.body.removeChild(textarea);
-        return result;
-      }
-
-      async function apiFetch(endpoint, options) {
-        if (CONFIG.utils && typeof CONFIG.utils.apiFetch === "function") {
-          return CONFIG.utils.apiFetch(endpoint, options);
-        }
-
-        throw new Error("API設定がまだ読み込まれていません。");
-      }
-
-      function getAdminCode() {
-        if (CONFIG.utils && typeof CONFIG.utils.getAdminCode === "function") {
-          return CONFIG.utils.getAdminCode();
-        }
-
-        try {
-          return localStorage.getItem(getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code")) || "";
-        } catch (error) {
-          return "";
-        }
-      }
-
-      function setAdminCode(code) {
-        if (CONFIG.utils && typeof CONFIG.utils.setAdminCode === "function") {
-          CONFIG.utils.setAdminCode(code);
-          return;
-        }
-
-        try {
-          localStorage.setItem(getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code"), code || "");
-        } catch (error) {
-          console.warn(error);
-        }
-      }
-
-      function getStaffName() {
-        if (CONFIG.utils && typeof CONFIG.utils.getStaffName === "function") {
-          return CONFIG.utils.getStaffName();
-        }
-
-        try {
-          return localStorage.getItem(getConfigValue("STORAGE_KEYS.STAFF_NAME", "dpro_dental_qr_staff_name")) || "受付スタッフ";
-        } catch (error) {
-          return "受付スタッフ";
-        }
-      }
-
-      function setStaffName(name) {
-        if (CONFIG.utils && typeof CONFIG.utils.setStaffName === "function") {
-          CONFIG.utils.setStaffName(name);
-          return;
-        }
-
-        try {
-          localStorage.setItem(getConfigValue("STORAGE_KEYS.STAFF_NAME", "dpro_dental_qr_staff_name"), name || "受付スタッフ");
-        } catch (error) {
-          console.warn(error);
-        }
-      }
-
-      function randomToken() {
-        const array = new Uint8Array(24);
-
-        if (window.crypto && window.crypto.getRandomValues) {
-          window.crypto.getRandomValues(array);
-          return Array.from(array).map((n) => n.toString(16).padStart(2, "0")).join("");
-        }
-
-        return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-      }
-
-      function generateMemberNo() {
-        const prefix = getConfigValue("ADMIN_SCREEN.MEMBER_NO_PREFIX", "D");
-        const length = getConfigValue("ADMIN_SCREEN.AUTO_MEMBER_NO_LENGTH", 5);
-
-        if (CONFIG.utils && typeof CONFIG.utils.generateTempMemberNo === "function") {
-          return CONFIG.utils.generateTempMemberNo(prefix, length);
-        }
-
-        const now = new Date();
-        const y = String(now.getFullYear()).slice(-2);
-        const m = String(now.getMonth() + 1).padStart(2, "0");
-        const d = String(now.getDate()).padStart(2, "0");
-        const rand = String(Math.floor(Math.random() * 10 ** length)).padStart(length, "0");
-
-        return `${prefix}${y}${m}${d}${rand}`;
-      }
-
-      function buildMemberUrl(token) {
-        const pages = CONFIG.PAGES || {};
-
-        if (pages && typeof pages.getMemberUrl === "function") {
-          return pages.getMemberUrl(token);
-        }
-
-        const base =
-          pages.BASE_PUBLIC_URL ||
-          window.location.origin + window.location.pathname.replace(/\/admin\.html.*$/, "");
-
-        return `${String(base).replace(/\/$/, "")}/member.html?t=${encodeURIComponent(token || "")}`;
-      }
-
-      function getLocalPatients() {
-        try {
-          const key = "dpro_dental_qr_local_patients";
-          const text = localStorage.getItem(key);
-          const rows = text ? JSON.parse(text) : [];
-          return Array.isArray(rows) ? rows : [];
-        } catch (error) {
-          return [];
-        }
-      }
-
-      function saveLocalPatients(rows) {
-        try {
-          const key = "dpro_dental_qr_local_patients";
-          localStorage.setItem(key, JSON.stringify(rows || []));
-        } catch (error) {
-          console.warn("ローカル患者保存に失敗しました。", error);
-        }
-      }
-
-      function normalizePatient(raw) {
-        const patient = raw || {};
-
-        return {
-          id: patient.id || `local-${Date.now()}`,
-          clinic_id: patient.clinic_id || "",
-          qr_token: patient.qr_token || patient.token || randomToken(),
-          member_no: patient.member_no || patient.memberNo || patient.card_no || "---",
-          patient_name: patient.patient_name || patient.name || patient.patientName || "患者さま",
-          patient_name_kana: patient.patient_name_kana || patient.kana || patient.patientNameKana || "",
-          phone: patient.phone || "",
-          email: patient.email || "",
-          birth_date: patient.birth_date || "",
-          gender: patient.gender || "",
-          line_user_id: patient.line_user_id || "",
-          line_display_name: patient.line_display_name || patient.lineDisplayName || "",
-          status: patient.status || "active",
-          card_enabled: patient.card_enabled !== false,
-          first_visit_date: patient.first_visit_date || "",
-          last_visit_at: patient.last_visit_at || "",
-          last_visit_type: patient.last_visit_type || "",
-          next_appointment_date: patient.next_appointment_date || patient.nextAppointmentDate || "",
-          next_appointment_time: patient.next_appointment_time || patient.nextAppointmentTime || "",
-          next_appointment_memo: patient.next_appointment_memo || patient.nextAppointmentMemo || "",
-          patient_memo: patient.patient_memo || patient.patientMemo || "",
-          internal_memo: patient.internal_memo || patient.internalMemo || "",
-          visit_count: patient.visit_count ?? patient.visitCount ?? 0,
-          created_at: patient.created_at || new Date().toISOString(),
-          updated_at: patient.updated_at || new Date().toISOString()
-        };
-      }
-
-      function getFormData() {
-        return {
-          clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-
-          member_no: els.memberNoInput.value.trim(),
-          patient_name: els.patientNameInput.value.trim(),
-          patient_name_kana: els.patientKanaInput.value.trim(),
-
-          phone: els.phoneInput.value.trim(),
-          birth_date: els.birthDateInput.value || null,
-          gender: els.genderInput.value || null,
-
-          line_user_id: els.lineUserIdInput.value.trim() || null,
-          line_display_name: els.lineDisplayNameInput.value.trim(),
-
-          status: els.statusInput.value || getConfigValue("ADMIN_SCREEN.DEFAULT_STATUS", "active"),
-
-          next_appointment_date: els.nextDateInput.value || null,
-          next_appointment_time: els.nextTimeInput.value || null,
-          next_appointment_memo: els.nextMemoInput.value.trim(),
-
-          patient_memo: els.patientMemoInput.value.trim(),
-          internal_memo: els.internalMemoInput.value.trim(),
-
-          card_enabled: true,
-          created_by_staff: getStaffName()
-        };
-      }
-
-      function validateForm(data) {
-        if (!data.member_no) return "診察券番号を入力してください。";
-        if (!data.patient_name) return "患者名を入力してください。";
-        if (data.next_appointment_time && !data.next_appointment_date) return "次回予約時間を入れる場合は、次回予約日も選択してください。";
-        return "";
-      }
-
-      function setFormData(patient) {
-        els.memberNoInput.value = patient.member_no || "";
-        els.statusInput.value = patient.status || "active";
-        els.patientNameInput.value = patient.patient_name || "";
-        els.patientKanaInput.value = patient.patient_name_kana || "";
-        els.phoneInput.value = patient.phone || "";
-        els.birthDateInput.value = patient.birth_date || "";
-        els.genderInput.value = patient.gender || "";
-        els.lineUserIdInput.value = patient.line_user_id || "";
-        els.lineDisplayNameInput.value = patient.line_display_name || "";
-        els.nextDateInput.value = patient.next_appointment_date || "";
-        els.nextMemoInput.value = patient.next_appointment_memo || "";
-        els.patientMemoInput.value = patient.patient_memo || "";
-        els.internalMemoInput.value = patient.internal_memo || "";
-        updateCurrentMemberNo();
-
-        if (patient.next_appointment_date) {
-          loadAppointmentOptions(patient.next_appointment_date, patient.next_appointment_time ? formatTime(patient.next_appointment_time) : "");
-        }
-      }
-
-      function clearForm() {
-        els.memberNoInput.value = generateMemberNo();
-        els.statusInput.value = getConfigValue("ADMIN_SCREEN.DEFAULT_STATUS", "active");
-        els.patientNameInput.value = "";
-        els.patientKanaInput.value = "";
-        els.phoneInput.value = "";
-        els.birthDateInput.value = "";
-        els.genderInput.value = "";
-        els.lineUserIdInput.value = "";
-        els.lineDisplayNameInput.value = "";
-        els.nextDateInput.value = "";
-        els.nextTimeInput.innerHTML = '<option value="">日付を選択してください</option>';
-        els.nextMemoInput.value = "";
-        els.patientMemoInput.value = "";
-        els.internalMemoInput.value = "";
-
-        clearMessage(els.createMessage);
-        clearMessage(els.appointmentMessage);
-        updateCurrentMemberNo();
-      }
-
-      async function fillDemoForm() {
-        const today = getTodayJST();
-        const candidate = findFirstAvailableDate(today);
-
-        els.memberNoInput.value = generateMemberNo();
-        els.statusInput.value = "active";
-        els.patientNameInput.value = "山田 太郎";
-        els.patientKanaInput.value = "ヤマダ タロウ";
-        els.phoneInput.value = "090-0000-0000";
-        els.birthDateInput.value = "1985-06-01";
-        els.genderInput.value = "male";
-        els.lineUserIdInput.value = "";
-        els.lineDisplayNameInput.value = "Taro Yamada";
-        els.nextDateInput.value = candidate;
-        els.nextMemoInput.value = "定期検診・クリーニング予定";
-        els.patientMemoInput.value = "次回来院時はQR診察券を受付でご提示ください。";
-        els.internalMemoInput.value = "デモ登録用の患者です。受付QR読み取りとLINE文面コピーの説明に使えます。";
-
-        updateCurrentMemberNo();
-        await loadAppointmentOptions(candidate, "10:30");
-        showMessage(els.createMessage, "info", "デモ入力を反映しました。登録ボタンでQR診察券を発行できます。");
-      }
-
-      function findFirstAvailableDate(startDate) {
-        const min = els.nextDateInput.min || startDate;
-        const max = els.nextDateInput.max || addMonths(startDate, 3);
-        let date = min;
-
-        for (let i = 0; i < 100; i += 1) {
-          if (date > max) break;
-          const day = new Date(`${date}T00:00:00+09:00`).getDay();
-          const row = state.regularHours.find((item) => Number(item.day_of_week) === day);
-          if (row && !row.is_closed) return date;
-          date = addDays(date, 1);
-        }
-
-        return min;
-      }
-
-      function populateStatusSelect() {
-        const statuses = getConfigValue("PATIENT_STATUS", {});
-
-        els.statusInput.innerHTML = Object.entries(statuses).map(([key, item]) => {
-          return `<option value="${escapeHtml(key)}">${escapeHtml(item.label || key)}</option>`;
-        }).join("");
-
-        if (!els.statusInput.innerHTML) {
-          els.statusInput.innerHTML = `
-            <option value="active">通院中</option>
-            <option value="temporary">仮登録</option>
-            <option value="needs_followup">要フォロー</option>
-            <option value="paused">一時停止</option>
-            <option value="inactive">休眠</option>
-            <option value="blocked">利用停止</option>
-          `;
-        }
-
-        els.statusInput.value = getConfigValue("ADMIN_SCREEN.DEFAULT_STATUS", "active");
-      }
-
-      function renderRegularHoursInputs() {
-        const defaults = [
-          { day_of_week: 0, is_closed: true, open_time_1: "", close_time_1: "", open_time_2: "", close_time_2: "", display_label: "日曜" },
-          { day_of_week: 1, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00", display_label: "月曜" },
-          { day_of_week: 2, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00", display_label: "火曜" },
-          { day_of_week: 3, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00", display_label: "水曜" },
-          { day_of_week: 4, is_closed: true, open_time_1: "", close_time_1: "", open_time_2: "", close_time_2: "", display_label: "木曜" },
-          { day_of_week: 5, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "14:30", close_time_2: "18:00", display_label: "金曜" },
-          { day_of_week: 6, is_closed: false, open_time_1: "09:00", close_time_1: "13:00", open_time_2: "", close_time_2: "", display_label: "土曜" }
-        ];
-
-        const rows = DAY_LABELS.map((_, day) => {
-          const existing = state.regularHours.find((item) => Number(item.day_of_week) === day);
-          return Object.assign({}, defaults[day], existing || {});
-        });
-
-        state.regularHours = rows;
-
-        els.regularHoursBox.innerHTML = rows.map((row) => {
-          const day = Number(row.day_of_week);
-          return `
-            <div class="hours-row" data-day="${day}">
-              <div class="day-label">${escapeHtml(DAY_LABELS[day])}</div>
-              <label class="check-field">
-                <input type="checkbox" data-hour-field="is_closed" ${row.is_closed ? "checked" : ""} />
-                休診
-              </label>
-
-              <div class="field">
-                <label>午前開始</label>
-                <input type="time" step="900" data-hour-field="open_time_1" value="${escapeHtml(formatTime(row.open_time_1 || ""))}" />
-              </div>
-
-              <div class="field">
-                <label>午前終了</label>
-                <input type="time" step="900" data-hour-field="close_time_1" value="${escapeHtml(formatTime(row.close_time_1 || ""))}" />
-              </div>
-
-              <div class="field">
-                <label>午後開始</label>
-                <input type="time" step="900" data-hour-field="open_time_2" value="${escapeHtml(formatTime(row.open_time_2 || ""))}" />
-              </div>
-
-              <div class="field">
-                <label>午後終了</label>
-                <input type="time" step="900" data-hour-field="close_time_2" value="${escapeHtml(formatTime(row.close_time_2 || ""))}" />
-              </div>
-            </div>
-          `;
-        }).join("");
-
-        els.regularHoursBox.querySelectorAll("[data-hour-field='is_closed']").forEach((checkbox) => {
-          checkbox.addEventListener("change", () => {
-            const row = checkbox.closest(".hours-row");
-            row.querySelectorAll("input[type='time']").forEach((input) => {
-              input.disabled = checkbox.checked;
-            });
-          });
-          checkbox.dispatchEvent(new Event("change"));
-        });
-      }
-
-      function collectRegularHoursFromForm() {
-        const rows = [];
-
-        els.regularHoursBox.querySelectorAll(".hours-row").forEach((row) => {
-          const day = Number(row.dataset.day);
-          const isClosed = row.querySelector("[data-hour-field='is_closed']").checked;
-          const get = (field) => row.querySelector(`[data-hour-field='${field}']`)?.value || "";
-
-          rows.push({
-            day_of_week: day,
-            is_closed: isClosed,
-            open_time_1: isClosed ? null : get("open_time_1"),
-            close_time_1: isClosed ? null : get("close_time_1"),
-            open_time_2: isClosed ? null : get("open_time_2"),
-            close_time_2: isClosed ? null : get("close_time_2"),
-            display_label: `${DAY_LABELS[day]} ${isClosed ? "休診" : "診療"}`,
-            note: ""
-          });
-        });
-
-        return rows;
-      }
-
-      function applySettingsToForm(data) {
-        const clinic = data?.clinic || {};
-        const settings = data?.settings || {};
-        const regularHours = data?.regular_hours || [];
-        const specialDays = data?.special_days || [];
-
-        state.clinic = clinic;
-        state.settings = Object.assign({}, state.settings, settings);
-        state.regularHours = regularHours;
-        state.specialDays = specialDays;
-        state.settingsLoaded = true;
-
-        els.clinicNameInput.value = clinic.clinic_name || getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
-        els.clinicKanaInput.value = clinic.clinic_name_kana || getConfigValue("CLINIC.NAME_KANA", "");
-        els.clinicPhoneInput.value = clinic.phone || "";
-        els.clinicAddressInput.value = clinic.address || "";
-        els.businessHoursNoteInput.value = clinic.business_hours_note || "";
-        els.closedDaysNoteInput.value = clinic.closed_days_note || "";
-        els.noticeTitleInput.value = clinic.notice_title || "";
-        els.noticeBodyInput.value = clinic.notice_body || "";
-
-        els.maxMonthsInput.value = String(state.settings.appointment_max_months_ahead || 3);
-        els.slotMinutesInput.value = String(state.settings.appointment_slot_minutes || 15);
-        els.durationMinutesInput.value = String(state.settings.default_visit_duration_minutes || 30);
-        els.sameDayInput.checked = state.settings.allow_same_day_appointment !== false;
-        els.useSpecialDaysInput.checked = state.settings.use_special_days !== false;
-
-        const rules = data?.appointment_rules || {};
-        const minDate = rules.min_date || calculateLocalMinDate();
-        const maxDate = rules.max_date || addMonths(getTodayJST(), Number(state.settings.appointment_max_months_ahead || 3));
-
-        els.nextDateInput.min = minDate;
-        els.nextDateInput.max = maxDate;
-        els.specialDateInput.min = getTodayJST();
-        els.specialDateInput.max = addMonths(getTodayJST(), 12);
-
-        renderRegularHoursInputs();
-        populateSpecialTimeSelects();
-        renderSpecialDaysList();
-        renderSettingsPreview();
-        updateSummary();
-      }
-
-      function calculateLocalMinDate() {
-        return state.settings.allow_same_day_appointment === false ? addDays(getTodayJST(), 1) : getTodayJST();
-      }
-
-      async function loadSettings() {
-        setButtonLoading(els.loadSettingsButton, true, "読み込み中...");
-        clearMessage(els.settingsMessage);
-
-        try {
-          const data = await apiFetch("/api/admin/settings", {
-            method: "GET",
-            params: {
-              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo")
-            }
-          });
-
-          applySettingsToForm(data);
-          showMessage(els.settingsMessage, "success", "医院設定を読み込みました。");
-        } catch (error) {
-          console.warn(error);
-          applySettingsToForm({
-            clinic: {
-              clinic_name: getConfigValue("CLINIC.NAME", "DPRO歯科クリニック"),
-              clinic_name_kana: getConfigValue("CLINIC.NAME_KANA", ""),
-              phone: getConfigValue("CLINIC.PHONE", ""),
-              address: getConfigValue("CLINIC.ADDRESS", ""),
-              business_hours_note: getConfigValue("CLINIC.BUSINESS_HOURS_NOTE", ""),
-              closed_days_note: getConfigValue("CLINIC.CLOSED_DAYS_NOTE", ""),
-              notice_title: getConfigValue("CLINIC.NOTICE_TITLE", "QR診察券のご案内"),
-              notice_body: getConfigValue("CLINIC.NOTICE_BODY", "")
-            },
-            settings: state.settings,
-            regular_hours: state.regularHours.length ? state.regularHours : []
-          });
-          showMessage(
-            els.settingsMessage,
-            "warning",
-            "医院設定APIを読み込めなかったため、画面内の初期設定で表示しています。Workerと管理コードを確認してください。\n\n詳細：" + (error.message || error)
-          );
-        } finally {
-          setButtonLoading(els.loadSettingsButton, false);
-        }
-      }
-
-      async function saveClinicSettings() {
-        setButtonLoading(els.saveSettingsButton, true, "保存中...");
-        clearMessage(els.settingsMessage);
-
-        const body = {
-          clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-          clinic: {
-            clinic_name: els.clinicNameInput.value.trim(),
-            clinic_name_kana: els.clinicKanaInput.value.trim(),
-            phone: els.clinicPhoneInput.value.trim(),
-            address: els.clinicAddressInput.value.trim(),
-            business_hours_note: els.businessHoursNoteInput.value.trim(),
-            closed_days_note: els.closedDaysNoteInput.value.trim(),
-            notice_title: els.noticeTitleInput.value.trim(),
-            notice_body: els.noticeBodyInput.value.trim()
-          },
-          settings: {
-            appointment_max_months_ahead: Number(els.maxMonthsInput.value || 3),
-            appointment_min_days_ahead: 0,
-            appointment_slot_minutes: Number(els.slotMinutesInput.value || 15),
-            default_visit_duration_minutes: Number(els.durationMinutesInput.value || 30),
-            allow_same_day_appointment: els.sameDayInput.checked,
-            use_regular_hours: true,
-            use_special_days: els.useSpecialDaysInput.checked,
-            holiday_handling: "manual",
-            timezone: "Asia/Tokyo",
-            public_note: `次回予約は原則${els.maxMonthsInput.value}か月先まで、${els.slotMinutesInput.value}分単位で受付します。`,
-            internal_note: "admin.htmlから更新"
-          },
-          regular_hours: collectRegularHoursFromForm()
-        };
-
-        try {
-          if (state.demoMode) {
-            applySettingsToForm({
-              clinic: body.clinic,
-              settings: body.settings,
-              regular_hours: body.regular_hours,
-              special_days: state.specialDays
-            });
-            showMessage(els.settingsMessage, "success", "デモモードで医院設定を画面に反映しました。");
-            return;
-          }
-
-          const result = await apiFetch("/api/admin/settings", {
-            method: "POST",
-            body
-          });
-
-          applySettingsToForm(result);
-          showMessage(els.settingsMessage, "success", "医院設定を保存しました。次回予約の日付・時間候補に反映されます。");
-        } catch (error) {
-          console.error(error);
-          showMessage(els.settingsMessage, "error", "医院設定を保存できませんでした。\n\n詳細：" + (error.message || error));
-        } finally {
-          setButtonLoading(els.saveSettingsButton, false);
-        }
-      }
-
-      async function loadSpecialDays() {
-        clearMessage(els.specialMessage);
-
-        try {
-          if (state.demoMode) {
-            renderSpecialDaysList();
-            showMessage(els.specialMessage, "success", "デモモードの臨時休業一覧を表示しました。");
-            return;
-          }
-
-          const result = await apiFetch("/api/admin/special-days", {
-            method: "GET",
-            params: {
-              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-              from: getTodayJST(),
-              to: addMonths(getTodayJST(), 12)
-            }
-          });
-
-          state.specialDays = result.special_days || [];
-          renderSpecialDaysList();
-          renderSettingsPreview();
-          showMessage(els.specialMessage, "success", "臨時休業・特別営業を読み込みました。");
-        } catch (error) {
-          console.error(error);
-          showMessage(els.specialMessage, "error", "臨時休業・特別営業を読み込めませんでした。\n\n詳細：" + (error.message || error));
-        }
-      }
-
-      async function saveSpecialDay() {
-        clearMessage(els.specialMessage);
-
-        if (!els.specialDateInput.value) {
-          showMessage(els.specialMessage, "warning", "日付を選択してください。");
-          return;
-        }
-
-        const dayType = els.specialTypeInput.value;
-        const isClosed = dayType === "closed";
-
-        const specialDay = {
-          special_date: els.specialDateInput.value,
-          day_type: dayType,
-          is_closed: isClosed,
-          title: els.specialTitleInput.value.trim() || (isClosed ? "臨時休業" : "特別営業"),
-          note: els.specialNoteInput.value.trim(),
-          open_time_1: isClosed || dayType === "memo" ? null : els.specialOpen1Input.value || null,
-          close_time_1: isClosed || dayType === "memo" ? null : els.specialClose1Input.value || null,
-          open_time_2: isClosed || dayType === "memo" ? null : els.specialOpen2Input.value || null,
-          close_time_2: isClosed || dayType === "memo" ? null : els.specialClose2Input.value || null
-        };
-
-        if (!isClosed && dayType !== "memo" && (!specialDay.open_time_1 || !specialDay.close_time_1)) {
-          showMessage(els.specialMessage, "warning", "特別営業・時短営業の場合は、少なくとも午前の開始・終了時間を入力してください。");
-          return;
-        }
-
-        try {
-          if (state.demoMode) {
-            state.specialDays = state.specialDays.filter((item) => item.special_date !== specialDay.special_date);
-            state.specialDays.push(Object.assign({}, specialDay, {
-              day_type_label: isClosed ? "臨時休業" : "特別営業",
-              hours_text: isClosed ? "休診" : buildHoursText(specialDay)
-            }));
-            state.specialDays.sort((a, b) => String(a.special_date).localeCompare(String(b.special_date)));
-            renderSpecialDaysList();
-            renderSettingsPreview();
-            showMessage(els.specialMessage, "success", "デモモードで臨時休業・特別営業を保存しました。");
-            return;
-          }
-
-          await apiFetch("/api/admin/special-days/upsert", {
-            method: "POST",
-            body: {
-              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-              staff_name: getStaffName(),
-              special_day: specialDay
-            }
-          });
-
-          await loadSpecialDays();
-          showMessage(els.specialMessage, "success", "臨時休業・特別営業を保存しました。");
-        } catch (error) {
-          console.error(error);
-          showMessage(els.specialMessage, "error", "保存できませんでした。\n\n詳細：" + (error.message || error));
-        }
-      }
-
-      async function deleteSpecialDay() {
-        const date = els.specialDateInput.value;
-
-        if (!date) {
-          showMessage(els.specialMessage, "warning", "削除する日付を選択してください。");
-          return;
-        }
-
-        try {
-          if (state.demoMode) {
-            state.specialDays = state.specialDays.filter((item) => item.special_date !== date);
-            renderSpecialDaysList();
-            renderSettingsPreview();
-            showMessage(els.specialMessage, "success", "デモモードで選択日の設定を削除しました。");
-            return;
-          }
-
-          await apiFetch("/api/admin/special-days/delete", {
-            method: "POST",
-            body: {
-              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-              special_date: date
-            }
-          });
-
-          await loadSpecialDays();
-          showMessage(els.specialMessage, "success", "選択日の設定を削除しました。");
-        } catch (error) {
-          console.error(error);
-          showMessage(els.specialMessage, "error", "削除できませんでした。\n\n詳細：" + (error.message || error));
-        }
-      }
-
-      function buildHoursText(day) {
-        if (day.is_closed) return "休診";
-        const a = day.open_time_1 && day.close_time_1 ? `${formatTime(day.open_time_1)}〜${formatTime(day.close_time_1)}` : "";
-        const b = day.open_time_2 && day.close_time_2 ? `${formatTime(day.open_time_2)}〜${formatTime(day.close_time_2)}` : "";
-        return [a, b].filter(Boolean).join(" / ");
-      }
-
-      function renderSpecialDaysList() {
-        if (!state.specialDays.length) {
-          els.specialDaysList.innerHTML = '<div class="empty-box">臨時休業・特別営業はまだ登録されていません。</div>';
-          return;
-        }
-
-        els.specialDaysList.innerHTML = state.specialDays.map((day) => {
-          const isClosed = day.is_closed || day.day_type === "closed";
-          return `
-            <div class="special-item clickable" data-date="${escapeHtml(day.special_date)}">
-              <div class="item-top">
-                <div>
-                  <div class="item-title">${escapeHtml(formatDate(day.special_date))}</div>
-                  <div class="item-sub">${escapeHtml(day.title || day.day_type_label || "")}</div>
-                </div>
-                <div class="item-meta">${escapeHtml(isClosed ? "休診" : (day.hours_text || buildHoursText(day)))}</div>
-              </div>
-              <div class="pill-row">
-                <span class="pill ${isClosed ? "red" : "green"}">${escapeHtml(day.day_type_label || day.day_type || "")}</span>
-                ${day.note ? `<span class="pill yellow">${escapeHtml(day.note)}</span>` : ""}
-              </div>
-            </div>
-          `;
-        }).join("");
-
-        els.specialDaysList.querySelectorAll("[data-date]").forEach((item) => {
-          item.addEventListener("click", () => {
-            const date = item.dataset.date;
-            const day = state.specialDays.find((d) => d.special_date === date);
-            if (!day) return;
-            els.specialDateInput.value = day.special_date || "";
-            els.specialTypeInput.value = day.day_type || "closed";
-            els.specialTitleInput.value = day.title || "";
-            els.specialNoteInput.value = day.note || "";
-            els.specialOpen1Input.value = formatTime(day.open_time_1 || "");
-            els.specialClose1Input.value = formatTime(day.close_time_1 || "");
-            els.specialOpen2Input.value = formatTime(day.open_time_2 || "");
-            els.specialClose2Input.value = formatTime(day.close_time_2 || "");
-          });
-        });
-      }
-
-      function renderSettingsPreview() {
-        const hours = state.regularHours.map((row) => {
-          return `
-            <div class="info-row">
-              <div class="info-key">${escapeHtml(DAY_LABELS[Number(row.day_of_week)])}</div>
-              <div class="info-value">${escapeHtml(row.is_closed ? "休診" : buildHoursText(row))}</div>
-            </div>
-          `;
-        }).join("");
-
-        const specialSummary = state.specialDays.length
-          ? `${state.specialDays.length}件 登録済み`
-          : "登録なし";
-
-        els.settingsPreview.innerHTML = `
-          <div class="info-row">
-            <div class="info-key">医院名</div>
-            <div class="info-value">${escapeHtml(state.clinic.clinic_name || els.clinicNameInput.value || "DPRO歯科クリニック")}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-key">予約期間</div>
-            <div class="info-value">${escapeHtml(state.settings.appointment_max_months_ahead || 3)}か月先まで / ${escapeHtml(state.settings.appointment_slot_minutes || 15)}分単位</div>
-          </div>
-          <div class="info-row">
-            <div class="info-key">臨時設定</div>
-            <div class="info-value">${escapeHtml(specialSummary)}</div>
-          </div>
-          ${hours}
-        `;
-      }
-
-      async function loadAppointmentOptions(dateText, preferredTime) {
-        clearMessage(els.appointmentMessage);
-        els.nextTimeInput.innerHTML = '<option value="">読み込み中...</option>';
-
-        if (!dateText) {
-          els.nextTimeInput.innerHTML = '<option value="">日付を選択してください</option>';
-          return;
-        }
-
-        const min = els.nextDateInput.min || calculateLocalMinDate();
-        const max = els.nextDateInput.max || addMonths(getTodayJST(), Number(state.settings.appointment_max_months_ahead || 3));
-
-        if (dateText < min) {
-          els.nextTimeInput.innerHTML = '<option value="">過去日は選択できません</option>';
-          showMessage(els.appointmentMessage, "warning", "過去日、または予約可能開始日より前の日付です。");
-          return;
-        }
-
-        if (dateText > max) {
-          els.nextTimeInput.innerHTML = '<option value="">予約可能期間外です</option>';
-          showMessage(els.appointmentMessage, "warning", `予約可能期間は${state.settings.appointment_max_months_ahead || 3}か月先までです。`);
-          return;
-        }
-
-        try {
-          if (state.demoMode) {
-            const slots = buildFallbackSlotsForDate(dateText);
-            populateTimeOptions(slots, preferredTime);
-            if (slots.length) {
-              showMessage(els.appointmentMessage, "success", `${formatDate(dateText)} の予約可能時間を表示しています。`);
-            } else {
-              showMessage(els.appointmentMessage, "warning", "この日は休診、または予約可能な時間がありません。");
-            }
-            return;
-          }
-
-          const result = await apiFetch("/api/admin/appointment-options", {
-            method: "GET",
-            params: {
-              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-              date: dateText
-            }
-          });
-
-          const slots = result.slots || [];
-          populateTimeOptions(slots, preferredTime);
-
-          if (result.is_available) {
-            showMessage(els.appointmentMessage, "success", `${formatDate(dateText)} の予約可能時間を表示しています。`);
-          } else {
-            showMessage(els.appointmentMessage, "warning", result.reason || "この日は予約できません。");
-          }
-        } catch (error) {
-          console.error(error);
-          const slots = buildFallbackSlotsForDate(dateText);
-          populateTimeOptions(slots, preferredTime);
-          showMessage(
-            els.appointmentMessage,
-            slots.length ? "warning" : "error",
-            "予約候補APIを取得できなかったため、画面内の曜日設定で候補を表示しています。\n\n詳細：" + (error.message || error)
-          );
-        }
-      }
-
-      function populateTimeOptions(slots, preferredTime) {
-        const selected = preferredTime ? formatTime(preferredTime) : "";
-
-        if (!slots.length) {
-          els.nextTimeInput.innerHTML = '<option value="">選択できる時間がありません</option>';
-          return;
-        }
-
-        els.nextTimeInput.innerHTML =
-          '<option value="">時間を選択</option>' +
-          slots.map((slot) => `<option value="${escapeHtml(slot)}">${escapeHtml(slot)}</option>`).join("");
-
-        if (selected && slots.includes(selected)) {
-          els.nextTimeInput.value = selected;
-        } else if (slots.includes("10:30")) {
-          els.nextTimeInput.value = "10:30";
-        }
-      }
-
-      async function generateQrForPatient(patient) {
-        const token = patient.qr_token || "";
-        const url = buildMemberUrl(token);
-
-        if (!token || !url) return;
-
-        const qrImage = els.qrImage;
-        const canvas = els.qrCanvas;
-        const fallbackImage = els.qrFallbackImage;
-        const textFallback = els.qrTextFallback;
-
-        function hideAllQrDisplays() {
-          if (qrImage) qrImage.classList.add("hidden");
-          if (canvas) canvas.classList.add("hidden");
-          if (fallbackImage) fallbackImage.classList.add("hidden");
-          if (textFallback) textFallback.classList.add("hidden");
-        }
-
-        function showTextFallback() {
-          hideAllQrDisplays();
-
-          if (textFallback) {
-            textFallback.innerHTML =
-              '<div><strong>QR画像を表示できませんでした。</strong><br>' +
-              '下の「診察券URLをコピー」または「患者画面を開く」を使ってください。<br><br>' +
-              escapeHtml(url) +
-              '</div>';
-            textFallback.classList.remove("hidden");
-          }
-        }
-
-        function setImageWithFallbacks() {
-          hideAllQrDisplays();
-
-          const sources = [
-            "https://quickchart.io/qr?size=220&margin=2&text=" + encodeURIComponent(url),
-            "https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=12&data=" + encodeURIComponent(url)
-          ];
-
-          let index = 0;
-
-          qrImage.onload = function () {
-            qrImage.classList.remove("hidden");
-          };
-
-          qrImage.onerror = function () {
-            index += 1;
-
-            if (index < sources.length) {
-              qrImage.src = sources[index];
-              return;
-            }
-
-            showTextFallback();
-          };
-
-          qrImage.src = sources[index];
-        }
-
-        setImageWithFallbacks();
-      }
-
-      async function renderIssuedPatient(patientArg, modeText) {
-        const patient = normalizePatient(patientArg);
-        const memberUrl = buildMemberUrl(patient.qr_token);
-
-        state.lastIssuedPatient = patient;
-
-        els.emptyResultBox.classList.add("hidden");
-        els.resultArea.classList.remove("hidden");
-
-        els.resultPatientName.textContent = patient.patient_name || "患者さま";
-        els.resultPatientKana.textContent = patient.patient_name_kana || "";
-        els.resultPatientKana.classList.toggle("hidden", !patient.patient_name_kana);
-
-        els.resultMemberNo.textContent = patient.member_no || "---";
-        els.resultStatus.textContent = getStatusLabel(patient.status);
-        els.resultClinicName.textContent = state.clinic.clinic_name || getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
-
-        els.memberUrlText.textContent = memberUrl;
-        els.qrTokenText.textContent = patient.qr_token || "---";
-        els.resultPhone.textContent = patient.phone || "未登録";
-
-        els.resultNextAppointment.textContent = buildNextAppointmentText(
-          patient.next_appointment_date,
-          patient.next_appointment_time,
-          patient.next_appointment_memo
-        );
-
-        els.resultInternalMemo.textContent = patient.internal_memo || "なし";
-
-        await generateQrForPatient(patient);
-
-        showMessage(
-          els.resultMessage,
-          "success",
-          `${modeText || "QR診察券"}を発行しました。\n患者さんには「診察券URL」をLINEで送るか、QRコードを読み取ってもらってください。`
-        );
-
-        updateSummary();
-        renderSelectedPatient(patient);
-      }
-
-      function renderSelectedPatient(patientArg) {
-        const patient = normalizePatient(patientArg);
-        const memberUrl = buildMemberUrl(patient.qr_token);
-
-        state.selectedPatient = patient;
-
-        els.emptySelectedBox.classList.add("hidden");
-        els.selectedArea.classList.remove("hidden");
-
-        els.selectedPatientName.textContent =
-          `${patient.patient_name}${patient.patient_name_kana ? "（" + patient.patient_name_kana + "）" : ""}`;
-
-        els.selectedMemberNo.textContent = patient.member_no || "---";
-        els.selectedPhone.textContent = patient.phone || "未登録";
-        els.selectedMemberUrl.textContent = memberUrl;
-
-        els.debugBox.textContent = JSON.stringify(
-          {
-            selected_patient_id: patient.id,
-            member_no: patient.member_no,
-            qr_token: patient.qr_token,
-            member_url: memberUrl
-          },
-          null,
-          2
-        );
-      }
-
-      function renderPatientList(rows) {
-        if (!rows || !rows.length) {
-          els.patientList.innerHTML = '<div class="empty-box">該当する患者はいません。</div>';
-          return;
-        }
-
-        els.patientList.innerHTML = rows.map((row) => {
-          const patient = normalizePatient(row);
-
-          return `
-            <div class="list-item clickable" data-patient-id="${escapeHtml(patient.id)}">
-              <div class="item-top">
-                <div>
-                  <div class="item-title">${escapeHtml(patient.patient_name)}</div>
-                  <div class="item-sub">
-                    ${escapeHtml(patient.patient_name_kana || "ふりがな未登録")} / ${escapeHtml(patient.phone || "電話未登録")}
-                  </div>
-                </div>
-                <div class="item-meta">${escapeHtml(patient.member_no || "---")}</div>
-              </div>
-              <div class="pill-row">
-                <span class="pill blue">${escapeHtml(getStatusLabel(patient.status))}</span>
-                <span class="pill green">QR発行済み</span>
-              </div>
-            </div>
-          `;
-        }).join("");
-
-        els.patientList.querySelectorAll("[data-patient-id]").forEach((item) => {
-          item.addEventListener("click", () => {
-            const id = item.dataset.patientId;
-            const found = rows.map(normalizePatient).find((patient) => patient.id === id);
-
-            if (found) {
-              renderSelectedPatient(found);
-              showMessage(els.selectedMessage, "success", "患者を選択しました。");
-            }
-          });
-        });
-      }
-
-      async function createPatient() {
-        const data = getFormData();
-        const error = validateForm(data);
-
-        clearMessage(els.createMessage);
-
-        if (error) {
-          showMessage(els.createMessage, "warning", error);
-          return;
-        }
-
-        setButtonLoading(els.createPatientButton, true, "登録中...");
-
-        try {
-          if (state.demoMode) {
-            const patient = normalizePatient(Object.assign({}, data, {
-              id: `local-${Date.now()}`,
-              qr_token: randomToken(),
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            }));
-
-            const rows = getLocalPatients();
-
-            const exists = rows.some((item) => item.member_no === patient.member_no);
-            if (exists) {
-              throw new Error("同じ診察券番号のローカル患者が既にあります。診察券番号を変更してください。");
-            }
-
-            rows.unshift(patient);
-            saveLocalPatients(rows);
-
-            await renderIssuedPatient(patient, "デモ用QR診察券");
-            showMessage(
-              els.createMessage,
-              "success",
-              "デモ登録が完了しました。\nWorker未作成でも、この画面上でQR診察券URLの発行確認ができます。"
-            );
-
-            renderPatientList(rows);
-            return;
-          }
-
-          const endpoint = getConfigValue("API.ENDPOINTS.ADMIN_PATIENT_CREATE", "/api/admin/patients/create");
-
-          const result = await apiFetch(endpoint, {
-            method: "POST",
-            body: data
-          });
-
-          if (result && result.ok === false) {
-            throw new Error(result.message || result.error || "患者登録に失敗しました。");
-          }
-
-          const root = result?.data || result || {};
-          const patient = normalizePatient(root.patient || root);
-
-          await renderIssuedPatient(patient, "QR診察券");
-          showMessage(els.createMessage, "success", "患者登録が完了しました。QR診察券を発行しました。");
-        } catch (error) {
-          console.error(error);
-
-          showMessage(
-            els.createMessage,
-            "error",
-            "患者登録に失敗しました。\n\n" +
-            "休診日・営業時間外・予約可能期間外の次回予約は登録できません。\n\n" +
-            "詳細：" +
-            (error.message || error)
-          );
-        } finally {
-          setButtonLoading(els.createPatientButton, false);
-        }
-      }
-
-      function getApiBase() {
-        return String(getConfigValue("API.BASE_URL", "https://dpro-dental-qr-api.dpromstk2000.workers.dev")).replace(/\/+$/, "");
-      }
-
-      async function directApiGet(path, params = {}) {
-        const url = new URL(getApiBase() + path);
-
-        url.searchParams.set("clinic_code", getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"));
-        url.searchParams.set("admin_code", getAdminCode());
-
-        Object.entries(params).forEach(([key, value]) => {
-          if (value !== undefined && value !== null && String(value) !== "") {
-            url.searchParams.set(key, String(value));
-          }
-        });
-
-        url.searchParams.set("_t", String(Date.now()));
-
-        const response = await fetch(url.toString(), {
-          method: "GET",
-          cache: "no-store",
-          mode: "cors"
-        });
-
-        const raw = await response.text();
-        let data = null;
-
-        try {
-          data = raw ? JSON.parse(raw) : {};
-        } catch (error) {
-          throw new Error("API応答を読めませんでした：" + raw.slice(0, 300));
-        }
-
-        if (!response.ok || data.ok === false) {
-          throw new Error(data.message || data.error || ("HTTP " + response.status));
-        }
-
-        return data;
-      }
-
-      async function directApiPost(path, body = {}) {
-        const url = new URL(getApiBase() + path);
-        url.searchParams.set("clinic_code", getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"));
-        url.searchParams.set("admin_code", getAdminCode());
-        url.searchParams.set("_t", String(Date.now()));
-
-        const response = await fetch(url.toString(), {
-          method: "POST",
-          cache: "no-store",
-          mode: "cors",
-          headers: {
-            "content-type": "application/json"
-          },
-          body: JSON.stringify(Object.assign({
-            clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
-            admin_code: getAdminCode()
-          }, body || {}))
-        });
-
-        const raw = await response.text();
-        let data = null;
-
-        try {
-          data = raw ? JSON.parse(raw) : {};
-        } catch (error) {
-          throw new Error("API応答を読めませんでした：" + raw.slice(0, 300));
-        }
-
-        if (!response.ok || data.ok === false) {
-          throw new Error(data.message || data.error || ("HTTP " + response.status));
-        }
-
-        return data;
-      }
-
-
-      function renderFamilyResult(family, cards) {
-        const safeCards = Array.isArray(cards) ? cards : [];
-
-        if (!els.familyResultBox) return;
-
-        if (!safeCards.length) {
-          els.familyResultBox.innerHTML = '<div class="empty-box">家族診察券はまだ読み込まれていません。</div>';
-          return;
-        }
-
-        const familyName = family?.family_name || "家族";
-        const guardian = family?.primary_guardian_name || "保護者";
-
-        els.familyResultBox.innerHTML = `
-          <div class="list-item">
-            <div class="list-title">${escapeHtml(familyName)} / 保護者：${escapeHtml(guardian)} 様</div>
-            <div class="list-meta">
-              LINE名：${escapeHtml(family?.line_display_name || "山田花子（お母さん）")} / 診察券 ${safeCards.length}枚
-            </div>
-          </div>
-          ${safeCards.map((card) => `
-            <div class="list-item">
-              <div class="list-title">${escapeHtml(card.display_label || card.relationship || "診察券")}：${escapeHtml(card.patient_name || "")}</div>
-              <div class="list-meta">
-                診察券番号：${escapeHtml(card.member_no || "---")} / QRトークン：${escapeHtml(card.qr_token || "---")}
-              </div>
-            </div>
-          `).join("")}
-        `;
-      }
-
-      async function resetFamilyDemoCards() {
-        clearMessage(els.familyMessage);
-
-        if (!getAdminCode()) {
-          showMessage(els.familyMessage, "warning", "先に管理設定で管理コードを保存してください。");
-          return;
-        }
-
-        setButtonLoading(els.familyDemoResetButton, true, "作成中...");
-
-        try {
-          const result = await directApiGet("/api/admin/demo/reset");
-
-          const family = result.family || null;
-          const cards = Array.isArray(result.family_cards) ? result.family_cards : [];
-
-          renderFamilyResult(family, cards);
-
-          showMessage(
-            els.familyMessage,
-            "success",
-            "山田家の家族診察券を作成・更新しました。\nお母さんのLINEに、花子様・太郎くん・さくらちゃんの診察券がまとまる状態です。"
-          );
-        } catch (error) {
-          console.error(error);
-          showMessage(
-            els.familyMessage,
-            "error",
-            "家族診察券デモの作成に失敗しました。\n\n" +
-            "確認すること：\n" +
-            "・STEP 30-20A SQLを実行済みか\n" +
-            "・Workerが step-30-20b2-family-duplicate-fix 以降か\n" +
-            "・管理コードが正しいか\n\n" +
-            "詳細：" + (error.message || error)
-          );
-        } finally {
-          setButtonLoading(els.familyDemoResetButton, false);
-        }
-      }
-
-      async function loadFamilyDemoCards() {
-        clearMessage(els.familyMessage);
-
-        if (!getAdminCode()) {
-          showMessage(els.familyMessage, "warning", "先に管理設定で管理コードを保存してください。");
-          return;
-        }
-
-        setButtonLoading(els.familyLoadButton, true, "確認中...");
-
-        try {
-          const result = await directApiGet("/api/admin/families/detail", {
-            family_code: "FAM-DEMO-YAMADA"
-          });
-
-          renderFamilyResult(result.family || null, result.cards || []);
-
-          showMessage(
-            els.familyMessage,
-            "success",
-            "山田家の家族診察券を確認しました。"
-          );
-        } catch (error) {
-          console.error(error);
-          showMessage(
-            els.familyMessage,
-            "error",
-            "山田家の確認に失敗しました。\n先に「山田家デモ診察券を作成・更新」を押してください。\n\n詳細：" + (error.message || error)
-          );
-        } finally {
-          setButtonLoading(els.familyLoadButton, false);
-        }
-      }
-
-      function openFamilyMemberPage() {
-        const base = getConfigValue("PAGES.BASE_PUBLIC_URL", "https://dpromstk2000-lab.github.io/DEGITAL-QR").replace(/\/+$/, "");
-        window.open(`${base}/member.html?t=demo-dental-patient-001`, "_blank", "noopener");
-      }
-
-
-      function getLiffUrlForLineLink() {
-        const line = getConfigValue("LINE", {});
-        const liffId =
-          line?.LIFF_ID ||
-          getConfigValue("LIFF_ID", "") ||
-          "";
-
-        if (liffId) {
-          return `https://liff.line.me/${liffId}`;
-        }
-
-        return getConfigValue("PAGES.MEMBER_URL", "https://dpromstk2000-lab.github.io/DEGITAL-QR/member.html");
-      }
-
-      function buildQrImage(url, size = 300) {
-        const value = encodeURIComponent(url || "");
-        return `https://quickchart.io/qr?text=${value}&size=${size}&margin=2`;
-      }
-
-      function renderLineLinkResult(result) {
-        const linkUrl = result.link_url || "";
-        const linkToken = result.link_token || result.line_link_token?.link_token || "";
-
-        state.lastLineLinkUrl = linkUrl;
-        state.lastLineLinkToken = linkToken;
-
-        els.lineLinkResult.classList.remove("hidden");
-        els.lineLinkUrlText.textContent = linkUrl || "---";
-        els.lineLinkTokenText.textContent = linkToken || "---";
-
-        if (linkUrl) {
-          const fallback = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(linkUrl)}`;
-
-          els.lineLinkQrBox.innerHTML = `
-            <img
-              src="${escapeHtml(buildQrImage(linkUrl, 300))}"
-              alt="LINE診察券登録用QR"
-              onerror="this.onerror=null;this.src='${escapeHtml(fallback)}';"
-            />
-          `;
-        } else {
-          els.lineLinkQrBox.textContent = "QR";
-        }
-      }
-
-      async function issueLineLinkForDemoFamily() {
-        clearMessage(els.lineLinkMessage);
-
-        if (!getAdminCode()) {
-          showMessage(els.lineLinkMessage, "warning", "先に管理設定で管理コードを保存してください。");
-          return;
-        }
-
-        setButtonLoading(els.lineLinkIssueButton, true, "発行中...");
-
-        try {
-          const result = await directApiPost("/api/admin/line-link-token/create", {
-            family_code: "FAM-DEMO-YAMADA",
-            public_base_url: getLiffUrlForLineLink(),
-            expires_in_days: 14,
-            created_by: getStaffName() || "admin",
-            memo: "山田家 LINE公式診察券登録用リンク"
-          });
-
-          renderLineLinkResult(result);
-
-          showMessage(
-            els.lineLinkMessage,
-            "success",
-            "山田家のLINE診察券登録用QRを発行しました。\nこのQRをお母さんがLINEで開くと、LINEアカウントと家族診察券を紐づけできます。\n下の「LINE登録状況を確認」で、未使用/連携済みを確認できます。"
-          );
-
-          await loadLineLinkStatusList();
-        } catch (error) {
-          console.error(error);
-          showMessage(
-            els.lineLinkMessage,
-            "error",
-            "LINE診察券登録用QRの発行に失敗しました。\n\n" +
-            "確認すること：\n" +
-            "・STEP 30-21A SQLが完了しているか\n" +
-            "・Workerが step-30-21b-line-link-api になっているか\n" +
-            "・管理コードが正しいか\n\n" +
-            "詳細：" + (error.message || error)
-          );
-        } finally {
-          setButtonLoading(els.lineLinkIssueButton, false);
-        }
-      }
-
-      async function copyLineLinkUrl() {
-        if (!state.lastLineLinkUrl) {
-          showMessage(els.lineLinkMessage, "warning", "先にLINE診察券登録用QRを発行してください。");
-          return;
-        }
-
-        await copyText(state.lastLineLinkUrl);
-        showMessage(els.lineLinkMessage, "success", "LINE診察券登録用URLをコピーしました。");
-      }
-
-      function openLineLinkUrl() {
-        if (!state.lastLineLinkUrl) {
-          showMessage(els.lineLinkMessage, "warning", "先にLINE診察券登録用QRを発行してください。");
-          return;
-        }
-
-        window.open(state.lastLineLinkUrl, "_blank", "noopener");
-      }
-
-
-      function formatLineLinkStatus(status) {
-        const value = String(status || "active");
-
-        if (value === "used") return "LINE連携済み";
-        if (value === "active") return "未使用";
-        if (value === "expired") return "期限切れ";
-        if (value === "revoked") return "無効";
-        if (value === "error") return "エラー";
-
-        return value;
-      }
-
-      function formatDateTime(value) {
-        if (!value) return "---";
-
-        try {
-          const date = new Date(value);
-          if (Number.isNaN(date.getTime())) return String(value);
-
-          const y = date.getFullYear();
-          const m = String(date.getMonth() + 1).padStart(2, "0");
-          const d = String(date.getDate()).padStart(2, "0");
-          const hh = String(date.getHours()).padStart(2, "0");
-          const mm = String(date.getMinutes()).padStart(2, "0");
-
-          return `${y}/${m}/${d} ${hh}:${mm}`;
-        } catch (error) {
-          return String(value);
-        }
-      }
-
-      function renderLineLinkStatusList(tokens) {
-        const safeTokens = Array.isArray(tokens) ? tokens : [];
-
-        if (!els.lineLinkStatusList) return;
-
-        if (!safeTokens.length) {
-          els.lineLinkStatusList.innerHTML = '<div class="empty-box">LINE登録QRはまだ発行されていません。</div>';
-          return;
-        }
-
-        els.lineLinkStatusList.innerHTML = safeTokens.map((token) => {
-          const status = token.status || "active";
-          const badgeClass = status === "used" ? "used" : status;
-
-          const familyName = token.family_name || "家族";
-          const guardianName = token.primary_guardian_name || token.guardian_name || "保護者";
-          const lineName = token.line_display_name || token.family_line_display_name || "";
-          const lineUserId = token.line_user_id || token.family_line_user_id || "";
-
-          return `
-            <div class="line-link-status-row">
-              <div>
-                <span class="line-link-status-badge ${escapeHtml(badgeClass)}">
-                  ${escapeHtml(formatLineLinkStatus(status))}
-                </span>
-              </div>
-
-              <div class="line-link-status-main">
-                <div class="line-link-status-name">
-                  ${escapeHtml(familyName)} / 保護者：${escapeHtml(guardianName)} 様
-                </div>
-                <div class="line-link-status-meta">
-                  LINE名：${escapeHtml(lineName || "未取得")}
-                </div>
-                <div class="line-link-status-meta">
-                  LINE userId：${escapeHtml(lineUserId || "未連携")}
-                </div>
-                <div class="line-link-status-meta">
-                  登録トークン：${escapeHtml(token.link_token || "---")}
-                </div>
-              </div>
-
-              <div class="line-link-status-date">
-                発行：${escapeHtml(formatDateTime(token.created_at))}<br>
-                使用：${escapeHtml(formatDateTime(token.used_at))}<br>
-                期限：${escapeHtml(formatDateTime(token.expires_at))}
-              </div>
-            </div>
-          `;
-        }).join("");
-      }
-
-      async function loadLineLinkStatusList() {
-        clearMessage(els.lineLinkMessage);
-
-        if (!getAdminCode()) {
-          showMessage(els.lineLinkMessage, "warning", "先に管理設定で管理コードを保存してください。");
-          return;
-        }
-
-        setButtonLoading(els.lineLinkStatusLoadButton, true, "登録状況を確認中...");
-
-        try {
-          const result = await directApiGet("/api/admin/line-link-tokens", {
-            family_code: "FAM-DEMO-YAMADA",
-            limit: 20
-          });
-
-          const tokens = Array.isArray(result.tokens)
-            ? result.tokens
-            : Array.isArray(result.line_link_tokens)
-              ? result.line_link_tokens
-              : [];
-
-          renderLineLinkStatusList(tokens);
-
-          showMessage(els.lineLinkMessage, "success", "LINE登録状況を確認しました。");
-        } catch (error) {
-          console.error(error);
-          showMessage(
-            els.lineLinkMessage,
-            "error",
-            "LINE登録状況の確認に失敗しました。\n\n" +
-            "確認すること：\n" +
-            "・Workerが step-30-21b 以降か\n" +
-            "・STEP 30-21A SQLが完了しているか\n\n" +
-            "詳細：" + (error.message || error)
-          );
-        } finally {
-          setButtonLoading(els.lineLinkStatusLoadButton, false);
-        }
-      }
-
-
-      async function searchPatients() {
-        const q = els.searchInput.value.trim();
-
-        setButtonLoading(els.searchButton, true, "検索中...");
-        clearMessage(els.searchMessage);
-
-        try {
-          if (state.demoMode) {
-            const rows = getLocalPatients();
-            const lower = q.toLowerCase();
-
-            const filtered = rows.filter((patient) => {
-              if (!q) return true;
-
-              return [
-                patient.patient_name,
-                patient.patient_name_kana,
-                patient.member_no,
-                patient.phone,
-                patient.line_display_name
-              ].some((value) => String(value || "").toLowerCase().includes(lower));
-            });
-
-            renderPatientList(filtered);
-            showMessage(els.searchMessage, "success", "ローカル登録患者を検索しました。");
-            return;
-          }
-
-          const endpoint = getConfigValue("API.ENDPOINTS.ADMIN_PATIENTS", "/api/admin/patients");
-
-          const result = await apiFetch(endpoint, {
-            method: "GET",
-            params: {
-              q,
-              limit: 30
-            }
-          });
-
-          const rows =
-            result?.data?.patients ||
-            result?.data ||
-            result?.patients ||
-            [];
-
-          renderPatientList(Array.isArray(rows) ? rows : []);
-          showMessage(els.searchMessage, "success", "患者検索が完了しました。");
-        } catch (error) {
-          console.error(error);
-
-          const localRows = getLocalPatients();
-
-          if (localRows.length) {
-            renderPatientList(localRows);
-            showMessage(
-              els.searchMessage,
-              "warning",
-              "DB検索に失敗したため、この画面でローカル登録した患者を表示しています。\n\n" +
-              "詳細：" +
-              (error.message || error)
-            );
-            return;
-          }
-
-          showMessage(
-            els.searchMessage,
-            "error",
-            "患者検索に失敗しました。\n\n" +
-            "まだWorker未作成の場合は、デモ登録を使ってください。\n\n" +
-            "詳細：" +
-            (error.message || error)
-          );
-        } finally {
-          setButtonLoading(els.searchButton, false);
-        }
-      }
-
-      function showLocalPatients() {
-        state.demoMode = true;
-        const rows = getLocalPatients();
-        renderPatientList(rows);
-
-        if (rows.length) {
-          showMessage(els.searchMessage, "success", "ローカル登録患者を表示しました。");
-        } else {
-          showMessage(els.searchMessage, "info", "ローカル登録患者はまだありません。デモ登録で作成できます。");
-        }
-
-        updateSummary();
-      }
-
-      function toggleDemoMode() {
-        state.demoMode = !state.demoMode;
-
-        if (state.demoMode) {
-          showMessage(
-            els.createMessage,
-            "info",
-            "デモ登録モードになりました。\nWorker未作成でも、ローカル保存でQR診察券発行の見た目を確認できます。"
-          );
-        } else {
-          showMessage(
-            els.createMessage,
-            "info",
-            "本番登録モードに戻しました。\n登録時はWorker APIに送信します。"
-          );
-        }
-
-        updateSummary();
-      }
-
-      function saveAdminSettings() {
-        const staffName = els.staffNameInput.value.trim() || getConfigValue("ADMIN.DEFAULT_STAFF_NAME", "受付スタッフ");
-        const adminCode = els.adminCodeInput.value.trim();
-
-        setStaffName(staffName);
-        setAdminCode(adminCode);
-
-        showMessage(
-          els.adminCodeMessage,
-          "success",
-          "管理設定を保存しました。\n管理コードはWorker側の認証で使用します。"
-        );
-      }
-
-      function loadSelectedIntoForm() {
-        if (!state.selectedPatient) {
-          showMessage(els.selectedMessage, "warning", "先に患者を選択してください。");
-          return;
-        }
-
-        setFormData(state.selectedPatient);
-        showMessage(els.selectedMessage, "success", "選択中の患者情報をフォームに読み込みました。");
-      }
-
-      async function copyIssuedUrl() {
-        if (!state.lastIssuedPatient) {
-          showMessage(els.resultMessage, "warning", "先にQR診察券を発行してください。");
-          return;
-        }
-
-        await copyText(buildMemberUrl(state.lastIssuedPatient.qr_token));
-        showMessage(els.resultMessage, "success", "診察券URLをコピーしました。");
-      }
-
-      async function copySelectedUrl() {
-        if (!state.selectedPatient) {
-          showMessage(els.selectedMessage, "warning", "先に患者を選択してください。");
-          return;
-        }
-
-        await copyText(buildMemberUrl(state.selectedPatient.qr_token));
-        showMessage(els.selectedMessage, "success", "診察券URLをコピーしました。");
-      }
-
-      function openIssuedMemberPage() {
-        if (!state.lastIssuedPatient) {
-          showMessage(els.resultMessage, "warning", "先にQR診察券を発行してください。");
-          return;
-        }
-
-        window.open(buildMemberUrl(state.lastIssuedPatient.qr_token), "_blank", "noopener");
-      }
-
-      function openSelectedMemberPage() {
-        if (!state.selectedPatient) {
-          showMessage(els.selectedMessage, "warning", "先に患者を選択してください。");
-          return;
-        }
-
-        window.open(buildMemberUrl(state.selectedPatient.qr_token), "_blank", "noopener");
-      }
-
-      function updateCurrentMemberNo() {
-        els.currentMemberNo.textContent = els.memberNoInput.value.trim() || "---";
-      }
-
-      function updateSummary() {
-        state.localPatients = getLocalPatients();
-        els.modeLabel.textContent = state.demoMode ? "デモ" : "本番";
-        els.appointmentRangeLabel.textContent = `${state.settings.appointment_max_months_ahead || 3}か月`;
-        els.slotLabel.textContent = `${state.settings.appointment_slot_minutes || 15}分`;
-        updateCurrentMemberNo();
-      }
-
-      function applyInitialConfig() {
-        const systemName = getConfigValue("SYSTEM_NAME", "DPRO SHOP");
-        const title = "患者管理・LINE診察券登録";
-        const clinicName = getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
-
-        document.title = `${systemName} | ${title}`;
-
-        els.systemName.textContent = systemName;
-        els.pageTitle.textContent = title;
-        els.clinicNameText.textContent = `${clinicName} / 医院設定・患者登録・QR診察券発行`;
-        els.footerClinicName.textContent = clinicName;
-        els.resultClinicName.textContent = clinicName;
-
-        const pages = CONFIG.PAGES || {};
-
-        els.ownerLink.href = pages.OWNER ? `./${pages.OWNER}` : "./owner.html?v=3023g";
-        els.scanLink.href = pages.SCAN ? `./${pages.SCAN}` : "./scan.html";
-        els.memberLink.href = pages.MEMBER ? `./${pages.MEMBER}?t=demo` : "./member.html?t=demo";
-
-        populateStatusSelect();
-
-        els.staffNameInput.value = getStaffName();
-        els.adminCodeInput.value = getAdminCode();
-
-        if (!els.memberNoInput.value) {
-          els.memberNoInput.value = generateMemberNo();
-        }
-
-        state.localPatients = getLocalPatients();
-        renderRegularHoursInputs();
-        populateSpecialTimeSelects();
-
-        const min = calculateLocalMinDate();
-        const max = addMonths(getTodayJST(), Number(state.settings.appointment_max_months_ahead || 3));
-        els.nextDateInput.min = min;
-        els.nextDateInput.max = max;
-        els.specialDateInput.min = getTodayJST();
-        els.specialDateInput.max = addMonths(getTodayJST(), 12);
-
-        updateSummary();
-      }
-
-      function bindEvents() {
-        els.memberNoInput.addEventListener("input", updateCurrentMemberNo);
-
-        els.generateMemberNoButton.addEventListener("click", () => {
-          els.memberNoInput.value = generateMemberNo();
-          updateCurrentMemberNo();
-        });
-
-        els.createPatientButton.addEventListener("click", createPatient);
-        els.clearFormButton.addEventListener("click", clearForm);
-        els.fillDemoFormButton.addEventListener("click", fillDemoForm);
-        els.demoModeButton.addEventListener("click", toggleDemoMode);
-
-        if (els.familyDemoResetButton) {
-          els.familyDemoResetButton.addEventListener("click", resetFamilyDemoCards);
-        }
-
-        if (els.familyLoadButton) {
-          els.familyLoadButton.addEventListener("click", loadFamilyDemoCards);
-        }
-
-        if (els.familyOpenMemberButton) {
-          els.familyOpenMemberButton.addEventListener("click", openFamilyMemberPage);
-        }
-
-        if (els.lineLinkIssueButton) {
-          els.lineLinkIssueButton.addEventListener("click", issueLineLinkForDemoFamily);
-        }
-
-        if (els.lineLinkCopyButton) {
-          els.lineLinkCopyButton.addEventListener("click", copyLineLinkUrl);
-        }
-
-        if (els.lineLinkOpenButton) {
-          els.lineLinkOpenButton.addEventListener("click", openLineLinkUrl);
-        }
-
-        if (els.lineLinkStatusLoadButton) {
-          els.lineLinkStatusLoadButton.addEventListener("click", loadLineLinkStatusList);
-        }
-
-        els.searchButton.addEventListener("click", searchPatients);
-        els.showLocalButton.addEventListener("click", showLocalPatients);
-
-        els.searchInput.addEventListener("keydown", async (event) => {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            await searchPatients();
-          }
-        });
-
-        els.saveAdminCodeButton.addEventListener("click", saveAdminSettings);
-
-        els.copyMemberUrlButton.addEventListener("click", copyIssuedUrl);
-        els.openMemberPageButton.addEventListener("click", openIssuedMemberPage);
-        els.printCardButton.addEventListener("click", () => window.print());
-
-        els.copySelectedUrlButton.addEventListener("click", copySelectedUrl);
-        els.openSelectedMemberButton.addEventListener("click", openSelectedMemberPage);
-        els.loadSelectedIntoFormButton.addEventListener("click", loadSelectedIntoForm);
-
-        els.loadSettingsButton.addEventListener("click", loadSettings);
-        els.saveSettingsButton.addEventListener("click", saveClinicSettings);
-
-        els.slotMinutesInput.addEventListener("change", () => {
-          state.settings.appointment_slot_minutes = Number(els.slotMinutesInput.value || 15);
-          populateSpecialTimeSelects();
-          updateSummary();
-        });
-
-        els.loadSpecialDaysButton.addEventListener("click", loadSpecialDays);
-        els.saveSpecialDayButton.addEventListener("click", saveSpecialDay);
-        els.deleteSpecialDayButton.addEventListener("click", deleteSpecialDay);
-
-        els.specialTypeInput.addEventListener("change", () => {
-          const closed = els.specialTypeInput.value === "closed" || els.specialTypeInput.value === "memo";
-          [els.specialOpen1Input, els.specialClose1Input, els.specialOpen2Input, els.specialClose2Input].forEach((input) => {
-            input.disabled = closed;
-          });
-        });
-
-        els.nextDateInput.addEventListener("change", async () => {
-          await loadAppointmentOptions(els.nextDateInput.value, "");
-        });
-      }
-
-      document.addEventListener("DOMContentLoaded", async () => {
-        applyInitialConfig();
-        bindEvents();
-
-        els.specialTypeInput.dispatchEvent(new Event("change"));
-
-        await loadSettings();
-        await loadSpecialDays();
-      });
-    })();
-  </script>
-
-  <script>
-    (function () {
-      "use strict";
-
       function $(id) {
         return document.getElementById(id);
       }
@@ -4899,6 +2815,9 @@
         const section = document.querySelector(selector);
         if (!section || !drawerBody) return;
         drawerBody.appendChild(section);
+        if (section.id === "csvImportPlan") {
+          section.classList.add("in-settings-drawer");
+        }
       }
 
       function smoothTo(id) {
@@ -4922,13 +2841,61 @@
         const drawerBody = $("ownerSettingDrawerBody");
         const openButton = $("ownerSettingsToggleButton");
         const closeButton = $("ownerSettingsCloseButton");
+        const cardOpenButton = $("ownerSettingsCardButton");
 
         moveSectionToDrawer('[data-owner-section="settings"]', drawerBody);
         moveSectionToDrawer('[data-owner-section="special"]', drawerBody);
         moveSectionToDrawer('[data-owner-section="admin-code"]', drawerBody);
         moveSectionToDrawer('[data-owner-section="settings-preview"]', drawerBody);
+        moveSectionToDrawer('#csvImportPlan', drawerBody);
 
-        function openDrawer() {
+        const summary = $("ownerOperationSummary");
+        const existingWorkGrid = $("ownerWorkGrid");
+        if (!existingWorkGrid && summary && summary.parentNode) {
+          const workGrid = document.createElement("section");
+          workGrid.className = "owner-work-grid";
+          workGrid.id = "ownerWorkGrid";
+
+          const workTitle = document.createElement("div");
+          workTitle.className = "owner-work-section-title";
+          workTitle.innerHTML = "<strong>日常業務の順番</strong><span>登録済み患者を検索 → 選択中の患者情報を確認 → 新規患者登録 → 家族・LINE連携の順で操作します。</span>";
+          workGrid.appendChild(workTitle);
+
+          summary.parentNode.insertBefore(workGrid, summary.nextSibling);
+
+          const searchCard = $("patientSearchCard");
+          const selectedCard = $("selectedPatientCard");
+          const createCard = $("patientCreateCard");
+          const resultCard = document.querySelector('[data-owner-section="result"]');
+          const familyCard = $("familyCardSection");
+
+          [searchCard, selectedCard, createCard, resultCard, familyCard].forEach(function (card) {
+            if (card) workGrid.appendChild(card);
+          });
+
+          if (searchCard && !searchCard.querySelector(".owner-flow-hint")) {
+            const body = searchCard.querySelector(".card-body");
+            if (body) {
+              const hint = document.createElement("div");
+              hint.className = "owner-flow-hint";
+              hint.textContent = "来院時は、まずここで患者さんを検索します。既存患者が見つからない場合だけ、新規患者登録へ進みます。";
+              body.insertBefore(hint, body.firstChild);
+            }
+          }
+
+          if (familyCard && !familyCard.querySelector(".owner-flow-hint")) {
+            const body = familyCard.querySelector(".card-body");
+            if (body) {
+              const hint = document.createElement("div");
+              hint.className = "owner-flow-hint";
+              hint.textContent = "家族・子ども診察券は、先に保護者または代表患者を検索・選択してから追加する流れが自然です。";
+              body.insertBefore(hint, body.firstChild);
+            }
+          }
+        }
+
+        function openDrawer(event) {
+          if (event) event.preventDefault();
           if (!drawer) return;
           drawer.classList.add("is-open");
           drawer.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -4942,11 +2909,18 @@
         }
 
         if (openButton) openButton.addEventListener("click", openDrawer);
+        if (cardOpenButton) cardOpenButton.addEventListener("click", openDrawer);
         if (closeButton) closeButton.addEventListener("click", closeDrawer);
 
-        document.querySelectorAll('a[href="#patientCreateCard"], a[href="#patientSearchCard"], a[href="#familyCardSection"], a[href="#csvImportPlan"]').forEach(function (a) {
+        document.querySelectorAll('a[href="#patientCreateCard"], a[href="#patientSearchCard"], a[href="#familyCardSection"], a[href="#selectedPatientCard"], a[href="#ownerSettingDrawer"]').forEach(function (a) {
           a.addEventListener("click", function (event) {
-            const target = a.getAttribute("href").replace("#", "");
+            const href = a.getAttribute("href");
+            if (href === "#ownerSettingDrawer") {
+              openDrawer(event);
+              return;
+            }
+
+            const target = href.replace("#", "");
             if (!target) return;
             event.preventDefault();
             smoothTo(target);
@@ -4961,6 +2935,7 @@
       }
     })();
   </script>
+
 
 </body>
 </html>
