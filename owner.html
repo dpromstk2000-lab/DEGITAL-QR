@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-23E 受付・診療状況連動 | 歯科医院 管理画面</title>
+  <title>DPRO SHOP | STEP 30-23F デモリセット受付診療自動更新 | 歯科医院 管理画面</title>
 
   <script src="./config.js"></script>
 
@@ -1620,7 +1620,7 @@
             受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。
           </div>
           <div class="daily-status-version">
-            STEP 30-23E：受付iPad・先生用と連動する管理表示
+            STEP 30-23F：デモリセット後も受付・診療状況を自動更新
           </div>
         </div>
 
@@ -3905,6 +3905,10 @@
           await loadPatientDetail(patient.id);
           await loadToday();
           await loadFollowups();
+
+          if (typeof window.DPRO_loadDailyStatusPanel === "function") {
+            await window.DPRO_loadDailyStatusPanel(false);
+          }
         } catch (error) {
           console.error(error);
           showMessage(
@@ -4117,7 +4121,7 @@
           showMessage(
             els.demoResetMessage,
             "success",
-            "営業前デモリセットが完了しました。今日の受付・フォロー対象を更新します。"
+            "営業前デモリセットが完了しました。今日の受付・診療状況も最新に更新します。"
           );
 
           await loadToday();
@@ -4141,6 +4145,14 @@
           }
 
           updateSummary();
+
+          if (typeof window.DPRO_loadDailyStatusPanel === "function") {
+            try {
+              await window.DPRO_loadDailyStatusPanel(false);
+            } catch (dailyStatusError) {
+              console.warn("受付・診療状況の自動更新に失敗しました。", dailyStatusError);
+            }
+          }
         } catch (error) {
           console.error(error);
           showMessage(
