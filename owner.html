@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-23G 受付診療状況0件停止防止 | 歯科医院 管理画面</title>
+  <title>DPRO SHOP | STEP 30-25B オーナー左メニュー型コンパクト管理トップ</title>
 
   <script src="./config.js"></script>
 
@@ -1453,11 +1453,744 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-25B OWNER LEFT MENU COMPACT
+       オーナー左メニュー型コンパクト管理トップ
+    ========================================================= */
+
+    body.owner-left-optimized {
+      background:
+        radial-gradient(circle at 8% 5%, rgba(37, 99, 235, 0.12), transparent 30%),
+        radial-gradient(circle at 92% 8%, rgba(6, 199, 85, 0.10), transparent 30%),
+        linear-gradient(135deg, #edf4ff 0%, #f8fbff 55%, #eefdf5 100%);
+    }
+
+    body.owner-left-optimized .top-bar,
+    body.owner-left-optimized .role-shortcut-bar,
+    body.owner-left-optimized .summary-grid,
+    body.owner-left-optimized > .page > .layout,
+    body.owner-left-optimized > .page > .daily-status-panel,
+    body.owner-left-optimized > .page > .sales-guide {
+      display: none !important;
+    }
+
+    .owner-left-app {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      min-height: calc(100vh - 34px);
+    }
+
+    .owner-left-sidebar {
+      position: sticky;
+      top: 14px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid #dbeafe;
+      box-shadow: 0 18px 44px rgba(15,23,42,0.09);
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .owner-left-brand {
+      padding: 12px 10px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 10px;
+    }
+
+    .owner-left-kicker {
+      color: #1d4ed8;
+      font-size: 11px;
+      line-height: 1.35;
+      letter-spacing: 0.1em;
+      font-weight: 950;
+    }
+
+    .owner-left-title {
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: -0.06em;
+      font-weight: 950;
+    }
+
+    .owner-left-date {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #166534;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .owner-left-menu {
+      display: grid;
+      gap: 7px;
+    }
+
+    .owner-menu-button,
+    .owner-menu-link {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 18px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #334155;
+      padding: 10px 11px;
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 9px;
+      align-items: center;
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+      transition: 0.14s ease;
+    }
+
+    .owner-menu-button:hover,
+    .owner-menu-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    .owner-menu-button.is-active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.16);
+    }
+
+    .owner-menu-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .owner-menu-button.is-active .owner-menu-icon {
+      background: rgba(255,255,255,0.18);
+      color: #ffffff;
+    }
+
+    .owner-menu-main {
+      display: block;
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .owner-menu-sub {
+      margin-top: 2px;
+      display: block;
+      color: #64748b;
+      font-size: 10px;
+      line-height: 1.35;
+      font-weight: 760;
+    }
+
+    .owner-menu-button.is-active .owner-menu-sub {
+      color: rgba(255,255,255,0.78);
+    }
+
+    .owner-menu-count {
+      min-width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      padding: 0 7px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .owner-menu-button.is-active .owner-menu-count {
+      background: rgba(255,255,255,0.20);
+      color: #ffffff;
+    }
+
+    .owner-left-content {
+      min-width: 0;
+    }
+
+    .owner-left-panel {
+      display: none;
+      border-radius: 32px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid #dbeafe;
+      box-shadow: 0 18px 44px rgba(15,23,42,0.09);
+      overflow: hidden;
+    }
+
+    .owner-left-panel.is-active {
+      display: block;
+    }
+
+    .owner-panel-head {
+      padding: 18px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      background: linear-gradient(135deg, #ffffff, #f8fbff);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .owner-panel-kicker {
+      color: #1d4ed8;
+      font-size: 11px;
+      line-height: 1.35;
+      letter-spacing: 0.09em;
+      font-weight: 950;
+    }
+
+    .owner-panel-title {
+      margin-top: 5px;
+      color: #0f172a;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.1;
+      letter-spacing: -0.065em;
+      font-weight: 950;
+    }
+
+    .owner-panel-sub {
+      margin-top: 8px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.75;
+      font-weight: 760;
+    }
+
+    .owner-panel-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .owner-panel-link,
+    .owner-panel-action {
+      min-height: 40px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      color: #1d4ed8;
+      padding: 9px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .owner-panel-link.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .owner-panel-body {
+      padding: 18px 20px 20px;
+    }
+
+    .owner-compact-kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .owner-compact-kpi {
+      border-radius: 20px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.055);
+      padding: 13px;
+    }
+
+    .owner-compact-label {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .owner-compact-value {
+      margin-top: 5px;
+      color: #0f172a;
+      font-size: 25px;
+      line-height: 1.1;
+      font-weight: 950;
+      letter-spacing: -0.055em;
+    }
+
+    .owner-compact-note {
+      margin-top: 5px;
+      color: #475569;
+      font-size: 11px;
+      line-height: 1.45;
+      font-weight: 740;
+    }
+
+    .owner-action-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .owner-action-item {
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      padding: 13px;
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 11px;
+      align-items: center;
+    }
+
+    .owner-action-item.warning {
+      border-color: #fde68a;
+      background: #fffbeb;
+    }
+
+    .owner-action-item.danger {
+      border-color: #fecaca;
+      background: #fef2f2;
+    }
+
+    .owner-action-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 14px;
+      font-weight: 950;
+    }
+
+    .owner-action-item.warning .owner-action-icon {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .owner-action-item.danger .owner-action-icon {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .owner-action-title {
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .owner-action-text {
+      margin-top: 3px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 740;
+    }
+
+    .owner-action-tag {
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 11px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .owner-panel-mount {
+      display: grid;
+      gap: 14px;
+    }
+
+    .owner-panel-mount > * {
+      margin: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .owner-unlinked-grid,
+    .owner-demo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .owner-info-card {
+      border-radius: 22px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      padding: 15px;
+    }
+
+    .owner-info-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .owner-info-card span {
+      margin-top: 5px;
+      display: block;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 740;
+    }
+
+    .owner-info-card a {
+      margin-top: 11px;
+      min-height: 38px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 8px 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    body.owner-left-optimized .daily-status-panel {
+      box-shadow: none !important;
+    }
+
+    body.owner-left-optimized .daily-status-head {
+      grid-template-columns: 1fr !important;
+    }
+
+    body.owner-left-optimized .daily-status-sub {
+      display: none !important;
+    }
+
+    body.owner-left-optimized .daily-status-version {
+      display: none !important;
+    }
+
+    body.owner-left-optimized .daily-status-actions {
+      margin-top: 10px;
+    }
+
+    @media (max-width: 1040px) {
+      .owner-left-app {
+        grid-template-columns: 1fr;
+      }
+
+      .owner-left-sidebar {
+        position: static;
+      }
+
+      .owner-left-menu {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .owner-compact-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .owner-panel-head {
+        grid-template-columns: 1fr;
+      }
+
+      .owner-panel-actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .owner-left-sidebar,
+      .owner-left-panel {
+        border-radius: 24px;
+      }
+
+      .owner-left-menu,
+      .owner-compact-kpis,
+      .owner-unlinked-grid,
+      .owner-demo-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .owner-panel-body,
+      .owner-panel-head {
+        padding: 16px;
+      }
+
+      .owner-action-item {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
   </style>
 </head>
 
 <body>
   <main class="page">
+
+    <section class="owner-left-app" id="ownerLeftApp">
+      <aside class="owner-left-sidebar">
+        <div class="owner-left-brand">
+          <div class="owner-left-kicker">DPRO SHOP / OWNER</div>
+          <div class="owner-left-title">医院管理</div>
+          <div class="owner-left-date" id="ownerTodayDate">本日</div>
+        </div>
+
+        <nav class="owner-left-menu" aria-label="オーナー管理メニュー">
+          <button class="owner-menu-button is-active" type="button" data-owner-tab="today">
+            <span class="owner-menu-icon">今</span>
+            <span>
+              <span class="owner-menu-main">今日の状況</span>
+              <span class="owner-menu-sub">最初に見る</span>
+            </span>
+            <span class="owner-menu-count" id="menuCountTodo">0</span>
+          </button>
+
+          <button class="owner-menu-button" type="button" data-owner-tab="status">
+            <span class="owner-menu-icon">受</span>
+            <span>
+              <span class="owner-menu-main">受付・診療状況</span>
+              <span class="owner-menu-sub">受付/診療の確認</span>
+            </span>
+            <span class="owner-menu-count" id="menuCountStatus">0</span>
+          </button>
+
+          <button class="owner-menu-button" type="button" data-owner-tab="follow">
+            <span class="owner-menu-icon">L</span>
+            <span>
+              <span class="owner-menu-main">LINEフォロー</span>
+              <span class="owner-menu-sub">文面コピー対象</span>
+            </span>
+            <span class="owner-menu-count" id="menuCountFollow">0</span>
+          </button>
+
+          <button class="owner-menu-button" type="button" data-owner-tab="unlinked">
+            <span class="owner-menu-icon">未</span>
+            <span>
+              <span class="owner-menu-main">LINE未連携</span>
+              <span class="owner-menu-sub">導入後に重要</span>
+            </span>
+            <span class="owner-menu-count">確認</span>
+          </button>
+
+          <a class="owner-menu-link" href="./admin.html?v=3024b">
+            <span class="owner-menu-icon">患</span>
+            <span>
+              <span class="owner-menu-main">患者管理へ</span>
+              <span class="owner-menu-sub">検索/登録/家族</span>
+            </span>
+            <span class="owner-menu-count">開</span>
+          </a>
+
+          <a class="owner-menu-link" href="./scan-ipad.html?v=3023h2">
+            <span class="owner-menu-icon">受</span>
+            <span>
+              <span class="owner-menu-main">受付iPadへ</span>
+              <span class="owner-menu-sub">受付済み操作</span>
+            </span>
+            <span class="owner-menu-count">開</span>
+          </a>
+
+          <a class="owner-menu-link" href="./doctor.html?v=3023d4">
+            <span class="owner-menu-icon">医</span>
+            <span>
+              <span class="owner-menu-main">先生用画面へ</span>
+              <span class="owner-menu-sub">今日やること</span>
+            </span>
+            <span class="owner-menu-count">開</span>
+          </a>
+
+          <button class="owner-menu-button" type="button" data-owner-tab="demo">
+            <span class="owner-menu-icon">デ</span>
+            <span>
+              <span class="owner-menu-main">デモ・確認</span>
+              <span class="owner-menu-sub">営業用/確認用</span>
+            </span>
+            <span class="owner-menu-count">奥</span>
+          </button>
+        </nav>
+      </aside>
+
+      <section class="owner-left-content">
+        <section class="owner-left-panel is-active" data-owner-panel="today">
+          <div class="owner-panel-head">
+            <div>
+              <div class="owner-panel-kicker">TODAY</div>
+              <div class="owner-panel-title">今日の状況</div>
+              <div class="owner-panel-sub">オーナーが最初に見る画面です。未対応だけすぐ分かるようにまとめます。</div>
+            </div>
+            <div class="owner-panel-actions">
+              <button class="owner-panel-action" id="ownerRefreshMiniButton" type="button">状況を更新</button>
+              <a class="owner-panel-link primary" href="./admin.html?v=3024b">患者管理</a>
+            </div>
+          </div>
+
+          <div class="owner-panel-body">
+            <div class="owner-compact-kpis">
+              <div class="owner-compact-kpi">
+                <div class="owner-compact-label">今日の予定</div>
+                <div class="owner-compact-value" id="owner25bTotal">3</div>
+                <div class="owner-compact-note">来院予定</div>
+              </div>
+
+              <div class="owner-compact-kpi">
+                <div class="owner-compact-label">未受付</div>
+                <div class="owner-compact-value" id="owner25bWaiting">3</div>
+                <div class="owner-compact-note">受付待ち</div>
+              </div>
+
+              <div class="owner-compact-kpi">
+                <div class="owner-compact-label">受付済み</div>
+                <div class="owner-compact-value" id="owner25bChecked">0</div>
+                <div class="owner-compact-note">受付iPadから反映</div>
+              </div>
+
+              <div class="owner-compact-kpi">
+                <div class="owner-compact-label">診療済み</div>
+                <div class="owner-compact-value" id="owner25bCompleted">0</div>
+                <div class="owner-compact-note">先生用から反映</div>
+              </div>
+
+              <div class="owner-compact-kpi">
+                <div class="owner-compact-label">LINEフォロー</div>
+                <div class="owner-compact-value" id="owner25bFollow">0</div>
+                <div class="owner-compact-note">文面コピー対象</div>
+              </div>
+            </div>
+
+            <div class="owner-action-list" id="owner25bActionList">
+              <div class="owner-action-item warning">
+                <div class="owner-action-icon">受</div>
+                <div>
+                  <div class="owner-action-title">まず受付・診療状況を更新してください</div>
+                  <div class="owner-action-text">受付iPad・先生用画面の最新状態を読み込んで、今日やることを確認します。</div>
+                </div>
+                <span class="owner-action-tag">最初に確認</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="owner-left-panel" data-owner-panel="status">
+          <div class="owner-panel-head">
+            <div>
+              <div class="owner-panel-kicker">RECEPTION / EXAM</div>
+              <div class="owner-panel-title">受付・診療状況</div>
+              <div class="owner-panel-sub">受付iPadと先生用画面の状態をここで確認します。</div>
+            </div>
+            <div class="owner-panel-actions">
+              <a class="owner-panel-link" href="./scan-ipad.html?v=3023h2">受付iPad</a>
+              <a class="owner-panel-link" href="./doctor.html?v=3023d4">先生用</a>
+            </div>
+          </div>
+          <div class="owner-panel-body">
+            <div class="owner-panel-mount" id="owner25bStatusMount"></div>
+          </div>
+        </section>
+
+        <section class="owner-left-panel" data-owner-panel="follow">
+          <div class="owner-panel-head">
+            <div>
+              <div class="owner-panel-kicker">LINE FOLLOW</div>
+              <div class="owner-panel-title">LINEフォロー</div>
+              <div class="owner-panel-sub">診療後に送るLINE文面コピー対象をまとめます。</div>
+            </div>
+            <div class="owner-panel-actions">
+              <a class="owner-panel-link" href="./doctor.html?v=3023d4">先生用で確認</a>
+            </div>
+          </div>
+          <div class="owner-panel-body">
+            <div class="owner-panel-mount" id="owner25bFollowMount"></div>
+          </div>
+        </section>
+
+        <section class="owner-left-panel" data-owner-panel="unlinked">
+          <div class="owner-panel-head">
+            <div>
+              <div class="owner-panel-kicker">LINE LINK</div>
+              <div class="owner-panel-title">LINE未連携</div>
+              <div class="owner-panel-sub">既存患者を一括登録した後、LINEと紐づいていない患者を確認する場所です。</div>
+            </div>
+            <div class="owner-panel-actions">
+              <a class="owner-panel-link primary" href="./admin.html?v=3024b">患者管理へ</a>
+            </div>
+          </div>
+          <div class="owner-panel-body">
+            <div class="owner-unlinked-grid">
+              <div class="owner-info-card">
+                <strong>LINE未連携患者を確認</strong>
+                <span>本番導入後は、既存患者を先に登録し、来院時やLINE案内時に後からLINE連携します。</span>
+                <a href="./admin.html?v=3024b">患者管理で確認</a>
+              </div>
+
+              <div class="owner-info-card">
+                <strong>連携の流れ</strong>
+                <span>診察券番号＋生年月日などで本人確認し、LINE userId と既存患者データを紐づけます。</span>
+                <a href="./member.html?t=demo-dental-patient-001">患者さん画面を見る</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="owner-left-panel" data-owner-panel="demo">
+          <div class="owner-panel-head">
+            <div>
+              <div class="owner-panel-kicker">DEMO / CHECK</div>
+              <div class="owner-panel-title">デモ・確認</div>
+              <div class="owner-panel-sub">営業前デモリセット、営業ガイド、画面一覧など、毎日使わないものをここにまとめます。</div>
+            </div>
+            <div class="owner-panel-actions">
+              <a class="owner-panel-link" href="./demo-guide.html?v=3023i">営業ガイド</a>
+              <a class="owner-panel-link" href="./index-list.html?v=3023j">画面一覧</a>
+              <a class="owner-panel-link" href="./index.html?v=3023k">トップ</a>
+            </div>
+          </div>
+          <div class="owner-panel-body">
+            <div class="owner-demo-grid" style="margin-bottom: 12px;">
+              <div class="owner-info-card">
+                <strong>営業前に使う</strong>
+                <span>営業前デモリセットや説明モードは、通常業務ではなくデモ前だけ使います。</span>
+              </div>
+              <div class="owner-info-card">
+                <strong>本番では奥へ</strong>
+                <span>本番導入後は、このメニューは目立たない場所に置くか、非表示にする想定です。</span>
+              </div>
+            </div>
+            <div class="owner-panel-mount" id="owner25bDemoMount"></div>
+          </div>
+        </section>
+      </section>
+    </section>
+
     <header class="top-bar">
       <div>
         <div class="brand-kicker" id="systemName">DPRO SHOP</div>
@@ -1466,7 +2199,7 @@
       </div>
 
       <div class="top-actions">
-        <a class="badge-link" id="adminLink" href="./admin.html">患者登録・医院設定</a>
+        <a class="badge-link" id="adminLink" href="./admin.html?v=3024b">患者登録・医院設定</a>
         <a class="badge-link" id="scanLink" href="./scan.html">受付QR読取</a>
         <a class="badge-link" id="memberLink" href="./member.html?t=demo">患者画面</a>
         <button class="badge" id="reloadSettingsButton" type="button">設定更新</button>
@@ -1485,7 +2218,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./scan-ipad.html">
+      <a class="role-shortcut" href="./scan-ipad.html?v=3023h2">
         <span class="role-shortcut-icon reception">受</span>
         <span>
           <span class="role-shortcut-title">受付iPad用</span>
@@ -1493,7 +2226,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./doctor.html">
+      <a class="role-shortcut" href="./doctor.html?v=3023d4">
         <span class="role-shortcut-icon doctor">医</span>
         <span>
           <span class="role-shortcut-title">先生・院長用</span>
@@ -1509,7 +2242,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./admin.html">
+      <a class="role-shortcut" href="./admin.html?v=3024b">
         <span class="role-shortcut-icon">設</span>
         <span>
           <span class="role-shortcut-title">患者登録・設定</span>
@@ -1620,14 +2353,14 @@
             受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。読み込み結果が空の場合も、営業デモ用の山田家3名を予備表示します。
           </div>
           <div class="daily-status-version">
-            STEP 30-23G：0件で止まらない受付・診療状況表示
+            STEP 30-25B：左メニュー型コンパクト管理トップ
           </div>
         </div>
 
         <div class="daily-status-actions">
           <button class="btn btn-primary" id="dailyStatusReloadButton" type="button">受付・診療状況を更新</button>
-          <a class="btn btn-light" href="./scan-ipad.html">受付iPadを開く</a>
-          <a class="btn btn-light" href="./doctor.html">先生用を開く</a>
+          <a class="btn btn-light" href="./scan-ipad.html?v=3023h2">受付iPad</a>
+          <a class="btn btn-light" href="./doctor.html?v=3023d4">先生用</a>
         </div>
       </div>
 
@@ -4311,7 +5044,7 @@
         els.todayDateLabel.textContent = formatDate(todayJST());
 
         const pages = CONFIG.PAGES || {};
-        els.adminLink.href = pages.ADMIN ? `./${pages.ADMIN}` : "./admin.html";
+        els.adminLink.href = pages.ADMIN ? `./${pages.ADMIN}` : "./admin.html?v=3024b";
         els.scanLink.href = pages.SCAN ? `./${pages.SCAN}` : "./scan.html";
         els.memberLink.href = pages.MEMBER ? `./${pages.MEMBER}?t=demo` : "./member.html?t=demo";
 
@@ -4699,8 +5432,8 @@
               </div>
 
               <div class="daily-status-side">
-                <a class="btn btn-light" href="./doctor.html">先生用</a>
-                <a class="btn btn-light" href="./scan-ipad.html">受付iPad</a>
+                <a class="btn btn-light" href="./doctor.html?v=3023d4">先生用</a>
+                <a class="btn btn-light" href="./scan-ipad.html?v=3023h2">受付iPad</a>
               </div>
             </div>
           `;
@@ -4788,6 +5521,219 @@
     })();
   </script>
   <!-- STEP 30-23G DAILY STATUS SCRIPT END -->
+
+
+  <script>
+    (function () {
+      "use strict";
+
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      function textNumber(id, fallback) {
+        const el = $(id);
+        if (!el) return fallback || 0;
+        const n = parseInt(String(el.textContent || "").replace(/[^0-9]/g, ""), 10);
+        return Number.isFinite(n) ? n : (fallback || 0);
+      }
+
+      function setText(id, value) {
+        const el = $(id);
+        if (el) el.textContent = String(value);
+      }
+
+      function findCardByTitle(keyword) {
+        const sections = Array.from(document.querySelectorAll("section.card"));
+        return sections.find(function (section) {
+          return section.textContent && section.textContent.indexOf(keyword) !== -1;
+        });
+      }
+
+      function moveInto(element, mountId) {
+        const mount = $(mountId);
+        if (!element || !mount || mount.contains(element)) return;
+        mount.appendChild(element);
+      }
+
+      function switchOwnerTab(tabName) {
+        document.querySelectorAll("[data-owner-tab]").forEach(function (button) {
+          button.classList.toggle("is-active", button.getAttribute("data-owner-tab") === tabName);
+        });
+
+        document.querySelectorAll("[data-owner-panel]").forEach(function (panel) {
+          panel.classList.toggle("is-active", panel.getAttribute("data-owner-panel") === tabName);
+        });
+      }
+
+      function updateOwnerDate() {
+        const el = $("ownerTodayDate");
+        if (!el) return;
+        const now = new Date();
+        el.textContent = now.toLocaleDateString("ja-JP", {
+          month: "long",
+          day: "numeric",
+          weekday: "short"
+        });
+      }
+
+      function buildActionList() {
+        const total = textNumber("dailyStatusTotal", 3);
+        const waiting = textNumber("dailyStatusWaitingReception", Math.max(total, 0));
+        const checked = textNumber("dailyStatusCheckedIn", 0);
+        const completed = textNumber("dailyStatusCompleted", 0);
+        const follow = textNumber("dailyStatusFollow", 0);
+        const list = $("owner25bActionList");
+        if (!list) return;
+
+        const items = [];
+
+        if (waiting > 0) {
+          items.push({
+            type: "warning",
+            icon: "受",
+            title: "未受付の患者さんがいます",
+            text: "受付iPadで受付済みにするか、来院状況を確認してください。",
+            tag: waiting + "件"
+          });
+        }
+
+        if (checked > completed) {
+          items.push({
+            type: "",
+            icon: "診",
+            title: "受付済みで診療待ちがあります",
+            text: "先生用画面で診療前メモや今日やることを確認してください。",
+            tag: (checked - completed) + "件"
+          });
+        }
+
+        if (follow > 0) {
+          items.push({
+            type: "warning",
+            icon: "L",
+            title: "LINEフォロー対象があります",
+            text: "診療後のLINE文面コピーを確認し、必要な患者さんへ送信してください。",
+            tag: follow + "件"
+          });
+        }
+
+        if (!items.length) {
+          items.push({
+            type: "",
+            icon: "✓",
+            title: "大きな未対応はありません",
+            text: "必要に応じて受付・診療状況を更新してください。",
+            tag: "OK"
+          });
+        }
+
+        list.innerHTML = items.map(function (item) {
+          return '' +
+            '<div class="owner-action-item ' + item.type + '">' +
+              '<div class="owner-action-icon">' + item.icon + '</div>' +
+              '<div>' +
+                '<div class="owner-action-title">' + item.title + '</div>' +
+                '<div class="owner-action-text">' + item.text + '</div>' +
+              '</div>' +
+              '<span class="owner-action-tag">' + item.tag + '</span>' +
+            '</div>';
+        }).join("");
+      }
+
+      function syncOwnerKpis() {
+        const total = textNumber("dailyStatusTotal", 3);
+        const waiting = textNumber("dailyStatusWaitingReception", Math.max(total, 0));
+        const checked = textNumber("dailyStatusCheckedIn", 0);
+        const completed = textNumber("dailyStatusCompleted", 0);
+        const follow = textNumber("dailyStatusFollow", 0);
+
+        setText("owner25bTotal", total || 3);
+        setText("owner25bWaiting", waiting);
+        setText("owner25bChecked", checked);
+        setText("owner25bCompleted", completed);
+        setText("owner25bFollow", follow);
+
+        setText("menuCountTodo", Math.max(waiting + follow, 0));
+        setText("menuCountStatus", total || 3);
+        setText("menuCountFollow", follow);
+
+        buildActionList();
+      }
+
+      function setupOwnerLeftMenu() {
+        document.body.classList.add("owner-left-optimized");
+        updateOwnerDate();
+
+        const dailyStatusPanel = $("dailyStatusPanel");
+        moveInto(dailyStatusPanel, "owner25bStatusMount");
+
+        const todayCard = findCardByTitle("今日の受付");
+        if (todayCard) {
+          moveInto(todayCard, "owner25bStatusMount");
+        }
+
+        const followCard = findCardByTitle("フォロー対象");
+        if (followCard) {
+          moveInto(followCard, "owner25bFollowMount");
+        }
+
+        const demoResetCard = findCardByTitle("営業前デモリセット");
+        if (demoResetCard) {
+          moveInto(demoResetCard, "owner25bDemoMount");
+        }
+
+        const adminCodeCard = findCardByTitle("管理設定");
+        if (adminCodeCard) {
+          moveInto(adminCodeCard, "owner25bDemoMount");
+        }
+
+        const salesGuidePanel = $("salesGuidePanel");
+        if (salesGuidePanel) {
+          salesGuidePanel.classList.remove("hidden");
+          moveInto(salesGuidePanel, "owner25bDemoMount");
+        }
+
+        document.querySelectorAll("[data-owner-tab]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            switchOwnerTab(button.getAttribute("data-owner-tab"));
+          });
+        });
+
+        const refreshMini = $("ownerRefreshMiniButton");
+        if (refreshMini) {
+          refreshMini.addEventListener("click", function () {
+            const reloadButton = $("dailyStatusReloadButton");
+            if (reloadButton) reloadButton.click();
+            setTimeout(syncOwnerKpis, 500);
+            setTimeout(syncOwnerKpis, 1300);
+            setTimeout(syncOwnerKpis, 2400);
+          });
+        }
+
+        const originalLoad = window.DPRO_loadDailyStatusPanel;
+        if (typeof originalLoad === "function" && !originalLoad.__owner25bWrapped) {
+          const wrapped = async function () {
+            const result = await originalLoad.apply(this, arguments);
+            setTimeout(syncOwnerKpis, 300);
+            setTimeout(syncOwnerKpis, 900);
+            return result;
+          };
+          wrapped.__owner25bWrapped = true;
+          window.DPRO_loadDailyStatusPanel = wrapped;
+        }
+
+        setTimeout(syncOwnerKpis, 400);
+        setTimeout(syncOwnerKpis, 1300);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupOwnerLeftMenu);
+      } else {
+        setupOwnerLeftMenu();
+      }
+    })();
+  </script>
 
 </body>
 </html>
