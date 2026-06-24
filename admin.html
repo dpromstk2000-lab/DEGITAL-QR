@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | 患者登録・医院設定 LINE登録状況対応</title>
+  <title>DPRO SHOP | 患者登録・医院設定 LINE登録状況ボタン改善</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1026,6 +1026,43 @@
     }
 
 
+  
+    .line-link-status-head {
+      display: block !important;
+    }
+
+    .line-link-status-action-area {
+      margin-top: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .line-link-status-main-button {
+      width: 100%;
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 16px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+    }
+
+    .line-link-status-main-button:hover {
+      filter: brightness(0.98);
+      transform: translateY(-1px);
+    }
+
+    .line-link-status-action-note {
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 750;
+    }
+
+
   </style>
 </head>
 
@@ -1530,7 +1567,15 @@
                       発行した登録QRが、未使用か、LINE連携済みかを確認できます。
                     </div>
                   </div>
-                  <button class="btn btn-light" id="lineLinkStatusLoadButton" type="button">登録状況を確認</button>
+
+                  <div class="line-link-status-action-area">
+                    <button class="line-link-status-main-button" id="lineLinkStatusLoadButton" type="button">
+                      LINE登録状況を確認
+                    </button>
+                    <div class="line-link-status-action-note">
+                      押すと、山田家の登録QRが「未使用」か「LINE連携済み」かを一覧で確認できます。
+                    </div>
+                  </div>
                 </div>
 
                 <div class="line-link-status-body" id="lineLinkStatusList">
@@ -3488,7 +3533,7 @@
           showMessage(
             els.lineLinkMessage,
             "success",
-            "山田家のLINE診察券登録用QRを発行しました。\nこのQRをお母さんがLINEで開くと、LINEアカウントと家族診察券を紐づけできます。"
+            "山田家のLINE診察券登録用QRを発行しました。\nこのQRをお母さんがLINEで開くと、LINEアカウントと家族診察券を紐づけできます。\n下の「LINE登録状況を確認」で、未使用/連携済みを確認できます。"
           );
 
           await loadLineLinkStatusList();
@@ -3620,7 +3665,7 @@
           return;
         }
 
-        setButtonLoading(els.lineLinkStatusLoadButton, true, "確認中...");
+        setButtonLoading(els.lineLinkStatusLoadButton, true, "登録状況を確認中...");
 
         try {
           const result = await directApiGet("/api/admin/line-link-tokens", {
