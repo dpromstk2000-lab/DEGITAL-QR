@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | 患者登録・医院設定 家族診察券対応</title>
+  <title>DPRO SHOP | 患者登録・医院設定 LINE登録QR対応</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -780,6 +780,132 @@
     }
 
 
+  
+    .line-link-issue-box {
+      margin-top: 14px;
+      border-radius: 24px;
+      border: 2px solid #06c755;
+      background:
+        radial-gradient(circle at 8% 14%, rgba(6, 199, 85, 0.14), transparent 34%),
+        linear-gradient(135deg, #f0fdf4, #ffffff);
+      padding: 16px;
+      box-shadow: 0 14px 34px rgba(6, 199, 85, 0.12);
+    }
+
+    .line-link-issue-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .line-link-issue-title {
+      color: #064e3b;
+      font-size: 17px;
+      font-weight: 950;
+      line-height: 1.4;
+      letter-spacing: -0.04em;
+    }
+
+    .line-link-issue-sub {
+      margin-top: 5px;
+      color: #334155;
+      font-size: 13px;
+      line-height: 1.75;
+      font-weight: 750;
+    }
+
+    .line-link-issue-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 8px 10px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #064e3b;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .line-link-result {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 14px;
+      align-items: start;
+      margin-top: 12px;
+      border-radius: 18px;
+      border: 1px solid #bbf7d0;
+      background: rgba(255, 255, 255, 0.78);
+      padding: 12px;
+    }
+
+    .line-link-qr {
+      width: 168px;
+      min-height: 168px;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid #bbf7d0;
+      display: grid;
+      place-items: center;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .line-link-qr img {
+      width: 148px;
+      height: 148px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .line-link-url-box {
+      display: grid;
+      gap: 8px;
+    }
+
+    .line-link-url-label {
+      color: #064e3b;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .line-link-url {
+      border-radius: 14px;
+      border: 1px solid #bbf7d0;
+      background: #f8fafc;
+      padding: 10px;
+      color: #0f172a;
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 750;
+      word-break: break-all;
+    }
+
+    .line-link-guide {
+      margin-top: 10px;
+      border-radius: 16px;
+      background: #ecfeff;
+      border: 1px solid #a5f3fc;
+      color: #164e63;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 750;
+    }
+
+    @media (max-width: 820px) {
+      .line-link-result {
+        grid-template-columns: 1fr;
+      }
+
+      .line-link-qr {
+        width: 100%;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -1228,6 +1354,53 @@
 
               <div id="familyMessage" class="message"></div>
               <div id="familyResultBox" class="list" style="margin-top: 12px;"></div>
+
+              <div class="line-link-issue-box">
+                <div class="line-link-issue-head">
+                  <div>
+                    <div class="line-link-issue-title">
+                      LINE診察券登録用QRを発行
+                    </div>
+                    <div class="line-link-issue-sub">
+                      受付でこのQRをお母さんに読み取ってもらうと、LINE公式の中で診察券が開き、
+                      そのLINEアカウントと山田家の家族診察券を紐づけできます。
+                    </div>
+                  </div>
+                  <div class="line-link-issue-pill">既存患者のLINE紐づけ</div>
+                </div>
+
+                <div class="actions">
+                  <button class="btn btn-primary" id="lineLinkIssueButton" type="button">山田家のLINE登録QRを発行</button>
+                  <button class="btn btn-light" id="lineLinkCopyButton" type="button">登録URLをコピー</button>
+                  <button class="btn btn-success" id="lineLinkOpenButton" type="button">LINE登録ページを開く</button>
+                </div>
+
+                <div id="lineLinkMessage" class="message"></div>
+
+                <div id="lineLinkResult" class="line-link-result hidden">
+                  <div class="line-link-qr" id="lineLinkQrBox">
+                    QR
+                  </div>
+
+                  <div class="line-link-url-box">
+                    <div>
+                      <div class="line-link-url-label">登録用URL</div>
+                      <div class="line-link-url" id="lineLinkUrlText">---</div>
+                    </div>
+
+                    <div>
+                      <div class="line-link-url-label">登録用トークン</div>
+                      <div class="line-link-url" id="lineLinkTokenText">---</div>
+                    </div>
+
+                    <div class="line-link-guide">
+                      営業トーク：LINE公式を友だち追加したあと、この診察券登録QRを開くことで、
+                      「このLINE友だちは山田家」と紐づきます。次回からリッチメニューの診察券を押すだけで、
+                      お母さん・太郎くん・さくらちゃんの診察券を切り替えて表示できます。
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -1486,6 +1659,8 @@
         specialDays: [],
         lastIssuedPatient: null,
         selectedPatient: null,
+        lastLineLinkUrl: "",
+        lastLineLinkToken: "",
         localPatients: []
       };
 
@@ -1564,6 +1739,14 @@
         familyOpenMemberButton: $("familyOpenMemberButton"),
         familyMessage: $("familyMessage"),
         familyResultBox: $("familyResultBox"),
+        lineLinkIssueButton: $("lineLinkIssueButton"),
+        lineLinkCopyButton: $("lineLinkCopyButton"),
+        lineLinkOpenButton: $("lineLinkOpenButton"),
+        lineLinkMessage: $("lineLinkMessage"),
+        lineLinkResult: $("lineLinkResult"),
+        lineLinkQrBox: $("lineLinkQrBox"),
+        lineLinkUrlText: $("lineLinkUrlText"),
+        lineLinkTokenText: $("lineLinkTokenText"),
 
         searchInput: $("searchInput"),
         searchButton: $("searchButton"),
@@ -2951,6 +3134,42 @@
         return data;
       }
 
+      async function directApiPost(path, body = {}) {
+        const url = new URL(getApiBase() + path);
+        url.searchParams.set("clinic_code", getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"));
+        url.searchParams.set("admin_code", getAdminCode());
+        url.searchParams.set("_t", String(Date.now()));
+
+        const response = await fetch(url.toString(), {
+          method: "POST",
+          cache: "no-store",
+          mode: "cors",
+          headers: {
+            "content-type": "application/json"
+          },
+          body: JSON.stringify(Object.assign({
+            clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+            admin_code: getAdminCode()
+          }, body || {}))
+        });
+
+        const raw = await response.text();
+        let data = null;
+
+        try {
+          data = raw ? JSON.parse(raw) : {};
+        } catch (error) {
+          throw new Error("API応答を読めませんでした：" + raw.slice(0, 300));
+        }
+
+        if (!response.ok || data.ok === false) {
+          throw new Error(data.message || data.error || ("HTTP " + response.status));
+        }
+
+        return data;
+      }
+
+
       function renderFamilyResult(family, cards) {
         const safeCards = Array.isArray(cards) ? cards : [];
 
@@ -3059,6 +3278,114 @@
       function openFamilyMemberPage() {
         const base = getConfigValue("PAGES.BASE_PUBLIC_URL", "https://dpromstk2000-lab.github.io/DEGITAL-QR").replace(/\/+$/, "");
         window.open(`${base}/member.html?t=demo-dental-patient-001`, "_blank", "noopener");
+      }
+
+
+      function getLiffUrlForLineLink() {
+        const line = getConfigValue("LINE", {});
+        const liffId =
+          line?.LIFF_ID ||
+          getConfigValue("LIFF_ID", "") ||
+          "";
+
+        if (liffId) {
+          return `https://liff.line.me/${liffId}`;
+        }
+
+        return getConfigValue("PAGES.MEMBER_URL", "https://dpromstk2000-lab.github.io/DEGITAL-QR/member.html");
+      }
+
+      function buildQrImage(url, size = 300) {
+        const value = encodeURIComponent(url || "");
+        return `https://quickchart.io/qr?text=${value}&size=${size}&margin=2`;
+      }
+
+      function renderLineLinkResult(result) {
+        const linkUrl = result.link_url || "";
+        const linkToken = result.link_token || result.line_link_token?.link_token || "";
+
+        state.lastLineLinkUrl = linkUrl;
+        state.lastLineLinkToken = linkToken;
+
+        els.lineLinkResult.classList.remove("hidden");
+        els.lineLinkUrlText.textContent = linkUrl || "---";
+        els.lineLinkTokenText.textContent = linkToken || "---";
+
+        if (linkUrl) {
+          const fallback = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(linkUrl)}`;
+
+          els.lineLinkQrBox.innerHTML = `
+            <img
+              src="${escapeHtml(buildQrImage(linkUrl, 300))}"
+              alt="LINE診察券登録用QR"
+              onerror="this.onerror=null;this.src='${escapeHtml(fallback)}';"
+            />
+          `;
+        } else {
+          els.lineLinkQrBox.textContent = "QR";
+        }
+      }
+
+      async function issueLineLinkForDemoFamily() {
+        clearMessage(els.lineLinkMessage);
+
+        if (!getAdminCode()) {
+          showMessage(els.lineLinkMessage, "warning", "先に管理設定で管理コードを保存してください。");
+          return;
+        }
+
+        setButtonLoading(els.lineLinkIssueButton, true, "発行中...");
+
+        try {
+          const result = await directApiPost("/api/admin/line-link-token/create", {
+            family_code: "FAM-DEMO-YAMADA",
+            public_base_url: getLiffUrlForLineLink(),
+            expires_in_days: 14,
+            created_by: getStaffName() || "admin",
+            memo: "山田家 LINE公式診察券登録用リンク"
+          });
+
+          renderLineLinkResult(result);
+
+          showMessage(
+            els.lineLinkMessage,
+            "success",
+            "山田家のLINE診察券登録用QRを発行しました。\nこのQRをお母さんがLINEで開くと、LINEアカウントと家族診察券を紐づけできます。"
+          );
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.lineLinkMessage,
+            "error",
+            "LINE診察券登録用QRの発行に失敗しました。\n\n" +
+            "確認すること：\n" +
+            "・STEP 30-21A SQLが完了しているか\n" +
+            "・Workerが step-30-21b-line-link-api になっているか\n" +
+            "・管理コードが正しいか\n\n" +
+            "詳細：" + (error.message || error)
+          );
+        } finally {
+          setButtonLoading(els.lineLinkIssueButton, false);
+        }
+      }
+
+      async function copyLineLinkUrl() {
+        if (!state.lastLineLinkUrl) {
+          showMessage(els.lineLinkMessage, "warning", "先にLINE診察券登録用QRを発行してください。");
+          return;
+        }
+
+        await copyText(state.lastLineLinkUrl);
+        showMessage(els.lineLinkMessage, "success", "LINE診察券登録用URLをコピーしました。");
+      }
+
+      function openLineLinkUrl() {
+        if (!state.lastLineLinkUrl) {
+          showMessage(els.lineLinkMessage, "warning", "先にLINE診察券登録用QRを発行してください。");
+          return;
+        }
+
+        window.open(state.lastLineLinkUrl, "_blank", "noopener");
       }
 
 
@@ -3311,6 +3638,18 @@
 
         if (els.familyOpenMemberButton) {
           els.familyOpenMemberButton.addEventListener("click", openFamilyMemberPage);
+        }
+
+        if (els.lineLinkIssueButton) {
+          els.lineLinkIssueButton.addEventListener("click", issueLineLinkForDemoFamily);
+        }
+
+        if (els.lineLinkCopyButton) {
+          els.lineLinkCopyButton.addEventListener("click", copyLineLinkUrl);
+        }
+
+        if (els.lineLinkOpenButton) {
+          els.lineLinkOpenButton.addEventListener("click", openLineLinkUrl);
         }
 
         els.searchButton.addEventListener("click", searchPatients);
