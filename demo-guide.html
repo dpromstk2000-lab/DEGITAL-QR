@@ -4,23 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | 歯科デジタルQR診察券 営業デモガイド</title>
-
-  <script src="./config.js"></script>
+  <title>DPRO SHOP | STEP 30-23I 歯科QR診察券 営業デモ最新版ガイド</title>
 
   <style>
     :root {
       --blue: #2563eb;
+      --blue-dark: #1d4ed8;
       --line: #06c755;
       --green: #16a34a;
       --orange: #f59e0b;
+      --red: #dc2626;
       --purple: #7c3aed;
       --ink: #0f172a;
       --muted: #64748b;
       --border: #dbeafe;
       --soft: #eff6ff;
-      --card: rgba(255,255,255,0.92);
-      --shadow: 0 18px 46px rgba(15, 23, 42, 0.10);
+      --card: rgba(255,255,255,0.94);
+      --shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
       --radius: 28px;
     }
 
@@ -28,9 +28,15 @@
       box-sizing: border-box;
     }
 
+    html {
+      min-height: 100%;
+      background: #f6f8fb;
+    }
+
     body {
       margin: 0;
-      min-height: 100vh;
+      min-height: 100%;
+      color: var(--ink);
       font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -40,10 +46,9 @@
         "Yu Gothic",
         Meiryo,
         sans-serif;
-      color: var(--ink);
       background:
-        radial-gradient(circle at 8% 4%, rgba(37, 99, 235, 0.16), transparent 30%),
-        radial-gradient(circle at 92% 10%, rgba(6, 199, 85, 0.13), transparent 28%),
+        radial-gradient(circle at 8% 5%, rgba(37, 99, 235, 0.16), transparent 30%),
+        radial-gradient(circle at 90% 8%, rgba(6, 199, 85, 0.14), transparent 30%),
         linear-gradient(135deg, #edf4ff 0%, #f8fbff 55%, #eefdf5 100%);
     }
 
@@ -57,120 +62,157 @@
       font: inherit;
     }
 
-    button {
-      cursor: pointer;
-    }
-
     .page {
-      width: min(1240px, calc(100% - 28px));
+      width: min(1220px, calc(100% - 28px));
       margin: 0 auto;
-      padding: 24px 0 44px;
+      padding: 22px 0 48px;
     }
 
     .hero {
-      border-radius: 34px;
-      background: var(--card);
-      border: 1px solid rgba(219, 234, 254, 0.95);
-      box-shadow: var(--shadow);
-      padding: clamp(22px, 4vw, 38px);
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+      align-items: stretch;
       margin-bottom: 16px;
     }
 
-    .kicker {
-      color: #1d4ed8;
-      font-size: 12px;
-      font-weight: 950;
-      letter-spacing: 0.14em;
-    }
-
-    h1 {
-      margin: 8px 0 0;
-      font-size: clamp(30px, 5vw, 54px);
-      line-height: 1.07;
-      letter-spacing: -0.08em;
-      font-weight: 950;
-    }
-
-    .lead {
-      margin-top: 15px;
-      color: #334155;
-      font-size: 15px;
-      line-height: 2;
-      font-weight: 780;
-      max-width: 940px;
-    }
-
-    .hero-actions {
-      margin-top: 22px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .btn {
-      min-height: 48px;
-      border-radius: 17px;
-      padding: 13px 16px;
-      border: 1px solid #bfdbfe;
-      background: #ffffff;
-      color: #1d4ed8;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-align: center;
-      font-size: 13px;
-      line-height: 1.35;
-      font-weight: 950;
-    }
-
-    .btn-primary {
-      color: #ffffff;
-      background: var(--line);
-      border-color: var(--line);
-      box-shadow: 0 12px 24px rgba(6, 199, 85, 0.18);
-    }
-
-    .btn-blue {
-      color: #ffffff;
-      background: var(--blue);
-      border-color: var(--blue);
-      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
-    }
-
-    .section {
-      display: grid;
-      grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
-      gap: 14px;
-      align-items: start;
-    }
-
+    .hero-main,
+    .hero-side,
     .card {
-      border-radius: var(--radius);
       background: var(--card);
       border: 1px solid rgba(219, 234, 254, 0.95);
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
     }
 
+    .hero-main {
+      padding: 28px;
+    }
+
+    .kicker {
+      color: var(--blue-dark);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+    }
+
+    h1 {
+      margin: 8px 0 0;
+      font-size: clamp(30px, 4vw, 50px);
+      line-height: 1.08;
+      letter-spacing: -0.075em;
+      font-weight: 950;
+    }
+
+    .lead {
+      margin-top: 13px;
+      color: #475569;
+      font-size: 15px;
+      line-height: 1.8;
+      font-weight: 780;
+    }
+
+    .version {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 950;
+    }
+
+    .hero-side {
+      padding: 20px;
+      display: grid;
+      gap: 10px;
+      align-content: center;
+    }
+
+    .quick-link {
+      border-radius: 18px;
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      padding: 13px 14px;
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .quick-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      color: #1d4ed8;
+      background: #dbeafe;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .quick-title {
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .quick-url {
+      margin-top: 3px;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.45;
+      font-weight: 740;
+      word-break: break-all;
+    }
+
+    .quick-open {
+      border-radius: 999px;
+      padding: 8px 10px;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 16px;
+      align-items: start;
+    }
+
     .card + .card {
-      margin-top: 14px;
+      margin-top: 16px;
     }
 
     .card-head {
-      padding: 16px 18px;
+      padding: 17px 19px;
       border-bottom: 1px solid #e2e8f0;
       background: linear-gradient(135deg, #ffffff, #f8fbff);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
     }
 
     .card-title {
-      font-size: 18px;
-      line-height: 1.35;
-      font-weight: 950;
-      letter-spacing: -0.045em;
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 10px;
+      color: #0f172a;
+      font-size: 19px;
+      line-height: 1.35;
+      letter-spacing: -0.045em;
+      font-weight: 950;
     }
 
     .icon {
@@ -186,118 +228,101 @@
       flex: 0 0 auto;
     }
 
-    .card-sub {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.75;
-      font-weight: 760;
-    }
-
     .card-body {
-      padding: 16px 18px 18px;
+      padding: 18px 19px 20px;
     }
 
-    .demo-step-list {
+    .flow {
       display: grid;
       gap: 12px;
     }
 
-    .demo-step {
+    .step {
       border-radius: 22px;
+      border: 1px solid #e2e8f0;
       background: #ffffff;
-      border: 1px solid #dbeafe;
-      padding: 14px;
+      padding: 15px;
       display: grid;
-      grid-template-columns: 44px 1fr auto;
-      gap: 12px;
+      grid-template-columns: 58px 1fr;
+      gap: 13px;
       align-items: start;
     }
 
-    .step-num {
-      width: 42px;
-      height: 42px;
-      border-radius: 16px;
+    .step-no {
+      width: 58px;
+      height: 58px;
+      border-radius: 20px;
       display: grid;
       place-items: center;
-      background: #dbeafe;
-      color: #1d4ed8;
-      font-size: 16px;
+      color: #ffffff;
+      background: var(--blue);
+      font-size: 20px;
       font-weight: 950;
+      letter-spacing: -0.05em;
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.2);
     }
 
     .step-title {
       color: #0f172a;
       font-size: 18px;
       line-height: 1.35;
+      letter-spacing: -0.045em;
       font-weight: 950;
-      letter-spacing: -0.05em;
     }
 
-    .step-role {
-      margin-top: 3px;
-      color: #64748b;
-      font-size: 12px;
-      line-height: 1.55;
-      font-weight: 780;
-    }
-
-    .step-talk {
-      margin-top: 9px;
-      border-radius: 16px;
-      background: #f8fbff;
-      border: 1px solid #dbeafe;
-      color: #334155;
-      padding: 10px;
-      font-size: 12px;
-      line-height: 1.7;
+    .step-text {
+      margin-top: 6px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.75;
       font-weight: 760;
-      white-space: pre-wrap;
     }
 
-    .step-actions {
-      display: grid;
-      gap: 8px;
-      min-width: 150px;
-    }
-
-    .step-actions .btn {
-      min-height: 40px;
-      padding: 9px 11px;
+    .step-link {
+      margin-top: 9px;
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 9px 12px;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
       font-size: 12px;
+      font-weight: 950;
+      word-break: break-all;
     }
 
-    .check-list {
+    .checklist {
       display: grid;
       gap: 9px;
     }
 
-    .check-item {
+    .check {
       border-radius: 18px;
-      background: #ffffff;
       border: 1px solid #e2e8f0;
-      padding: 12px;
+      background: #ffffff;
+      padding: 13px 14px;
       display: grid;
-      grid-template-columns: 30px 1fr;
+      grid-template-columns: 28px 1fr;
       gap: 10px;
       align-items: start;
     }
 
     .check-mark {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       border-radius: 999px;
       display: grid;
       place-items: center;
-      background: #dbeafe;
-      color: #1d4ed8;
-      font-size: 13px;
+      background: #dcfce7;
+      color: #166534;
+      font-size: 12px;
       font-weight: 950;
     }
 
     .check-title {
-      font-size: 13px;
-      line-height: 1.45;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.5;
       font-weight: 950;
     }
 
@@ -305,64 +330,62 @@
       margin-top: 3px;
       color: #64748b;
       font-size: 12px;
-      line-height: 1.6;
-      font-weight: 760;
+      line-height: 1.65;
+      font-weight: 740;
+    }
+
+    .talk-box {
+      border-radius: 24px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      padding: 16px;
+      color: #1e3a8a;
+      font-size: 14px;
+      line-height: 1.85;
+      font-weight: 800;
+      white-space: pre-wrap;
     }
 
     .url-list {
       display: grid;
-      gap: 8px;
+      gap: 9px;
     }
 
     .url-item {
-      border-radius: 16px;
-      background: #f8fafc;
+      border-radius: 18px;
       border: 1px solid #e2e8f0;
-      padding: 11px;
-      display: grid;
-      gap: 5px;
+      background: #ffffff;
+      padding: 13px;
     }
 
-    .url-label {
-      color: #334155;
-      font-size: 12px;
-      line-height: 1.45;
+    .url-title {
+      color: #0f172a;
+      font-size: 13px;
       font-weight: 950;
     }
 
-    .url-value {
+    .url-text {
+      margin-top: 5px;
       color: #1d4ed8;
       font-size: 12px;
       line-height: 1.55;
-      font-weight: 780;
+      font-weight: 820;
       word-break: break-all;
     }
 
-    .talk-box {
-      border-radius: 20px;
-      background: #0f172a;
-      color: #ffffff;
-      padding: 15px;
-      font-size: 13px;
-      line-height: 1.85;
-      font-weight: 740;
-      white-space: pre-wrap;
-    }
-
-    .note {
-      margin-top: 12px;
-      border-radius: 18px;
-      background: #fffbeb;
+    .warning {
+      border-radius: 22px;
       border: 1px solid #fde68a;
+      background: #fffbeb;
+      padding: 15px;
       color: #92400e;
-      padding: 13px;
       font-size: 13px;
       line-height: 1.8;
-      font-weight: 800;
+      font-weight: 790;
     }
 
     .footer {
-      margin-top: 28px;
+      margin-top: 22px;
       text-align: center;
       color: #64748b;
       font-size: 12px;
@@ -371,32 +394,48 @@
     }
 
     @media (max-width: 980px) {
-      .section {
+      .hero,
+      .grid {
         grid-template-columns: 1fr;
-      }
-
-      .demo-step {
-        grid-template-columns: 44px 1fr;
-      }
-
-      .step-actions {
-        grid-column: 1 / -1;
-        grid-template-columns: repeat(2, 1fr);
       }
     }
 
-    @media (max-width: 560px) {
+    @media (max-width: 640px) {
       .page {
-        width: min(100% - 18px, 1240px);
+        width: min(100% - 18px, 1220px);
+        padding-top: 12px;
       }
 
-      .hero-actions .btn,
-      .step-actions .btn {
-        width: 100%;
+      .hero-main {
+        padding: 20px;
       }
 
-      .step-actions {
+      .quick-link,
+      .step,
+      .check {
         grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .page {
+        width: 100%;
+        padding: 0;
+      }
+
+      .hero-main,
+      .hero-side,
+      .card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      .quick-open {
+        display: none;
       }
     }
   </style>
@@ -405,201 +444,136 @@
 <body>
   <main class="page">
     <section class="hero">
-      <div class="kicker">DPRO SHOP / STEP 30-22F</div>
-      <h1>歯科デジタルQR診察券<br>営業デモガイド</h1>
-      <div class="lead">
-        営業先で迷わないように、見せる順番・確認ポイント・説明トークを1ページにまとめました。
-        患者さん、受付、先生、管理者、登録担当まで一連の流れで見せます。
+      <div class="hero-main">
+        <div class="kicker">DPRO SHOP / 歯科QR診察券デモ / STEP 30-23I</div>
+        <h1>営業デモで見せる順番と確認ポイント</h1>
+        <div class="lead">
+          患者さんのLINE診察券、受付iPad、先生用画面、管理画面、患者登録までを迷わず見せるための最新版ガイドです。
+          営業前はこのページを開いて、順番どおりに確認してください。
+        </div>
+        <div class="version">
+          最新版：受付・診療状況連動 / 受付iPad更新中停止修正 / 0件停止防止 対応済み
+        </div>
       </div>
 
-      <div class="hero-actions">
-        <a class="btn btn-primary" id="liffDemoLink" href="https://liff.line.me/2010491267-waXBAIje?t=demo-dental-patient-001">
-          まずLINE診察券を開く
+      <div class="hero-side">
+        <a class="quick-link" href="./owner.html?v=3023g">
+          <span class="quick-icon">管</span>
+          <span>
+            <span class="quick-title">管理画面</span>
+            <span class="quick-url">owner.html?v=3023g</span>
+          </span>
+          <span class="quick-open">開く</span>
         </a>
-        <a class="btn btn-blue" href="./index-list.html">
-          画面一覧へ
+
+        <a class="quick-link" href="./scan-ipad.html?v=3023h2">
+          <span class="quick-icon">受</span>
+          <span>
+            <span class="quick-title">受付iPad</span>
+            <span class="quick-url">scan-ipad.html?v=3023h2</span>
+          </span>
+          <span class="quick-open">開く</span>
         </a>
-        <a class="btn" href="./index.html">
-          トップページへ
+
+        <a class="quick-link" href="./doctor.html?v=3023d4">
+          <span class="quick-icon">先</span>
+          <span>
+            <span class="quick-title">先生用画面</span>
+            <span class="quick-url">doctor.html?v=3023d4</span>
+          </span>
+          <span class="quick-open">開く</span>
+        </a>
+
+        <a class="quick-link" href="./member.html?t=demo-dental-patient-001">
+          <span class="quick-icon">患</span>
+          <span>
+            <span class="quick-title">患者さん診察券</span>
+            <span class="quick-url">member.html?t=demo-dental-patient-001</span>
+          </span>
+          <span class="quick-open">開く</span>
         </a>
       </div>
     </section>
 
-    <section class="section">
-      <section>
+    <section class="grid">
+      <div>
         <div class="card">
           <div class="card-head">
-            <div class="card-title"><span class="icon">順</span>営業デモで見せる順番</div>
-            <div class="card-sub">
-              この順番で見せると「患者さん・受付・先生・医院管理」がつながっていることが伝わります。
-            </div>
+            <div class="card-title"><span class="icon">順</span>営業で見せる順番</div>
           </div>
 
           <div class="card-body">
-            <div class="demo-step-list">
-              <div class="demo-step">
-                <div class="step-num">1</div>
+            <div class="flow">
+              <div class="step">
+                <div class="step-no">1</div>
                 <div>
-                  <div class="step-title">患者さんスマホ：LINE家族診察券</div>
-                  <div class="step-role">member.html / お母さん・患者さん用</div>
-                  <div class="step-talk">「紙の診察券を持たなくても、LINE公式のメニューから診察券を開けます。お母さんのLINEに、お子さまの診察券もまとめて表示できます。」</div>
-                </div>
-                <div class="step-actions">
-                  <a class="btn btn-primary" href="./member.html?t=demo-dental-patient-001">患者画面</a>
-                  <a class="btn" href="https://liff.line.me/2010491267-waXBAIje?t=demo-dental-patient-001">LIFFで開く</a>
+                  <div class="step-title">管理画面で営業前デモリセット</div>
+                  <div class="step-text">
+                    まず管理画面を開き、営業前デモリセットを押します。
+                    山田家3名のデモ状態を今日基準に戻し、今日の受付・診療状況も確認します。
+                  </div>
+                  <a class="step-link" href="./owner.html?v=3023g">owner.html?v=3023g</a>
                 </div>
               </div>
 
-              <div class="demo-step">
-                <div class="step-num">2</div>
+              <div class="step">
+                <div class="step-no">2</div>
                 <div>
-                  <div class="step-title">受付iPad：QRを読んで受付済みにする</div>
-                  <div class="step-role">scan-ipad.html / 受付スタッフ用</div>
-                  <div class="step-talk">「受付では患者さんのQR診察券を読むだけです。患者名、家族、LINE連携済みか、今日の受付状況を大きく確認できます。」</div>
-                </div>
-                <div class="step-actions">
-                  <a class="btn btn-blue" href="./scan-ipad.html">受付iPad</a>
+                  <div class="step-title">患者さんのLINE診察券を見せる</div>
+                  <div class="step-text">
+                    お母さんのLINEに、本人・子ども2名の診察券がまとまっていることを見せます。
+                    「紙の診察券を忘れる」「子どもの診察券を探す」を減らせる点を伝えます。
+                  </div>
+                  <a class="step-link" href="./member.html?t=demo-dental-patient-001">member.html?t=demo-dental-patient-001</a>
                 </div>
               </div>
 
-              <div class="demo-step">
-                <div class="step-num">3</div>
+              <div class="step">
+                <div class="step-no">3</div>
                 <div>
-                  <div class="step-title">先生・院長：今日やることを見る</div>
-                  <div class="step-role">doctor.html / 先生・院長用</div>
-                  <div class="step-talk">「先生は今日の来院予定、受付済み、診療前メモ、診療後LINEフォローを確認できます。LINE文面は自動送信ではなくコピー用なので安全です。」</div>
-                </div>
-                <div class="step-actions">
-                  <a class="btn" href="./doctor.html">先生用</a>
+                  <div class="step-title">受付iPadで受付済みにする</div>
+                  <div class="step-text">
+                    受付スタッフがQR診察券を確認し、患者さんを受付済みにします。
+                    受付済みにすると先生用画面にも反映される流れを見せます。
+                  </div>
+                  <a class="step-link" href="./scan-ipad.html?v=3023h2">scan-ipad.html?v=3023h2</a>
                 </div>
               </div>
 
-              <div class="demo-step">
-                <div class="step-num">4</div>
+              <div class="step">
+                <div class="step-no">4</div>
                 <div>
-                  <div class="step-title">管理画面：家族診察券とLINE連携を確認</div>
-                  <div class="step-role">owner.html / 医院管理者用</div>
-                  <div class="step-talk">「管理画面では、山田家のような家族診察券、LINE連携状態、受付・フォローの流れを確認できます。営業説明モードにも使えます。」</div>
-                </div>
-                <div class="step-actions">
-                  <a class="btn" href="./owner.html">管理画面</a>
+                  <div class="step-title">先生用画面で今日やることを確認</div>
+                  <div class="step-text">
+                    受付済み・未受付、診療前メモ、家族情報、診療後LINE文面を1画面で確認します。
+                    「受付状態を更新」を押すと、受付iPadの状態が反映されます。
+                  </div>
+                  <a class="step-link" href="./doctor.html?v=3023d4">doctor.html?v=3023d4</a>
                 </div>
               </div>
 
-              <div class="demo-step">
-                <div class="step-num">5</div>
+              <div class="step">
+                <div class="step-no">5</div>
                 <div>
-                  <div class="step-title">患者登録・LINE登録QRを発行</div>
-                  <div class="step-role">admin.html / 設定・患者登録用</div>
-                  <div class="step-talk">「既存患者さんには、受付でLINE登録QRを発行して案内できます。お母さんのLINEに家族診察券を紐づける流れを作れます。」</div>
-                </div>
-                <div class="step-actions">
-                  <a class="btn" href="./admin.html">患者登録</a>
+                  <div class="step-title">診療後LINE文面をコピー</div>
+                  <div class="step-text">
+                    自動送信ではなく、LINE公式のチャットへ貼り付ける文面コピーとして見せます。
+                    医院側が確認してから送れるため、現場でも安心です。
+                  </div>
+                  <a class="step-link" href="./doctor.html?v=3023d4">doctor.html?v=3023d4</a>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <aside>
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title"><span class="icon">確</span>営業前チェック</div>
-            <div class="card-sub">
-              営業前にここだけ確認すれば安全です。
-            </div>
-          </div>
-
-          <div class="card-body">
-            <div class="check-list">
-              <div class="check-item">
-                <div class="check-mark">1</div>
+              <div class="step">
+                <div class="step-no">6</div>
                 <div>
-                  <div class="check-title">個人LINE名が残っていないか</div>
-                  <div class="check-text">営業前デモリセット後、山田花子（お母さん）に戻っているか確認。</div>
+                  <div class="step-title">管理画面で受付・診療状況を確認</div>
+                  <div class="step-text">
+                    最後に管理画面へ戻り、今日の受付・診療状況に反映されていることを見せます。
+                    0件で止まらないよう、営業デモ用の山田家3名も予備表示されます。
+                  </div>
+                  <a class="step-link" href="./owner.html?v=3023g">owner.html?v=3023g</a>
                 </div>
-              </div>
-
-              <div class="check-item">
-                <div class="check-mark">2</div>
-                <div>
-                  <div class="check-title">member.html が開くか</div>
-                  <div class="check-text">山田家の3枚の診察券が切り替わるか確認。</div>
-                </div>
-              </div>
-
-              <div class="check-item">
-                <div class="check-mark">3</div>
-                <div>
-                  <div class="check-title">scan-ipad.html が開くか</div>
-                  <div class="check-text">山田 花子 / 太郎 / さくら ボタンで患者表示されるか確認。</div>
-                </div>
-              </div>
-
-              <div class="check-item">
-                <div class="check-mark">4</div>
-                <div>
-                  <div class="check-title">doctor.html が反応するか</div>
-                  <div class="check-text">確認ボタンで詳細へ移動、LINE文面プレビューが出るか確認。</div>
-                </div>
-              </div>
-
-              <div class="check-item">
-                <div class="check-mark">5</div>
-                <div>
-                  <div class="check-title">admin.html のLINE登録状況</div>
-                  <div class="check-text">LINE登録状況を確認ボタンが表示されるか確認。</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="note">
-              営業時に実際の個人LINE名を見せたくない場合は、必ず営業前デモリセットを実行してください。
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title"><span class="icon">URL</span>主要URL</div>
-          </div>
-
-          <div class="card-body">
-            <div class="url-list">
-              <div class="url-item">
-                <div class="url-label">トップページ</div>
-                <a class="url-value" href="./index.html">./index.html</a>
-              </div>
-
-              <div class="url-item">
-                <div class="url-label">画面一覧</div>
-                <a class="url-value" href="./index-list.html">./index-list.html</a>
-              </div>
-
-              <div class="url-item">
-                <div class="url-label">患者画面</div>
-                <a class="url-value" href="./member.html?t=demo-dental-patient-001">./member.html?t=demo-dental-patient-001</a>
-              </div>
-
-              <div class="url-item">
-                <div class="url-label">受付iPad</div>
-                <a class="url-value" href="./scan-ipad.html">./scan-ipad.html</a>
-              </div>
-
-              <div class="url-item">
-                <div class="url-label">先生用</div>
-                <a class="url-value" href="./doctor.html">./doctor.html</a>
-              </div>
-
-              <div class="url-item">
-                <div class="url-label">管理画面</div>
-                <a class="url-value" href="./owner.html">./owner.html</a>
-              </div>
-
-              <div class="url-item">
-                <div class="url-label">患者登録</div>
-                <a class="url-value" href="./admin.html">./admin.html</a>
               </div>
             </div>
           </div>
@@ -611,57 +585,143 @@
           </div>
 
           <div class="card-body">
-            <div class="talk-box">LINE公式を導入しても、友だち追加だけでは患者管理にはなりません。
+            <div class="talk-box">この仕組みは、LINE公式を単なるお知らせ配信で終わらせず、診察券・受付・先生の確認・診療後フォローまでつなげる仕組みです。
 
-大切なのは、
-「このLINE友だちは、どの患者さんなのか」
-「家族の誰の診察券を持っているのか」
-「次にいつ来てもらうべきなのか」
-まで分かる状態にすることです。
+患者さんは紙の診察券を探さずにLINEから出せます。
+受付はQRを確認して受付済みにできます。
+先生は今日やることと診療後のLINE文面を1画面で確認できます。
+さらに管理画面で、今日の受付・診療状況も確認できます。
 
-この仕組みは、LINE公式を単なるお知らせ配信ではなく、
-デジタル診察券・受付・先生の今日やること・再来院フォローにつなげます。</div>
+特にお子さんがいるご家庭では、お母さんのLINEに家族分の診察券をまとめられるので、医院側にも患者さん側にも分かりやすいです。</div>
           </div>
         </div>
-      </aside>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="icon">確</span>営業前チェック</div>
+          </div>
+
+          <div class="card-body">
+            <div class="checklist">
+              <div class="check">
+                <div class="check-mark">✓</div>
+                <div>
+                  <div class="check-title">管理コードを保存しているか</div>
+                  <div class="check-text">通常は dpro-dental-2026。owner / scan-ipad / doctor で保存しておくとスムーズです。</div>
+                </div>
+              </div>
+
+              <div class="check">
+                <div class="check-mark">✓</div>
+                <div>
+                  <div class="check-title">owner.html の今日の受付・診療状況が0件で止まっていないか</div>
+                  <div class="check-text">山田家3名が表示されればOK。共有状態が空でも予備表示されます。</div>
+                </div>
+              </div>
+
+              <div class="check">
+                <div class="check-mark">✓</div>
+                <div>
+                  <div class="check-title">scan-ipad.html が「STEP 30-23H2」になっているか</div>
+                  <div class="check-text">「更新中...」のまま止まらず、受付状態を更新に戻ればOKです。</div>
+                </div>
+              </div>
+
+              <div class="check">
+                <div class="check-mark">✓</div>
+                <div>
+                  <div class="check-title">doctor.html の右上が「受付状態を更新」になっているか</div>
+                  <div class="check-text">古い「再読込」が出る場合は、doctor.html が旧版です。</div>
+                </div>
+              </div>
+
+              <div class="check">
+                <div class="check-mark">✓</div>
+                <div>
+                  <div class="check-title">画面上に「DB」という言葉が残っていないか</div>
+                  <div class="check-text">患者さん・受付・先生に見せる画面では専門用語を出さない方が分かりやすいです。</div>
+                </div>
+              </div>
+
+              <div class="check">
+                <div class="check-mark">✓</div>
+                <div>
+                  <div class="check-title">個人LINE名や本番情報が出ていないか</div>
+                  <div class="check-text">営業前に、画面上の名前・LINE表示・URLを確認してください。</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="warning" style="margin-top: 14px;">
+              うまく反映されない時は、URLの最後に <strong>?v=3023i</strong> のような数字を付けて開くか、Ctrl + F5 で強制更新してください。
+              GitHub Pagesは反映まで1〜2分かかることがあります。
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="icon">URL</span>確認URL一覧</div>
+          </div>
+
+          <div class="card-body">
+            <div class="url-list">
+              <div class="url-item">
+                <div class="url-title">トップページ</div>
+                <div class="url-text">https://dpromstk2000-lab.github.io/DEGITAL-QR/</div>
+              </div>
+
+              <div class="url-item">
+                <div class="url-title">画面一覧</div>
+                <div class="url-text">https://dpromstk2000-lab.github.io/DEGITAL-QR/index-list.html</div>
+              </div>
+
+              <div class="url-item">
+                <div class="url-title">患者さん診察券</div>
+                <div class="url-text">https://dpromstk2000-lab.github.io/DEGITAL-QR/member.html?t=demo-dental-patient-001</div>
+              </div>
+
+              <div class="url-item">
+                <div class="url-title">受付iPad</div>
+                <div class="url-text">https://dpromstk2000-lab.github.io/DEGITAL-QR/scan-ipad.html?v=3023h2</div>
+              </div>
+
+              <div class="url-item">
+                <div class="url-title">先生用画面</div>
+                <div class="url-text">https://dpromstk2000-lab.github.io/DEGITAL-QR/doctor.html?v=3023d4</div>
+              </div>
+
+              <div class="url-item">
+                <div class="url-title">管理画面</div>
+                <div class="url-text">https://dpromstk2000-lab.github.io/DEGITAL-QR/owner.html?v=3023g</div>
+              </div>
+
+              <div class="url-item">
+                <div class="url-title">患者登録・設定</div>
+                <div class="url-text">https://dpromstk2000-lab.github.io/DEGITAL-QR/admin.html</div>
+              </div>
+
+              <div class="url-item">
+                <div class="url-title">GitHub編集</div>
+                <div class="url-text">https://github.com/dpromstk2000-lab/DEGITAL-QR</div>
+              </div>
+
+              <div class="url-item">
+                <div class="url-title">Cloudflare Worker health</div>
+                <div class="url-text">https://dpro-dental-qr-api.dpromstk2000.workers.dev/api/health</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <div class="footer">
-      DPRO SHOP / 歯科デジタルQR診察券 営業デモガイド<br>
-      demo-guide.html
+      DPRO SHOP / DEGITAL-QR / STEP 30-23I<br>
+      営業デモ用ガイド。医院に見せる前の確認用ページです。
     </div>
   </main>
-
-  <script>
-    (function () {
-      "use strict";
-
-      const config = window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
-
-      function getConfigValue(path, fallback = "") {
-        const keys = String(path || "").split(".");
-        let current = config;
-
-        for (const key of keys) {
-          if (!current || typeof current !== "object" || !(key in current)) return fallback;
-          current = current[key];
-        }
-
-        return current === undefined || current === null ? fallback : current;
-      }
-
-      function setupLinks() {
-        const liffId = getConfigValue("LINE.LIFF_ID", "2010491267-waXBAIje");
-        const liffUrl = liffId
-          ? `https://liff.line.me/${liffId}?t=demo-dental-patient-001`
-          : "./member.html?t=demo-dental-patient-001";
-
-        const link = document.getElementById("liffDemoLink");
-        if (link) link.href = liffUrl;
-      }
-
-      document.addEventListener("DOMContentLoaded", setupLinks);
-    })();
-  </script>
 </body>
 </html>
