@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | 受付iPad専用</title>
+  <title>DPRO SHOP | 受付iPad専用 DB受付保存対応</title>
 
   <script src="./config.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -766,7 +766,7 @@
     <header class="topbar">
       <div>
         <div class="kicker">DPRO SHOP / 受付iPad専用</div>
-        <div class="title">今日の受付が、ひと目で分かる画面</div>
+        <div class="title">今日の受付をDB保存して先生用画面に連動する画面</div>
         <div class="subtitle">
           QRを読む → 患者確認 → LINE連携確認 → 受付済みにする。受付スタッフ向けに、操作を大きくシンプルにしています。
         </div>
@@ -833,6 +833,11 @@
           <div class="big-actions">
             <button class="btn btn-primary" id="startScanButton" type="button">カメラ開始</button>
             <button class="btn btn-danger" id="stopScanButton" type="button">カメラ停止</button>
+          </div>
+
+          <div class="big-actions">
+            <button class="btn btn-light" id="reloadDailyStatusButton" type="button">DB受付状態を再読込</button>
+            <button class="btn btn-light" id="openDoctorButton" type="button">先生用画面を開く</button>
           </div>
 
           <div class="input-row">
@@ -1037,7 +1042,9 @@
         currentFamily: null,
         currentFamilyCards: [],
         lastScanText: "",
-        localReceptions: []
+        localReceptions: [],
+        dbStatuses: [],
+        dbAvailable: false
       };
 
       const $ = (id) => document.getElementById(id);
@@ -1052,6 +1059,8 @@
         qrReader: $("qrReader"),
         startScanButton: $("startScanButton"),
         stopScanButton: $("stopScanButton"),
+        reloadDailyStatusButton: $("reloadDailyStatusButton"),
+        openDoctorButton: $("openDoctorButton"),
         manualInput: $("manualInput"),
         manualSearchButton: $("manualSearchButton"),
         scanMessage: $("scanMessage"),
@@ -1329,6 +1338,160 @@
         };
       }
 
+      function normalizeDailyStatusRow(row) {
+        const raw = row || {};
+
+        return {
+          daily_status_id: raw.daily_status_id || raw.id || "",
+          patient_id: raw.patient_id || "",
+          qr_token: raw.qr_token || raw.token || "",
+          member_no: raw.member_no || raw.card_no || "",
+          patient_name: raw.patient_name || raw.name || "患者さま",
+          patient_name_kana: raw.patient_name_kana || "",
+          patient_kind: raw.patient_kind || "adult",
+          school_grade: raw.school_grade || "",
+          guardian_name: raw.guardian_name || raw.primary_guardian_name || "",
+          guardian_phone: raw.guardian_phone || raw.primary_guardian_phone || "",
+          scheduled_time: raw.scheduled_time || "",
+          scheduled_label: raw.scheduled_label || "",
+          task_summary: raw.task_summary || "",
+          reception_status: raw.reception_status || "scheduled",
+          received_at: raw.received_at || "",
+          received_by_staff: raw.received_by_staff || "",
+          reception_memo: raw.reception_memo || "",
+          exam_status: raw.exam_status || "waiting",
+          doctor_memo: raw.doctor_memo || "",
+          handoff_memo: raw.handoff_memo || "",
+          line_follow_status: raw.line_follow_status || "none",
+          line_follow_message: raw.line_follow_message || "",
+          family_name: raw.family_name || "山田家",
+          family_code: raw.family_code || "FAM-DEMO-YAMADA",
+          family_line_user_id: raw.family_line_user_id || raw.line_user_id_snapshot || "",
+          family_line_display_name: raw.family_line_display_name || raw.line_display_name_snapshot || "",
+          family_line_link_status: raw.family_line_link_status || raw.line_link_status_snapshot || "",
+          family_display_label: raw.family_display_label || "",
+          family_relationship: raw.family_relationship || "",
+          internal_memo: raw.internal_memo || raw.doctor_memo || raw.task_summary || "",
+          patient_memo: raw.patient_memo || raw.reception_memo || ""
+        };
+      }
+
+      function getDailyStatusByToken(tokenOrMemberNo) {
+        const q = String(tokenOrMemberNo || "").trim();
+
+        if (!q || !Array.isArray(state.dbStatuses)) return null;
+
+        return state.dbStatuses.find((row) => {
+          return row.qr_token === q || row.member_no === q || row.patient_name === q;
+        }) || null;
+      }
+
+      function statusRowToPatientData(statusRow) {
+        const row = normalizeDailyStatusRow(statusRow);
+
+        const family = {
+          family_code: row.family_code || "FAM-DEMO-YAMADA",
+          family_name: row.family_name || "山田家",
+          primary_guardian_name: row.guardian_name || "山田 花子",
+          primary_guardian_phone: row.guardian_phone || "",
+          line_user_id: row.family_line_user_id || "demo-line-mother-yamada",
+          line_display_name: row.family_line_display_name || "山田花子（お母さん）",
+          line_link_status: row.family_line_link_status || "linked",
+          line_link_source: "daily_status"
+        };
+
+        return {
+          patient: {
+            id: row.patient_id || "",
+            clinic_id: "from-daily-status",
+            qr_token: row.qr_token,
+            member_no: row.member_no,
+            patient_name: row.patient_name,
+            patient_name_kana: row.patient_name_kana,
+            patient_kind: row.patient_kind,
+            school_grade: row.school_grade,
+            guardian_name: row.guardian_name,
+            guardian_phone: row.guardian_phone,
+            phone: row.guardian_phone || "",
+            line_display_name: row.family_line_display_name,
+            line_user_id: row.family_line_user_id,
+            next_appointment_date: getTodayJST(),
+            next_appointment_time: String(row.scheduled_time || "").slice(0, 5),
+            next_appointment_memo: row.scheduled_label || row.task_summary,
+            patient_memo: row.patient_memo,
+            internal_memo: row.internal_memo || row.task_summary,
+            status: "active",
+            card_enabled: true
+          },
+          family_context: {
+            family,
+            cards: state.currentFamilyCards && state.currentFamilyCards.length
+              ? state.currentFamilyCards
+              : FAMILY_CONTEXT.cards
+          }
+        };
+      }
+
+      async function loadDailyStatuses(showResultMessage = false) {
+        if (!getAdminCode()) {
+          state.dbAvailable = false;
+
+          if (showResultMessage) {
+            showMessage(els.scanMessage, "warning", "DB受付状態の読込には管理コードが必要です。左下で管理コードを保存してください。");
+          }
+
+          updateStats();
+          renderQueue();
+          return;
+        }
+
+        try {
+          const result = await apiFetch("/api/scan/today", {
+            method: "GET",
+            params: {
+              date: getTodayJST(),
+              limit: 100
+            }
+          });
+
+          const rows = Array.isArray(result.statuses)
+            ? result.statuses
+            : Array.isArray(result.daily_statuses)
+              ? result.daily_statuses
+              : [];
+
+          state.dbStatuses = rows.map(normalizeDailyStatusRow);
+          state.dbAvailable = true;
+
+          updateStats();
+          renderQueue();
+
+          if (showResultMessage) {
+            showMessage(els.scanMessage, "success", "DBから今日の受付状態を再読込しました。");
+          }
+        } catch (error) {
+          console.error(error);
+          state.dbAvailable = false;
+
+          if (showResultMessage) {
+            showMessage(
+              els.scanMessage,
+              "error",
+              "DB受付状態の読込に失敗しました。\n\n" +
+              "確認すること：\n" +
+              "・STEP 30-23A SQLが完了しているか\n" +
+              "・Workerが step-30-23b か\n" +
+              "・管理コードが正しいか\n\n" +
+              "詳細：" + (error.message || error)
+            );
+          }
+
+          updateStats();
+          renderQueue();
+        }
+      }
+
+
       function getReceptionStorageKey() {
         return "dpro_dental_ipad_receptions_" + getTodayJST();
       }
@@ -1352,6 +1515,12 @@
       }
 
       function isReceived(token) {
+        const dbRow = getDailyStatusByToken(token);
+
+        if (dbRow) {
+          return dbRow.reception_status === "checked_in";
+        }
+
         return state.localReceptions.some((item) => item.qr_token === token || item.member_no === token);
       }
 
@@ -1360,6 +1529,23 @@
       }
 
       function updateStats() {
+        if (state.dbAvailable && Array.isArray(state.dbStatuses) && state.dbStatuses.length) {
+          const schedule = state.dbStatuses.length;
+          const received = state.dbStatuses.filter((row) => row.reception_status === "checked_in").length;
+          const waiting = Math.max(schedule - received, 0);
+          const lineUnlinked = state.dbStatuses.filter((row) => {
+            const userId = row.family_line_user_id || "";
+            const status = row.family_line_link_status || "";
+            return !userId || status === "unlinked" || status === "not_linked";
+          }).length;
+
+          els.statSchedule.textContent = String(schedule);
+          els.statReceived.textContent = String(received);
+          els.statWaiting.textContent = String(waiting);
+          els.statLineUnlinked.textContent = String(lineUnlinked);
+          return;
+        }
+
         const schedule = DEMO_PATIENTS.length;
         const received = state.localReceptions.length;
         const waiting = Math.max(schedule - received, 0);
@@ -1371,16 +1557,37 @@
       }
 
       function renderQueue() {
-        const rows = DEMO_PATIENTS.map((p) => {
-          const done = isReceived(p.token);
+        const sourceRows = (state.dbAvailable && Array.isArray(state.dbStatuses) && state.dbStatuses.length)
+          ? state.dbStatuses.map((row) => ({
+              token: row.qr_token,
+              member_no: row.member_no,
+              patient_name: row.patient_name,
+              role: row.family_display_label || row.family_relationship || (row.patient_kind === "child" ? "子ども診察券" : "本人診察券"),
+              next_appointment_time: String(row.scheduled_time || "").slice(0, 5),
+              next_appointment_memo: row.scheduled_label || row.task_summary,
+              done: row.reception_status === "checked_in",
+              source: "db"
+            }))
+          : DEMO_PATIENTS.map((p) => ({
+              token: p.token,
+              member_no: p.member_no,
+              patient_name: p.patient_name,
+              role: p.role,
+              next_appointment_time: p.next_appointment_time,
+              next_appointment_memo: p.next_appointment_memo,
+              done: isReceived(p.token),
+              source: "demo"
+            }));
+
+        const rows = sourceRows.map((p) => {
           return `
-            <div class="queue-item" data-token="${escapeHtml(p.token)}">
+            <div class="queue-item" data-token="${escapeHtml(p.token || p.member_no)}">
               <div class="queue-time">${escapeHtml(p.next_appointment_time || "--:--")}</div>
               <div>
                 <div class="queue-name">${escapeHtml(p.patient_name)}</div>
                 <div class="queue-sub">${escapeHtml(p.role)} / ${escapeHtml(p.next_appointment_memo)}</div>
               </div>
-              <div class="queue-badge ${done ? "done" : ""}">${done ? "受付済み" : "未受付"}</div>
+              <div class="queue-badge ${p.done ? "done" : ""}">${p.done ? "受付済み" : "未受付"}</div>
             </div>
           `;
         }).join("");
@@ -1605,6 +1812,16 @@
         showMessage(els.scanMessage, "info", "患者情報を確認しています...");
 
         try {
+          const dbRow = getDailyStatusByToken(parsed.token || parsed.member_no || parsed.raw);
+
+          if (dbRow) {
+            const data = statusRowToPatientData(dbRow);
+            renderPatient(data);
+            await logScan(parsed.raw, "db_daily_status_success", data.patient);
+            showMessage(els.scanMessage, "success", "DBの今日の受付予定から患者を表示しました。");
+            return;
+          }
+
           const isDemo =
             parsed.raw === "demo" ||
             parsed.token.startsWith("demo-dental-") ||
@@ -1739,7 +1956,7 @@
         if (showDoneMessage) showMessage(els.scanMessage, "success", "カメラ読み取りを停止しました。");
       }
 
-      function markReceived() {
+      async function markReceived() {
         const patient = state.currentPatient;
 
         if (!patient || !patient.qr_token) {
@@ -1749,7 +1966,37 @@
 
         const already = isReceived(patient.qr_token);
 
-        if (!already) {
+        if (already) {
+          showMessage(els.patientMessage, "success", "すでに受付済みです。");
+          return;
+        }
+
+        if (!getAdminCode()) {
+          showMessage(els.patientMessage, "warning", "DBへ受付保存するには管理コードが必要です。左下で管理コードを保存してください。");
+          return;
+        }
+
+        showMessage(els.patientMessage, "info", "受付済みをDBに保存しています...");
+
+        try {
+          const result = await apiFetch("/api/scan/check-in", {
+            method: "POST",
+            body: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              visit_date: getTodayJST(),
+              qr_token: patient.qr_token,
+              member_no: patient.member_no,
+              staff_name: getStaffName(),
+              received_by_staff: getStaffName(),
+              reception_memo: els.handoffMemo.value || patient.internal_memo || patient.patient_memo || "",
+              source_screen: "scan-ipad.html"
+            }
+          });
+
+          if (result && result.ok === false) {
+            throw new Error(result.message || result.error || "受付保存に失敗しました。");
+          }
+
           state.localReceptions.push({
             qr_token: patient.qr_token,
             member_no: patient.member_no,
@@ -1759,23 +2006,40 @@
           });
 
           saveLocalReceptions();
-        }
 
-        showMessage(
-          els.patientMessage,
-          "success",
-          already
-            ? "すでに受付済みです。"
-            : `${patient.patient_name} 様を受付済みにしました。`
-        );
+          await loadDailyStatuses(false);
 
-        renderPatient({
-          patient,
-          family_context: {
-            family: state.currentFamily,
-            cards: state.currentFamilyCards
+          showMessage(
+            els.patientMessage,
+            "success",
+            `${patient.patient_name} 様を受付済みにしました。\\nDBに保存したので、先生用 doctor.html でも受付済みとして確認できます。`
+          );
+
+          const dbRow = getDailyStatusByToken(patient.qr_token);
+          if (dbRow) {
+            renderPatient(statusRowToPatientData(dbRow));
+          } else {
+            renderPatient({
+              patient,
+              family_context: {
+                family: state.currentFamily,
+                cards: state.currentFamilyCards
+              }
+            });
           }
-        });
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.patientMessage,
+            "error",
+            "受付済みのDB保存に失敗しました。\\n\\n" +
+            "確認すること：\\n" +
+            "・STEP 30-23A SQLが完了しているか\\n" +
+            "・Workerが step-30-23b か\\n" +
+            "・管理コードが正しいか\\n\\n" +
+            "詳細：" + (error.message || error)
+          );
+        }
       }
 
       function copyLineGuide() {
@@ -1836,12 +2100,22 @@
           });
         }
 
-        showMessage(els.scanMessage, "success", "今日の受付リストをリセットしました。");
+        showMessage(els.scanMessage, "success", "このiPad内の受付済みリストをリセットしました。DB側の受付状態は変更していません。");
       }
 
       function bindEvents() {
         els.startScanButton.addEventListener("click", startScanner);
         els.stopScanButton.addEventListener("click", () => stopScanner(true));
+
+        if (els.reloadDailyStatusButton) {
+          els.reloadDailyStatusButton.addEventListener("click", () => loadDailyStatuses(true));
+        }
+
+        if (els.openDoctorButton) {
+          els.openDoctorButton.addEventListener("click", () => {
+            window.open("./doctor.html", "_blank", "noopener,noreferrer");
+          });
+        }
 
         els.manualSearchButton.addEventListener("click", () => lookupPatient(els.manualInput.value, "manual"));
         els.manualInput.addEventListener("keydown", (event) => {
@@ -1855,7 +2129,8 @@
         els.saveAdminCodeButton.addEventListener("click", () => {
           setAdminCode(els.adminCodeInput.value.trim());
           setStaffName(els.staffNameInput.value.trim() || "受付スタッフ");
-          showMessage(els.scanMessage, "success", "管理コードとスタッフ名を保存しました。");
+          showMessage(els.scanMessage, "success", "管理コードとスタッフ名を保存しました。DB受付状態を読み込みます。");
+          loadDailyStatuses(true);
         });
 
         els.staffNameInput.addEventListener("change", () => {
@@ -1880,7 +2155,12 @@
         renderQueue();
         bindEvents();
 
-        showMessage(els.scanMessage, "info", "受付iPad画面を開きました。まずはデモ患者ボタンで動作確認できます。");
+        if (getAdminCode()) {
+          loadDailyStatuses(false);
+          showMessage(els.scanMessage, "info", "受付iPad画面を開きました。DBから今日の受付状態を読み込みます。");
+        } else {
+          showMessage(els.scanMessage, "info", "受付iPad画面を開きました。DB連動には左下で管理コードを保存してください。まずはデモ患者ボタンでも動作確認できます。");
+        }
       }
 
       document.addEventListener("DOMContentLoaded", init);
