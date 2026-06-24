@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-26B 治療内容別LINEフォロー文面選択・編集</title>
+  <title>DPRO SHOP | STEP 30-26B2 LINE文面編集 安全版</title>
 
   <script src="./config.js"></script>
 
@@ -1370,42 +1370,62 @@
 
   
     /* =========================================================
-       STEP 30-26B LINE FOLLOW TEMPLATE EDITOR
-       治療内容別テンプレート選択・編集・コピー
+       STEP 30-26B2 SAFE LINE TEMPLATE EDITOR
+       既存ボタンを壊さない追加型
     ========================================================= */
 
-    .line-template-editor {
-      margin: 14px 0 12px;
+    .safe-line-template-card {
+      margin: 0 0 14px;
       border-radius: 24px;
       border: 1px solid #bbf7d0;
       background:
-        radial-gradient(circle at 94% 8%, rgba(6, 199, 85, 0.12), transparent 34%),
+        radial-gradient(circle at 94% 8%, rgba(6,199,85,0.12), transparent 34%),
         linear-gradient(135deg, #f0fdf4, #ffffff);
-      padding: 14px;
+      padding: 15px;
       display: grid;
       gap: 12px;
     }
 
-    .line-template-row {
+    .safe-line-template-title {
+      display: grid;
+      gap: 4px;
+    }
+
+    .safe-line-template-title strong {
+      color: #0f172a;
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.035em;
+    }
+
+    .safe-line-template-title span {
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 780;
+    }
+
+    .safe-line-template-row {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto auto;
       gap: 8px;
       align-items: end;
     }
 
-    .line-template-field {
+    .safe-line-field {
       display: grid;
       gap: 6px;
     }
 
-    .line-template-label {
+    .safe-line-label {
       color: #166534;
       font-size: 12px;
       line-height: 1.35;
       font-weight: 950;
     }
 
-    .line-template-select {
+    .safe-line-select {
       width: 100%;
       min-height: 44px;
       border-radius: 16px;
@@ -1418,12 +1438,7 @@
       outline: none;
     }
 
-    .line-template-select:focus {
-      border-color: #06c755;
-      box-shadow: 0 0 0 4px rgba(6, 199, 85, 0.12);
-    }
-
-    .line-template-mini-button {
+    .safe-line-button {
       min-height: 44px;
       border-radius: 999px;
       border: 1px solid #86efac;
@@ -1437,13 +1452,13 @@
       white-space: nowrap;
     }
 
-    .line-template-mini-button.primary {
+    .safe-line-button.primary {
       background: #06c755;
       border-color: #06c755;
       color: #ffffff;
     }
 
-    .line-message-editor {
+    .safe-line-textarea {
       width: 100%;
       min-height: 220px;
       border-radius: 20px;
@@ -1459,12 +1474,13 @@
       white-space: pre-wrap;
     }
 
-    .line-message-editor:focus {
+    .safe-line-textarea:focus,
+    .safe-line-select:focus {
       border-color: #06c755;
-      box-shadow: 0 0 0 4px rgba(6, 199, 85, 0.12);
+      box-shadow: 0 0 0 4px rgba(6,199,85,0.12);
     }
 
-    .line-template-hint {
+    .safe-line-hint {
       border-radius: 18px;
       background: #ffffff;
       border: 1px solid #dcfce7;
@@ -1475,41 +1491,27 @@
       font-weight: 780;
     }
 
-    .line-template-actions {
+    .safe-line-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
 
-    .line-template-actions .btn {
-      min-height: 46px;
-    }
-
-    .line-template-editor + .line-preview-body {
-      display: none;
-    }
-
-    body.doctor-left-optimized #linePreviewPanel {
-      display: block;
-      margin-bottom: 14px !important;
-      box-shadow: none !important;
-    }
-
-    body.doctor-left-optimized #linePreviewPanel.hidden {
-      display: none !important;
-    }
-
-    body.doctor-left-optimized [data-doctor-panel="follow"].is-active #linePreviewPanel.hidden {
-      display: block !important;
+    .safe-line-status {
+      min-height: 20px;
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 900;
     }
 
     @media (max-width: 720px) {
-      .line-template-row,
-      .line-template-actions {
+      .safe-line-template-row,
+      .safe-line-actions {
         grid-template-columns: 1fr;
       }
 
-      .line-template-mini-button {
+      .safe-line-button {
         width: 100%;
       }
     }
@@ -1552,7 +1554,7 @@
             <span class="doctor-menu-icon">L</span>
             <span>
               <span class="doctor-menu-main">LINEフォロー</span>
-              <span class="doctor-menu-sub">文面選択・編集</span>
+              <span class="doctor-menu-sub">診療後文面</span>
             </span>
             <span class="doctor-menu-count" id="doctorMenuFollowCount">0</span>
           </button>
@@ -1592,7 +1594,7 @@
             <div>
               <div class="doctor-panel-kicker">TODAY</div>
               <div class="doctor-panel-title">今日の診療</div>
-              <div class="doctor-panel-sub">受付済みの患者さんから確認し、診療後は治療内容に合ったLINE文面を選び、編集してからコピーします。</div>
+              <div class="doctor-panel-sub">受付済みの患者さんから確認し、診療後は治療内容に合わせたLINE文面を編集・コピーできます。</div>
             </div>
             <div class="doctor-panel-actions">
               <button class="doctor-panel-action" id="doctorCompactReloadButton" type="button">受付状態を更新</button>
@@ -1663,13 +1665,55 @@
             <div>
               <div class="doctor-panel-kicker">LINE FOLLOW</div>
               <div class="doctor-panel-title">LINEフォロー</div>
-              <div class="doctor-panel-sub">治療内容ごとの文面を選び、必要に応じて編集してからコピーします。</div>
+              <div class="doctor-panel-sub">診療後に送るLINE文面コピー対象をまとめます。</div>
             </div>
             <div class="doctor-panel-actions">
-              <button class="doctor-panel-action" id="doctorCompactCopyButton" type="button">編集後の文面をコピー</button>
+              <button class="doctor-panel-action" id="doctorCompactCopyButton" type="button">LINE文面をコピー</button>
             </div>
           </div>
           <div class="doctor-panel-body">
+            
+            <div class="safe-line-template-card" id="safeLineTemplateCard">
+              <div class="safe-line-template-title">
+                <strong>治療内容に合わせたLINE文面</strong>
+                <span>治療内容を選ぶと文面が入ります。必要に応じて編集してからコピーしてください。既存の確認ボタンや患者選択処理には干渉しない安全版です。</span>
+              </div>
+
+              <div class="safe-line-template-row">
+                <label class="safe-line-field">
+                  <span class="safe-line-label">治療内容を選ぶ</span>
+                  <select class="safe-line-select" id="safeLineTemplateSelect">
+                    <option value="checkup">定期検診後</option>
+                    <option value="cleaning">クリーニング後</option>
+                    <option value="caries">虫歯治療後</option>
+                    <option value="child">小児歯科</option>
+                    <option value="fluoride">フッ素塗布後</option>
+                    <option value="extraction">抜歯後</option>
+                    <option value="whitening">ホワイトニング後</option>
+                    <option value="next_visit">次回予約案内</option>
+                    <option value="line_link">LINE登録案内</option>
+                    <option value="free">自由入力</option>
+                  </select>
+                </label>
+
+                <button class="safe-line-button primary" id="safeApplyLineTemplateButton" type="button">文面を反映</button>
+                <button class="safe-line-button" id="safeResetLineTemplateButton" type="button">初期文面に戻す</button>
+              </div>
+
+              <textarea class="safe-line-textarea" id="safeLineMessageArea" placeholder="ここにLINEで送る文面が入ります。必要に応じて編集してからコピーしてください。"></textarea>
+
+              <div class="safe-line-hint">
+                自動送信ではありません。患者さんに送る前に医院側で内容を確認し、編集後の文面をコピーしてLINE公式チャットへ貼り付けます。
+              </div>
+
+              <div class="safe-line-actions">
+                <button class="safe-line-button primary" id="safeCopyEditedLineButton" type="button">編集後の文面をコピー</button>
+                <button class="safe-line-button" id="safeFreeInputButton" type="button">自由入力にする</button>
+              </div>
+
+              <div class="safe-line-status" id="safeLineTemplateStatus"></div>
+            </div>
+
             <div class="doctor-panel-mount" id="doctor26FollowMount"></div>
           </div>
         </section>
@@ -1727,7 +1771,7 @@
         <div class="today-date" id="todayDateLabel">TODAY</div>
         <div class="today-task">今日やること：診療前確認 → 診療 → LINEフォロー</div>
         <div class="today-note">
-          受付済みの患者さんから順に確認し、診療後は治療内容に合ったLINE文面を選び、編集してからコピーします。
+          受付済みの患者さんから順に確認し、診療後は治療内容に合わせたLINE文面を編集・コピーできます。
         </div>
       </div>
 
@@ -1847,7 +1891,7 @@
               <div class="line-preview-panel hidden" id="linePreviewPanel">
                 <div class="line-preview-head">
                   <div>
-                    <div class="line-preview-title" id="linePreviewTitle">LINE文面選択・編集</div>
+                    <div class="line-preview-title" id="linePreviewTitle">LINE文面プレビュー</div>
                     <div class="line-preview-sub">
                       これは自動送信ではありません。文面をコピーして、LINE公式のチャットに貼り付けて使います。
                     </div>
@@ -1855,43 +1899,10 @@
                   <span class="copy-only-badge">コピーのみ・自動送信なし</span>
                 </div>
 
-                <div class="line-template-editor" id="lineTemplateEditor">
-                  <div class="line-template-row">
-                    <label class="line-template-field">
-                      <span class="line-template-label">治療内容を選ぶ</span>
-                      <select class="line-template-select" id="lineTreatmentTemplateSelect">
-                        <option value="checkup">定期検診後</option>
-                        <option value="cleaning">クリーニング後</option>
-                        <option value="caries">虫歯治療後</option>
-                        <option value="child">小児歯科</option>
-                        <option value="fluoride">フッ素塗布後</option>
-                        <option value="extraction">抜歯後</option>
-                        <option value="whitening">ホワイトニング後</option>
-                        <option value="next_visit">次回予約案内</option>
-                        <option value="line_link">LINE登録案内</option>
-                        <option value="free">自由入力</option>
-                      </select>
-                    </label>
-                    <button class="line-template-mini-button primary" id="applyLineTemplateButton" type="button">文面を反映</button>
-                    <button class="line-template-mini-button" id="resetLineTemplateButton" type="button">初期文面に戻す</button>
-                  </div>
-
-                  <textarea class="line-message-editor" id="lineMessageEditArea" placeholder="ここにLINEで送る文面が入ります。必要に応じて編集してからコピーしてください。"></textarea>
-
-                  <div class="line-template-hint">
-                    自動送信ではありません。患者さんに送る前に、医院側で内容を確認し、編集後の文面をコピーしてLINE公式チャットへ貼り付けます。
-                  </div>
-
-                  <div class="line-template-actions">
-                    <button class="btn btn-line" id="copyEditedLineMessageButton" type="button">編集後の文面をコピー</button>
-                    <button class="btn btn-light" id="selectFreeLineMessageButton" type="button">自由入力にする</button>
-                  </div>
-                </div>
-
                 <div class="line-preview-body" id="linePreviewBody"></div>
 
                 <div class="action-grid">
-                  <button class="btn btn-line" id="copyPreviewAgainButton" type="button">編集後の文面をもう一度コピー</button>
+                  <button class="btn btn-line" id="copyPreviewAgainButton" type="button">この文面をもう一度コピー</button>
                   <button class="btn btn-light" id="hideLinePreviewButton" type="button">プレビューを閉じる</button>
                 </div>
               </div>
@@ -2695,200 +2706,14 @@
         `).join("");
       }
 
-      const LINE_TREATMENT_TEMPLATES = {
-        checkup: {
-          label: "定期検診後",
-          build(patient) {
-            return [
-              `こんにちは。DPRO歯科クリニックです。`,
-              ``,
-              `${patient.patient_name}様、本日は定期検診でのご来院ありがとうございました。`,
-              `本日はお口全体の状態確認を行いました。`,
-              ``,
-              `気になる症状や、歯ぐきの違和感などがありましたら、LINEからお気軽にご相談ください。`,
-              `次回ご来院時は、LINEメニューの「診察券」からQR診察券をご提示ください。`
-            ].join("\n");
-          }
-        },
-        cleaning: {
-          label: "クリーニング後",
-          build(patient) {
-            return [
-              `こんにちは。DPRO歯科クリニックです。`,
-              ``,
-              `${patient.patient_name}様、本日はクリーニングでのご来院ありがとうございました。`,
-              `本日は歯石・着色の除去と、お口の清掃状態の確認を行いました。`,
-              ``,
-              `しみる感じや違和感が続く場合は、無理せずLINEからご連絡ください。`,
-              `次回もLINE診察券をご提示いただくと受付がスムーズです。`
-            ].join("\n");
-          }
-        },
-        caries: {
-          label: "虫歯治療後",
-          build(patient) {
-            return [
-              `こんにちは。DPRO歯科クリニックです。`,
-              ``,
-              `${patient.patient_name}様、本日は虫歯治療でのご来院ありがとうございました。`,
-              `治療後は一時的にしみる感じや噛んだ時の違和感が出る場合があります。`,
-              ``,
-              `強い痛みが続く場合や、気になることがある場合はLINEからご相談ください。`,
-              `次回の確認・治療予定もLINE診察券からスムーズにご案内できます。`
-            ].join("\n");
-          }
-        },
-        child: {
-          label: "小児歯科",
-          build(patient) {
-            const name = patient.patient_name || "お子さま";
-            return [
-              `こんにちは。DPRO歯科クリニックです。`,
-              ``,
-              `${name}様、本日はご来院ありがとうございました。`,
-              `本日はお口の状態確認と、必要なケアの確認を行いました。`,
-              ``,
-              `おうちでの歯みがきで気になることや、痛み・違和感がありましたらLINEからご相談ください。`,
-              `次回も保護者さまのLINE診察券から受付できます。`
-            ].join("\n");
-          }
-        },
-        fluoride: {
-          label: "フッ素塗布後",
-          build(patient) {
-            return [
-              `こんにちは。DPRO歯科クリニックです。`,
-              ``,
-              `${patient.patient_name}様、本日はフッ素塗布でのご来院ありがとうございました。`,
-              `本日は虫歯予防のためのフッ素塗布と、お口の状態確認を行いました。`,
-              ``,
-              `しばらく飲食を控えていただく必要がある場合は、院内でお伝えした内容をご確認ください。`,
-              `次回のフッ素時期が近づきましたら、LINEでのご案内にも活用できます。`
-            ].join("\n");
-          }
-        },
-        extraction: {
-          label: "抜歯後",
-          build(patient) {
-            return [
-              `こんにちは。DPRO歯科クリニックです。`,
-              ``,
-              `${patient.patient_name}様、本日は抜歯処置でのご来院ありがとうございました。`,
-              `処置後は、強いうがい・患部を触ること・激しい運動などは控えてください。`,
-              ``,
-              `出血が長く続く場合、強い痛みや腫れがある場合は、LINEまたはお電話でご連絡ください。`,
-              `次回ご来院時はLINE診察券をご提示ください。`
-            ].join("\n");
-          }
-        },
-        whitening: {
-          label: "ホワイトニング後",
-          build(patient) {
-            return [
-              `こんにちは。DPRO歯科クリニックです。`,
-              ``,
-              `${patient.patient_name}様、本日はホワイトニングでのご来院ありがとうございました。`,
-              `施術後は一時的にしみる感じが出る場合があります。`,
-              ``,
-              `色の濃い飲食物など、注意事項については本日お伝えした内容をご確認ください。`,
-              `気になることがありましたら、LINEからお気軽にご相談ください。`
-            ].join("\n");
-          }
-        },
-        next_visit: {
-          label: "次回予約案内",
-          build(patient) {
-            return [
-              `こんにちは。DPRO歯科クリニックです。`,
-              ``,
-              `${patient.patient_name}様、本日はご来院ありがとうございました。`,
-              `次回は本日の経過確認、または継続治療を予定しています。`,
-              ``,
-              `ご都合の良い日時が分かりましたら、LINEからご連絡ください。`,
-              `次回ご来院時は、LINE診察券をご提示いただくと受付がスムーズです。`
-            ].join("\n");
-          }
-        },
-        line_link: {
-          label: "LINE登録案内",
-          build(patient) {
-            return [
-              `こんにちは。DPRO歯科クリニックです。`,
-              ``,
-              `${patient.patient_name}様、本日はご来院ありがとうございました。`,
-              `次回以降は、LINEのデジタル診察券をご利用いただくと受付がスムーズです。`,
-              ``,
-              `LINEメニューの「診察券」からQR診察券を表示して受付でご提示ください。`,
-              `ご家族分の診察券もまとめて確認できます。`
-            ].join("\n");
-          }
-        },
-        free: {
-          label: "自由入力",
-          build(patient) {
-            return [
-              `こんにちは。DPRO歯科クリニックです。`,
-              ``,
-              `${patient.patient_name}様、本日はご来院ありがとうございました。`,
-              ``,
-              ``
-            ].join("\n");
-          }
-        }
-      };
-
-      function inferLineTemplateKey(patient) {
-        const treatment = String(patient && patient.treatment ? patient.treatment : "");
-        const kind = String(patient && patient.patient_kind ? patient.patient_kind : "");
-
-        if (treatment.includes("フッ素")) return "fluoride";
-        if (treatment.includes("クリーニング")) return "cleaning";
-        if (treatment.includes("虫歯")) return "caries";
-        if (treatment.includes("抜歯")) return "extraction";
-        if (treatment.includes("ホワイトニング")) return "whitening";
-        if (kind === "child" || treatment.includes("小児")) return "child";
-        if (treatment.includes("定期")) return "checkup";
-        return "checkup";
-      }
-
-      function getLineTemplateKey(patient) {
-        const select = $("lineTreatmentTemplateSelect");
-        if (select && select.value) return select.value;
-        return inferLineTemplateKey(patient);
-      }
-
-      function makeAfterVisitMessage(patient, templateKey) {
-        const key = templateKey || getLineTemplateKey(patient);
-        const template = LINE_TREATMENT_TEMPLATES[key] || LINE_TREATMENT_TEMPLATES.checkup;
-        return template.build(patient);
-      }
-
-      function getEditableLineMessage() {
-        const textarea = $("lineMessageEditArea");
-        if (textarea) return textarea.value || "";
-        return state.lastLinePreviewText || "";
-      }
-
-      function setEditableLineMessage(text) {
-        const textarea = $("lineMessageEditArea");
-        if (textarea) textarea.value = text || "";
-        state.lastLinePreviewText = text || "";
-      }
-
-      function applyLineTemplateToEditor(patient, templateKey) {
-        const targetPatient = patient || getPatient(state.selectedToken || DEMO_PATIENTS[0].token);
-        const key = templateKey || getLineTemplateKey(targetPatient);
-        const select = $("lineTreatmentTemplateSelect");
-        if (select) select.value = key;
-
-        const text = makeAfterVisitMessage(targetPatient, key);
-        setEditableLineMessage(text);
-
-        if (els.linePreviewBody) {
-          els.linePreviewBody.textContent = text;
-        }
-
-        return text;
+      function makeAfterVisitMessage(patient) {
+        return [
+          `こんにちは。DPRO歯科クリニックです。`,
+          ``,
+          patient.after_follow || `本日はご来院ありがとうございました。`,
+          ``,
+          `次回ご来院時は、LINEメニューの「診察券」からQR診察券をご提示ください。`
+        ].join("\n");
       }
 
       async function copyText(text, element, successMessage) {
@@ -2902,30 +2727,21 @@
 
       async function copyAfterVisitMessage(token) {
         const patient = getPatient(token || state.selectedToken);
+        const text = makeAfterVisitMessage(patient);
+
         state.selectedToken = patient.token;
         renderSelectedPatient();
 
-        const selectedTemplateKey = getLineTemplateKey(patient) || inferLineTemplateKey(patient);
-        const select = $("lineTreatmentTemplateSelect");
-        if (select) select.value = selectedTemplateKey;
-
-        const initialText = makeAfterVisitMessage(patient, selectedTemplateKey);
-
         showActionFeedback(
           "文",
-          `${patient.patient_name} 様のLINE文面を編集できます`,
-          "治療内容を選ぶと文面が自動で入ります。必要に応じて編集してからコピーします。自動送信はしていません。"
+          `${patient.patient_name} 様のLINE文面を表示しました`,
+          "自動送信はしていません。文面をコピーして、LINE公式のチャットに貼り付けて使います。"
         );
 
-        showLinePreview(patient, initialText);
+        showLinePreview(patient, text);
+        scrollToSelectedPatient();
 
-        const finalText = getEditableLineMessage() || initialText;
-        if (!finalText.trim()) {
-          showMessage(els.selectedMessage, "warning", "コピーするLINE文面がありません。");
-          return;
-        }
-
-        await copyText(finalText, els.selectedMessage, `${patient.patient_name} 様へのLINE文面をコピーしました。自動送信はしていません。`);
+        await copyText(text, els.selectedMessage, `${patient.patient_name} 様へのLINE文面をコピーしました。自動送信はしていません。`);
 
         if (getAdminCode()) {
           try {
@@ -2936,8 +2752,7 @@
                 visit_date: getTodayJST(),
                 qr_token: patient.token,
                 member_no: patient.member_no,
-                line_follow_message: finalText,
-                line_follow_template: selectedTemplateKey,
+                line_follow_message: text,
                 doctor_name: getDoctorName(),
                 source_screen: "doctor.html"
               }
@@ -2984,34 +2799,13 @@
       }
 
       function showLinePreview(patient, text) {
-        const targetPatient = patient || getPatient(state.selectedToken || DEMO_PATIENTS[0].token);
-        const initialText = text || makeAfterVisitMessage(targetPatient, getLineTemplateKey(targetPatient));
-
-        state.lastLinePreviewText = initialText || "";
-        setEditableLineMessage(initialText);
+        state.lastLinePreviewText = text || "";
 
         if (!els.linePreviewPanel) return;
 
-        const followMount = $("doctor26FollowMount");
-        if (followMount && !followMount.contains(els.linePreviewPanel)) {
-          followMount.prepend(els.linePreviewPanel);
-        }
-
         els.linePreviewPanel.classList.remove("hidden");
-        els.linePreviewTitle.textContent = `${targetPatient.patient_name} 様へのLINE文面編集`;
-        if (els.linePreviewBody) {
-          els.linePreviewBody.textContent = initialText || "";
-        }
-
-        const select = $("lineTreatmentTemplateSelect");
-        if (select) {
-          select.value = getLineTemplateKey(targetPatient);
-        }
-
-        const followTab = document.querySelector('[data-doctor-tab="follow"]');
-        if (followTab) {
-          followTab.click();
-        }
+        els.linePreviewTitle.textContent = `${patient.patient_name} 様へのLINE文面プレビュー`;
+        els.linePreviewBody.textContent = text || "";
       }
 
 
@@ -3145,77 +2939,19 @@
 
         if (els.copyPreviewAgainButton) {
           els.copyPreviewAgainButton.addEventListener("click", () => {
-            const text = getEditableLineMessage();
-            if (!text.trim()) {
+            if (!state.lastLinePreviewText) {
               showMessage(els.selectedMessage, "warning", "コピーするLINE文面がありません。");
               return;
             }
 
-            state.lastLinePreviewText = text;
-            copyText(text, els.selectedMessage, "編集後のLINE文面をコピーしました。自動送信はしていません。");
+            copyText(state.lastLinePreviewText, els.selectedMessage, "LINE文面をもう一度コピーしました。自動送信はしていません。");
           });
         }
 
         if (els.hideLinePreviewButton) {
           els.hideLinePreviewButton.addEventListener("click", () => {
             els.linePreviewPanel.classList.add("hidden");
-            showMessage(els.selectedMessage, "info", "LINE文面選択・編集を閉じました。");
-          });
-        }
-
-        const lineTemplateSelect = $("lineTreatmentTemplateSelect");
-        const applyLineTemplateButton = $("applyLineTemplateButton");
-        const resetLineTemplateButton = $("resetLineTemplateButton");
-        const copyEditedLineMessageButton = $("copyEditedLineMessageButton");
-        const selectFreeLineMessageButton = $("selectFreeLineMessageButton");
-
-        if (lineTemplateSelect) {
-          lineTemplateSelect.addEventListener("change", () => {
-            const patient = getPatient(state.selectedToken || DEMO_PATIENTS[0].token);
-            applyLineTemplateToEditor(patient, lineTemplateSelect.value);
-            showMessage(els.selectedMessage, "info", `${LINE_TREATMENT_TEMPLATES[lineTemplateSelect.value]?.label || "選択した治療内容"}の文面を反映しました。必要に応じて編集してください。`);
-          });
-        }
-
-        if (applyLineTemplateButton) {
-          applyLineTemplateButton.addEventListener("click", () => {
-            const patient = getPatient(state.selectedToken || DEMO_PATIENTS[0].token);
-            applyLineTemplateToEditor(patient, getLineTemplateKey(patient));
-            showMessage(els.selectedMessage, "success", "選択した治療内容の文面を反映しました。");
-          });
-        }
-
-        if (resetLineTemplateButton) {
-          resetLineTemplateButton.addEventListener("click", () => {
-            const patient = getPatient(state.selectedToken || DEMO_PATIENTS[0].token);
-            const key = inferLineTemplateKey(patient);
-            applyLineTemplateToEditor(patient, key);
-            showMessage(els.selectedMessage, "success", "患者さんの治療内容に合わせた初期文面に戻しました。");
-          });
-        }
-
-        if (copyEditedLineMessageButton) {
-          copyEditedLineMessageButton.addEventListener("click", () => {
-            const text = getEditableLineMessage();
-            if (!text.trim()) {
-              showMessage(els.selectedMessage, "warning", "コピーするLINE文面がありません。");
-              return;
-            }
-
-            state.lastLinePreviewText = text;
-            copyText(text, els.selectedMessage, "編集後のLINE文面をコピーしました。自動送信はしていません。");
-          });
-        }
-
-        if (selectFreeLineMessageButton) {
-          selectFreeLineMessageButton.addEventListener("click", () => {
-            const select = $("lineTreatmentTemplateSelect");
-            if (select) select.value = "free";
-            const patient = getPatient(state.selectedToken || DEMO_PATIENTS[0].token);
-            applyLineTemplateToEditor(patient, "free");
-            const textarea = $("lineMessageEditArea");
-            if (textarea) textarea.focus();
-            showMessage(els.selectedMessage, "info", "自由入力にしました。必要な文面を入力してください。");
+            showMessage(els.selectedMessage, "info", "LINE文面プレビューを閉じました。");
           });
         }
 
@@ -3424,8 +3160,8 @@
         const copyButton = $("doctorCompactCopyButton");
         if (copyButton) {
           copyButton.addEventListener("click", function () {
-            const edited = $("copyEditedLineMessageButton") || $("copyPreviewAgainButton") || $("copyAfterVisitLineButton");
-            if (edited) edited.click();
+            const original = $("copyPreviewAgainButton") || $("copyAfterVisitLineButton");
+            if (original) original.click();
           });
         }
 
@@ -3437,6 +3173,238 @@
         document.addEventListener("DOMContentLoaded", setupDoctorLeftMenu);
       } else {
         setupDoctorLeftMenu();
+      }
+    })();
+  </script>
+
+
+  <script>
+    (function () {
+      "use strict";
+
+      const SAFE_LINE_TEMPLATES = {
+        checkup: {
+          label: "定期検診後",
+          body: [
+            "こんにちは。DPRO歯科クリニックです。",
+            "",
+            "本日は定期検診でのご来院ありがとうございました。",
+            "本日はお口全体の状態確認を行いました。",
+            "",
+            "気になる症状や、歯ぐきの違和感などがありましたら、LINEからお気軽にご相談ください。",
+            "次回ご来院時は、LINEメニューの「診察券」からQR診察券をご提示ください。"
+          ].join("\n")
+        },
+        cleaning: {
+          label: "クリーニング後",
+          body: [
+            "こんにちは。DPRO歯科クリニックです。",
+            "",
+            "本日はクリーニングでのご来院ありがとうございました。",
+            "本日は歯石・着色の除去と、お口の清掃状態の確認を行いました。",
+            "",
+            "しみる感じや違和感が続く場合は、無理せずLINEからご連絡ください。",
+            "次回もLINE診察券をご提示いただくと受付がスムーズです。"
+          ].join("\n")
+        },
+        caries: {
+          label: "虫歯治療後",
+          body: [
+            "こんにちは。DPRO歯科クリニックです。",
+            "",
+            "本日は虫歯治療でのご来院ありがとうございました。",
+            "治療後は一時的にしみる感じや、噛んだ時の違和感が出る場合があります。",
+            "",
+            "強い痛みが続く場合や、気になることがある場合はLINEからご相談ください。",
+            "次回の確認・治療予定もLINE診察券からスムーズにご案内できます。"
+          ].join("\n")
+        },
+        child: {
+          label: "小児歯科",
+          body: [
+            "こんにちは。DPRO歯科クリニックです。",
+            "",
+            "本日はご来院ありがとうございました。",
+            "本日はお口の状態確認と、必要なケアの確認を行いました。",
+            "",
+            "おうちでの歯みがきで気になることや、痛み・違和感がありましたらLINEからご相談ください。",
+            "次回も保護者さまのLINE診察券から受付できます。"
+          ].join("\n")
+        },
+        fluoride: {
+          label: "フッ素塗布後",
+          body: [
+            "こんにちは。DPRO歯科クリニックです。",
+            "",
+            "本日はフッ素塗布でのご来院ありがとうございました。",
+            "本日は虫歯予防のためのフッ素塗布と、お口の状態確認を行いました。",
+            "",
+            "しばらく飲食を控えていただく必要がある場合は、院内でお伝えした内容をご確認ください。",
+            "次回のフッ素時期が近づきましたら、LINEでのご案内にも活用できます。"
+          ].join("\n")
+        },
+        extraction: {
+          label: "抜歯後",
+          body: [
+            "こんにちは。DPRO歯科クリニックです。",
+            "",
+            "本日は抜歯処置でのご来院ありがとうございました。",
+            "処置後は、強いうがい・患部を触ること・激しい運動などは控えてください。",
+            "",
+            "出血が長く続く場合、強い痛みや腫れがある場合は、LINEまたはお電話でご連絡ください。",
+            "次回ご来院時はLINE診察券をご提示ください。"
+          ].join("\n")
+        },
+        whitening: {
+          label: "ホワイトニング後",
+          body: [
+            "こんにちは。DPRO歯科クリニックです。",
+            "",
+            "本日はホワイトニングでのご来院ありがとうございました。",
+            "施術後は一時的にしみる感じが出る場合があります。",
+            "",
+            "色の濃い飲食物など、注意事項については本日お伝えした内容をご確認ください。",
+            "気になることがありましたら、LINEからお気軽にご相談ください。"
+          ].join("\n")
+        },
+        next_visit: {
+          label: "次回予約案内",
+          body: [
+            "こんにちは。DPRO歯科クリニックです。",
+            "",
+            "本日はご来院ありがとうございました。",
+            "次回は本日の経過確認、または継続治療を予定しています。",
+            "",
+            "ご都合の良い日時が分かりましたら、LINEからご連絡ください。",
+            "次回ご来院時は、LINE診察券をご提示いただくと受付がスムーズです。"
+          ].join("\n")
+        },
+        line_link: {
+          label: "LINE登録案内",
+          body: [
+            "こんにちは。DPRO歯科クリニックです。",
+            "",
+            "本日はご来院ありがとうございました。",
+            "次回以降は、LINEのデジタル診察券をご利用いただくと受付がスムーズです。",
+            "",
+            "LINEメニューの「診察券」からQR診察券を表示して受付でご提示ください。",
+            "ご家族分の診察券もまとめて確認できます。"
+          ].join("\n")
+        },
+        free: {
+          label: "自由入力",
+          body: [
+            "こんにちは。DPRO歯科クリニックです。",
+            "",
+            "本日はご来院ありがとうございました。",
+            "",
+            ""
+          ].join("\n")
+        }
+      };
+
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      function showSafeLineStatus(message) {
+        const el = $("safeLineTemplateStatus");
+        if (!el) return;
+        el.textContent = message || "";
+      }
+
+      function getCurrentPatientName() {
+        const candidates = [
+          "#selectedPatientName",
+          "[data-selected-patient-name]",
+          ".selected-patient-name",
+          "#patientName"
+        ];
+
+        for (const selector of candidates) {
+          const el = document.querySelector(selector);
+          if (el && el.textContent && el.textContent.trim()) {
+            return el.textContent.trim();
+          }
+        }
+
+        const selectedCard = document.getElementById("selectedPatientCard");
+        if (selectedCard) {
+          const text = selectedCard.textContent || "";
+          const match = text.match(/山田\s*[^\s　様]+|[^\s　]+様/);
+          if (match) {
+            return match[0].replace(/様$/, "").trim();
+          }
+        }
+
+        return "患者さん";
+      }
+
+      function buildMessage(key) {
+        const template = SAFE_LINE_TEMPLATES[key] || SAFE_LINE_TEMPLATES.checkup;
+        const name = getCurrentPatientName();
+        const honorificName = name.includes("患者") ? name : `${name}様`;
+        return template.body.replace(/本日は/g, `${honorificName}、本日は`);
+      }
+
+      function applyTemplate(key) {
+        const select = $("safeLineTemplateSelect");
+        const area = $("safeLineMessageArea");
+        if (!area) return;
+
+        const value = key || (select ? select.value : "checkup");
+        if (select) select.value = value;
+
+        area.value = buildMessage(value);
+        const template = SAFE_LINE_TEMPLATES[value] || SAFE_LINE_TEMPLATES.checkup;
+        showSafeLineStatus(`${template.label}の文面を反映しました。必要に応じて編集してください。`);
+      }
+
+      async function copyEditedMessage() {
+        const area = $("safeLineMessageArea");
+        if (!area || !area.value.trim()) {
+          showSafeLineStatus("コピーする文面がありません。");
+          return;
+        }
+
+        try {
+          await navigator.clipboard.writeText(area.value);
+          showSafeLineStatus("編集後のLINE文面をコピーしました。自動送信はしていません。");
+        } catch (error) {
+          area.focus();
+          area.select();
+          document.execCommand("copy");
+          showSafeLineStatus("編集後のLINE文面をコピーしました。自動送信はしていません。");
+        }
+      }
+
+      function setupSafeLineTemplateEditor() {
+        const select = $("safeLineTemplateSelect");
+        const applyButton = $("safeApplyLineTemplateButton");
+        const resetButton = $("safeResetLineTemplateButton");
+        const copyButton = $("safeCopyEditedLineButton");
+        const freeButton = $("safeFreeInputButton");
+
+        if (!select || !applyButton || !resetButton || !copyButton || !freeButton) return;
+
+        select.addEventListener("change", () => applyTemplate(select.value));
+        applyButton.addEventListener("click", () => applyTemplate(select.value));
+        resetButton.addEventListener("click", () => applyTemplate("checkup"));
+        copyButton.addEventListener("click", copyEditedMessage);
+        freeButton.addEventListener("click", () => {
+          select.value = "free";
+          applyTemplate("free");
+          const area = $("safeLineMessageArea");
+          if (area) area.focus();
+        });
+
+        applyTemplate("checkup");
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupSafeLineTemplateEditor);
+      } else {
+        setupSafeLineTemplateEditor();
       }
     })();
   </script>
