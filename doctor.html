@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-26B2 LINE文面編集 安全版</title>
+  <title>DPRO SHOP | STEP 30-26B3 更新ボタン反応改善</title>
 
   <script src="./config.js"></script>
 
@@ -1517,6 +1517,75 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-26B3 UPDATE FEEDBACK
+       今日の診療：更新ボタンを押した反応を見える化
+    ========================================================= */
+
+    .doctor-update-feedback {
+      margin: 0 0 14px;
+      border-radius: 18px;
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 11px 12px;
+      display: grid;
+      gap: 4px;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 850;
+    }
+
+    .doctor-update-feedback strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .doctor-update-feedback.is-loading {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .doctor-update-feedback.is-success {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .doctor-update-feedback.is-warning {
+      border-color: #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .doctor-update-feedback.is-error {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .doctor-update-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 7px;
+      background: currentColor;
+      vertical-align: middle;
+      opacity: 0.8;
+    }
+
+    #doctorCompactReloadButton.is-updating {
+      opacity: 0.72;
+      cursor: wait;
+    }
+
+
   </style>
 </head>
 
@@ -1603,6 +1672,12 @@
           </div>
 
           <div class="doctor-panel-body">
+            
+            <div class="doctor-update-feedback" id="doctorUpdateFeedback">
+              <strong><span class="doctor-update-dot"></span>まだ更新していません</strong>
+              受付iPadで受付済みにした後は、「受付状態を更新」を押すとこの画面に反映されます。
+            </div>
+
             <div class="doctor-compact-kpis">
               <div class="doctor-compact-kpi">
                 <div class="doctor-compact-label">来院予定</div>
@@ -3146,14 +3221,84 @@
           });
         });
 
+        function setDoctorUpdateFeedback(type, title, detail) {
+          const feedback = $("doctorUpdateFeedback");
+          if (!feedback) return;
+
+          feedback.className = "doctor-update-feedback" + (type ? " is-" + type : "");
+          feedback.innerHTML = '<strong><span class="doctor-update-dot"></span>' + title + '</strong>' + (detail || "");
+        }
+
+        function getCompactStatusSnapshot() {
+          return {
+            schedule: numberFrom("doctor26Schedule", 3),
+            received: numberFrom("doctor26Received", 0),
+            follow: numberFrom("doctor26Follow", 0),
+            unlinked: numberFrom("doctor26Unlinked", 0)
+          };
+        }
+
+        function compactStatusText(snapshot) {
+          return "来院予定 " + snapshot.schedule + "件 / 受付済み " + snapshot.received + "件 / LINEフォロー " + snapshot.follow + "件 / LINE未連携 " + snapshot.unlinked + "件";
+        }
+
         const reloadButton = $("doctorCompactReloadButton");
         if (reloadButton) {
           reloadButton.addEventListener("click", function () {
             const original = $("reloadButton");
-            if (original) original.click();
-            setTimeout(updateDoctorCompactKpis, 500);
-            setTimeout(updateDoctorCompactKpis, 1300);
-            setTimeout(updateDoctorCompactKpis, 2400);
+            const before = getCompactStatusSnapshot();
+
+            reloadButton.disabled = true;
+            reloadButton.classList.add("is-updating");
+            reloadButton.textContent = "更新中...";
+
+            setDoctorUpdateFeedback(
+              "loading",
+              "受付状態を更新中です",
+              "受付iPad・先生用画面の最新状態を確認しています。"
+            );
+
+            if (original) {
+              original.click();
+            } else {
+              setDoctorUpdateFeedback(
+                "error",
+                "更新ボタンが見つかりません",
+                "画面の読み込み状態を確認してください。"
+              );
+            }
+
+            setTimeout(updateDoctorCompactKpis, 400);
+            setTimeout(updateDoctorCompactKpis, 1000);
+            setTimeout(updateDoctorCompactKpis, 1700);
+
+            setTimeout(function () {
+              updateDoctorCompactKpis();
+
+              const after = getCompactStatusSnapshot();
+              const changed =
+                before.schedule !== after.schedule ||
+                before.received !== after.received ||
+                before.follow !== after.follow ||
+                before.unlinked !== after.unlinked;
+
+              const now = new Date().toLocaleTimeString("ja-JP", {
+                hour: "2-digit",
+                minute: "2-digit"
+              });
+
+              setDoctorUpdateFeedback(
+                changed ? "success" : "warning",
+                changed ? "更新完了 " + now : "最新状態を確認しました " + now,
+                changed
+                  ? compactStatusText(after)
+                  : compactStatusText(after) + "。件数に変化はありませんでした。"
+              );
+
+              reloadButton.disabled = false;
+              reloadButton.classList.remove("is-updating");
+              reloadButton.textContent = "受付状態を更新";
+            }, 2300);
           });
         }
 
@@ -3369,12 +3514,12 @@
 
         try {
           await navigator.clipboard.writeText(area.value);
-          showSafeLineStatus("編集後のLINE文面をコピーしました。自動送信はしていません。");
+          showSafeLineStatus("編集後のLINE文面をコピーしました。LINE公式チャットへ貼り付けて送信してください。自動送信はしていません。");
         } catch (error) {
           area.focus();
           area.select();
           document.execCommand("copy");
-          showSafeLineStatus("編集後のLINE文面をコピーしました。自動送信はしていません。");
+          showSafeLineStatus("編集後のLINE文面をコピーしました。LINE公式チャットへ貼り付けて送信してください。自動送信はしていません。");
         }
       }
 
