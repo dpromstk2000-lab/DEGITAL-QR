@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-26C doctor.html 完全作り直し安定版</title>
+  <title>DPRO SHOP | STEP 30-26D doctor.html 完全安定版・直接反応方式</title>
 
   <script src="./config.js"></script>
 
@@ -25,7 +25,7 @@
       --orange-soft: #fffbeb;
       --red-soft: #fef2f2;
       --purple-soft: #f5f3ff;
-      --card: rgba(255,255,255,0.96);
+      --card: rgba(255,255,255,0.98);
       --shadow: 0 18px 46px rgba(15, 23, 42, 0.10);
       --radius: 28px;
     }
@@ -68,12 +68,16 @@
       font: inherit;
     }
 
+    button {
+      touch-action: manipulation;
+    }
+
     .app {
       display: grid;
-      grid-template-columns: 248px minmax(0, 1fr);
+      grid-template-columns: 252px minmax(0, 1fr);
       gap: 14px;
       align-items: start;
-      max-width: 1440px;
+      max-width: 1460px;
       margin: 0 auto;
       min-height: calc(100vh - 28px);
     }
@@ -311,7 +315,8 @@
       color: #ffffff;
     }
 
-    .pill-button:disabled {
+    .pill-button:disabled,
+    .small-button:disabled {
       opacity: 0.64;
       cursor: wait;
     }
@@ -476,13 +481,7 @@
       grid-template-columns: 1fr auto;
       gap: 12px;
       align-items: start;
-      cursor: pointer;
       transition: 0.14s ease;
-    }
-
-    .patient-card:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 26px rgba(15,23,42,0.07);
     }
 
     .patient-card.is-selected {
@@ -554,17 +553,21 @@
     }
 
     .small-button {
-      min-height: 36px;
+      min-height: 42px;
+      min-width: 118px;
       border-radius: 999px;
       border: 1px solid #dbeafe;
       background: #ffffff;
       color: var(--blue-dark);
-      padding: 7px 10px;
-      font-size: 12px;
+      padding: 8px 13px;
+      font-size: 13px;
       line-height: 1.35;
       font-weight: 950;
       cursor: pointer;
       white-space: nowrap;
+      pointer-events: auto;
+      position: relative;
+      z-index: 3;
     }
 
     .small-button.primary {
@@ -753,6 +756,10 @@
       .patient-actions {
         justify-content: flex-start;
       }
+
+      .small-button {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -761,13 +768,13 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="kicker">STEP 30-26C / DOCTOR</div>
+        <div class="kicker">STEP 30-26D / DOCTOR</div>
         <div class="brand-title">先生用<br>今日やること</div>
         <div class="date-pill" id="todayDate">本日</div>
       </div>
 
       <nav class="menu" aria-label="先生用メニュー">
-        <button class="menu-button is-active" type="button" data-tab="today">
+        <button class="menu-button is-active" type="button" onclick="DPRO_doctorSwitchTab('today')" id="tabButtonToday">
           <span class="menu-icon">今</span>
           <span>
             <span class="menu-main">今日の診療</span>
@@ -776,7 +783,7 @@
           <span class="menu-count" id="countToday">0</span>
         </button>
 
-        <button class="menu-button" type="button" data-tab="patients">
+        <button class="menu-button" type="button" onclick="DPRO_doctorSwitchTab('patients')" id="tabButtonPatients">
           <span class="menu-icon">患</span>
           <span>
             <span class="menu-main">患者確認</span>
@@ -785,7 +792,7 @@
           <span class="menu-count" id="countSelected">選</span>
         </button>
 
-        <button class="menu-button" type="button" data-tab="line">
+        <button class="menu-button" type="button" onclick="DPRO_doctorSwitchTab('line')" id="tabButtonLine">
           <span class="menu-icon">L</span>
           <span>
             <span class="menu-main">LINEフォロー</span>
@@ -794,7 +801,7 @@
           <span class="menu-count" id="countLine">0</span>
         </button>
 
-        <button class="menu-button" type="button" data-tab="settings">
+        <button class="menu-button" type="button" onclick="DPRO_doctorSwitchTab('settings')" id="tabButtonSettings">
           <span class="menu-icon">設</span>
           <span>
             <span class="menu-main">設定・確認</span>
@@ -824,7 +831,7 @@
     </aside>
 
     <main class="content">
-      <section class="panel is-active" data-panel="today">
+      <section class="panel is-active" data-panel="today" id="panelToday">
         <div class="panel-head">
           <div>
             <div class="panel-kicker">TODAY</div>
@@ -835,7 +842,7 @@
           </div>
 
           <div class="panel-actions">
-            <button class="pill-button primary" id="refreshButton" type="button">受付状態を更新</button>
+            <button class="pill-button primary" id="refreshButton" type="button" onclick="DPRO_doctorRefreshStatus()">受付状態を更新</button>
             <a class="pill-link" href="./scan-ipad.html?v=3023h2">受付iPad</a>
           </div>
         </div>
@@ -876,7 +883,7 @@
         </div>
       </section>
 
-      <section class="panel" data-panel="patients">
+      <section class="panel" data-panel="patients" id="panelPatients">
         <div class="panel-head">
           <div>
             <div class="panel-kicker">PATIENTS</div>
@@ -887,8 +894,8 @@
           </div>
 
           <div class="panel-actions">
-            <button class="pill-button" id="selectFirstPatientButton" type="button">先頭の患者を確認</button>
-            <button class="pill-button" id="refreshPatientsButton" type="button">一覧更新</button>
+            <button class="pill-button" id="selectFirstPatientButton" type="button" onclick="DPRO_doctorSelectFirstPatient()">先頭の患者を確認</button>
+            <button class="pill-button" id="refreshPatientsButton" type="button" onclick="DPRO_doctorRenderAllWithMessage()">一覧更新</button>
           </div>
         </div>
 
@@ -906,8 +913,8 @@
               <div class="field-note" id="selectedPatientSummary">まだ選択されていません。</div>
               <div class="badges" id="selectedBadges"></div>
               <div class="two-actions">
-                <button class="small-button green" id="markDoneButton" type="button">診療済みにする</button>
-                <button class="small-button line" id="openLineForSelectedButton" type="button">LINE文面を作る</button>
+                <button class="small-button green" id="markDoneButton" type="button" onclick="DPRO_doctorMarkDone()">診療済みにする</button>
+                <button class="small-button line" id="openLineForSelectedButton" type="button" onclick="DPRO_doctorOpenLineEditor()">LINE文面を作る</button>
               </div>
             </div>
 
@@ -915,8 +922,8 @@
               <div class="field-title">先生用メモ</div>
               <textarea class="textarea" id="doctorMemo" placeholder="診療中のメモ、次回説明、注意点など"></textarea>
               <div class="two-actions">
-                <button class="small-button primary" id="saveMemoButton" type="button">メモ保存</button>
-                <button class="small-button" id="copyMemoButton" type="button">メモコピー</button>
+                <button class="small-button primary" id="saveMemoButton" type="button" onclick="DPRO_doctorSaveMemo()">メモ保存</button>
+                <button class="small-button" id="copyMemoButton" type="button" onclick="DPRO_doctorCopyMemo()">メモコピー</button>
               </div>
               <div class="status-line" id="memoStatus"></div>
             </div>
@@ -924,7 +931,7 @@
         </div>
       </section>
 
-      <section class="panel" data-panel="line">
+      <section class="panel" data-panel="line" id="panelLine">
         <div class="panel-head">
           <div>
             <div class="panel-kicker">LINE FOLLOW</div>
@@ -935,7 +942,7 @@
           </div>
 
           <div class="panel-actions">
-            <button class="pill-button line" id="copyLineButtonTop" type="button">編集後の文面をコピー</button>
+            <button class="pill-button line" id="copyLineButtonTop" type="button" onclick="DPRO_doctorCopyLineMessage()">編集後の文面をコピー</button>
           </div>
         </div>
 
@@ -949,7 +956,7 @@
             <div class="line-row">
               <label class="field-box" style="padding: 0; border: 0; background: transparent;">
                 <span class="field-title" style="font-size: 12px;">治療内容を選ぶ</span>
-                <select class="select" id="templateSelect">
+                <select class="select" id="templateSelect" onchange="DPRO_doctorApplyTemplate(this.value)">
                   <option value="checkup">定期検診後</option>
                   <option value="cleaning">クリーニング後</option>
                   <option value="caries">虫歯治療後</option>
@@ -963,8 +970,8 @@
                 </select>
               </label>
 
-              <button class="pill-button line" id="applyTemplateButton" type="button">文面を反映</button>
-              <button class="pill-button" id="resetTemplateButton" type="button">初期文面に戻す</button>
+              <button class="pill-button line" id="applyTemplateButton" type="button" onclick="DPRO_doctorApplySelectedTemplate()">文面を反映</button>
+              <button class="pill-button" id="resetTemplateButton" type="button" onclick="DPRO_doctorResetTemplate()">初期文面に戻す</button>
             </div>
 
             <textarea class="textarea line-message" id="lineMessage" placeholder="ここにLINEで送る文面が入ります。"></textarea>
@@ -974,8 +981,8 @@
             </div>
 
             <div class="two-actions">
-              <button class="pill-button line" id="copyLineButton" type="button">編集後の文面をコピー</button>
-              <button class="pill-button" id="freeInputButton" type="button">自由入力にする</button>
+              <button class="pill-button line" id="copyLineButton" type="button" onclick="DPRO_doctorCopyLineMessage()">編集後の文面をコピー</button>
+              <button class="pill-button" id="freeInputButton" type="button" onclick="DPRO_doctorFreeInput()">自由入力にする</button>
             </div>
 
             <div class="status-line" id="lineStatus"></div>
@@ -987,7 +994,7 @@
         </div>
       </section>
 
-      <section class="panel" data-panel="settings">
+      <section class="panel" data-panel="settings" id="panelSettings">
         <div class="panel-head">
           <div>
             <div class="panel-kicker">SETTINGS</div>
@@ -1009,7 +1016,7 @@
               <div class="field-title">管理コード</div>
               <div class="field-note">通常は dpro-dental-2026 です。共有保存する時に使います。</div>
               <input class="input" id="adminCodeInput" type="password" placeholder="管理コード" />
-              <button class="pill-button primary" id="saveAdminCodeButton" type="button" style="margin-top: 8px;">保存</button>
+              <button class="pill-button primary" id="saveAdminCodeButton" type="button" style="margin-top: 8px;" onclick="DPRO_doctorSaveAdminCode()">保存</button>
               <div class="status-line" id="settingsStatus"></div>
             </div>
 
@@ -1017,7 +1024,7 @@
               <div class="field-title">先生名</div>
               <div class="field-note">メモ保存や診療済み記録に使います。</div>
               <input class="input" id="doctorNameInput" type="text" placeholder="例：院長" />
-              <button class="pill-button" id="saveDoctorNameButton" type="button" style="margin-top: 8px;">保存</button>
+              <button class="pill-button" id="saveDoctorNameButton" type="button" style="margin-top: 8px;" onclick="DPRO_doctorSaveDoctorName()">保存</button>
             </div>
 
             <div class="info-card">
@@ -1032,7 +1039,7 @@
             <div class="info-card">
               <div class="field-title">デモ状態リセット</div>
               <div class="field-note">この画面内の受付済み・診療済みデモ状態を初期化します。</div>
-              <button class="pill-button" id="resetLocalButton" type="button" style="margin-top: 8px;">この画面だけリセット</button>
+              <button class="pill-button" id="resetLocalButton" type="button" style="margin-top: 8px;" onclick="DPRO_doctorResetLocal()">この画面だけリセット</button>
             </div>
           </div>
         </div>
@@ -1045,7 +1052,7 @@
       "use strict";
 
       const DEFAULT_API_BASE = "https://dpro-dental-qr-api.dpromstk2000.workers.dev";
-      const STORAGE_KEY = "dpro_dental_doctor_3026c_state";
+      const STORAGE_KEY = "dpro_dental_doctor_3026d_state";
 
       const DEMO_PATIENTS = [
         {
@@ -1086,7 +1093,6 @@
       const TEMPLATES = {
         checkup: {
           label: "定期検診後",
-          match: ["定期", "検診"],
           body(patient) {
             return [
               "こんにちは。DPRO歯科クリニックです。",
@@ -1101,7 +1107,6 @@
         },
         cleaning: {
           label: "クリーニング後",
-          match: ["クリーニング", "清掃", "歯石"],
           body(patient) {
             return [
               "こんにちは。DPRO歯科クリニックです。",
@@ -1116,7 +1121,6 @@
         },
         caries: {
           label: "虫歯治療後",
-          match: ["虫歯", "むし歯", "治療"],
           body(patient) {
             return [
               "こんにちは。DPRO歯科クリニックです。",
@@ -1131,7 +1135,6 @@
         },
         child: {
           label: "小児歯科",
-          match: ["小児"],
           body(patient) {
             return [
               "こんにちは。DPRO歯科クリニックです。",
@@ -1146,7 +1149,6 @@
         },
         fluoride: {
           label: "フッ素塗布後",
-          match: ["フッ素"],
           body(patient) {
             return [
               "こんにちは。DPRO歯科クリニックです。",
@@ -1161,7 +1163,6 @@
         },
         extraction: {
           label: "抜歯後",
-          match: ["抜歯"],
           body(patient) {
             return [
               "こんにちは。DPRO歯科クリニックです。",
@@ -1176,7 +1177,6 @@
         },
         whitening: {
           label: "ホワイトニング後",
-          match: ["ホワイトニング"],
           body(patient) {
             return [
               "こんにちは。DPRO歯科クリニックです。",
@@ -1191,7 +1191,6 @@
         },
         next_visit: {
           label: "次回予約案内",
-          match: ["次回"],
           body(patient) {
             return [
               "こんにちは。DPRO歯科クリニックです。",
@@ -1206,7 +1205,6 @@
         },
         line_link: {
           label: "LINE登録案内",
-          match: ["LINE"],
           body(patient) {
             return [
               "こんにちは。DPRO歯科クリニックです。",
@@ -1221,7 +1219,6 @@
         },
         free: {
           label: "自由入力",
-          match: [],
           body(patient) {
             return [
               "こんにちは。DPRO歯科クリニックです。",
@@ -1333,14 +1330,36 @@
           .replace(/'/g, "&#039;");
       }
 
-      function switchTab(tabName) {
-        document.querySelectorAll("[data-tab]").forEach((button) => {
-          button.classList.toggle("is-active", button.getAttribute("data-tab") === tabName);
-        });
+      function setStatus(id, message) {
+        const el = $(id);
+        if (el) el.textContent = message || "";
+      }
 
-        document.querySelectorAll("[data-panel]").forEach((panel) => {
-          panel.classList.toggle("is-active", panel.getAttribute("data-panel") === tabName);
-        });
+      function counts() {
+        const total = state.patients.length;
+        const checked = state.patients.filter(isChecked).length;
+        const done = state.patients.filter(isDone).length;
+        const follow = state.patients.filter(needsFollow).length;
+        return { total, checked, done, follow };
+      }
+
+      function statusBadges(patient) {
+        const badges = [];
+        badges.push(`<span class="badge blue">${escapeHtml(patient.time)}</span>`);
+        badges.push(`<span class="badge purple">${escapeHtml(patient.treatment)}</span>`);
+        badges.push(isChecked(patient)
+          ? `<span class="badge green">受付済み</span>`
+          : `<span class="badge orange">未受付</span>`);
+        badges.push(isDone(patient)
+          ? `<span class="badge green">診療済み</span>`
+          : `<span class="badge">診療前</span>`);
+        badges.push(patient.line_linked
+          ? `<span class="badge green">LINE連携済み</span>`
+          : `<span class="badge orange">LINE未連携</span>`);
+        if (state.lineCopied[patient.token]) {
+          badges.push(`<span class="badge green">LINE文面コピー済み</span>`);
+        }
+        return badges.join("");
       }
 
       function setFeedback(type, title, message) {
@@ -1355,18 +1374,32 @@
         el.innerHTML = `<strong>${escapeHtml(title)}</strong>${escapeHtml(message)}`;
       }
 
-      function setStatus(id, message) {
-        const el = $(id);
-        if (el) el.textContent = message || "";
-      }
+      window.DPRO_doctorSwitchTab = function(tabName) {
+        const panelMap = {
+          today: "panelToday",
+          patients: "panelPatients",
+          line: "panelLine",
+          settings: "panelSettings"
+        };
 
-      function counts() {
-        const total = state.patients.length;
-        const checked = state.patients.filter(isChecked).length;
-        const done = state.patients.filter(isDone).length;
-        const follow = state.patients.filter(needsFollow).length;
-        return { total, checked, done, follow };
-      }
+        document.querySelectorAll(".menu-button").forEach((button) => {
+          button.classList.remove("is-active");
+        });
+
+        const activeButton = $("tabButton" + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+        if (activeButton) activeButton.classList.add("is-active");
+
+        document.querySelectorAll(".panel").forEach((panel) => {
+          panel.classList.remove("is-active");
+        });
+
+        const panel = $(panelMap[tabName]);
+        if (panel) panel.classList.add("is-active");
+
+        if (panel) {
+          panel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      };
 
       function renderDate() {
         $("todayDate").textContent = new Date().toLocaleDateString("ja-JP", {
@@ -1389,9 +1422,7 @@
 
       function renderTasks() {
         const list = $("taskList");
-        const c = counts();
         const tasks = [];
-
         const waiting = state.patients.filter((p) => !isChecked(p));
         const ready = state.patients.filter((p) => isChecked(p) && !isDone(p));
         const follow = state.patients.filter(needsFollow);
@@ -1448,29 +1479,10 @@
         `).join("");
       }
 
-      function statusBadges(patient) {
-        const badges = [];
-        badges.push(`<span class="badge blue">${escapeHtml(patient.time)}</span>`);
-        badges.push(`<span class="badge purple">${escapeHtml(patient.treatment)}</span>`);
-        badges.push(isChecked(patient)
-          ? `<span class="badge green">受付済み</span>`
-          : `<span class="badge orange">未受付</span>`);
-        badges.push(isDone(patient)
-          ? `<span class="badge green">診療済み</span>`
-          : `<span class="badge">診療前</span>`);
-        badges.push(patient.line_linked
-          ? `<span class="badge green">LINE連携済み</span>`
-          : `<span class="badge orange">LINE未連携</span>`);
-        if (state.lineCopied[patient.token]) {
-          badges.push(`<span class="badge green">LINE文面コピー済み</span>`);
-        }
-        return badges.join("");
-      }
-
       function renderPatients() {
         const list = $("patientList");
         list.innerHTML = state.patients.map((patient) => `
-          <div class="patient-card ${patient.token === state.selectedToken ? "is-selected" : ""}" data-token="${escapeHtml(patient.token)}">
+          <div class="patient-card ${patient.token === state.selectedToken ? "is-selected" : ""}" id="patientCard-${escapeHtml(patient.token)}">
             <div class="patient-main">
               <div class="patient-name">${escapeHtml(patient.patient_name)}</div>
               <div class="patient-meta">
@@ -1479,40 +1491,12 @@
               <div class="badges">${statusBadges(patient)}</div>
             </div>
             <div class="patient-actions">
-              <button class="small-button primary" type="button" data-action="select" data-token="${escapeHtml(patient.token)}">確認</button>
-              <button class="small-button green" type="button" data-action="done" data-token="${escapeHtml(patient.token)}">診療済み</button>
-              <button class="small-button line" type="button" data-action="line" data-token="${escapeHtml(patient.token)}">LINE文面</button>
+              <button class="small-button primary" type="button" onclick="DPRO_doctorSelectPatient('${escapeHtml(patient.token)}')">確認</button>
+              <button class="small-button green" type="button" onclick="DPRO_doctorMarkDoneFor('${escapeHtml(patient.token)}')">診療済み</button>
+              <button class="small-button line" type="button" onclick="DPRO_doctorOpenLineFor('${escapeHtml(patient.token)}')">LINE文面</button>
             </div>
           </div>
         `).join("");
-
-        list.querySelectorAll("[data-action]").forEach((button) => {
-          button.addEventListener("click", (event) => {
-            event.stopPropagation();
-            const token = button.getAttribute("data-token");
-            const action = button.getAttribute("data-action");
-
-            if (action === "select") {
-              selectPatient(token, true);
-            }
-
-            if (action === "done") {
-              selectPatient(token, false);
-              markDone();
-            }
-
-            if (action === "line") {
-              selectPatient(token, false);
-              openLineEditor();
-            }
-          });
-        });
-
-        list.querySelectorAll(".patient-card").forEach((card) => {
-          card.addEventListener("click", () => {
-            selectPatient(card.getAttribute("data-token"), true);
-          });
-        });
       }
 
       function renderSelected() {
@@ -1552,18 +1536,11 @@
                 <div class="badges">${statusBadges(patient)}</div>
               </div>
               <div class="patient-actions">
-                <button class="small-button line" type="button" data-follow-token="${escapeHtml(patient.token)}">文面を作る</button>
+                <button class="small-button line" type="button" onclick="DPRO_doctorOpenLineFor('${escapeHtml(patient.token)}')">文面を作る</button>
               </div>
             </div>
           </div>
         `).join("");
-
-        list.querySelectorAll("[data-follow-token]").forEach((button) => {
-          button.addEventListener("click", () => {
-            selectPatient(button.getAttribute("data-follow-token"), false);
-            openLineEditor();
-          });
-        });
       }
 
       function renderAll() {
@@ -1574,25 +1551,32 @@
         renderFollowList();
       }
 
-      function selectPatient(token, showFeedback = true) {
+      window.DPRO_doctorSelectPatient = function(token) {
         const patient = getPatient(token);
         state.selectedToken = patient.token;
         saveLocal();
         renderAll();
 
-        if (showFeedback) {
-          setPatientFeedback(
-            "success",
-            `${patient.patient_name} 様を確認中`,
-            `${patient.time} / ${patient.treatment}。受付状態：${isChecked(patient) ? "受付済み" : "未受付"}。`
-          );
-          switchTab("patients");
-        }
+        setPatientFeedback(
+          "success",
+          `${patient.patient_name} 様を確認中`,
+          `${patient.time} / ${patient.treatment}。受付状態：${isChecked(patient) ? "受付済み" : "未受付"}。`
+        );
 
+        window.DPRO_doctorSwitchTab("patients");
         applyTemplate(inferTemplateKey(patient));
-      }
+      };
 
-      async function refreshStatus() {
+      window.DPRO_doctorSelectFirstPatient = function() {
+        window.DPRO_doctorSelectPatient(state.patients[0].token);
+      };
+
+      window.DPRO_doctorRenderAllWithMessage = function() {
+        renderAll();
+        setPatientFeedback("success", "患者一覧を更新しました", "表示中の患者情報を再描画しました。");
+      };
+
+      window.DPRO_doctorRefreshStatus = async function() {
         const before = counts();
         const button = $("refreshButton");
 
@@ -1618,26 +1602,24 @@
             const data = await res.json();
             const rows = Array.isArray(data.rows) ? data.rows : Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
 
-            if (rows.length) {
-              rows.forEach((row) => {
-                const token = row.qr_token || row.token || row.qrToken;
-                if (!token) return;
+            rows.forEach((row) => {
+              const token = row.qr_token || row.token || row.qrToken;
+              if (!token) return;
 
-                if (row.reception_status === "checked_in" || row.checked_in_at || row.status === "checked_in") {
-                  state.checkedIn[token] = true;
-                }
+              if (row.reception_status === "checked_in" || row.checked_in_at || row.status === "checked_in") {
+                state.checkedIn[token] = true;
+              }
 
-                if (row.exam_status === "completed" || row.exam_completed_at || row.status === "completed") {
-                  state.done[token] = true;
-                }
+              if (row.exam_status === "completed" || row.exam_completed_at || row.status === "completed") {
+                state.done[token] = true;
+              }
 
-                if (row.line_follow_copied_at) {
-                  state.lineCopied[token] = true;
-                }
-              });
+              if (row.line_follow_copied_at) {
+                state.lineCopied[token] = true;
+              }
+            });
 
-              usedApi = true;
-            }
+            if (rows.length) usedApi = true;
           }
         } catch (error) {
           console.warn("API refresh skipped", error);
@@ -1659,48 +1641,60 @@
 
         button.disabled = false;
         button.textContent = "受付状態を更新";
-      }
+      };
 
-      async function markDone() {
-        const patient = getPatient(state.selectedToken);
-
-        state.done[patient.token] = true;
-        state.checkedIn[patient.token] = true;
-        saveLocal();
-
+      async function postJson(path, body) {
         try {
-          await fetch(getApiBase() + "/api/doctor/exam-complete", {
+          await fetch(getApiBase() + path, {
             method: "POST",
             headers: {
               "content-type": "application/json",
               "x-admin-token": getAdminCode()
             },
-            body: JSON.stringify({
-              clinic_code: getClinicCode(),
-              visit_date: getTodayJST(),
-              qr_token: patient.token,
-              member_no: patient.member_no,
-              doctor_memo: $("doctorMemo").value || patient.doctor_note || "",
-              doctor_name: getDoctorName(),
-              staff_name: getDoctorName(),
-              source_screen: "doctor.html"
-            })
+            body: JSON.stringify(body)
           });
         } catch (error) {
-          console.warn("exam complete api skipped", error);
+          console.warn(path + " skipped", error);
         }
+      }
+
+      async function markDoneCore(token) {
+        const patient = getPatient(token || state.selectedToken);
+        state.selectedToken = patient.token;
+        state.done[patient.token] = true;
+        state.checkedIn[patient.token] = true;
+        saveLocal();
+
+        await postJson("/api/doctor/exam-complete", {
+          clinic_code: getClinicCode(),
+          visit_date: getTodayJST(),
+          qr_token: patient.token,
+          member_no: patient.member_no,
+          doctor_memo: $("doctorMemo").value || patient.doctor_note || "",
+          doctor_name: getDoctorName(),
+          staff_name: getDoctorName(),
+          source_screen: "doctor.html"
+        });
 
         renderAll();
         setPatientFeedback("success", `${patient.patient_name} 様を診療済みにしました`, "LINEフォロー文面を作成できます。");
-        openLineEditor();
+        window.DPRO_doctorOpenLineFor(patient.token);
       }
 
-      function saveMemo() {
+      window.DPRO_doctorMarkDone = function() {
+        markDoneCore(state.selectedToken);
+      };
+
+      window.DPRO_doctorMarkDoneFor = function(token) {
+        markDoneCore(token);
+      };
+
+      window.DPRO_doctorSaveMemo = function() {
         const patient = getPatient(state.selectedToken);
         state.memo[patient.token] = $("doctorMemo").value || "";
         saveLocal();
         setStatus("memoStatus", `${patient.patient_name} 様のメモを保存しました。`);
-      }
+      };
 
       async function copyText(text, statusId, message) {
         try {
@@ -1715,6 +1709,10 @@
           setStatus(statusId, "コピーできない場合は、本文を選択して手動コピーしてください。");
         }
       }
+
+      window.DPRO_doctorCopyMemo = function() {
+        copyText($("doctorMemo").value || "", "memoStatus", "先生用メモをコピーしました。");
+      };
 
       function inferTemplateKey(patient) {
         const treatment = String(patient.treatment || "");
@@ -1739,14 +1737,39 @@
         setStatus("lineStatus", "");
       }
 
-      function openLineEditor() {
-        const patient = getPatient(state.selectedToken);
-        switchTab("line");
+      window.DPRO_doctorApplyTemplate = function(key) {
+        applyTemplate(key);
+      };
+
+      window.DPRO_doctorApplySelectedTemplate = function() {
+        applyTemplate($("templateSelect").value);
+      };
+
+      window.DPRO_doctorResetTemplate = function() {
+        applyTemplate(inferTemplateKey(getPatient(state.selectedToken)));
+      };
+
+      window.DPRO_doctorFreeInput = function() {
+        $("templateSelect").value = "free";
+        applyTemplate("free");
+        $("lineMessage").focus();
+      };
+
+      window.DPRO_doctorOpenLineEditor = function() {
+        window.DPRO_doctorOpenLineFor(state.selectedToken);
+      };
+
+      window.DPRO_doctorOpenLineFor = function(token) {
+        const patient = getPatient(token);
+        state.selectedToken = patient.token;
+        saveLocal();
+        renderAll();
+        window.DPRO_doctorSwitchTab("line");
         applyTemplate(inferTemplateKey(patient));
         setStatus("lineStatus", `${patient.patient_name} 様へのLINE文面を作成中です。`);
-      }
+      };
 
-      async function copyLineMessage() {
+      window.DPRO_doctorCopyLineMessage = async function() {
         const patient = getPatient(state.selectedToken);
         const message = $("lineMessage").value || "";
 
@@ -1758,100 +1781,69 @@
         state.lineCopied[patient.token] = true;
         saveLocal();
 
-        try {
-          await fetch(getApiBase() + "/api/doctor/line-follow-copied", {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
-              "x-admin-token": getAdminCode()
-            },
-            body: JSON.stringify({
-              clinic_code: getClinicCode(),
-              visit_date: getTodayJST(),
-              qr_token: patient.token,
-              member_no: patient.member_no,
-              line_follow_message: message,
-              line_follow_template: $("templateSelect").value,
-              doctor_name: getDoctorName(),
-              source_screen: "doctor.html"
-            })
-          });
-        } catch (error) {
-          console.warn("line copied api skipped", error);
-        }
+        await postJson("/api/doctor/line-follow-copied", {
+          clinic_code: getClinicCode(),
+          visit_date: getTodayJST(),
+          qr_token: patient.token,
+          member_no: patient.member_no,
+          line_follow_message: message,
+          line_follow_template: $("templateSelect").value,
+          doctor_name: getDoctorName(),
+          source_screen: "doctor.html"
+        });
 
         await copyText(message, "lineStatus", "編集後のLINE文面をコピーしました。LINE公式チャットへ貼り付けて送信してください。自動送信はしていません。");
         renderAll();
-      }
+      };
 
-      function setupEvents() {
-        document.querySelectorAll("[data-tab]").forEach((button) => {
-          button.addEventListener("click", () => switchTab(button.getAttribute("data-tab")));
-        });
+      window.DPRO_doctorSaveAdminCode = function() {
+        const value = $("adminCodeInput").value.trim();
+        if (value) {
+          localStorage.setItem("dpro_dental_admin_code", value);
+          setStatus("settingsStatus", "管理コードを保存しました。");
+        } else {
+          setStatus("settingsStatus", "管理コードを入力してください。");
+        }
+      };
 
-        $("refreshButton").addEventListener("click", refreshStatus);
-        $("refreshPatientsButton").addEventListener("click", () => {
-          renderAll();
-          setPatientFeedback("success", "患者一覧を更新しました", "表示中の患者情報を再描画しました。");
-        });
-        $("selectFirstPatientButton").addEventListener("click", () => selectPatient(state.patients[0].token, true));
-        $("markDoneButton").addEventListener("click", markDone);
-        $("openLineForSelectedButton").addEventListener("click", openLineEditor);
-        $("saveMemoButton").addEventListener("click", saveMemo);
-        $("copyMemoButton").addEventListener("click", () => copyText($("doctorMemo").value || "", "memoStatus", "先生用メモをコピーしました。"));
+      window.DPRO_doctorSaveDoctorName = function() {
+        const value = $("doctorNameInput").value.trim() || "院長";
+        localStorage.setItem("dpro_dental_doctor_name", value);
+        setStatus("settingsStatus", "先生名を保存しました。");
+      };
 
-        $("templateSelect").addEventListener("change", () => applyTemplate($("templateSelect").value));
-        $("applyTemplateButton").addEventListener("click", () => applyTemplate($("templateSelect").value));
-        $("resetTemplateButton").addEventListener("click", () => applyTemplate(inferTemplateKey(getPatient(state.selectedToken))));
-        $("freeInputButton").addEventListener("click", () => {
-          $("templateSelect").value = "free";
-          applyTemplate("free");
-          $("lineMessage").focus();
-        });
-        $("copyLineButton").addEventListener("click", copyLineMessage);
-        $("copyLineButtonTop").addEventListener("click", copyLineMessage);
-
-        $("saveAdminCodeButton").addEventListener("click", () => {
-          const value = $("adminCodeInput").value.trim();
-          if (value) {
-            localStorage.setItem("dpro_dental_admin_code", value);
-            setStatus("settingsStatus", "管理コードを保存しました。");
-          } else {
-            setStatus("settingsStatus", "管理コードを入力してください。");
-          }
-        });
-
-        $("saveDoctorNameButton").addEventListener("click", () => {
-          const value = $("doctorNameInput").value.trim() || "院長";
-          localStorage.setItem("dpro_dental_doctor_name", value);
-          setStatus("settingsStatus", "先生名を保存しました。");
-        });
-
-        $("resetLocalButton").addEventListener("click", () => {
-          localStorage.removeItem(STORAGE_KEY);
-          state.checkedIn = {};
-          state.done = {};
-          state.memo = {};
-          state.lineCopied = {};
-          state.selectedToken = "demo-dental-patient-001";
-          saveLocal();
-          renderAll();
-          applyTemplate(inferTemplateKey(getPatient(state.selectedToken)));
-          setStatus("settingsStatus", "この画面のデモ状態をリセットしました。");
-        });
-      }
+      window.DPRO_doctorResetLocal = function() {
+        localStorage.removeItem(STORAGE_KEY);
+        state.checkedIn = {};
+        state.done = {};
+        state.memo = {};
+        state.lineCopied = {};
+        state.selectedToken = "demo-dental-patient-001";
+        saveLocal();
+        renderAll();
+        applyTemplate(inferTemplateKey(getPatient(state.selectedToken)));
+        setStatus("settingsStatus", "この画面のデモ状態をリセットしました。");
+      };
 
       function init() {
         loadLocal();
-        renderDate();
+
+        $("todayDate").textContent = new Date().toLocaleDateString("ja-JP", {
+          month: "long",
+          day: "numeric",
+          weekday: "short"
+        });
 
         $("adminCodeInput").value = getAdminCode();
         $("doctorNameInput").value = getDoctorName();
 
-        setupEvents();
         renderAll();
-        selectPatient(state.selectedToken, false);
+        state.selectedToken = state.selectedToken || "demo-dental-patient-001";
+        renderSelected();
         applyTemplate(inferTemplateKey(getPatient(state.selectedToken)));
+
+        // 初回でも確認ボタンが効いていることが分かるように患者確認メッセージだけ準備
+        setPatientFeedback("success", "患者さんを選択できます", "青い「確認」ボタン、緑の「LINE文面」ボタンは直接反応方式です。");
       }
 
       if (document.readyState === "loading") {
