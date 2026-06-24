@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | 歯医者さん用 今日やること / DB受付連動 操作反応改善</title>
+  <title>DPRO SHOP | 歯医者さん用 今日やること / 受付iPad連動 操作反応改善</title>
 
   <script src="./config.js"></script>
 
@@ -1301,7 +1301,7 @@
         if (!getAdminCode()) {
           state.dbAvailable = false;
           if (showResultMessage) {
-            showMessage(els.mainMessage, "warning", "DB受付状態の読込には管理コードが必要です。右下の設定で管理コードを保存してください。");
+            showMessage(els.mainMessage, "warning", "受付・診療状態の読込には管理コードが必要です。右下の設定で管理コードを保存してください。");
           }
           renderAllLocalOnly();
           return;
@@ -1337,7 +1337,7 @@
           if (state.selectedToken) renderSelectedPatient();
 
           if (showResultMessage) {
-            showMessage(els.mainMessage, "success", "DBから今日の受付・診療状態を読み込みました。");
+            showMessage(els.mainMessage, "success", "受付iPadの最新状態を読み込みました。");
           }
         } catch (error) {
           console.error(error);
@@ -1349,10 +1349,10 @@
             showMessage(
               els.mainMessage,
               "error",
-              "DB状態の読み込みに失敗しました。\n\n" +
+              "受付・診療状態の読み込みに失敗しました。\n\n" +
               "確認すること：\n" +
-              "・STEP 30-23A SQLが完了しているか\n" +
-              "・Workerが step-30-23b か\n" +
+              "・受付・診療ステータス用SQLが完了しているか\n" +
+              "・連携APIが最新版か\n" +
               "・管理コードが正しいか\n\n" +
               "詳細：" + (error.message || error)
             );
@@ -1639,9 +1639,9 @@
             });
 
             await loadDailyStatuses(false);
-            showMessage(els.selectedMessage, "success", "先生用メモをDBに保存しました。");
+            showMessage(els.selectedMessage, "success", "先生用メモを保存しました。");
           } else {
-            showMessage(els.selectedMessage, "success", "先生用メモをこの端末に保存しました。DB保存には管理コードが必要です。");
+            showMessage(els.selectedMessage, "success", "先生用メモをこの端末に保存しました。共有保存には管理コードが必要です。");
           }
         } catch (error) {
           showMessage(els.selectedMessage, "error", "メモ保存に失敗しました。" + (error.message || error));
@@ -1813,9 +1813,9 @@
             });
 
             await loadDailyStatuses(false);
-            showMessage(els.selectedMessage, "success", `${patient.patient_name} 様へのLINE文面コピーをDBに記録しました。自動送信はしていません。`);
+            showMessage(els.selectedMessage, "success", `${patient.patient_name} 様へのLINE文面コピーを記録しました。自動送信はしていません。`);
           } catch (error) {
-            showMessage(els.selectedMessage, "warning", "LINE文面はコピーしましたが、DB記録に失敗しました。" + (error.message || error));
+            showMessage(els.selectedMessage, "warning", "LINE文面はコピーしましたが、記録に失敗しました。" + (error.message || error));
           }
         }
       }
@@ -1888,11 +1888,11 @@
         }
 
         if (!getAdminCode()) {
-          showMessage(els.selectedMessage, "warning", "診療済みをDB保存するには管理コードが必要です。右下の設定で管理コードを保存してください。");
+          showMessage(els.selectedMessage, "warning", "診療済みを共有保存するには管理コードが必要です。右下の設定で管理コードを保存してください。");
           return;
         }
 
-        showMessage(els.selectedMessage, "info", "診療済みをDBに保存しています...");
+        showMessage(els.selectedMessage, "info", "診療済みを保存しています...");
 
         try {
           await apiFetch("/api/doctor/exam-complete", {
@@ -1918,11 +1918,11 @@
 
           state.selectedToken = patient.token;
 
-          showMessage(els.selectedMessage, "success", `${patient.patient_name} 様を診療済みにしました。DBに保存しました。`);
+          showMessage(els.selectedMessage, "success", `${patient.patient_name} 様を診療済みにしました。受付・管理画面にも反映されます。`);
           showActionFeedback(
             "済",
             `${patient.patient_name} 様を診療済みにしました`,
-            "診療済み状態をDBに保存しました。診療後に必要な場合は「診療後LINE文面コピー」を押して、コピーした文面をLINE公式に貼り付けてください。"
+            "診療済み状態を保存しました。受付・管理画面にも反映されます。診療後に必要な場合は「診療後LINE文面コピー」を押して、コピーした文面をLINE公式に貼り付けてください。"
           );
 
           renderAllLocalOnly();
@@ -1933,10 +1933,10 @@
           showMessage(
             els.selectedMessage,
             "error",
-            "診療済みのDB保存に失敗しました。\n\n" +
+            "診療済みの保存に失敗しました。\n\n" +
             "確認すること：\n" +
-            "・STEP 30-23A SQLが完了しているか\n" +
-            "・Workerが step-30-23b か\n" +
+            "・受付・診療ステータス用SQLが完了しているか\n" +
+            "・連携APIが最新版か\n" +
             "・管理コードが正しいか\n\n" +
             "詳細：" + (error.message || error)
           );
@@ -1960,7 +1960,7 @@
           renderSelectedPatient();
         }
 
-        showMessage(els.settingsMessage, "success", "この端末内の診療済み状態をリセットしました。DB側は営業前デモリセットで戻してください。");
+        showMessage(els.settingsMessage, "success", "この端末内の診療済み状態をリセットしました。共有状態は営業前デモリセットで戻してください。");
       }
 
       function renderAllLocalOnly() {
@@ -2012,7 +2012,7 @@
         els.saveAdminCodeButton.addEventListener("click", () => {
           setAdminCode(els.adminCodeInput.value.trim());
           setDoctorName(els.doctorNameInput.value.trim() || "院長");
-          showMessage(els.settingsMessage, "success", "管理コードと先生名を保存しました。DB状態を読み込みます。");
+          showMessage(els.settingsMessage, "success", "管理コードと先生名を保存しました。受付iPadの最新状態を読み込みます。");
           loadDailyStatuses(true);
         });
 
@@ -2043,7 +2043,7 @@
           "左の来院予定から「確認」を押すと、この患者詳細まで自動で移動します。LINE文面は自動送信ではなくコピーのみです。"
         );
 
-        showMessage(els.mainMessage, "info", "歯医者さん用の今日やること画面を開きました。受付iPadの受付済み状態をDBから読み込み、診療済み・LINE文面コピーも記録できます。");
+        showMessage(els.mainMessage, "info", "歯医者さん用の今日やること画面を開きました。受付iPadで登録した受付済み状態を読み込み、診療済み・LINE文面コピーも記録できます。");
       }
 
       document.addEventListener("DOMContentLoaded", init);
