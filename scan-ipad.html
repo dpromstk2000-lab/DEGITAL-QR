@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | 受付iPad専用 DB受付保存対応</title>
+  <title>DPRO SHOP | 受付iPad専用 受付状態共有保存対応</title>
 
   <script src="./config.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -758,6 +758,36 @@
         grid-template-columns: 1fr;
       }
     }
+  
+    .reload-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      border-radius: 999px;
+      padding: 8px 11px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      font-size: 11px;
+      line-height: 1.3;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .reload-status.loading {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .reload-status.error {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+
   </style>
 </head>
 
@@ -766,7 +796,7 @@
     <header class="topbar">
       <div>
         <div class="kicker">DPRO SHOP / 受付iPad専用</div>
-        <div class="title">今日の受付をDB保存して先生用画面に連動する画面</div>
+        <div class="title">今日の受付を保存して先生用画面に反映する画面</div>
         <div class="subtitle">
           QRを読む → 患者確認 → LINE連携確認 → 受付済みにする。受付スタッフ向けに、操作を大きくシンプルにしています。
         </div>
@@ -836,7 +866,8 @@
           </div>
 
           <div class="big-actions">
-            <button class="btn btn-light" id="reloadDailyStatusButton" type="button">DB受付状態を再読込</button>
+            <button class="btn btn-light" id="reloadDailyStatusButton" type="button">受付状態を更新</button>
+            <span class="reload-status" id="dailyStatusReloadStatus">未更新</span>
             <button class="btn btn-light" id="openDoctorButton" type="button">先生用画面を開く</button>
           </div>
 
@@ -1060,6 +1091,7 @@
         startScanButton: $("startScanButton"),
         stopScanButton: $("stopScanButton"),
         reloadDailyStatusButton: $("reloadDailyStatusButton"),
+        dailyStatusReloadStatus: $("dailyStatusReloadStatus"),
         openDoctorButton: $("openDoctorButton"),
         manualInput: $("manualInput"),
         manualSearchButton: $("manualSearchButton"),
@@ -1213,6 +1245,28 @@
 
         return data;
       }
+
+      function formatNowTime() {
+        return new Date().toLocaleTimeString("ja-JP", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      function setDailyStatusReloadStatus(type, text) {
+        if (!els.dailyStatusReloadStatus) return;
+
+        els.dailyStatusReloadStatus.className = `reload-status ${type || ""}`.trim();
+        els.dailyStatusReloadStatus.textContent = text || "";
+      }
+
+      function setDailyStatusReloadLoading(isLoading) {
+        if (!els.reloadDailyStatusButton) return;
+
+        els.reloadDailyStatusButton.disabled = Boolean(isLoading);
+        els.reloadDailyStatusButton.textContent = isLoading ? "更新中..." : "受付状態を更新";
+      }
+
 
       function showMessage(element, type, text) {
         if (!element) return;
@@ -1437,13 +1491,16 @@
           state.dbAvailable = false;
 
           if (showResultMessage) {
-            showMessage(els.scanMessage, "warning", "DB受付状態の読込には管理コードが必要です。左下で管理コードを保存してください。");
+            showMessage(els.scanMessage, "warning", "受付状態の更新には管理コードが必要です。左下で管理コードを保存してください。");
           }
 
           updateStats();
           renderQueue();
           return;
         }
+
+        setDailyStatusReloadLoading(true);
+        setDailyStatusReloadStatus("loading", "更新中...");
 
         try {
           const result = await apiFetch("/api/scan/today", {
@@ -1467,17 +1524,24 @@
           renderQueue();
 
           if (showResultMessage) {
-            showMessage(els.scanMessage, "success", "DBから今日の受付状態を再読込しました。");
+            const updatedAt = formatNowTime();
+          setDailyStatusReloadStatus("", `更新完了 ${updatedAt}`);
+          showMessage(
+            els.scanMessage,
+            "success",
+            `今日の受付状態を更新しました。\n最終更新：${updatedAt}`
+          );
           }
         } catch (error) {
           console.error(error);
           state.dbAvailable = false;
 
           if (showResultMessage) {
-            showMessage(
+            setDailyStatusReloadStatus("error", "更新失敗");
+          showMessage(
               els.scanMessage,
               "error",
-              "DB受付状態の読込に失敗しました。\n\n" +
+              "受付状態の更新に失敗しました。\n\n" +
               "確認すること：\n" +
               "・STEP 30-23A SQLが完了しているか\n" +
               "・Workerが step-30-23b か\n" +
@@ -1818,7 +1882,7 @@
             const data = statusRowToPatientData(dbRow);
             renderPatient(data);
             await logScan(parsed.raw, "db_daily_status_success", data.patient);
-            showMessage(els.scanMessage, "success", "DBの今日の受付予定から患者を表示しました。");
+            showMessage(els.scanMessage, "success", "今日の受付予定から患者さんを表示しました。");
             return;
           }
 
@@ -1972,11 +2036,11 @@
         }
 
         if (!getAdminCode()) {
-          showMessage(els.patientMessage, "warning", "DBへ受付保存するには管理コードが必要です。左下で管理コードを保存してください。");
+          showMessage(els.patientMessage, "warning", "受付済みを共有するには管理コードが必要です。左下で管理コードを保存してください。");
           return;
         }
 
-        showMessage(els.patientMessage, "info", "受付済みをDBに保存しています...");
+        showMessage(els.patientMessage, "info", "受付済みを保存しています...");
 
         try {
           const result = await apiFetch("/api/scan/check-in", {
@@ -2012,7 +2076,7 @@
           showMessage(
             els.patientMessage,
             "success",
-            `${patient.patient_name} 様を受付済みにしました。\\nDBに保存したので、先生用 doctor.html でも受付済みとして確認できます。`
+            `${patient.patient_name} 様を受付済みにしました。\\n先生用画面にも受付済みとして反映されます。`
           );
 
           const dbRow = getDailyStatusByToken(patient.qr_token);
@@ -2032,7 +2096,7 @@
           showMessage(
             els.patientMessage,
             "error",
-            "受付済みのDB保存に失敗しました。\\n\\n" +
+            "受付済みの保存に失敗しました。\\n\\n" +
             "確認すること：\\n" +
             "・STEP 30-23A SQLが完了しているか\\n" +
             "・Workerが step-30-23b か\\n" +
@@ -2100,7 +2164,7 @@
           });
         }
 
-        showMessage(els.scanMessage, "success", "このiPad内の受付済みリストをリセットしました。DB側の受付状態は変更していません。");
+        showMessage(els.scanMessage, "success", "このiPad内の受付済みリストをリセットしました。共有されている受付状態は変更していません。");
       }
 
       function bindEvents() {
@@ -2129,7 +2193,7 @@
         els.saveAdminCodeButton.addEventListener("click", () => {
           setAdminCode(els.adminCodeInput.value.trim());
           setStaffName(els.staffNameInput.value.trim() || "受付スタッフ");
-          showMessage(els.scanMessage, "success", "管理コードとスタッフ名を保存しました。DB受付状態を読み込みます。");
+          showMessage(els.scanMessage, "success", "管理コードとスタッフ名を保存しました。受付状態を更新します。");
           loadDailyStatuses(true);
         });
 
@@ -2157,9 +2221,9 @@
 
         if (getAdminCode()) {
           loadDailyStatuses(false);
-          showMessage(els.scanMessage, "info", "受付iPad画面を開きました。DBから今日の受付状態を読み込みます。");
+          showMessage(els.scanMessage, "info", "受付iPad画面を開きました。今日の受付状態を更新します。");
         } else {
-          showMessage(els.scanMessage, "info", "受付iPad画面を開きました。DB連動には左下で管理コードを保存してください。まずはデモ患者ボタンでも動作確認できます。");
+          showMessage(els.scanMessage, "info", "受付iPad画面を開きました。受付状態の共有には左下で管理コードを保存してください。まずはデモ患者ボタンでも動作確認できます。");
         }
       }
 
