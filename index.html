@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DPRO SHOP | LINE公式連携 デジタル家族診察券</title>
+  <title>DPRO SHOP | LINE公式連携 デジタル家族診察券 役割別導線</title>
   <script src="./config.js"></script>
   <style>
     :root {
@@ -475,6 +475,101 @@
         width: 100%;
       }
     }
+  
+    .role-panel {
+      margin-top: 18px;
+      padding: 18px;
+    }
+
+    .role-grid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .role-card {
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: #ffffff;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      min-height: 180px;
+    }
+
+    .role-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-weight: 950;
+    }
+
+    .role-title {
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+    }
+
+    .role-text {
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.7;
+      font-weight: 760;
+    }
+
+    .role-link {
+      margin-top: auto;
+      min-height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 950;
+      padding: 9px;
+    }
+
+    .role-link.green {
+      background: #dcfce7;
+      border-color: #86efac;
+      color: #064e3b;
+    }
+
+    .role-link.purple {
+      background: #f5f3ff;
+      border-color: #ddd6fe;
+      color: #5b21b6;
+    }
+
+    @media (max-width: 1080px) {
+      .role-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .role-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
+  
+    .url-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
   </style>
 </head>
 <body>
@@ -490,7 +585,8 @@
 
       <nav class="nav">
         <a href="./member.html?t=demo-dental-patient-001">患者画面</a>
-        <a href="./scan.html">受付QR</a>
+        <a href="./scan-ipad.html">受付iPad</a>
+        <a href="./doctor.html">先生用</a>
         <a href="./owner.html">管理画面</a>
         <a href="./admin.html">患者登録</a>
       </nav>
@@ -514,11 +610,14 @@
           <a class="btn btn-primary" id="openLiffDemoButton" href="https://liff.line.me/2010491267-waXBAIje?t=demo-dental-patient-001">
             LINEで家族診察券を開く
           </a>
-          <a class="btn btn-blue" href="./admin.html">
-            医院側でLINE登録QRを発行
+          <a class="btn btn-blue" href="./scan-ipad.html">
+            受付iPad画面を見る
           </a>
-          <a class="btn btn-light" href="./owner.html">
-            管理画面を見る
+          <a class="btn btn-light" href="./doctor.html">
+            先生用 今日やること
+          </a>
+          <a class="btn btn-light" href="./admin.html">
+            LINE登録QRを発行
           </a>
         </div>
 
@@ -620,17 +719,74 @@
       </div>
     </section>
 
+
+    <section class="card role-panel">
+      <div class="mini-title">使う人ごとの画面</div>
+      <div class="mini-text">
+        営業デモでは、患者さん・受付・先生・管理者で画面が分かれていることを見せると、現場で使うイメージが伝わります。
+      </div>
+
+      <div class="role-grid">
+        <div class="role-card">
+          <div class="role-icon">患</div>
+          <div class="role-title">患者さん・お母さん</div>
+          <div class="role-text">
+            LINEで家族診察券を開き、受付でQRを提示します。
+          </div>
+          <a class="role-link green" href="./member.html?t=demo-dental-patient-001">member.html を開く</a>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon">受</div>
+          <div class="role-title">受付スタッフ</div>
+          <div class="role-text">
+            iPadでQRを読み取り、LINE連携状態と受付済みを確認します。
+          </div>
+          <a class="role-link" href="./scan-ipad.html">scan-ipad.html を開く</a>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon">医</div>
+          <div class="role-title">先生・院長</div>
+          <div class="role-text">
+            今日の来院予定、診療前メモ、診療後フォローを確認します。
+          </div>
+          <a class="role-link purple" href="./doctor.html">doctor.html を開く</a>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon">管</div>
+          <div class="role-title">医院管理者</div>
+          <div class="role-text">
+            家族診察券、来院状況、LINE連携、営業説明モードを確認します。
+          </div>
+          <a class="role-link" href="./owner.html">owner.html を開く</a>
+        </div>
+
+        <div class="role-card">
+          <div class="role-icon">設</div>
+          <div class="role-title">設定・患者登録</div>
+          <div class="role-text">
+            患者登録、家族診察券追加、LINE登録QR発行を行います。
+          </div>
+          <a class="role-link" href="./admin.html">admin.html を開く</a>
+        </div>
+      </div>
+    </section>
+
     <section class="card url-panel">
       <div class="mini-title">デモで使う画面</div>
       <div class="mini-text">
-        営業デモでは、患者画面 → 受付QR → 管理画面 → 患者登録/LINE登録QR の順番で見せると伝わりやすいです。
+        営業デモでは、患者画面 → 受付iPad → 先生用今日やること → 管理画面 → 患者登録/LINE登録QR の順番で見せると伝わりやすいです。
       </div>
 
       <div class="url-grid">
         <a href="./member.html?t=demo-dental-patient-001">患者画面<br>member.html</a>
-        <a href="./scan.html">受付QR<br>scan.html</a>
+        <a href="./scan-ipad.html">受付iPad<br>scan-ipad.html</a>
+        <a href="./doctor.html">先生用<br>doctor.html</a>
         <a href="./owner.html">管理画面<br>owner.html</a>
         <a href="./admin.html">患者登録<br>admin.html</a>
+        <a href="./scan.html">通常受付<br>scan.html</a>
         <a href="https://liff.line.me/2010491267-waXBAIje?t=demo-dental-patient-001">LIFFで開く<br>LINE診察券</a>
       </div>
     </section>
