@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | 受付iPad専用 受付状態共有保存対応</title>
+  <title>DPRO SHOP | STEP 30-23H2 受付iPad 更新中停止修正</title>
 
   <script src="./config.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -788,6 +788,23 @@
     }
 
 
+  
+    .version-check-badge {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 950;
+    }
+
+
   </style>
 </head>
 
@@ -799,6 +816,9 @@
         <div class="title">今日の受付を保存して先生用画面に反映する画面</div>
         <div class="subtitle">
           QRを読む → 患者確認 → LINE連携確認 → 受付済みにする。受付スタッフ向けに、操作を大きくシンプルにしています。
+        </div>
+        <div class="version-check-badge">
+          STEP 30-23H2：更新中のまま止まる不具合を修正済み
         </div>
       </div>
 
@@ -1489,6 +1509,8 @@
       async function loadDailyStatuses(showResultMessage = false) {
         if (!getAdminCode()) {
           state.dbAvailable = false;
+          setDailyStatusReloadLoading(false);
+          setDailyStatusReloadStatus("error", "管理コード未設定");
 
           if (showResultMessage) {
             showMessage(els.scanMessage, "warning", "受付状態の更新には管理コードが必要です。左下で管理コードを保存してください。");
@@ -1501,6 +1523,10 @@
 
         setDailyStatusReloadLoading(true);
         setDailyStatusReloadStatus("loading", "更新中...");
+
+        if (showResultMessage) {
+          showMessage(els.scanMessage, "info", "今日の受付状態を確認しています...");
+        }
 
         try {
           const result = await apiFetch("/api/scan/today", {
@@ -1523,28 +1549,29 @@
           updateStats();
           renderQueue();
 
-          if (showResultMessage) {
-            const updatedAt = formatNowTime();
+          const updatedAt = formatNowTime();
           setDailyStatusReloadStatus("", `更新完了 ${updatedAt}`);
-          showMessage(
-            els.scanMessage,
-            "success",
-            `今日の受付状態を更新しました。\n最終更新：${updatedAt}`
-          );
+
+          if (showResultMessage) {
+            showMessage(
+              els.scanMessage,
+              "success",
+              `今日の受付状態を更新しました。\n最終更新：${updatedAt}\n表示が変わらない場合は、受付状況に変更がない状態です。`
+            );
           }
         } catch (error) {
           console.error(error);
           state.dbAvailable = false;
+          setDailyStatusReloadStatus("error", "更新失敗");
 
           if (showResultMessage) {
-            setDailyStatusReloadStatus("error", "更新失敗");
-          showMessage(
+            showMessage(
               els.scanMessage,
               "error",
               "受付状態の更新に失敗しました。\n\n" +
               "確認すること：\n" +
-              "・STEP 30-23A SQLが完了しているか\n" +
-              "・Workerが step-30-23b か\n" +
+              "・受付・診療ステータス用SQLが完了しているか\n" +
+              "・連携APIが最新版か\n" +
               "・管理コードが正しいか\n\n" +
               "詳細：" + (error.message || error)
             );
@@ -1552,6 +1579,8 @@
 
           updateStats();
           renderQueue();
+        } finally {
+          setDailyStatusReloadLoading(false);
         }
       }
 
