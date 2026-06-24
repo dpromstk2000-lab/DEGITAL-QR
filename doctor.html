@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>DPRO SHOP | 歯医者さん用 今日やること</title>
+
+  <script src="./config.js"></script>
+
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --line: #06c755;
+      --green: #16a34a;
+      --orange: #f59e0b;
+      --red: #dc2626;
+      --purple: #7c3aed;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --border: #dbeafe;
+      --soft: #eff6ff;
+      --green-soft: #f0fdf4;
+      --orange-soft: #fffbeb;
+      --red-soft: #fef2f2;
+      --purple-soft: #f5f3ff;
+      --card: rgba(255,255,255,0.92);
+      --shadow: 0 18px 46px rgba(15, 23, 42, 0.10);
+      --radius: 28px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: #f6f8fb;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Hiragino Sans",
+        "Hiragino Kaku Gothic ProN",
+        "Yu Gothic",
+        Meiryo,
+        sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 4%, rgba(37, 99, 235, 0.16), transparent 30%),
+        radial-gradient(circle at 92% 10%, rgba(6, 199, 85, 0.13), transparent 28%),
+        linear-gradient(135deg, #edf4ff 0%, #f8fbff 55%, #eefdf5 100%);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1320px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0 40px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+      margin-bottom: 14px;
+    }
+
+    .kicker {
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+    }
+
+    .title {
+      margin-top: 4px;
+      font-size: clamp(26px, 3.7vw, 44px);
+      line-height: 1.08;
+      font-weight: 950;
+      letter-spacing: -0.075em;
+    }
+
+    .subtitle {
+      margin-top: 7px;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.7;
+      font-weight: 760;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .top-actions a,
+    .top-actions button {
+      min-height: 42px;
+      border-radius: 999px;
+      padding: 10px 13px;
+      border: 1px solid #bfdbfe;
+      background: rgba(255,255,255,0.78);
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 950;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1.25fr repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .today-main,
+    .stat {
+      border-radius: 24px;
+      background: var(--card);
+      border: 1px solid rgba(219, 234, 254, 0.95);
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
+      padding: 15px;
+    }
+
+    .today-date {
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+    }
+
+    .today-task {
+      margin-top: 6px;
+      font-size: 20px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+    }
+
+    .today-note {
+      margin-top: 7px;
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 760;
+    }
+
+    .stat-label {
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .stat-value {
+      margin-top: 7px;
+      font-size: 33px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.06em;
+    }
+
+    .stat-note {
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.5;
+      font-weight: 750;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .card {
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid rgba(219, 234, 254, 0.95);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card + .card {
+      margin-top: 14px;
+    }
+
+    .card-head {
+      padding: 16px 18px;
+      border-bottom: 1px solid #e2e8f0;
+      background: linear-gradient(135deg, #ffffff, #f8fbff);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 13px;
+      font-weight: 950;
+      flex: 0 0 auto;
+    }
+
+    .card-body {
+      padding: 16px 18px 18px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 17px;
+      min-height: 44px;
+      padding: 11px 14px;
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 950;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      text-align: center;
+      white-space: normal;
+    }
+
+    .btn-primary {
+      color: #ffffff;
+      background: var(--blue);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.20);
+    }
+
+    .btn-line {
+      color: #ffffff;
+      background: var(--line);
+      box-shadow: 0 12px 24px rgba(6, 199, 85, 0.18);
+    }
+
+    .btn-green {
+      color: #ffffff;
+      background: var(--green);
+      box-shadow: 0 12px 24px rgba(22, 163, 74, 0.18);
+    }
+
+    .btn-orange {
+      color: #78350f;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+    }
+
+    .btn-purple {
+      color: #ffffff;
+      background: var(--purple);
+      box-shadow: 0 12px 24px rgba(124, 58, 237, 0.18);
+    }
+
+    .btn-light {
+      color: #1d4ed8;
+      background: #ffffff;
+      border: 1px solid #bfdbfe;
+    }
+
+    .btn-danger {
+      color: #991b1b;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-full {
+      width: 100%;
+      min-height: 52px;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    .input {
+      width: 100%;
+      min-height: 50px;
+      border-radius: 17px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: #0f172a;
+      outline: none;
+    }
+
+    .input:focus,
+    textarea:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tab {
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      color: #1d4ed8;
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .tab.active {
+      color: #ffffff;
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .task-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .task-card {
+      border-radius: 22px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 86px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      transition: 0.15s ease;
+    }
+
+    .task-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+    }
+
+    .task-time {
+      color: #1d4ed8;
+      font-size: 20px;
+      line-height: 1.1;
+      font-weight: 950;
+      letter-spacing: -0.055em;
+    }
+
+    .task-status {
+      margin-top: 6px;
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 6px 8px;
+      font-size: 11px;
+      font-weight: 950;
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .task-status.done {
+      background: #dcfce7;
+      color: #14532d;
+      border-color: #86efac;
+    }
+
+    .task-status.warn {
+      background: #fef2f2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+
+    .task-name {
+      color: #0f172a;
+      font-size: 20px;
+      line-height: 1.25;
+      font-weight: 950;
+      letter-spacing: -0.055em;
+    }
+
+    .task-sub {
+      margin-top: 4px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 760;
+    }
+
+    .task-tags {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 6px 8px;
+      background: #eff6ff;
+      color: #1e3a8a;
+      border: 1px solid #bfdbfe;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .pill.green {
+      background: #dcfce7;
+      color: #14532d;
+      border-color: #86efac;
+    }
+
+    .pill.orange {
+      background: #fffbeb;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .pill.red {
+      background: #fef2f2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+
+    .pill.purple {
+      background: #f5f3ff;
+      color: #5b21b6;
+      border-color: #ddd6fe;
+    }
+
+    .task-actions {
+      display: grid;
+      gap: 7px;
+      min-width: 140px;
+    }
+
+    .task-actions .btn {
+      min-height: 38px;
+      padding: 9px 10px;
+      font-size: 12px;
+    }
+
+    .selected-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 12px;
+    }
+
+    .patient-name {
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.06;
+      font-weight: 950;
+      letter-spacing: -0.075em;
+    }
+
+    .patient-kana {
+      margin-top: 6px;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .patient-meta {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .info {
+      border-radius: 18px;
+      background: #f8fbff;
+      border: 1px solid #dbeafe;
+      padding: 12px;
+      min-height: 84px;
+    }
+
+    .info-label {
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .info-value {
+      margin-top: 6px;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.65;
+      font-weight: 830;
+      white-space: pre-wrap;
+    }
+
+    .doctor-note {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px;
+      padding: 13px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      border-radius: 18px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.65;
+      color: #0f172a;
+      outline: none;
+      resize: vertical;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .message {
+      display: none;
+      white-space: pre-wrap;
+      margin-top: 12px;
+      border-radius: 18px;
+      padding: 13px 14px;
+      font-size: 13px;
+      line-height: 1.65;
+      font-weight: 760;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.info {
+      background: #eff6ff;
+      color: #1e3a8a;
+      border: 1px solid #bfdbfe;
+    }
+
+    .message.success {
+      background: #f0fdf4;
+      color: #14532d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .message.warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .message.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .follow-list,
+    .mini-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .follow-item,
+    .mini-item {
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .follow-top,
+    .mini-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .follow-name,
+    .mini-name {
+      font-size: 14px;
+      font-weight: 950;
+      line-height: 1.35;
+    }
+
+    .follow-reason,
+    .mini-text {
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 760;
+    }
+
+    .copy-line {
+      margin-top: 7px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    .copy-preview {
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 9px;
+      color: #334155;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 740;
+      white-space: pre-wrap;
+    }
+
+    .empty {
+      border-radius: 22px;
+      border: 2px dashed #bfdbfe;
+      background: #f8fbff;
+      padding: 22px;
+      text-align: center;
+      color: #475569;
+      font-weight: 820;
+      line-height: 1.8;
+    }
+
+    .small-note {
+      margin-top: 10px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 740;
+    }
+
+    .settings {
+      display: grid;
+      gap: 8px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1120px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .layout,
+      .selected-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        width: min(100% - 18px, 1320px);
+        padding-top: 12px;
+      }
+
+      .topbar,
+      .summary-grid,
+      .task-card,
+      .info-grid,
+      .action-grid,
+      .input-row,
+      .copy-line {
+        grid-template-columns: 1fr;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .task-actions {
+        grid-template-columns: 1fr 1fr;
+        min-width: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <div class="kicker">DPRO SHOP / 歯医者さん・院長用</div>
+        <div class="title">今日やることが、朝すぐ分かる画面</div>
+        <div class="subtitle">
+          今日の来院予定、受付済み、未受付、診療前メモ、診療後LINEフォローを1画面で確認します。
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <a href="./scan-ipad.html">受付iPad</a>
+        <a href="./scan.html">通常受付</a>
+        <a href="./owner.html">管理画面</a>
+        <a href="./admin.html">患者登録</a>
+        <button type="button" id="reloadButton">再読込</button>
+      </div>
+    </header>
+
+    <section class="summary-grid">
+      <div class="today-main">
+        <div class="today-date" id="todayDateLabel">TODAY</div>
+        <div class="today-task">今日やること：診療前確認 → 診療 → LINEフォロー</div>
+        <div class="today-note">
+          受付済みの患者さんから順に確認し、診療後は必要なLINE文面をコピーします。
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">今日の来院予定</div>
+        <div class="stat-value" id="statSchedule">3</div>
+        <div class="stat-note">デモ患者を表示</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">受付済み</div>
+        <div class="stat-value" id="statReceived">0</div>
+        <div class="stat-note">受付iPadと同じ端末なら反映</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">LINEフォロー</div>
+        <div class="stat-value" id="statFollow">2</div>
+        <div class="stat-note">診療後に文面コピー</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">未連携案内</div>
+        <div class="stat-value" id="statUnlinked">0</div>
+        <div class="stat-note">受付でLINE案内</div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <section>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="icon">今</span>今日の来院予定</div>
+            <div class="tabs">
+              <button class="tab active" type="button" data-filter="all">すべて</button>
+              <button class="tab" type="button" data-filter="received">受付済み</button>
+              <button class="tab" type="button" data-filter="waiting">未受付</button>
+              <button class="tab" type="button" data-filter="follow">フォロー必要</button>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="task-list" id="todayTaskList"></div>
+            <div class="message" id="mainMessage"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="icon">患</span>選択中の患者</div>
+            <button class="btn btn-light" id="openPatientCardButton" type="button">患者診察券を開く</button>
+          </div>
+
+          <div class="card-body">
+            <div class="empty" id="selectedEmpty">
+              まだ患者さんを選択していません。<br>
+              今日の来院予定から患者さんを選んでください。
+            </div>
+
+            <div id="selectedPanel" class="hidden">
+              <div class="selected-grid">
+                <div>
+                  <div class="patient-name" id="selectedName">---</div>
+                  <div class="patient-kana" id="selectedKana"></div>
+                  <div class="patient-meta" id="selectedMeta"></div>
+
+                  <div class="info-grid">
+                    <div class="info">
+                      <div class="info-label">本日の内容</div>
+                      <div class="info-value" id="selectedTodayMemo">---</div>
+                    </div>
+
+                    <div class="info">
+                      <div class="info-label">受付状態</div>
+                      <div class="info-value" id="selectedReception">---</div>
+                    </div>
+
+                    <div class="info">
+                      <div class="info-label">LINE連携</div>
+                      <div class="info-value" id="selectedLine">---</div>
+                    </div>
+
+                    <div class="info">
+                      <div class="info-label">家族・保護者</div>
+                      <div class="info-value" id="selectedFamily">---</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="doctor-note">
+                  <div class="info-label">先生用メモ</div>
+                  <textarea id="doctorMemoInput" placeholder="診療中のメモ・次回案内内容を入力"></textarea>
+                  <div class="action-grid">
+                    <button class="btn btn-primary" id="saveDoctorMemoButton" type="button">メモ保存</button>
+                    <button class="btn btn-light" id="copyDoctorMemoButton" type="button">メモコピー</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="action-grid">
+                <button class="btn btn-green btn-full" id="markExamDoneButton" type="button">診療済みにする</button>
+                <button class="btn btn-line btn-full" id="copyAfterVisitLineButton" type="button">診療後LINE文面コピー</button>
+              </div>
+
+              <div class="message" id="selectedMessage"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="icon">後</span>診療後LINEフォロー</div>
+          </div>
+
+          <div class="card-body">
+            <div class="follow-list" id="followList"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="icon">注</span>今日の注意</div>
+          </div>
+
+          <div class="card-body">
+            <div class="mini-list" id="attentionList"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="icon">設</span>管理設定</div>
+          </div>
+
+          <div class="card-body">
+            <div class="settings">
+              <div class="input-row">
+                <input class="input" id="adminCodeInput" type="password" placeholder="管理コード" />
+                <button class="btn btn-light" id="saveAdminCodeButton" type="button">保存</button>
+              </div>
+              <input class="input" id="doctorNameInput" type="text" placeholder="先生名・院長名" />
+              <button class="btn btn-purple btn-full" id="demoResetButton" type="button">この画面の診療済み状態をリセット</button>
+              <div class="small-note">
+                管理コードは通常 <strong>dpro-dental-2026</strong> です。<br>
+                この画面の診療済み状態は端末内に保存されます。
+              </div>
+              <div class="message" id="settingsMessage"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const CONFIG = window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
+
+      const DEMO_PATIENTS = [
+        {
+          role: "お母さん",
+          token: "demo-dental-patient-001",
+          member_no: "D260600001",
+          patient_name: "山田 花子",
+          patient_name_kana: "ヤマダ ハナコ",
+          patient_kind: "adult",
+          time: "09:30",
+          treatment: "定期検診・クリーニング",
+          doctor_note: "家族3名分の診察券をお母さんのLINEにまとめています。本人の定期検診。",
+          reception_note: "LINE連携済み。子ども2名も同日来院。",
+          after_follow: "本日は定期検診ありがとうございました。次回もLINE診察券をご提示ください。",
+          follow_required: true,
+          line_linked: true,
+          family_name: "山田家",
+          guardian_name: "",
+          attention: "家族3名まとめて来院"
+        },
+        {
+          role: "長男・太郎くん",
+          token: "demo-dental-child-taro",
+          member_no: "D260600002",
+          patient_name: "山田 太郎",
+          patient_name_kana: "ヤマダ タロウ",
+          patient_kind: "child",
+          school_grade: "小学3年生",
+          guardian_name: "山田 花子",
+          time: "10:00",
+          treatment: "フッ素塗布・定期チェック",
+          doctor_note: "怖がりやすいので、最初に短く説明してから処置。保護者同席。",
+          reception_note: "お母さんのLINEに診察券連携済み。",
+          after_follow: "本日は太郎くんの定期チェックありがとうございました。次回もフッ素の時期が近づきましたらLINEでご案内します。",
+          follow_required: true,
+          line_linked: true,
+          family_name: "山田家",
+          attention: "声かけを丁寧に"
+        },
+        {
+          role: "長女・さくらちゃん",
+          token: "demo-dental-child-sakura",
+          member_no: "D260600003",
+          patient_name: "山田 さくら",
+          patient_name_kana: "ヤマダ サクラ",
+          patient_kind: "child",
+          school_grade: "年長",
+          guardian_name: "山田 花子",
+          time: "10:30",
+          treatment: "定期チェック・ブラッシング確認",
+          doctor_note: "初回説明は短めに。兄と一緒に来院予定。",
+          reception_note: "お母さんのLINEに診察券連携済み。",
+          after_follow: "本日はさくらちゃんの定期チェックありがとうございました。ブラッシングで気になることがありましたらLINEでご相談ください。",
+          follow_required: false,
+          line_linked: true,
+          family_name: "山田家",
+          attention: "兄と一緒に来院"
+        }
+      ];
+
+      const state = {
+        filter: "all",
+        selectedToken: "",
+        examDone: [],
+        receptions: []
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      const els = {
+        todayDateLabel: $("todayDateLabel"),
+        statSchedule: $("statSchedule"),
+        statReceived: $("statReceived"),
+        statFollow: $("statFollow"),
+        statUnlinked: $("statUnlinked"),
+        todayTaskList: $("todayTaskList"),
+        mainMessage: $("mainMessage"),
+
+        selectedEmpty: $("selectedEmpty"),
+        selectedPanel: $("selectedPanel"),
+        selectedName: $("selectedName"),
+        selectedKana: $("selectedKana"),
+        selectedMeta: $("selectedMeta"),
+        selectedTodayMemo: $("selectedTodayMemo"),
+        selectedReception: $("selectedReception"),
+        selectedLine: $("selectedLine"),
+        selectedFamily: $("selectedFamily"),
+        doctorMemoInput: $("doctorMemoInput"),
+        saveDoctorMemoButton: $("saveDoctorMemoButton"),
+        copyDoctorMemoButton: $("copyDoctorMemoButton"),
+        markExamDoneButton: $("markExamDoneButton"),
+        copyAfterVisitLineButton: $("copyAfterVisitLineButton"),
+        selectedMessage: $("selectedMessage"),
+        openPatientCardButton: $("openPatientCardButton"),
+
+        followList: $("followList"),
+        attentionList: $("attentionList"),
+
+        adminCodeInput: $("adminCodeInput"),
+        doctorNameInput: $("doctorNameInput"),
+        saveAdminCodeButton: $("saveAdminCodeButton"),
+        demoResetButton: $("demoResetButton"),
+        settingsMessage: $("settingsMessage"),
+        reloadButton: $("reloadButton")
+      };
+
+      function getConfigValue(path, fallback = "") {
+        const keys = String(path || "").split(".");
+        let current = CONFIG;
+
+        for (const key of keys) {
+          if (!current || typeof current !== "object" || !(key in current)) return fallback;
+          current = current[key];
+        }
+
+        return current === undefined || current === null ? fallback : current;
+      }
+
+      function getTodayJST() {
+        const now = new Date();
+        const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+        return jst.toISOString().slice(0, 10);
+      }
+
+      function formatTodayLabel() {
+        const today = new Date(getTodayJST() + "T00:00:00+09:00");
+        const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+        return `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日（${weekdays[today.getDay()]}）`;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function getAdminCode() {
+        try {
+          return localStorage.getItem(getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code")) || "";
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function setAdminCode(value) {
+        try {
+          localStorage.setItem(getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code"), value || "");
+        } catch (error) {
+          console.warn(error);
+        }
+      }
+
+      function getDoctorName() {
+        try {
+          return localStorage.getItem("dpro_dental_doctor_name") || "院長";
+        } catch (error) {
+          return "院長";
+        }
+      }
+
+      function setDoctorName(value) {
+        try {
+          localStorage.setItem("dpro_dental_doctor_name", value || "院長");
+        } catch (error) {
+          console.warn(error);
+        }
+      }
+
+      function getReceptionStorageKey() {
+        return "dpro_dental_ipad_receptions_" + getTodayJST();
+      }
+
+      function getExamDoneStorageKey() {
+        return "dpro_dental_doctor_exam_done_" + getTodayJST();
+      }
+
+      function getDoctorMemoStorageKey(token) {
+        return "dpro_dental_doctor_memo_" + getTodayJST() + "_" + token;
+      }
+
+      function loadJson(key, fallback) {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function saveJson(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {
+          console.warn(error);
+        }
+      }
+
+      function loadState() {
+        state.receptions = loadJson(getReceptionStorageKey(), []);
+        if (!Array.isArray(state.receptions)) state.receptions = [];
+
+        state.examDone = loadJson(getExamDoneStorageKey(), []);
+        if (!Array.isArray(state.examDone)) state.examDone = [];
+      }
+
+      function saveExamDone() {
+        saveJson(getExamDoneStorageKey(), state.examDone);
+      }
+
+      function isReceived(token) {
+        return state.receptions.some((item) => item.qr_token === token || item.member_no === token);
+      }
+
+      function isExamDone(token) {
+        return state.examDone.includes(token);
+      }
+
+      function getPatient(token) {
+        return DEMO_PATIENTS.find((p) => p.token === token) || DEMO_PATIENTS[0];
+      }
+
+      function showMessage(element, type, text) {
+        if (!element) return;
+        element.className = `message show ${type || "info"}`;
+        element.textContent = text || "";
+      }
+
+      function clearMessage(element) {
+        if (!element) return;
+        element.className = "message";
+        element.textContent = "";
+      }
+
+      function patientTags(patient) {
+        const tags = [];
+
+        tags.push(`<span class="pill">${escapeHtml(patient.member_no)}</span>`);
+        tags.push(`<span class="pill ${patient.patient_kind === "child" ? "orange" : ""}">${patient.patient_kind === "child" ? "子ども診察券" : "本人診察券"}</span>`);
+        tags.push(`<span class="pill green">${patient.line_linked ? "LINE連携済み" : "LINE未連携"}</span>`);
+
+        if (patient.follow_required) {
+          tags.push('<span class="pill purple">LINEフォロー必要</span>');
+        }
+
+        if (isExamDone(patient.token)) {
+          tags.push('<span class="pill green">診療済み</span>');
+        }
+
+        return tags.join("");
+      }
+
+      function getFilteredPatients() {
+        return DEMO_PATIENTS.filter((patient) => {
+          if (state.filter === "received") return isReceived(patient.token);
+          if (state.filter === "waiting") return !isReceived(patient.token);
+          if (state.filter === "follow") return patient.follow_required;
+          return true;
+        });
+      }
+
+      function renderStats() {
+        const schedule = DEMO_PATIENTS.length;
+        const received = DEMO_PATIENTS.filter((p) => isReceived(p.token)).length;
+        const follow = DEMO_PATIENTS.filter((p) => p.follow_required).length;
+        const unlinked = DEMO_PATIENTS.filter((p) => !p.line_linked).length;
+
+        els.statSchedule.textContent = String(schedule);
+        els.statReceived.textContent = String(received);
+        els.statFollow.textContent = String(follow);
+        els.statUnlinked.textContent = String(unlinked);
+      }
+
+      function renderTaskList() {
+        const patients = getFilteredPatients();
+
+        if (!patients.length) {
+          els.todayTaskList.innerHTML = '<div class="empty">この条件の患者さんはいません。</div>';
+          return;
+        }
+
+        els.todayTaskList.innerHTML = patients.map((patient) => {
+          const received = isReceived(patient.token);
+          const done = isExamDone(patient.token);
+          const statusClass = done ? "done" : received ? "done" : "warn";
+          const statusText = done ? "診療済み" : received ? "受付済み" : "未受付";
+
+          return `
+            <div class="task-card" data-token="${escapeHtml(patient.token)}">
+              <div>
+                <div class="task-time">${escapeHtml(patient.time)}</div>
+                <div class="task-status ${statusClass}">${escapeHtml(statusText)}</div>
+              </div>
+
+              <div>
+                <div class="task-name">${escapeHtml(patient.patient_name)}</div>
+                <div class="task-sub">${escapeHtml(patient.role)} / ${escapeHtml(patient.treatment)}</div>
+                <div class="task-sub">${escapeHtml(patient.doctor_note)}</div>
+                <div class="task-tags">${patientTags(patient)}</div>
+              </div>
+
+              <div class="task-actions">
+                <button class="btn btn-primary" type="button" data-action="select" data-token="${escapeHtml(patient.token)}">確認</button>
+                <button class="btn btn-line" type="button" data-action="copy" data-token="${escapeHtml(patient.token)}">LINE文面</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        Array.from(els.todayTaskList.querySelectorAll("[data-action='select']")).forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            selectPatient(button.getAttribute("data-token"));
+          });
+        });
+
+        Array.from(els.todayTaskList.querySelectorAll("[data-action='copy']")).forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            copyAfterVisitMessage(button.getAttribute("data-token"));
+          });
+        });
+
+        Array.from(els.todayTaskList.querySelectorAll(".task-card")).forEach((card) => {
+          card.addEventListener("click", () => {
+            selectPatient(card.getAttribute("data-token"));
+          });
+        });
+      }
+
+      function getDefaultDoctorMemo(patient) {
+        return [
+          `${patient.patient_name} 様`,
+          `本日の内容：${patient.treatment}`,
+          `診療前メモ：${patient.doctor_note}`,
+          patient.patient_kind === "child" ? `保護者：${patient.guardian_name || "未登録"}` : "本人",
+          `LINE連携：${patient.line_linked ? "済み" : "未連携"}`
+        ].join("\n");
+      }
+
+      function loadDoctorMemo(patient) {
+        try {
+          return localStorage.getItem(getDoctorMemoStorageKey(patient.token)) || "";
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function saveDoctorMemo() {
+        const patient = getPatient(state.selectedToken);
+
+        if (!patient) {
+          showMessage(els.selectedMessage, "warning", "先に患者さんを選択してください。");
+          return;
+        }
+
+        try {
+          localStorage.setItem(getDoctorMemoStorageKey(patient.token), els.doctorMemoInput.value || "");
+          showMessage(els.selectedMessage, "success", "先生用メモを保存しました。");
+        } catch (error) {
+          showMessage(els.selectedMessage, "error", "メモ保存に失敗しました。" + (error.message || error));
+        }
+      }
+
+      function renderSelectedPatient() {
+        const patient = getPatient(state.selectedToken);
+
+        if (!state.selectedToken || !patient) {
+          els.selectedEmpty.classList.remove("hidden");
+          els.selectedPanel.classList.add("hidden");
+          return;
+        }
+
+        const received = isReceived(patient.token);
+        const done = isExamDone(patient.token);
+
+        els.selectedEmpty.classList.add("hidden");
+        els.selectedPanel.classList.remove("hidden");
+
+        els.selectedName.textContent = patient.patient_name;
+        els.selectedKana.textContent = patient.patient_name_kana || "";
+        els.selectedMeta.innerHTML = patientTags(patient);
+
+        els.selectedTodayMemo.textContent = [
+          `${patient.time} / ${patient.treatment}`,
+          patient.doctor_note
+        ].join("\n");
+
+        els.selectedReception.textContent = [
+          received ? "受付済み" : "未受付",
+          done ? "診療済み" : "未診療"
+        ].join("\n");
+
+        els.selectedLine.textContent = patient.line_linked
+          ? "LINE連携済み\n山田花子（お母さん）\ndemo-line-mother-yamada"
+          : "LINE未連携\n受付でLINE登録QRを案内";
+
+        els.selectedFamily.textContent = [
+          patient.family_name || "家族なし",
+          patient.patient_kind === "child" ? `保護者：${patient.guardian_name || "未登録"}` : "本人診察券",
+          patient.school_grade ? `学年：${patient.school_grade}` : ""
+        ].filter(Boolean).join("\n");
+
+        els.doctorMemoInput.value = loadDoctorMemo(patient) || getDefaultDoctorMemo(patient);
+        clearMessage(els.selectedMessage);
+      }
+
+      function renderFollowList() {
+        const followPatients = DEMO_PATIENTS.filter((p) => p.follow_required);
+
+        if (!followPatients.length) {
+          els.followList.innerHTML = '<div class="empty">今日のLINEフォローはありません。</div>';
+          return;
+        }
+
+        els.followList.innerHTML = followPatients.map((patient) => {
+          return `
+            <div class="follow-item">
+              <div class="follow-top">
+                <div>
+                  <div class="follow-name">${escapeHtml(patient.patient_name)}</div>
+                  <div class="follow-reason">${escapeHtml(patient.treatment)}</div>
+                </div>
+                <span class="pill purple">フォロー</span>
+              </div>
+
+              <div class="copy-line">
+                <div class="copy-preview">${escapeHtml(makeAfterVisitMessage(patient))}</div>
+                <button class="btn btn-line" type="button" data-follow-copy="${escapeHtml(patient.token)}">コピー</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        Array.from(els.followList.querySelectorAll("[data-follow-copy]")).forEach((button) => {
+          button.addEventListener("click", () => copyAfterVisitMessage(button.getAttribute("data-follow-copy")));
+        });
+      }
+
+      function renderAttentionList() {
+        const attentions = [
+          {
+            name: "LINE未連携の確認",
+            text: "未連携の患者さんがいれば、受付でLINE登録QRを案内します。",
+            type: DEMO_PATIENTS.some((p) => !p.line_linked) ? "red" : "green"
+          },
+          {
+            name: "子ども診察券",
+            text: "山田 太郎くん、山田 さくらちゃんは、お母さんのLINEに紐づいた家族診察券です。",
+            type: "orange"
+          },
+          {
+            name: "診療後フォロー",
+            text: "山田 花子様・山田 太郎くんは、診療後LINE文面コピー対象です。",
+            type: "purple"
+          }
+        ];
+
+        els.attentionList.innerHTML = attentions.map((item) => `
+          <div class="mini-item">
+            <div class="mini-top">
+              <div class="mini-name">${escapeHtml(item.name)}</div>
+              <span class="pill ${escapeHtml(item.type)}">${escapeHtml(item.type === "green" ? "OK" : "確認")}</span>
+            </div>
+            <div class="mini-text">${escapeHtml(item.text)}</div>
+          </div>
+        `).join("");
+      }
+
+      function makeAfterVisitMessage(patient) {
+        return [
+          `こんにちは。DPRO歯科クリニックです。`,
+          ``,
+          patient.after_follow || `本日はご来院ありがとうございました。`,
+          ``,
+          `次回ご来院時は、LINEメニューの「診察券」からQR診察券をご提示ください。`
+        ].join("\n");
+      }
+
+      async function copyText(text, element, successMessage) {
+        try {
+          await navigator.clipboard.writeText(text);
+          showMessage(element || els.mainMessage, "success", successMessage || "コピーしました。");
+        } catch (error) {
+          showMessage(element || els.mainMessage, "warning", "コピーできない場合は、手動で選択してコピーしてください。");
+        }
+      }
+
+      function copyAfterVisitMessage(token) {
+        const patient = getPatient(token || state.selectedToken);
+        const text = makeAfterVisitMessage(patient);
+        copyText(text, els.selectedMessage, `${patient.patient_name} 様へのLINE文面をコピーしました。`);
+      }
+
+      function copyDoctorMemo() {
+        const text = els.doctorMemoInput.value || "";
+        if (!text.trim()) {
+          showMessage(els.selectedMessage, "warning", "コピーするメモがありません。");
+          return;
+        }
+
+        copyText(text, els.selectedMessage, "先生用メモをコピーしました。");
+      }
+
+      function selectPatient(token) {
+        state.selectedToken = token || DEMO_PATIENTS[0].token;
+        renderSelectedPatient();
+      }
+
+      function markExamDone() {
+        const patient = getPatient(state.selectedToken);
+
+        if (!patient) {
+          showMessage(els.selectedMessage, "warning", "先に患者さんを選択してください。");
+          return;
+        }
+
+        if (!state.examDone.includes(patient.token)) {
+          state.examDone.push(patient.token);
+          saveExamDone();
+        }
+
+        showMessage(els.selectedMessage, "success", `${patient.patient_name} 様を診療済みにしました。`);
+        renderAll();
+        selectPatient(patient.token);
+      }
+
+      function openPatientCard() {
+        const patient = getPatient(state.selectedToken || DEMO_PATIENTS[0].token);
+        const url = `./member.html?t=${encodeURIComponent(patient.token)}`;
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+
+      function resetDemoState() {
+        if (!confirm("この画面の診療済み状態をリセットしますか？")) return;
+
+        state.examDone = [];
+        saveExamDone();
+        renderAll();
+
+        if (state.selectedToken) {
+          renderSelectedPatient();
+        }
+
+        showMessage(els.settingsMessage, "success", "診療済み状態をリセットしました。");
+      }
+
+      function renderAll() {
+        loadState();
+        renderStats();
+        renderTaskList();
+        renderFollowList();
+        renderAttentionList();
+      }
+
+      function bindEvents() {
+        Array.from(document.querySelectorAll(".tab")).forEach((button) => {
+          button.addEventListener("click", () => {
+            state.filter = button.getAttribute("data-filter") || "all";
+            Array.from(document.querySelectorAll(".tab")).forEach((b) => b.classList.remove("active"));
+            button.classList.add("active");
+            renderTaskList();
+          });
+        });
+
+        els.saveDoctorMemoButton.addEventListener("click", saveDoctorMemo);
+        els.copyDoctorMemoButton.addEventListener("click", copyDoctorMemo);
+        els.markExamDoneButton.addEventListener("click", markExamDone);
+        els.copyAfterVisitLineButton.addEventListener("click", () => copyAfterVisitMessage(state.selectedToken));
+        els.openPatientCardButton.addEventListener("click", openPatientCard);
+
+        els.saveAdminCodeButton.addEventListener("click", () => {
+          setAdminCode(els.adminCodeInput.value.trim());
+          setDoctorName(els.doctorNameInput.value.trim() || "院長");
+          showMessage(els.settingsMessage, "success", "管理コードと先生名を保存しました。");
+        });
+
+        els.doctorNameInput.addEventListener("change", () => {
+          setDoctorName(els.doctorNameInput.value.trim() || "院長");
+        });
+
+        els.demoResetButton.addEventListener("click", resetDemoState);
+
+        els.reloadButton.addEventListener("click", () => {
+          renderAll();
+          if (state.selectedToken) renderSelectedPatient();
+          showMessage(els.mainMessage, "success", "今日の状態を再読み込みしました。");
+        });
+      }
+
+      function init() {
+        els.todayDateLabel.textContent = formatTodayLabel();
+        els.adminCodeInput.value = getAdminCode();
+        els.doctorNameInput.value = getDoctorName();
+
+        bindEvents();
+        renderAll();
+        selectPatient(DEMO_PATIENTS[0].token);
+
+        showMessage(els.mainMessage, "info", "歯医者さん用の今日やること画面を開きました。患者さんを選んで診療前メモを確認できます。");
+      }
+
+      document.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+</body>
+</html>
