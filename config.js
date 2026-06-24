@@ -21,7 +21,7 @@
     SYSTEM_NAME: "DPRO SHOP",
     SERVICE_NAME: "歯科デジタルQR診察券",
     SERVICE_COPY: "LINE公式で開ける、家族対応デジタル診察券",
-    VERSION: "step-30-21d-liff-config",
+    VERSION: "step-30-21e-liff-id-set",
     TIMEZONE: "Asia/Tokyo",
 
     CLINIC: {
@@ -97,8 +97,8 @@
         liff.init → liff.getProfile を実行し、
         LINE userId を取得して家族診察券と紐づけます。
       */
-      USE_LIFF: false,
-      LIFF_ID: "",
+      USE_LIFF: true,
+      LIFF_ID: "2010491267-waXBAIje",
 
       /*
         LINE Developers の LIFF Endpoint URL には、
@@ -117,8 +117,8 @@
         最初はDEMO_MEMBER_URLを使うと営業デモが簡単です。
         本番では MEMBER_URL を使い、LINE userId から家族診察券を自動表示します。
       */
-      RICH_MENU_CARD_URL: BASE_PUBLIC_URL + "/member.html",
-      RICH_MENU_DEMO_CARD_URL: BASE_PUBLIC_URL + "/member.html?t=demo-dental-patient-001",
+      RICH_MENU_CARD_URL: "https://liff.line.me/2010491267-waXBAIje",
+      RICH_MENU_DEMO_CARD_URL: "https://liff.line.me/2010491267-waXBAIje?t=demo-dental-patient-001",
 
       /*
         Messaging API送信は、まだこのSTEPでは使いません。
