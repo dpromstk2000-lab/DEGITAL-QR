@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | 歯医者さん用 今日やること / DB受付連動 操作反応改善</title>
+  <title>DPRO SHOP | 歯医者さん用 今日やること / 受付iPad連動 操作反応改善</title>
 
   <script src="./config.js"></script>
 
@@ -132,6 +132,58 @@
       align-items: center;
       justify-content: center;
     }
+
+
+    .reload-status {
+      min-height: 42px;
+      border-radius: 999px;
+      padding: 10px 12px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      font-size: 11px;
+      line-height: 1.3;
+      font-weight: 950;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .reload-status.loading {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .reload-status.error {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .top-actions button.is-loading {
+      opacity: 0.82;
+      pointer-events: none;
+    }
+
+
+
+    .version-check-badge {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 950;
+    }
+
 
     .summary-grid {
       display: grid;
@@ -847,7 +899,7 @@
     <header class="topbar">
       <div>
         <div class="kicker">DPRO SHOP / 歯医者さん・院長用</div>
-        <div class="title">今日やることと操作結果が、すぐ分かる画面</div>
+        <div class="title">今日やることと受付状態が、すぐ分かる画面</div>
         <div class="subtitle">
           今日の来院予定、受付済み、未受付、診療前メモ、診療後LINEフォローを1画面で確認します。
         </div>
@@ -858,7 +910,8 @@
         <a href="./scan.html">通常受付</a>
         <a href="./owner.html">管理画面</a>
         <a href="./admin.html">患者登録</a>
-        <button type="button" id="reloadButton">再読込</button>
+        <button type="button" id="reloadButton">受付状態を更新</button>
+        <span class="reload-status" id="reloadStatus">未更新</span>
       </div>
     </header>
 
@@ -1175,7 +1228,8 @@
         saveAdminCodeButton: $("saveAdminCodeButton"),
         demoResetButton: $("demoResetButton"),
         settingsMessage: $("settingsMessage"),
-        reloadButton: $("reloadButton")
+        reloadButton: $("reloadButton"),
+        reloadStatus: $("reloadStatus")
       };
 
       function getConfigValue(path, fallback = "") {
@@ -1300,14 +1354,22 @@
       async function loadDailyStatuses(showResultMessage = false) {
         if (!getAdminCode()) {
           state.dbAvailable = false;
+          setReloadStatus("error", "管理コード未設定");
+          setReloadButtonLoading(false);
           if (showResultMessage) {
-            showMessage(els.mainMessage, "warning", "DB受付状態の読込には管理コードが必要です。右下の設定で管理コードを保存してください。");
+            showMessage(els.mainMessage, "warning", "受付・診療状態の読込には管理コードが必要です。右下の設定で管理コードを保存してください。");
           }
           renderAllLocalOnly();
           return;
         }
 
         state.isLoadingDb = true;
+        setReloadButtonLoading(true);
+        setReloadStatus("loading", "更新中...");
+
+        if (showResultMessage) {
+          showMessage(els.mainMessage, "info", "受付iPadの最新状態を確認しています...");
+        }
 
         try {
           const result = await apiFetch("/api/doctor/today", {
@@ -1336,8 +1398,15 @@
 
           if (state.selectedToken) renderSelectedPatient();
 
+          const updatedAt = formatNowTime();
+          setReloadStatus("", `更新完了 ${updatedAt}`);
+
           if (showResultMessage) {
-            showMessage(els.mainMessage, "success", "DBから今日の受付・診療状態を読み込みました。");
+            showMessage(
+              els.mainMessage,
+              "success",
+              `受付iPadの最新状態を反映しました。\n最終更新：${updatedAt}\n表示が変わらない場合は、受付側の状態に変更がない状態です。`
+            );
           }
         } catch (error) {
           console.error(error);
@@ -1345,20 +1414,23 @@
 
           renderAllLocalOnly();
 
+          setReloadStatus("error", "更新失敗");
+
           if (showResultMessage) {
             showMessage(
               els.mainMessage,
               "error",
-              "DB状態の読み込みに失敗しました。\n\n" +
+              "受付・診療状態の読み込みに失敗しました。\n\n" +
               "確認すること：\n" +
-              "・STEP 30-23A SQLが完了しているか\n" +
-              "・Workerが step-30-23b か\n" +
+              "・受付・診療ステータス用SQLが完了しているか\n" +
+              "・連携APIが最新版か\n" +
               "・管理コードが正しいか\n\n" +
               "詳細：" + (error.message || error)
             );
           }
         } finally {
           state.isLoadingDb = false;
+          setReloadButtonLoading(false);
         }
       }
 
@@ -1481,6 +1553,29 @@
         const patients = getAllPatients();
         return patients.find((p) => p.token === token || p.member_no === token) || patients[0] || DEMO_PATIENTS[0];
       }
+
+      function formatNowTime() {
+        return new Date().toLocaleTimeString("ja-JP", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      function setReloadStatus(type, text) {
+        if (!els.reloadStatus) return;
+
+        els.reloadStatus.className = `reload-status ${type || ""}`.trim();
+        els.reloadStatus.textContent = text || "";
+      }
+
+      function setReloadButtonLoading(isLoading) {
+        if (!els.reloadButton) return;
+
+        els.reloadButton.disabled = Boolean(isLoading);
+        els.reloadButton.classList.toggle("is-loading", Boolean(isLoading));
+        els.reloadButton.textContent = isLoading ? "更新中..." : "受付状態を更新";
+      }
+
 
       function showMessage(element, type, text) {
         if (!element) return;
@@ -1639,9 +1734,9 @@
             });
 
             await loadDailyStatuses(false);
-            showMessage(els.selectedMessage, "success", "先生用メモをDBに保存しました。");
+            showMessage(els.selectedMessage, "success", "先生用メモを保存しました。");
           } else {
-            showMessage(els.selectedMessage, "success", "先生用メモをこの端末に保存しました。DB保存には管理コードが必要です。");
+            showMessage(els.selectedMessage, "success", "先生用メモをこの端末に保存しました。共有保存には管理コードが必要です。");
           }
         } catch (error) {
           showMessage(els.selectedMessage, "error", "メモ保存に失敗しました。" + (error.message || error));
@@ -1813,9 +1908,9 @@
             });
 
             await loadDailyStatuses(false);
-            showMessage(els.selectedMessage, "success", `${patient.patient_name} 様へのLINE文面コピーをDBに記録しました。自動送信はしていません。`);
+            showMessage(els.selectedMessage, "success", `${patient.patient_name} 様へのLINE文面コピーを記録しました。自動送信はしていません。`);
           } catch (error) {
-            showMessage(els.selectedMessage, "warning", "LINE文面はコピーしましたが、DB記録に失敗しました。" + (error.message || error));
+            showMessage(els.selectedMessage, "warning", "LINE文面はコピーしましたが、記録に失敗しました。" + (error.message || error));
           }
         }
       }
@@ -1888,11 +1983,11 @@
         }
 
         if (!getAdminCode()) {
-          showMessage(els.selectedMessage, "warning", "診療済みをDB保存するには管理コードが必要です。右下の設定で管理コードを保存してください。");
+          showMessage(els.selectedMessage, "warning", "診療済みを共有保存するには管理コードが必要です。右下の設定で管理コードを保存してください。");
           return;
         }
 
-        showMessage(els.selectedMessage, "info", "診療済みをDBに保存しています...");
+        showMessage(els.selectedMessage, "info", "診療済みを保存しています...");
 
         try {
           await apiFetch("/api/doctor/exam-complete", {
@@ -1918,11 +2013,11 @@
 
           state.selectedToken = patient.token;
 
-          showMessage(els.selectedMessage, "success", `${patient.patient_name} 様を診療済みにしました。DBに保存しました。`);
+          showMessage(els.selectedMessage, "success", `${patient.patient_name} 様を診療済みにしました。受付・管理画面にも反映されます。`);
           showActionFeedback(
             "済",
             `${patient.patient_name} 様を診療済みにしました`,
-            "診療済み状態をDBに保存しました。診療後に必要な場合は「診療後LINE文面コピー」を押して、コピーした文面をLINE公式に貼り付けてください。"
+            "診療済み状態を保存しました。受付・管理画面にも反映されます。診療後に必要な場合は「診療後LINE文面コピー」を押して、コピーした文面をLINE公式に貼り付けてください。"
           );
 
           renderAllLocalOnly();
@@ -1933,10 +2028,10 @@
           showMessage(
             els.selectedMessage,
             "error",
-            "診療済みのDB保存に失敗しました。\n\n" +
+            "診療済みの保存に失敗しました。\n\n" +
             "確認すること：\n" +
-            "・STEP 30-23A SQLが完了しているか\n" +
-            "・Workerが step-30-23b か\n" +
+            "・受付・診療ステータス用SQLが完了しているか\n" +
+            "・連携APIが最新版か\n" +
             "・管理コードが正しいか\n\n" +
             "詳細：" + (error.message || error)
           );
@@ -1960,7 +2055,7 @@
           renderSelectedPatient();
         }
 
-        showMessage(els.settingsMessage, "success", "この端末内の診療済み状態をリセットしました。DB側は営業前デモリセットで戻してください。");
+        showMessage(els.settingsMessage, "success", "この端末内の診療済み状態をリセットしました。共有状態は営業前デモリセットで戻してください。");
       }
 
       function renderAllLocalOnly() {
@@ -2012,7 +2107,7 @@
         els.saveAdminCodeButton.addEventListener("click", () => {
           setAdminCode(els.adminCodeInput.value.trim());
           setDoctorName(els.doctorNameInput.value.trim() || "院長");
-          showMessage(els.settingsMessage, "success", "管理コードと先生名を保存しました。DB状態を読み込みます。");
+          showMessage(els.settingsMessage, "success", "管理コードと先生名を保存しました。受付iPadの最新状態を読み込みます。");
           loadDailyStatuses(true);
         });
 
@@ -2023,6 +2118,11 @@
         els.demoResetButton.addEventListener("click", resetDemoState);
 
         els.reloadButton.addEventListener("click", () => {
+          showActionFeedback(
+            "更",
+            "受付状態を更新しています",
+            "受付iPadで受付済みにした患者さんがいれば、この画面にも反映されます。"
+          );
           loadDailyStatuses(true);
         });
       }
@@ -2043,7 +2143,7 @@
           "左の来院予定から「確認」を押すと、この患者詳細まで自動で移動します。LINE文面は自動送信ではなくコピーのみです。"
         );
 
-        showMessage(els.mainMessage, "info", "歯医者さん用の今日やること画面を開きました。受付iPadの受付済み状態をDBから読み込み、診療済み・LINE文面コピーも記録できます。");
+        showMessage(els.mainMessage, "info", "歯医者さん用の今日やること画面を開きました。右上の「受付状態を更新」を押すと、受付iPadで受付済みにした患者さんが反映されます。");
       }
 
       document.addEventListener("DOMContentLoaded", init);
