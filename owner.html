@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-23F デモリセット受付診療自動更新 | 歯科医院 管理画面</title>
+  <title>DPRO SHOP | STEP 30-23G 受付診療状況0件停止防止 | 歯科医院 管理画面</title>
 
   <script src="./config.js"></script>
 
@@ -1617,10 +1617,10 @@
             今日の受付・診療状況
           </div>
           <div class="daily-status-sub">
-            受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。
+            受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。読み込み結果が空の場合も、営業デモ用の山田家3名を予備表示します。
           </div>
           <div class="daily-status-version">
-            STEP 30-23F：デモリセット後も受付・診療状況を自動更新
+            STEP 30-23G：0件で止まらない受付・診療状況表示
           </div>
         </div>
 
@@ -2714,6 +2714,10 @@
 
           renderSettingsPreview();
           updateSummary();
+
+          if (typeof window.DPRO_refreshDailyStatusAfterDemoReset === "function") {
+            window.DPRO_refreshDailyStatusAfterDemoReset();
+          }
           showMessage(els.settingsLoadMessage, "success", "医院設定を読み込みました。");
           return true;
         } catch (error) {
@@ -4425,5 +4429,365 @@
       });
     })();
   </script>
+
+  <!-- STEP 30-23G DAILY STATUS SCRIPT START -->
+  <script>
+    (function () {
+      "use strict";
+
+      const CONFIG = window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
+      const $ = (id) => document.getElementById(id);
+
+      const DEMO_DAILY_STATUS_ROWS = [
+        {
+          member_no: "D260600001",
+          patient_name: "山田 花子",
+          patient_kind: "adult",
+          family_display_label: "山田家 / お母さん",
+          scheduled_time: "09:30",
+          scheduled_label: "定期検診・クリーニング",
+          task_summary: "家族3名分の診察券をお母さんのLINEにまとめています。",
+          reception_status: "scheduled",
+          exam_status: "waiting",
+          line_follow_status: "needed",
+          family_line_user_id: "demo-line-mother-yamada",
+          family_line_link_status: "linked"
+        },
+        {
+          member_no: "D260600002",
+          patient_name: "山田 太郎",
+          patient_kind: "child",
+          family_display_label: "山田家 / 長男・太郎くん",
+          scheduled_time: "10:00",
+          scheduled_label: "フッ素塗布・定期チェック",
+          task_summary: "子ども診察券。保護者同席。",
+          reception_status: "scheduled",
+          exam_status: "waiting",
+          line_follow_status: "needed",
+          family_line_user_id: "demo-line-mother-yamada",
+          family_line_link_status: "linked"
+        },
+        {
+          member_no: "D260600003",
+          patient_name: "山田 さくら",
+          patient_kind: "child",
+          family_display_label: "山田家 / 長女・さくらちゃん",
+          scheduled_time: "10:30",
+          scheduled_label: "定期チェック・ブラッシング確認",
+          task_summary: "子ども診察券。兄と一緒に来院予定。",
+          reception_status: "scheduled",
+          exam_status: "waiting",
+          line_follow_status: "none",
+          family_line_user_id: "demo-line-mother-yamada",
+          family_line_link_status: "linked"
+        }
+      ];
+
+      const dailyEls = {
+        reloadButton: $("dailyStatusReloadButton"),
+        message: $("dailyStatusMessage"),
+        list: $("dailyStatusList"),
+        total: $("dailyStatusTotal"),
+        checkedIn: $("dailyStatusCheckedIn"),
+        waitingReception: $("dailyStatusWaitingReception"),
+        completed: $("dailyStatusCompleted"),
+        follow: $("dailyStatusFollow")
+      };
+
+      function getConfigValue(path, fallback = "") {
+        const keys = String(path || "").split(".");
+        let current = CONFIG;
+
+        for (const key of keys) {
+          if (!current || typeof current !== "object" || !(key in current)) return fallback;
+          current = current[key];
+        }
+
+        return current === undefined || current === null ? fallback : current;
+      }
+
+      function getApiBaseUrl() {
+        return String(
+          getConfigValue(
+            "API.BASE_URL",
+            getConfigValue("API_BASE_URL", "https://dpro-dental-qr-api.dpromstk2000.workers.dev")
+          ) || ""
+        ).replace(/\/+$/, "");
+      }
+
+      function getClinicCode() {
+        return getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo");
+      }
+
+      function getAdminCode() {
+        try {
+          return localStorage.getItem(
+            getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code")
+          ) || "";
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function getTodayJST() {
+        const now = new Date();
+        const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+        return jst.toISOString().slice(0, 10);
+      }
+
+      function formatNowTime() {
+        return new Date().toLocaleTimeString("ja-JP", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function showDailyMessage(type, text) {
+        if (!dailyEls.message) return;
+        dailyEls.message.className = `daily-status-message show ${type || "info"}`;
+        dailyEls.message.textContent = text || "";
+      }
+
+      function setDailyButtonLoading(isLoading) {
+        if (!dailyEls.reloadButton) return;
+        dailyEls.reloadButton.disabled = Boolean(isLoading);
+        dailyEls.reloadButton.textContent = isLoading ? "更新中..." : "受付・診療状況を更新";
+      }
+
+      async function dailyApiFetch(path, params = {}) {
+        const baseUrl = getApiBaseUrl();
+        if (!baseUrl) throw new Error("API URLが設定されていません。");
+
+        const adminCode = getAdminCode();
+        if (!adminCode) {
+          throw new Error("管理コードが保存されていません。下の管理設定で dpro-dental-2026 を保存してください。");
+        }
+
+        const url = new URL(baseUrl + path);
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== "") {
+            url.searchParams.set(key, value);
+          }
+        });
+        url.searchParams.set("_t", String(Date.now()));
+
+        const response = await fetch(url.toString(), {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-code": adminCode,
+            "Authorization": `Bearer ${adminCode}`
+          },
+          cache: "no-store"
+        });
+
+        const contentType = response.headers.get("content-type") || "";
+        const data = contentType.includes("application/json")
+          ? await response.json()
+          : { ok: response.ok, message: await response.text() };
+
+        if (!response.ok || data.ok === false) {
+          throw new Error(data.message || data.error || `API Error ${response.status}`);
+        }
+
+        return data;
+      }
+
+      function normalizeStatus(row) {
+        const raw = row || {};
+        const lineUserId = raw.family_line_user_id || raw.line_user_id_snapshot || raw.line_user_id || "";
+        const lineStatus = raw.family_line_link_status || raw.line_link_status_snapshot || raw.line_link_status || "";
+        const linked = Boolean(lineUserId) && lineStatus !== "unlinked" && lineStatus !== "not_linked";
+
+        return {
+          member_no: raw.member_no || "",
+          patient_name: raw.patient_name || "患者さま",
+          family_display_label: raw.family_display_label || raw.family_name || "",
+          scheduled_time: String(raw.scheduled_time || raw.time || "").slice(0, 5),
+          scheduled_label: raw.scheduled_label || raw.treatment || raw.task_summary || "本日の診療",
+          task_summary: raw.task_summary || raw.doctor_memo || "",
+          reception_status: raw.reception_status || "scheduled",
+          received_at: raw.received_at || "",
+          received_by_staff: raw.received_by_staff || "",
+          exam_status: raw.exam_status || "waiting",
+          line_follow_status: raw.line_follow_status || "none",
+          line_linked: linked
+        };
+      }
+
+      function getReceptionLabel(status) {
+        if (status === "checked_in") return "受付済み";
+        if (status === "cancelled") return "キャンセル";
+        if (status === "no_show") return "未来院";
+        return "未受付";
+      }
+
+      function getExamLabel(status) {
+        if (status === "completed") return "診療済み";
+        if (status === "in_treatment") return "診療中";
+        if (status === "skipped") return "診療なし";
+        return "未診療";
+      }
+
+      function renderDailyStatuses(rows, mode = "api") {
+        const statuses = (rows || []).map(normalizeStatus);
+        const total = statuses.length;
+        const checkedIn = statuses.filter((row) => row.reception_status === "checked_in").length;
+        const waitingReception = statuses.filter((row) => row.reception_status !== "checked_in").length;
+        const completed = statuses.filter((row) => row.exam_status === "completed").length;
+        const follow = statuses.filter((row) => row.line_follow_status === "needed" || row.line_follow_status === "copied").length;
+
+        if (dailyEls.total) dailyEls.total.textContent = String(total);
+        if (dailyEls.checkedIn) dailyEls.checkedIn.textContent = String(checkedIn);
+        if (dailyEls.waitingReception) dailyEls.waitingReception.textContent = String(waitingReception);
+        if (dailyEls.completed) dailyEls.completed.textContent = String(completed);
+        if (dailyEls.follow) dailyEls.follow.textContent = String(follow);
+
+        if (!dailyEls.list) return;
+
+        if (!statuses.length) {
+          dailyEls.list.innerHTML = `
+            <div class="daily-status-empty">
+              今日の受付・診療状況はまだありません。<br>
+              「受付・診療状況を更新」を押してください。
+            </div>
+          `;
+          return;
+        }
+
+        dailyEls.list.innerHTML = statuses.map((row) => {
+          const receptionClass = row.reception_status === "checked_in" ? "green" : "red";
+          const examClass = row.exam_status === "completed" ? "green" : row.exam_status === "in_treatment" ? "orange" : "";
+          const followClass = row.line_follow_status === "needed" ? "purple" : row.line_follow_status === "copied" ? "green" : "";
+          const receptionTime = row.received_at
+            ? new Date(row.received_at).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })
+            : "";
+
+          return `
+            <div class="daily-status-row">
+              <div>
+                <div class="daily-status-time">${escapeHtml(row.scheduled_time || "--:--")}</div>
+                <div class="daily-status-detail">${escapeHtml(row.member_no)}</div>
+              </div>
+
+              <div>
+                <div class="daily-status-name">${escapeHtml(row.patient_name)}</div>
+                <div class="daily-status-detail">
+                  ${escapeHtml(row.family_display_label || "")}
+                  ${row.scheduled_label ? " / " + escapeHtml(row.scheduled_label) : ""}
+                </div>
+                <div class="daily-status-detail">
+                  ${row.received_by_staff ? "受付担当：" + escapeHtml(row.received_by_staff) : ""}
+                  ${receptionTime ? " / 受付時刻：" + escapeHtml(receptionTime) : ""}
+                  ${mode === "fallback" ? "営業デモ用の予備表示です。" : ""}
+                </div>
+                <div class="daily-status-pills">
+                  <span class="daily-status-pill ${receptionClass}">${escapeHtml(getReceptionLabel(row.reception_status))}</span>
+                  <span class="daily-status-pill ${examClass}">${escapeHtml(getExamLabel(row.exam_status))}</span>
+                  <span class="daily-status-pill ${row.line_linked ? "green" : "orange"}">${row.line_linked ? "LINE連携済み" : "LINE案内必要"}</span>
+                  ${row.line_follow_status !== "none" ? `<span class="daily-status-pill ${followClass}">LINEフォロー</span>` : ""}
+                </div>
+              </div>
+
+              <div class="daily-status-side">
+                <a class="btn btn-light" href="./doctor.html">先生用</a>
+                <a class="btn btn-light" href="./scan-ipad.html">受付iPad</a>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function renderFallbackDailyStatuses(reason = "") {
+        renderDailyStatuses(DEMO_DAILY_STATUS_ROWS, "fallback");
+        showDailyMessage(
+          "warning",
+          "共有状態の読み込み結果が空だったため、営業デモ用の山田家3名を予備表示しました。\n" +
+          "受付iPadや先生用で操作した後は「受付・診療状況を更新」を押してください。" +
+          (reason ? "\n\n補足：" + reason : "")
+        );
+      }
+
+      async function loadDailyStatusPanel(showResultMessage = true, options = {}) {
+        setDailyButtonLoading(true);
+
+        if (showResultMessage) {
+          showDailyMessage("info", "受付iPad・先生用の最新状態を確認しています...");
+        }
+
+        try {
+          const result = await dailyApiFetch("/api/owner/daily-statuses", {
+            clinic_code: getClinicCode(),
+            date: getTodayJST(),
+            limit: 100
+          });
+
+          const rows = Array.isArray(result.statuses)
+            ? result.statuses
+            : Array.isArray(result.daily_statuses)
+              ? result.daily_statuses
+              : [];
+
+          if (!rows.length) {
+            renderFallbackDailyStatuses("共有状態は読み込めましたが、今日の行が0件でした。");
+            return;
+          }
+
+          renderDailyStatuses(rows, "api");
+
+          if (showResultMessage) {
+            showDailyMessage(
+              "success",
+              `受付iPad・先生用の最新状態を反映しました。\n最終更新：${formatNowTime()}`
+            );
+          }
+        } catch (error) {
+          console.error(error);
+          renderFallbackDailyStatuses(error.message || error);
+        } finally {
+          setDailyButtonLoading(false);
+        }
+      }
+
+      function initDailyStatusPanel() {
+        if (!dailyEls.reloadButton || !dailyEls.list) return;
+
+        dailyEls.reloadButton.addEventListener("click", () => {
+          loadDailyStatusPanel(true);
+        });
+
+        // 画面を開いた時点で0件表示のまま止まらないよう、まず予備表示を出す。
+        renderFallbackDailyStatuses("画面を開いた時点の初期表示です。");
+
+        // 管理コードが保存済みなら、すぐ共有状態も確認する。
+        if (getAdminCode()) {
+          window.setTimeout(() => {
+            loadDailyStatusPanel(false);
+          }, 450);
+        }
+      }
+
+      window.DPRO_loadDailyStatusPanel = loadDailyStatusPanel;
+      window.DPRO_refreshDailyStatusAfterDemoReset = function () {
+        showDailyMessage("info", "営業前デモリセット後の受付・診療状況を更新しています...");
+        window.setTimeout(() => {
+          loadDailyStatusPanel(true);
+        }, 900);
+      };
+
+      document.addEventListener("DOMContentLoaded", initDailyStatusPanel);
+    })();
+  </script>
+  <!-- STEP 30-23G DAILY STATUS SCRIPT END -->
+
 </body>
 </html>
