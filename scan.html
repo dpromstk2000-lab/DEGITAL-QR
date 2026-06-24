@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | 受付QR読み取り</title>
+  <title>DPRO SHOP | 受付QR読み取り LINE連携表示</title>
 
   <script src="./config.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -606,6 +606,96 @@
       line-height: 1.45;
     }
 
+
+    .scan-line-link-box {
+      margin-top: 14px;
+      border-radius: 20px;
+      border: 1px solid #bbf7d0;
+      background:
+        radial-gradient(circle at 10% 15%, rgba(6, 199, 85, 0.14), transparent 34%),
+        linear-gradient(135deg, #f0fdf4, #ffffff);
+      padding: 14px;
+    }
+
+    .scan-line-link-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .scan-line-link-title {
+      color: #064e3b;
+      font-size: 15px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      line-height: 1.45;
+    }
+
+    .scan-line-link-sub {
+      margin-top: 4px;
+      color: #334155;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 750;
+    }
+
+    .scan-line-link-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 8px 10px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #064e3b;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .scan-line-link-pill.warning {
+      background: #fffbeb;
+      border-color: #fde68a;
+      color: #92400e;
+    }
+
+    .scan-line-link-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .scan-line-link-mini {
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(187, 247, 208, 0.8);
+      padding: 9px;
+    }
+
+    .scan-line-link-mini-label {
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 850;
+      line-height: 1.4;
+    }
+
+    .scan-line-link-mini-value {
+      margin-top: 3px;
+      color: #0f172a;
+      font-size: 12px;
+      font-weight: 950;
+      line-height: 1.45;
+      word-break: break-all;
+    }
+
+    @media (max-width: 760px) {
+      .scan-line-link-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
     .info-list {
       display: grid;
       gap: 0;
@@ -1023,6 +1113,33 @@
               <div id="familyCardList" class="family-card-list"></div>
             </div>
 
+            <div id="scanLineLinkBox" class="scan-line-link-box hidden">
+              <div class="scan-line-link-head">
+                <div>
+                  <div class="scan-line-link-title" id="scanLineLinkTitle">LINE公式との連携状態</div>
+                  <div class="scan-line-link-sub" id="scanLineLinkSub">
+                    LINE公式から診察券を開くと、LINEアカウントと家族診察券が紐づきます。
+                  </div>
+                </div>
+                <div class="scan-line-link-pill warning" id="scanLineLinkPill">確認中</div>
+              </div>
+
+              <div class="scan-line-link-grid">
+                <div class="scan-line-link-mini">
+                  <div class="scan-line-link-mini-label">LINE名</div>
+                  <div class="scan-line-link-mini-value" id="scanLineDisplayName">---</div>
+                </div>
+                <div class="scan-line-link-mini">
+                  <div class="scan-line-link-mini-label">LINE userId</div>
+                  <div class="scan-line-link-mini-value" id="scanLineUserId">---</div>
+                </div>
+                <div class="scan-line-link-mini">
+                  <div class="scan-line-link-mini-label">このLINEの診察券</div>
+                  <div class="scan-line-link-mini-value" id="scanLineCardCount">---</div>
+                </div>
+              </div>
+            </div>
+
             <div class="info-list">
               <div class="info-row">
                 <div class="info-key">電話</div>
@@ -1278,6 +1395,13 @@
         familyContextSubtitle: $("familyContextSubtitle"),
         familyContextCount: $("familyContextCount"),
         familyCardList: $("familyCardList"),
+        scanLineLinkBox: $("scanLineLinkBox"),
+        scanLineLinkTitle: $("scanLineLinkTitle"),
+        scanLineLinkSub: $("scanLineLinkSub"),
+        scanLineLinkPill: $("scanLineLinkPill"),
+        scanLineDisplayName: $("scanLineDisplayName"),
+        scanLineUserId: $("scanLineUserId"),
+        scanLineCardCount: $("scanLineCardCount"),
         lastVisit: $("lastVisit"),
         nextAppointment: $("nextAppointment"),
         patientMemo: $("patientMemo"),
@@ -1874,7 +1998,11 @@
             family_name: "山田家",
             primary_guardian_name: "山田 花子",
             line_user_id: "demo-line-mother-yamada",
-            line_display_name: "山田花子（お母さん）"
+            line_display_name: "山田花子（お母さん）",
+            line_link_status: "linked",
+            line_link_source: "demo",
+            line_linked_at: new Date().toISOString(),
+            line_last_seen_at: new Date().toISOString()
           },
           cards: [
             {
@@ -2259,6 +2387,39 @@
         return "本人";
       }
 
+      function renderScanLineLinkStatus(family, cards) {
+        if (!els.scanLineLinkBox) return;
+
+        const safeCards = Array.isArray(cards) ? cards : [];
+        const lineUserId = family?.line_user_id || "";
+        const lineDisplayName = family?.line_display_name || "";
+        const status = family?.line_link_status || (lineUserId ? "linked" : "unlinked");
+        const familyName = family?.family_name || "この家族";
+
+        els.scanLineLinkBox.classList.remove("hidden");
+
+        if (status === "linked" || lineUserId) {
+          els.scanLineLinkPill.textContent = "LINE連携済み";
+          els.scanLineLinkPill.classList.remove("warning");
+
+          els.scanLineLinkTitle.textContent = "LINE公式と家族診察券が紐づいています";
+          els.scanLineLinkSub.textContent =
+            `${familyName}は、${lineDisplayName || "保護者様"}のLINEから家族診察券を開けます。`;
+        } else {
+          els.scanLineLinkPill.textContent = "LINE未連携";
+          els.scanLineLinkPill.classList.add("warning");
+
+          els.scanLineLinkTitle.textContent = "まだLINE公式とは未連携です";
+          els.scanLineLinkSub.textContent =
+            "医院側でLINE診察券登録用QRを発行し、患者さんがLINEで開くと紐づけできます。";
+        }
+
+        els.scanLineDisplayName.textContent = lineDisplayName || "未取得";
+        els.scanLineUserId.textContent = lineUserId || "未連携";
+        els.scanLineCardCount.textContent = `${safeCards.length || 0}枚`;
+      }
+
+
       function renderFamilyContext(patient, family, cards) {
         const safeCards = Array.isArray(cards) ? cards : [];
 
@@ -2345,6 +2506,8 @@
           `${family?.family_name || active?.family_name || "家族"}の診察券`,
           active ? `今回受付：${getFamilyCardLabel(active)} / ${active.patient_name}` : "",
           guardianName ? `保護者：${guardianName}` : "",
+          family?.line_display_name ? `LINE名：${family.line_display_name}` : "",
+          family?.line_user_id ? "LINE連携：済み" : "LINE連携：未連携",
           `登録診察券：${safeCards.length}枚`
         ].filter(Boolean).join("\n");
       }
@@ -2399,7 +2562,13 @@
         );
 
         els.patientMemo.textContent = patient.patient_memo || "なし";
-        els.internalMemo.textContent = patient.internal_memo || "なし";
+        els.internalMemo.textContent =
+          buildFamilyInfoText(patient, family, familyCards) +
+          (family?.line_user_id ? "\nLINE連携：済み" : "\nLINE連携：未連携") +
+          (patient.internal_memo ? "\n\n院内メモ：" + patient.internal_memo : "");
+
+        renderFamilyContext(patient, family, familyCards);
+        renderScanLineLinkStatus(family, familyCards);
 
         els.nextDateInput.value = patient.next_appointment_date || "";
         els.nextMemoInput.value = patient.next_appointment_memo || "";
