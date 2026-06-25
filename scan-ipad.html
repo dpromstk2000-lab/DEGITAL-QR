@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-28 scan-ipad.html 受付iPad本番API統一</title>
+  <title>DPRO SHOP | STEP 30-29 scan-ipad.html QRリーダー入力モード</title>
 
   <script src="./config.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -807,7 +807,7 @@
 
   
     /* =========================================================
-       STEP 30-28 PRODUCTION API ONLY RECEPTION
+       STEP 30-29 PRODUCTION API ONLY RECEPTION
        受付iPadも固定デモ/ローカル状態ではなくWorker API/Supabaseを正にする
     ========================================================= */
     .production-reception-note {
@@ -848,6 +848,115 @@
       margin-bottom: 4px;
     }
 
+  
+    /* =========================================================
+       STEP 30-29 HARDWARE QR READER MODE
+       USB/Bluetooth QRリーダーをキーボード入力として受ける
+    ========================================================= */
+
+    .reader-mode-card {
+      border-radius: 24px;
+      border: 1px solid #bbf7d0;
+      background:
+        radial-gradient(circle at 94% 10%, rgba(6,199,85,0.12), transparent 34%),
+        linear-gradient(135deg, #f0fdf4, #ffffff);
+      padding: 14px;
+      display: grid;
+      gap: 11px;
+      margin-bottom: 14px;
+    }
+
+    .reader-mode-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+      font-size: 17px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .reader-mode-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: #dcfce7;
+      color: #166534;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .reader-mode-note {
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.7;
+      font-weight: 820;
+    }
+
+    .reader-input {
+      width: 100%;
+      min-height: 58px;
+      border-radius: 18px;
+      border: 2px solid #22c55e;
+      background: #ffffff;
+      color: #0f172a;
+      padding: 13px 14px;
+      outline: none;
+      font-size: 18px;
+      line-height: 1.4;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+    }
+
+    .reader-input:focus {
+      box-shadow: 0 0 0 5px rgba(34,197,94,0.16);
+      border-color: #16a34a;
+    }
+
+    .reader-actions {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .reader-status {
+      min-height: 22px;
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 900;
+      white-space: pre-wrap;
+    }
+
+    .camera-subtitle {
+      margin-top: 8px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 12px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 800;
+    }
+
+    @media (max-width: 720px) {
+      .reader-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .reader-input {
+        font-size: 16px;
+      }
+    }
+
+
+  
+    .demo-buttons {
+      display: none !important;
+    }
+
   </style>
 </head>
 
@@ -861,7 +970,7 @@
           QRを読む → 患者確認 → LINE連携確認 → 受付済みにする。受付スタッフ向けに、操作を大きくシンプルにしています。
         </div>
         <div class="version-check-badge">
-          STEP 30-28：受付iPad本番API統一
+          STEP 30-29：QRリーダー入力モード
         </div>
       </div>
 
@@ -914,6 +1023,40 @@
         </div>
 
         <div class="card-body">
+
+          <div class="reader-mode-card">
+            <div class="reader-mode-title">
+              <span class="reader-mode-icon">読</span>
+              QRリーダー受付
+            </div>
+            <div class="reader-mode-note">
+              USB/Bluetooth QRリーダーを使う場合は、この入力欄を選択した状態でQR診察券を読み取ります。リーダー側は「読み取り後にEnter/改行を送る」設定がおすすめです。
+            </div>
+
+            <input
+              class="reader-input"
+              id="readerInput"
+              type="text"
+              inputmode="text"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="ここにカーソルを合わせて、QRリーダーでピッと読み取る"
+            />
+
+            <div class="reader-actions">
+              <button class="btn btn-primary" id="readerFocusButton" type="button">QRリーダー待機</button>
+              <button class="btn btn-light" id="readerSearchButton" type="button">読み取った内容で検索</button>
+              <button class="btn btn-light" id="readerClearButton" type="button">入力クリア</button>
+            </div>
+
+            <div class="reader-status" id="readerStatus">QRリーダー待機ボタンを押すと、読み取り入力欄にカーソルが合います。</div>
+          </div>
+
+          <div class="camera-subtitle">
+            カメラ読み取りは予備です。受付PCや受付iPadにQRリーダーを接続できる場合は、上の「QRリーダー受付」をメインに使うとスムーズです。
+          </div>
+
           <div class="scanner-box">
             <div id="qrReader">
               <div class="scanner-placeholder">
@@ -935,7 +1078,7 @@
           </div>
 
           <div class="input-row">
-            <input class="input" id="manualInput" type="text" placeholder="診察券番号・名前・QRトークンを入力" value="" />
+            <input class="input" id="manualInput" type="text" placeholder="手入力検索：診察券番号・名前・QRトークンを入力" value="" />
             <button class="btn btn-light" id="manualSearchButton" type="button">検索</button>
           </div>
 
@@ -1060,7 +1203,7 @@
 
       const CONFIG = window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
 
-      // STEP 30-28:
+      // STEP 30-29:
       // 本番環境に寄せるため、固定デモ患者では受付一覧を表示しない。
       // 受付一覧と数字は Worker API / Supabase から取得した daily_status rows のみで作る。
       const DEMO_PATIENTS = [];
@@ -1099,7 +1242,12 @@
         statWaiting: $("statWaiting"),
         statLineUnlinked: $("statLineUnlinked"),
 
-        qrReader: $("qrReader"),
+        readerInput: $("readerInput"),
+        readerFocusButton: $("readerFocusButton"),
+        readerSearchButton: $("readerSearchButton"),
+        readerClearButton: $("readerClearButton"),
+        readerStatus: $("readerStatus"),
+                qrReader: $("qrReader"),
         startScanButton: $("startScanButton"),
         stopScanButton: $("stopScanButton"),
         reloadDailyStatusButton: $("reloadDailyStatusButton"),
@@ -1540,7 +1688,7 @@
                   ? result.daily_statuses
                   : [];
 
-          // STEP 30-28:
+          // STEP 30-29:
           // 固定デモ/ローカル受付ではなく、API結果のみを画面の正にする。
           state.dbStatuses = rows.map(normalizeDailyStatusRow);
           state.dbAvailable = true;
@@ -1590,14 +1738,14 @@
       }
 
       function loadLocalReceptions() {
-        // STEP 30-28:
+        // STEP 30-29:
         // 本番環境では受付状態の正を localStorage にしない。
         // 受付済み状態は Worker API / Supabase から読み込む。
         state.localReceptions = [];
       }
 
       function saveLocalReceptions() {
-        // STEP 30-28:
+        // STEP 30-29:
         // 本番環境では受付済み状態を localStorage に保存しない。
         // Worker API / Supabase への保存成功後、API再読込で反映する。
       }
@@ -1617,7 +1765,7 @@
       }
 
       function updateStats() {
-        // STEP 30-28:
+        // STEP 30-29:
         // 受付iPadの数字も Worker API / Supabase の結果だけで集計する。
         const rows = Array.isArray(state.dbStatuses) ? state.dbStatuses : [];
         const schedule = rows.length;
@@ -1879,6 +2027,85 @@
         }
       }
 
+
+      function setReaderStatus(message) {
+        if (els.readerStatus) {
+          els.readerStatus.textContent = message || "";
+        }
+      }
+
+      function focusReaderInput(selectAll = true) {
+        if (!els.readerInput) return;
+
+        try {
+          els.readerInput.focus({ preventScroll: true });
+        } catch (error) {
+          els.readerInput.focus();
+        }
+
+        if (selectAll) {
+          try {
+            els.readerInput.select();
+          } catch (error) {
+            // ignore
+          }
+        }
+
+        setReaderStatus("QRリーダー待機中です。QR診察券を読み取ってください。");
+      }
+
+      async function searchFromReaderInput() {
+        if (!els.readerInput) return;
+
+        const value = String(els.readerInput.value || "").trim();
+
+        if (!value) {
+          setReaderStatus("読み取り内容が空です。QRリーダーで読み取るか、手入力してください。");
+          focusReaderInput(false);
+          return;
+        }
+
+        setReaderStatus("読み取りました。患者情報を確認しています...");
+        await lookupPatient(value, "reader");
+
+        if (els.readerInput) {
+          els.readerInput.value = "";
+        }
+
+        setTimeout(() => focusReaderInput(false), 250);
+      }
+
+      function setupReaderInputMode() {
+        if (!els.readerInput) return;
+
+        els.readerInput.addEventListener("focus", () => {
+          setReaderStatus("QRリーダー待機中です。読み取り後Enterで自動検索します。");
+        });
+
+        els.readerInput.addEventListener("keydown", async (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            await searchFromReaderInput();
+          }
+        });
+
+        if (els.readerFocusButton) {
+          els.readerFocusButton.addEventListener("click", () => focusReaderInput(true));
+        }
+
+        if (els.readerSearchButton) {
+          els.readerSearchButton.addEventListener("click", () => searchFromReaderInput());
+        }
+
+        if (els.readerClearButton) {
+          els.readerClearButton.addEventListener("click", () => {
+            els.readerInput.value = "";
+            setReaderStatus("入力をクリアしました。QRリーダー待機中です。");
+            focusReaderInput(false);
+          });
+        }
+      }
+
       async function lookupPatient(inputText, source) {
         const parsed = parseScanText(inputText);
 
@@ -1889,7 +2116,7 @@
 
         state.lastScanText = parsed.raw;
         clearMessage(els.patientMessage);
-        showMessage(els.scanMessage, "info", "患者情報を確認しています...");
+        showMessage(els.scanMessage, "info", source === "reader" ? "QRリーダーの読み取り内容を確認しています..." : "患者情報を確認しています...");
 
         try {
           const dbRow = getDailyStatusByToken(parsed.token || parsed.member_no || parsed.raw);
@@ -1898,11 +2125,11 @@
             const data = statusRowToPatientData(dbRow);
             renderPatient(data);
             await logScan(parsed.raw, "db_daily_status_success", data.patient);
-            showMessage(els.scanMessage, "success", "今日の受付予定から患者さんを表示しました。");
+            showMessage(els.scanMessage, "success", source === "reader" ? "QRリーダーで患者さんを表示しました。" : "今日の受付予定から患者さんを表示しました。");
             return;
           }
 
-          // STEP 30-28:
+          // STEP 30-29:
           // 本番寄せのため、固定デモ患者へのフォールバック表示は行わない。
           // 今日の受付予定にいない患者は、SCAN_LOOKUP API で確認する。
 
@@ -2067,9 +2294,10 @@
             throw new Error(result.message || result.error || "受付保存に失敗しました。");
           }
 
-          // STEP 30-28:
+          // STEP 30-29:
           // ローカル保存ではなく、API保存成功後にSupabaseから再読込して反映する。
           await loadDailyStatuses(false);
+          setTimeout(() => focusReaderInput(false), 400);
 
           showMessage(
             els.patientMessage,
@@ -2178,6 +2406,8 @@
             window.open("./doctor.html", "_blank", "noopener,noreferrer");
           });
         }
+
+        setupReaderInputMode();
 
         els.manualSearchButton.addEventListener("click", () => lookupPatient(els.manualInput.value, "manual"));
         els.manualInput.addEventListener("keydown", (event) => {
