@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-26D doctor.html 完全安定版・直接反応方式</title>
+  <title>DPRO SHOP | STEP 30-26E doctor.html 患者選択フロー安全化</title>
 
   <script src="./config.js"></script>
 
@@ -761,6 +761,55 @@
         width: 100%;
       }
     }
+  
+    /* =========================================================
+       STEP 30-26E PATIENT SELECTION SAFETY
+       患者一覧は「患者を開く」のみにして、診療済み/LINE文面は選択中エリアで操作
+    ========================================================= */
+
+    .patient-open-button {
+      min-width: 150px;
+      min-height: 44px;
+      font-size: 13px;
+    }
+
+    .patient-actions.safe-single {
+      align-items: center;
+    }
+
+    .selected-action-note {
+      border-radius: 18px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+    }
+
+    .selected-flow-banner {
+      margin-top: 10px;
+      border-radius: 18px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+    }
+
+    .selected-flow-banner strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
+    }
+
+
   </style>
 </head>
 
@@ -768,8 +817,8 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="kicker">STEP 30-26D / DOCTOR</div>
-        <div class="brand-title">先生用<br>今日やること</div>
+        <div class="kicker">STEP 30-26E / DOCTOR</div>
+        <div class="brand-title">先生用<br>患者選択フロー</div>
         <div class="date-pill" id="todayDate">本日</div>
       </div>
 
@@ -889,7 +938,7 @@
             <div class="panel-kicker">PATIENTS</div>
             <div class="panel-title">患者確認</div>
             <div class="panel-sub">
-              「確認」ボタンを押すと、選択中の患者さんが必ず変わり、画面に反応が出ます。
+              患者一覧では「患者を開く」だけにし、診療済みやLINE文面作成は選択中の患者エリアで行います。
             </div>
           </div>
 
@@ -1490,10 +1539,8 @@
               </div>
               <div class="badges">${statusBadges(patient)}</div>
             </div>
-            <div class="patient-actions">
-              <button class="small-button primary" type="button" onclick="DPRO_doctorSelectPatient('${escapeHtml(patient.token)}')">確認</button>
-              <button class="small-button green" type="button" onclick="DPRO_doctorMarkDoneFor('${escapeHtml(patient.token)}')">診療済み</button>
-              <button class="small-button line" type="button" onclick="DPRO_doctorOpenLineFor('${escapeHtml(patient.token)}')">LINE文面</button>
+            <div class="patient-actions safe-single">
+              <button class="small-button primary patient-open-button" type="button" onclick="DPRO_doctorSelectPatient('${escapeHtml(patient.token)}')">患者を開く</button>
             </div>
           </div>
         `).join("");
@@ -1559,12 +1606,17 @@
 
         setPatientFeedback(
           "success",
-          `${patient.patient_name} 様を確認中`,
-          `${patient.time} / ${patient.treatment}。受付状態：${isChecked(patient) ? "受付済み" : "未受付"}。`
+          `${patient.patient_name} 様を開きました`,
+          `${patient.time} / ${patient.treatment}。この下の「選択中の患者」エリアでメモ確認・診療済み・LINE文面作成を行います。`
         );
 
         window.DPRO_doctorSwitchTab("patients");
         applyTemplate(inferTemplateKey(patient));
+
+        const summary = $("selectedPatientSummary");
+        if (summary) {
+          summary.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
       };
 
       window.DPRO_doctorSelectFirstPatient = function() {
@@ -1677,7 +1729,7 @@
         });
 
         renderAll();
-        setPatientFeedback("success", `${patient.patient_name} 様を診療済みにしました`, "LINEフォロー文面を作成できます。");
+        setPatientFeedback("success", `${patient.patient_name} 様を診療済みにしました`, "この患者さんのLINEフォロー文面を作成できます。診療済みにした患者さんだけがLINEフォロー対象になります。");
         window.DPRO_doctorOpenLineFor(patient.token);
       }
 
@@ -1685,6 +1737,7 @@
         markDoneCore(state.selectedToken);
       };
 
+      // STEP 30-26E note: 一覧からは診療済みにしない。将来の内部用として残す。
       window.DPRO_doctorMarkDoneFor = function(token) {
         markDoneCore(token);
       };
@@ -1843,7 +1896,7 @@
         applyTemplate(inferTemplateKey(getPatient(state.selectedToken)));
 
         // 初回でも確認ボタンが効いていることが分かるように患者確認メッセージだけ準備
-        setPatientFeedback("success", "患者さんを選択できます", "青い「確認」ボタン、緑の「LINE文面」ボタンは直接反応方式です。");
+        setPatientFeedback("success", "患者さんを開いて確認できます", "一覧では「患者を開く」だけ表示します。診療済み・LINE文面作成は、選択中の患者エリアで行います。");
       }
 
       if (document.readyState === "loading") {
