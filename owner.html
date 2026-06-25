@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-34C owner.html LINEフォロー対象一覧</title>
+  <title>DPRO SHOP | STEP 30-36B owner.html PC受付リーダーリンク追加</title>
 
   <script src="./config.js"></script>
 
@@ -2167,7 +2167,7 @@
 
   
     /* =========================================================
-       STEP 30-34C TOP REFRESH DIRECT FEEDBACK
+       STEP 30-36B TOP REFRESH DIRECT FEEDBACK
        右上「状況を更新」を押した反応を必ず表示
     ========================================================= */
 
@@ -2234,7 +2234,7 @@
 
   
     /* =========================================================
-       STEP 30-34C UNIFIED API COUNTS
+       STEP 30-36B UNIFIED API COUNTS
        旧カウント処理で上書きしない。本番API結果だけを今日の状況に反映
     ========================================================= */
 
@@ -2262,7 +2262,7 @@
 
   
     /* =========================================================
-       STEP 30-34C PRODUCTION OWNER CLEANUP
+       STEP 30-36B PRODUCTION OWNER CLEANUP
        owner.htmlから営業前DEMO操作を外し、医院管理画面として整理
     ========================================================= */
 
@@ -2289,7 +2289,7 @@
 
   
     /* =========================================================
-       STEP 30-34C LINE FOLLOW TARGET LIST
+       STEP 30-36B LINE FOLLOW TARGET LIST
        LINEフォロー数がある時に対象者が見えるようにする
     ========================================================= */
 
@@ -2433,6 +2433,76 @@
       }
     }
 
+  
+    /* =========================================================
+       STEP 30-36B PC RECEPTION READER LINK
+       PC受付リーダーへの導線を追加
+    ========================================================= */
+
+    .pc36-link-card {
+      border-radius: 22px;
+      border: 1px solid #bfdbfe;
+      background:
+        radial-gradient(circle at 96% 8%, rgba(37,99,235,0.13), transparent 34%),
+        linear-gradient(135deg, #eff6ff, #ffffff);
+      color: #0f172a;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr);
+      gap: 11px;
+      align-items: center;
+      text-decoration: none;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+    }
+
+    .pc36-link-card:hover {
+      transform: translateY(-1px);
+      border-color: #93c5fd;
+    }
+
+    .pc36-link-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 17px;
+      display: grid;
+      place-items: center;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+    }
+
+    .pc36-link-title {
+      display: block;
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .pc36-link-desc {
+      display: block;
+      margin-top: 3px;
+      color: #475569;
+      font-size: 11px;
+      line-height: 1.55;
+      font-weight: 780;
+    }
+
+    .pc36-link-row {
+      margin: 12px 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    @media (min-width: 760px) {
+      .pc36-link-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
   </style>
 </head>
 
@@ -2501,6 +2571,16 @@
             </span>
             <span class="owner-menu-count">開</span>
           </a>
+
+<a class="pc36-link-card" href="./scan-pc.html?v=3036">
+  <span class="pc36-link-icon">PC</span>
+  <span>
+    <span class="pc36-link-title">PC受付リーダー</span>
+    <span class="pc36-link-desc">USB/Bluetooth QRリーダー用。PC受付で診察券QRを読み取ります。</span>
+  </span>
+</a>
+
+
 
           <a class="owner-menu-link" href="./doctor.html?v=3027g">
             <span class="owner-menu-icon">医</span>
@@ -2583,6 +2663,17 @@
             </div>
           </div>
         </section>
+
+<div class="pc36-link-row">
+  <a class="pc36-link-card" href="./scan-pc.html?v=3036">
+    <span class="pc36-link-icon">PC</span>
+    <span>
+      <span class="pc36-link-title">PC受付リーダー</span>
+      <span class="pc36-link-desc">PC受付リーダーは受付PCで使います。受付結果はこの管理トップと先生用に反映されます。</span>
+    </span>
+  </a>
+</div>
+
 
         <section class="owner-left-panel" data-owner-panel="status">
           <div class="owner-panel-head">
@@ -2860,7 +2951,7 @@
             受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。読み込み結果が空の場合も、APIの保存済み状態を表示します。
           </div>
           <div class="daily-status-version">
-            STEP 30-34C：受付操作は受付iPadへ集約。LINEフォロー対象は左メニューから一覧確認できます。
+            STEP 30-36B：受付操作は受付iPadへ集約。LINEフォロー対象は左メニューから一覧確認できます。
           </div>
         </div>
 
@@ -4050,7 +4141,7 @@
       }
 
       async function loadToday() {
-        // STEP 30-34C:
+        // STEP 30-36B:
         // 古い「今日の受付」セクションは削除済み。
         // 受付の実操作は scan-ipad.html、管理確認は受付・診療状況パネルに集約。
         if (!els.loadTodayButton || !els.todayList || !els.todayMessage) {
@@ -5944,7 +6035,7 @@
         if (dailyEls.completed) dailyEls.completed.textContent = String(completed);
         if (dailyEls.follow) dailyEls.follow.textContent = String(follow);
 
-        // STEP 30-34C:
+        // STEP 30-36B:
         // LINEフォロー画面にも対象者一覧を表示する。
         renderOwnerLineFollowTargets(statuses);
 
@@ -6205,7 +6296,7 @@
       }
 
       function syncOwnerKpis() {
-        // STEP 30-34C:
+        // STEP 30-36B:
         // 古い dailyStatusTotal 側の数字で、上部の今日の状況を上書きしない。
         // ownerSyncTotal が存在する場合は、Worker API / Supabase の統一結果を優先する。
         const apiTotal = textNumber("ownerSyncTotal", NaN);
@@ -6262,7 +6353,7 @@
           moveInto(followCard, "owner25bFollowMount");
         }
 
-        // STEP 30-34C:
+        // STEP 30-36B:
         // 営業前DEMO設定・営業用説明モードは system-check.html に集約。
         // owner.html は医院の日常管理画面として使うため、デモ用カードを移動・表示しない。
         const demoResetCard = findCardByTitle("営業前デモリセット");
@@ -6498,7 +6589,7 @@
         try {
           const waiting = Math.max(total - checked, 0);
 
-          // STEP 30-34C:
+          // STEP 30-36B:
           // 今日の状況の上部数字も、同じAPI結果から統一して反映する。
           setText("owner25bTotal", total);
           setText("owner25bWaiting", waiting);
@@ -6615,7 +6706,7 @@
 
 
   <script>
-    /* STEP 30-34C TOP REFRESH DIRECT SCRIPT */
+    /* STEP 30-36B TOP REFRESH DIRECT SCRIPT */
     (function () {
       "use strict";
 
@@ -6719,7 +6810,7 @@
         }
 
         setTimeout(function () {
-          // STEP 30-34C:
+          // STEP 30-36B:
           // 旧カウント処理でAPI統一結果を上書きしない。
           // renderRows() 側で、上部の今日の状況・左メニュー数字まで反映済み。
         }, 300);
@@ -6775,7 +6866,7 @@
 
 
   <script>
-    /* STEP 30-34C FINAL UNIFIED API REFRESH GUARD */
+    /* STEP 30-36B FINAL UNIFIED API REFRESH GUARD */
     (function () {
       "use strict";
 
