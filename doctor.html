@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-27D doctor.html 本番API保存版</title>
+  <title>DPRO SHOP | STEP 30-27F doctor.html 本番API読込統一</title>
 
   <script src="./config.js"></script>
 
@@ -847,6 +847,53 @@
     .today-open-button { min-width: 150px; min-height: 44px; }
 
 
+  
+    /* =========================================================
+       STEP 30-27F API ONLY PATIENT LIST
+       doctor.html も本番API / Supabaseの結果だけで表示
+    ========================================================= */
+
+    .api-only-note {
+      border-radius: 18px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+    }
+
+    .api-only-note strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
+    }
+
+    .empty-api-card {
+      border-radius: 22px;
+      border: 1px dashed #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 18px;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 850;
+    }
+
+    .empty-api-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 16px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 4px;
+    }
+
+
   </style>
 </head>
 
@@ -854,7 +901,7 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="kicker">STEP 30-27D / DOCTOR</div>
+        <div class="kicker">STEP 30-27F / DOCTOR</div>
         <div class="brand-title">先生用<br>本番保存フロー</div>
         <div class="date-pill" id="todayDate">本日</div>
       </div>
@@ -934,6 +981,12 @@
         </div>
 
         <div class="panel-body">
+          
+          <div class="api-only-note">
+            <strong>本番API読込モード</strong>
+            今日の患者一覧・来院予定・受付済み・診療済み・LINEフォローは、Worker API / Supabase から取得した同じ結果だけで表示します。
+          </div>
+
           <div class="feedback" id="updateFeedback">
             <strong>まだ更新していません</strong>
             受付iPadで受付済みにした後は、「受付状態を更新」を押して最新状態を確認してください。
@@ -1152,41 +1205,9 @@
       const DEFAULT_API_BASE = "https://dpro-dental-qr-api.dpromstk2000.workers.dev";
       const STORAGE_KEY = "dpro_dental_doctor_3026d_state";
 
-      const DEMO_PATIENTS = [
-        {
-          token: "demo-dental-patient-001",
-          member_no: "D260600001",
-          patient_name: "山田 花子",
-          time: "09:30",
-          treatment: "定期検診",
-          patient_kind: "adult",
-          line_linked: true,
-          doctor_note: "歯ぐきの状態確認。前回より出血が少ないか確認。",
-          after_follow: "定期検診後"
-        },
-        {
-          token: "demo-dental-child-taro",
-          member_no: "D260600002",
-          patient_name: "山田 太郎",
-          time: "10:00",
-          treatment: "フッ素塗布",
-          patient_kind: "child",
-          line_linked: true,
-          doctor_note: "保護者へ仕上げ磨きの説明。奥歯の磨き残し確認。",
-          after_follow: "フッ素塗布後"
-        },
-        {
-          token: "demo-dental-child-sakura",
-          member_no: "D260600003",
-          patient_name: "山田 さくら",
-          time: "10:30",
-          treatment: "クリーニング",
-          patient_kind: "child",
-          line_linked: true,
-          doctor_note: "本人が怖がらないように短めに案内。着色の確認。",
-          after_follow: "クリーニング後"
-        }
-      ];
+      // STEP 30-27F: 本番寄せ。固定デモ患者では表示しない。
+      // 患者一覧と数字は Worker API / Supabase から取得した rows だけを使う。
+      const DEMO_PATIENTS = [];
 
       const TEMPLATES = {
         checkup: {
@@ -1330,13 +1351,14 @@
       };
 
       const state = {
-        patients: [...DEMO_PATIENTS],
-        selectedToken: "demo-dental-patient-001",
+        patients: [],
+        selectedToken: "",
         checkedIn: {},
         done: {},
         memo: {},
         lineCopied: {},
-        lastRefreshAt: null
+        lastRefreshAt: null,
+        lastApiLoaded: false
       };
 
       function $(id) {
@@ -1382,10 +1404,10 @@
 
       function saveLocal() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
-          checkedIn: state.checkedIn,
-          done: state.done,
+          // STEP 30-27F:
+          // 本番環境では受付済み/診療済み/LINEコピー状態は保存元にしない。
+          // 状態の正は Worker API / Supabase。
           memo: state.memo,
-          lineCopied: state.lineCopied,
           selectedToken: state.selectedToken,
           lastRefreshAt: state.lastRefreshAt
         }));
@@ -1396,30 +1418,145 @@
           const raw = localStorage.getItem(STORAGE_KEY);
           if (!raw) return;
           const data = JSON.parse(raw);
-          state.checkedIn = data.checkedIn || {};
-          state.done = data.done || {};
+
+          // STEP 30-27F:
+          // localStorage の受付済み/診療済み/LINEコピー状態は使わない。
+          // 患者一覧と数字は API から読み込む。
           state.memo = data.memo || {};
-          state.lineCopied = data.lineCopied || {};
-          state.selectedToken = data.selectedToken || state.selectedToken;
+          state.selectedToken = data.selectedToken || "";
           state.lastRefreshAt = data.lastRefreshAt || null;
         } catch (error) {
           console.warn("local state skipped", error);
         }
       }
 
+
+      function getRowToken(row) {
+        return row.qr_token || row.token || row.qrToken || row.patient_token || row.member_token || "";
+      }
+
+      function normalizeApiPatient(row) {
+        const token = getRowToken(row);
+        const memberNo = row.member_no || row.memberNo || row.patient_no || row.card_no || "";
+        const name = row.patient_name || row.patientName || row.name || row.display_name || "患者さん";
+        const time = row.visit_time || row.time || row.appointment_time || row.scheduled_time || row.start_time || "";
+        const treatment = row.treatment_name || row.treatment || row.menu_name || row.service_name || row.after_follow || "診療";
+        const lineLinked = Boolean(
+          row.line_linked === true ||
+          row.line_link_status === "linked" ||
+          row.line_user_id ||
+          row.line_display_name
+        );
+
+        return {
+          token,
+          member_no: memberNo,
+          patient_name: name,
+          time,
+          treatment,
+          patient_kind: row.patient_kind || row.kind || "patient",
+          line_linked: lineLinked,
+          doctor_note: row.doctor_memo || row.doctor_note || row.note || "",
+          after_follow: row.after_follow || row.line_follow_template || "",
+          reception_status: row.reception_status || row.checkin_status || row.status || "",
+          checked_in_at: row.checked_in_at || row.reception_at || "",
+          exam_status: row.exam_status || row.treatment_status || "",
+          exam_completed_at: row.exam_completed_at || row.completed_at || "",
+          line_follow_status: row.line_follow_status || "",
+          line_follow_copied_at: row.line_follow_copied_at || row.line_copied_at || ""
+        };
+      }
+
+      function extractApiRows(data) {
+        if (Array.isArray(data?.rows)) return data.rows;
+        if (Array.isArray(data?.items)) return data.items;
+        if (Array.isArray(data?.statuses)) return data.statuses;
+        if (Array.isArray(data?.daily_statuses)) return data.daily_statuses;
+        if (Array.isArray(data)) return data;
+        return [];
+      }
+
+      function applyApiRowsToState(rows) {
+        const patients = rows
+          .map(normalizeApiPatient)
+          .filter((p) => Boolean(p.token));
+
+        // STEP 30-27F:
+        // 固定デモ患者は使わず、API結果だけで患者一覧・数字を作る。
+        state.patients = patients;
+        state.checkedIn = {};
+        state.done = {};
+        state.lineCopied = {};
+
+        patients.forEach((patient) => {
+          if (patient.reception_status === "checked_in" || patient.checked_in_at || patient.status === "checked_in") {
+            state.checkedIn[patient.token] = true;
+          }
+
+          if (patient.exam_status === "completed" || patient.exam_completed_at || patient.exam_status === "exam_completed") {
+            state.done[patient.token] = true;
+          }
+
+          if (patient.line_follow_copied_at || patient.line_follow_status === "copied") {
+            state.lineCopied[patient.token] = true;
+          }
+        });
+
+        if (!patients.length) {
+          state.selectedToken = "";
+          return;
+        }
+
+        const selectedStillExists = patients.some((p) => p.token === state.selectedToken);
+        if (!state.selectedToken || !selectedStillExists) {
+          state.selectedToken = patients[0].token;
+        }
+      }
+
+      async function fetchTodayRowsFromApi() {
+        const url = new URL(getApiBase() + "/api/owner/daily-statuses");
+        url.searchParams.set("clinic_code", getClinicCode());
+        url.searchParams.set("visit_date", getTodayJST());
+        url.searchParams.set("date", getTodayJST());
+        url.searchParams.set("admin_token", getAdminCode());
+
+        const res = await fetch(url.toString(), {
+          headers: {
+            "x-admin-token": getAdminCode()
+          }
+        });
+
+        let data = null;
+        try {
+          data = await res.json();
+        } catch (error) {
+          data = null;
+        }
+
+        if (!res.ok || !data || data.ok === false) {
+          const message = (data && (data.message || data.error)) || ("API読込に失敗しました。HTTP " + res.status);
+          throw new Error(message);
+        }
+
+        return extractApiRows(data);
+      }
+
       function getPatient(token) {
-        return state.patients.find((p) => p.token === token) || state.patients[0];
+        return state.patients.find((p) => p.token === token) || state.patients[0] || null;
       }
 
       function isChecked(patient) {
+        if (!patient) return false;
         return Boolean(state.checkedIn[patient.token] || patient.reception_status === "checked_in" || patient.checked_in_at);
       }
 
       function isDone(patient) {
+        if (!patient) return false;
         return Boolean(state.done[patient.token] || patient.exam_status === "completed" || patient.exam_completed_at);
       }
 
       function needsFollow(patient) {
+        if (!patient) return false;
         return isDone(patient) && !state.lineCopied[patient.token];
       }
 
@@ -1559,12 +1696,20 @@
           });
         }
 
-        if (!tasks.length) {
+        if (!state.patients.length) {
+          tasks.push({
+            type: "warning",
+            icon: "読",
+            title: "本日の患者情報を取得してください",
+            text: "固定デモ件数では表示しません。右上の「受付状態を更新」で Worker API / Supabase から読み込みます。",
+            tag: "API"
+          });
+        } else if (!tasks.length) {
           tasks.push({
             type: "success",
             icon: "✓",
             title: "大きな未対応はありません",
-            text: "受付状態を更新して、最新状態を確認してください。",
+            text: "Worker API / Supabase の最新状態を表示しています。",
             tag: "OK"
           });
         }
@@ -1583,6 +1728,16 @@
 
       function renderPatients() {
         const list = $("patientList");
+        if (!state.patients.length) {
+          list.innerHTML = `
+            <div class="empty-api-card">
+              <strong>本日の患者情報がありません</strong>
+              固定デモ3件では表示しません。受付・診療状況がSupabaseに登録されているか、右上の「受付状態を更新」で確認してください。
+            </div>
+          `;
+          return;
+        }
+
         list.innerHTML = state.patients.map((patient) => `
           <div class="patient-card ${patient.token === state.selectedToken ? "is-selected" : ""}" id="patientCard-${escapeHtml(patient.token)}">
             <div class="patient-main">
@@ -1603,6 +1758,16 @@
       function renderTodayPatients() {
         const list = $("todayPatientList");
         if (!list) return;
+
+        if (!state.patients.length) {
+          list.innerHTML = `
+            <div class="empty-api-card">
+              <strong>本日の患者情報がありません</strong>
+              doctor.html も owner.html と同じ Worker API / Supabase の結果だけで表示します。右上の「受付状態を更新」を押してください。
+            </div>
+          `;
+          return;
+        }
 
         list.innerHTML = state.patients.map((patient) => `
           <div class="patient-card ${patient.token === state.selectedToken ? "is-selected" : ""}" id="todayPatientCard-${escapeHtml(patient.token)}">
@@ -1628,15 +1793,25 @@
             ${escapeHtml(patient.member_no)} / ${escapeHtml(patient.time)} / ${escapeHtml(patient.treatment)}<br>
             ${escapeHtml(patient.doctor_note || "診療メモはありません。")}
           `
-          : "まだ選択されていません。";
+          : "まだ患者さんが選択されていません。Worker API / Supabase から本日の患者情報を取得してください。";
 
         $("selectedBadges").innerHTML = patient ? statusBadges(patient) : "";
-        $("doctorMemo").value = state.memo[patient.token] || patient.doctor_note || "";
+        $("doctorMemo").value = patient ? (state.memo[patient.token] || patient.doctor_note || "") : "";
       }
 
       function renderFollowList() {
         const list = $("followList");
         const targets = state.patients.filter((p) => isDone(p) || p.token === state.selectedToken);
+
+        if (!state.patients.length) {
+          list.innerHTML = `
+            <div class="info-card">
+              <div class="field-title">本日の患者情報がありません</div>
+              <div class="field-note">固定デモでは表示しません。Worker API / Supabase から取得してください。</div>
+            </div>
+          `;
+          return;
+        }
 
         if (!targets.length) {
           list.innerHTML = `
@@ -1675,6 +1850,12 @@
 
       window.DPRO_doctorSelectPatient = function(token) {
         const patient = getPatient(token);
+        if (!patient) {
+          setPatientFeedback("error", "患者情報がありません", "Worker API / Supabase から本日の患者情報を取得してください。");
+          window.DPRO_doctorSwitchTab("patients");
+          return;
+        }
+
         state.selectedToken = patient.token;
         saveLocal();
         renderAll();
@@ -1695,6 +1876,10 @@
       };
 
       window.DPRO_doctorSelectFirstPatient = function() {
+        if (!state.patients.length) {
+          setPatientFeedback("error", "患者情報がありません", "先に右上の「受付状態を更新」で Worker API / Supabase から読み込んでください。");
+          return;
+        }
         window.DPRO_doctorSelectPatient(state.patients[0].token);
       };
 
@@ -1707,67 +1892,52 @@
         const before = counts();
         const button = $("refreshButton");
 
-        button.disabled = true;
-        button.textContent = "更新中...";
-        setFeedback("warning", "受付状態を更新中です", "受付iPad・共有状態を確認しています。");
-
-        let usedApi = false;
-
-        try {
-          const url = new URL(getApiBase() + "/api/doctor/today");
-          url.searchParams.set("clinic_code", getClinicCode());
-          url.searchParams.set("visit_date", getTodayJST());
-          url.searchParams.set("admin_token", getAdminCode());
-
-          const res = await fetch(url.toString(), {
-            headers: {
-              "x-admin-token": getAdminCode()
-            }
-          });
-
-          if (res.ok) {
-            const data = await res.json();
-            const rows = Array.isArray(data.rows) ? data.rows : Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
-
-            rows.forEach((row) => {
-              const token = row.qr_token || row.token || row.qrToken;
-              if (!token) return;
-
-              if (row.reception_status === "checked_in" || row.checked_in_at || row.status === "checked_in") {
-                state.checkedIn[token] = true;
-              }
-
-              if (row.exam_status === "completed" || row.exam_completed_at || row.status === "completed") {
-                state.done[token] = true;
-              }
-
-              if (row.line_follow_copied_at) {
-                state.lineCopied[token] = true;
-              }
-            });
-
-            if (rows.length) usedApi = true;
-          }
-        } catch (error) {
-          console.warn("API refresh skipped", error);
+        if (button) {
+          button.disabled = true;
+          button.textContent = "更新中...";
         }
 
-        state.lastRefreshAt = new Date().toISOString();
-        saveLocal();
-        renderAll();
+        setFeedback("warning", "本日の患者情報を取得中です", "Worker API / Supabase から本日の受付・診療状態を読み込んでいます。固定デモ件数では表示しません。");
 
-        const after = counts();
-        const changed = before.total !== after.total || before.checked !== after.checked || before.done !== after.done || before.follow !== after.follow;
-        const now = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+        try {
+          const rows = await fetchTodayRowsFromApi();
+          applyApiRowsToState(rows);
 
-        setFeedback(
-          changed ? "success" : "warning",
-          changed ? `更新完了 ${now}` : `最新状態を確認しました ${now}`,
-          `${usedApi ? "共有状態を確認しました。" : "画面内の状態を確認しました。"} 来院予定 ${after.total}件 / 受付済み ${after.checked}件 / 診療済み ${after.done}件 / LINEフォロー ${after.follow}件。${changed ? "" : "件数に変化はありません。"}`
-        );
+          state.lastRefreshAt = new Date().toISOString();
+          saveLocal();
+          renderAll();
 
-        button.disabled = false;
-        button.textContent = "受付状態を更新";
+          const after = counts();
+          const changed = before.total !== after.total || before.checked !== after.checked || before.done !== after.done || before.follow !== after.follow;
+          const now = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+
+          setFeedback(
+            "success",
+            changed ? `API読込完了 ${now}` : `API最新状態を確認しました ${now}`,
+            `Worker API / Supabase の結果を表示しています。来院予定 ${after.total}件 / 受付済み ${after.checked}件 / 診療済み ${after.done}件 / LINEフォロー ${after.follow}件。`
+          );
+
+          if (state.patients.length) {
+            setPatientFeedback("success", "本日の患者情報を読み込みました", "今日の診療と患者確認の患者一覧は、API結果だけで表示しています。");
+          } else {
+            setPatientFeedback("warning", "本日の患者情報は0件です", "Supabaseに本日の受付・診療予定があるか確認してください。");
+          }
+        } catch (error) {
+          state.patients = [];
+          state.selectedToken = "";
+          state.checkedIn = {};
+          state.done = {};
+          state.lineCopied = {};
+          renderAll();
+
+          setFeedback("error", "本日の患者情報を取得できませんでした", error.message || "Worker API / Supabase の読み込みに失敗しました。");
+          setPatientFeedback("error", "患者情報を取得できませんでした", "固定デモでは表示しません。Worker API / Supabase を確認してください。");
+        } finally {
+          if (button) {
+            button.disabled = false;
+            button.textContent = "受付状態を更新";
+          }
+        }
       };
 
       async function postJson(path, body) {
@@ -1801,6 +1971,11 @@
         const patient = getPatient(token || state.selectedToken);
         const button = $("markDoneButton");
 
+        if (!patient) {
+          setPatientFeedback("error", "患者情報がありません", "Worker API / Supabase から本日の患者情報を取得してください。");
+          return;
+        }
+
         state.selectedToken = patient.token;
         renderAll();
 
@@ -1825,17 +2000,14 @@
             source_screen: "doctor.html"
           });
 
-          state.done[patient.token] = true;
-          state.checkedIn[patient.token] = true;
+          // 保存成功後はAPIから再読込して、画面もSupabaseの状態に合わせる。
+          const rows = await fetchTodayRowsFromApi();
+          applyApiRowsToState(rows);
+          state.selectedToken = patient.token;
           saveLocal();
           renderAll();
 
-          const savedStatus = data.daily_status || data.status || null;
-          const savedMessage = savedStatus
-            ? "Supabaseに保存済みです。owner.htmlの状況更新で反映されます。"
-            : "保存成功しました。owner.htmlの状況更新で反映されます。";
-
-          setPatientFeedback("success", `${patient.patient_name} 様を診療済みにしました`, savedMessage);
+          setPatientFeedback("success", `${patient.patient_name} 様を診療済みに保存しました`, "Supabase保存後にAPIから再読込しました。owner.htmlと同じ状態を表示します。");
           window.DPRO_doctorOpenLineFor(patient.token);
         } catch (error) {
           console.error("exam complete failed", error);
@@ -1859,6 +2031,10 @@
 
       window.DPRO_doctorSaveMemo = function() {
         const patient = getPatient(state.selectedToken);
+        if (!patient) {
+          setStatus("memoStatus", "患者情報がありません。");
+          return;
+        }
         state.memo[patient.token] = $("doctorMemo").value || "";
         saveLocal();
         setStatus("memoStatus", `${patient.patient_name} 様のメモを保存しました。`);
@@ -1883,6 +2059,7 @@
       };
 
       function inferTemplateKey(patient) {
+        if (!patient) return "free";
         const treatment = String(patient.treatment || "");
         if (treatment.includes("フッ素")) return "fluoride";
         if (treatment.includes("クリーニング")) return "cleaning";
@@ -1896,6 +2073,14 @@
 
       function applyTemplate(key) {
         const patient = getPatient(state.selectedToken);
+
+        if (!patient) {
+          $("lineMessage").value = "";
+          $("lineHint").textContent = "患者情報がありません。Worker API / Supabase から本日の患者情報を取得してください。";
+          setStatus("lineStatus", "");
+          return;
+        }
+
         const templateKey = key || $("templateSelect").value || inferTemplateKey(patient);
         const template = TEMPLATES[templateKey] || TEMPLATES.checkup;
 
@@ -1929,6 +2114,12 @@
 
       window.DPRO_doctorOpenLineFor = function(token) {
         const patient = getPatient(token);
+        if (!patient) {
+          window.DPRO_doctorSwitchTab("line");
+          setStatus("lineStatus", "患者情報がありません。Worker API / Supabase から本日の患者情報を取得してください。");
+          return;
+        }
+
         state.selectedToken = patient.token;
         saveLocal();
         renderAll();
@@ -2015,7 +2206,7 @@
         setStatus("settingsStatus", "この画面のデモ状態をリセットしました。");
       };
 
-      function init() {
+      async function init() {
         loadLocal();
 
         $("todayDate").textContent = new Date().toLocaleDateString("ja-JP", {
@@ -2028,12 +2219,9 @@
         $("doctorNameInput").value = getDoctorName();
 
         renderAll();
-        state.selectedToken = state.selectedToken || "demo-dental-patient-001";
-        renderSelected();
-        applyTemplate(inferTemplateKey(getPatient(state.selectedToken)));
+        setPatientFeedback("warning", "本日の患者情報を読み込みます", "固定デモ3件では表示しません。Worker API / Supabase から取得します。");
 
-        // 初回でも確認ボタンが効いていることが分かるように患者確認メッセージだけ準備
-        setPatientFeedback("success", "患者さんを開いて確認できます", "今日の診療と患者確認の両方に「患者を開く」を表示します。診療済み・LINE文面作成は、選択中の患者エリアで行います。");
+        await window.DPRO_doctorRefreshStatus();
       }
 
       if (document.readyState === "loading") {
