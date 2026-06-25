@@ -1,27 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>DPRO SHOP | STEP 30-36B index.html PC受付リーダーリンク追加</title>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DPRO SHOP | STEP 30-36C 歯科デジタルQR診察券デモ</title>
+  <meta name="description" content="LINEで使える歯科デジタルQR診察券デモ。患者画面、受付iPad、PC受付リーダー、先生用、医院管理、患者管理をまとめた入口です。">
   <style>
     :root {
-      --blue: #2563eb;
-      --blue-dark: #1d4ed8;
-      --line: #06c755;
-      --green: #16a34a;
-      --orange: #f59e0b;
-      --red: #dc2626;
-      --purple: #7c3aed;
-      --ink: #0f172a;
+      --bg1: #eaf2ff;
+      --bg2: #eefdf3;
+      --text: #0f172a;
       --muted: #64748b;
-      --border: #dbeafe;
-      --soft: #eff6ff;
-      --card: rgba(255,255,255,0.94);
-      --shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
-      --radius: 30px;
+      --line: #e2e8f0;
+      --blue: #2563eb;
+      --blue2: #1d4ed8;
+      --green: #06c755;
+      --purple: #7c3aed;
+      --amber: #f59e0b;
+      --card: rgba(255,255,255,0.92);
+      --shadow: 0 22px 70px rgba(15,23,42,0.10);
+      --radius: 28px;
     }
 
     * {
@@ -29,829 +27,641 @@
     }
 
     html {
-      min-height: 100%;
-      background: #f6f8fb;
+      scroll-behavior: smooth;
     }
 
     body {
       margin: 0;
-      min-height: 100%;
-      color: var(--ink);
+      min-height: 100vh;
+      color: var(--text);
       font-family:
+        system-ui,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
-        "Hiragino Sans",
-        "Hiragino Kaku Gothic ProN",
-        "Yu Gothic",
-        Meiryo,
         sans-serif;
       background:
-        radial-gradient(circle at 8% 6%, rgba(37, 99, 235, 0.18), transparent 31%),
-        radial-gradient(circle at 92% 8%, rgba(6, 199, 85, 0.15), transparent 30%),
-        linear-gradient(135deg, #edf4ff 0%, #f8fbff 55%, #eefdf5 100%);
+        radial-gradient(circle at 18% 0%, rgba(37,99,235,0.16), transparent 34%),
+        radial-gradient(circle at 92% 3%, rgba(6,199,85,0.16), transparent 38%),
+        linear-gradient(135deg, var(--bg1), #f8fbff 48%, var(--bg2));
+      line-height: 1.65;
     }
 
     a {
       color: inherit;
-      text-decoration: none;
     }
 
     .page {
-      width: min(1180px, calc(100% - 28px));
+      width: min(1120px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 24px 0 48px;
+      padding: 28px 0 42px;
+    }
+
+    .top-note {
+      border-radius: 24px;
+      border: 1px solid #bbf7d0;
+      background: rgba(240,253,244,0.92);
+      color: #166534;
+      padding: 12px 15px;
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow: 0 12px 32px rgba(15,23,42,0.055);
+      margin-bottom: 14px;
     }
 
     .hero {
-      border-radius: 34px;
-      background: var(--card);
-      border: 1px solid rgba(219, 234, 254, 0.95);
-      box-shadow: var(--shadow);
-      padding: 30px;
-      display: grid;
-      grid-template-columns: 1.06fr 0.94fr;
-      gap: 18px;
-      align-items: stretch;
-      margin-bottom: 16px;
+      position: relative;
       overflow: hidden;
-      position: relative;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      right: -90px;
-      top: -90px;
-      width: 260px;
-      height: 260px;
-      border-radius: 999px;
-      background: rgba(37, 99, 235, 0.08);
-    }
-
-    .hero-main,
-    .hero-side {
-      position: relative;
-      z-index: 1;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 88% 8%, rgba(37,99,235,0.12), transparent 30%),
+        linear-gradient(135deg, rgba(255,255,255,0.96), rgba(255,255,255,0.86));
+      border: 1px solid rgba(219,234,254,0.95);
+      box-shadow: var(--shadow);
+      padding: 34px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(330px, 0.85fr);
+      gap: 28px;
+      align-items: center;
+      margin-bottom: 18px;
     }
 
     .kicker {
-      color: var(--blue-dark);
+      color: var(--blue2);
       font-size: 12px;
-      font-weight: 950;
+      line-height: 1;
       letter-spacing: 0.12em;
+      font-weight: 950;
+      text-transform: uppercase;
+      margin-bottom: 12px;
     }
 
     h1 {
-      margin: 9px 0 0;
-      color: #0f172a;
-      font-size: clamp(32px, 4.6vw, 58px);
-      line-height: 1.05;
-      letter-spacing: -0.082em;
+      margin: 0;
+      color: var(--text);
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.02;
+      letter-spacing: -0.08em;
       font-weight: 950;
     }
 
     .lead {
-      margin-top: 14px;
-      color: #475569;
+      margin: 18px 0 0;
+      color: #334155;
       font-size: 15px;
-      line-height: 1.85;
-      font-weight: 790;
+      line-height: 1.9;
+      font-weight: 760;
+      max-width: 670px;
     }
 
-    .version {
-      margin-top: 16px;
-      display: inline-flex;
-      align-items: center;
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .badge {
       border-radius: 999px;
-      padding: 9px 13px;
-      background: #dcfce7;
-      border: 1px solid #86efac;
-      color: #166534;
-      font-size: 12px;
-      line-height: 1.4;
-      font-weight: 950;
-    }
-
-    .hero-side {
-      display: grid;
-      gap: 10px;
-      align-content: center;
-    }
-
-    .feature {
-      border-radius: 20px;
-      background: #ffffff;
-      border: 1px solid #dbeafe;
-      padding: 14px;
-      display: grid;
-      grid-template-columns: 44px 1fr;
-      gap: 12px;
-      align-items: start;
-    }
-
-    .feature-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 16px;
+      padding: 8px 11px;
       background: #eff6ff;
       color: #1d4ed8;
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 950;
+      border: 1px solid #bfdbfe;
+    }
+
+    .badge.green {
+      background: #dcfce7;
+      border-color: #86efac;
+      color: #166534;
+    }
+
+    .hero-panel {
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-step {
+      border-radius: 22px;
+      border: 1px solid #e2e8f0;
+      background: rgba(255,255,255,0.88);
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .hero-step-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
       display: grid;
       place-items: center;
-      font-size: 13px;
+      background: #eff6ff;
+      color: var(--blue2);
       font-weight: 950;
     }
 
-    .feature-title {
-      color: #0f172a;
+    .hero-step strong {
+      display: block;
       font-size: 14px;
       line-height: 1.45;
       font-weight: 950;
     }
 
-    .feature-text {
-      margin-top: 4px;
-      color: #64748b;
+    .hero-step span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
       font-size: 12px;
-      line-height: 1.65;
+      line-height: 1.55;
       font-weight: 750;
     }
 
-    .notice {
+    .section-note {
+      margin: 18px 0;
       border-radius: 24px;
       border: 1px solid #bfdbfe;
-      background: #eff6ff;
-      padding: 15px 16px;
+      background: rgba(239,246,255,0.94);
       color: #1e3a8a;
+      padding: 13px 16px;
       font-size: 13px;
-      line-height: 1.8;
-      font-weight: 800;
-      margin-bottom: 16px;
+      line-height: 1.75;
+      font-weight: 830;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
     }
 
     .role-grid {
-      display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 16px;
     }
 
-    .role-card {
-      border-radius: var(--radius);
+    .card {
+      min-height: 196px;
+      border-radius: 28px;
+      border: 1px solid rgba(226,232,240,0.95);
       background: var(--card);
-      border: 1px solid rgba(219, 234, 254, 0.95);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      min-height: 260px;
+      box-shadow: 0 14px 42px rgba(15,23,42,0.07);
+      padding: 20px;
       display: grid;
       align-content: space-between;
-      gap: 14px;
-      position: relative;
-      overflow: hidden;
+      gap: 16px;
+      text-decoration: none;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     }
 
-    .role-card::after {
-      content: "";
-      position: absolute;
-      right: -52px;
-      top: -52px;
-      width: 140px;
-      height: 140px;
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 58px rgba(15,23,42,0.11);
+      border-color: #bfdbfe;
+    }
+
+    .card-head {
+      display: grid;
+      gap: 8px;
+    }
+
+    .pill {
+      width: fit-content;
       border-radius: 999px;
-      background: rgba(37, 99, 235, 0.08);
-    }
-
-    .role-top,
-    .role-actions {
-      position: relative;
-      z-index: 1;
-    }
-
-    .role-badge {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      padding: 7px 10px;
+      padding: 6px 9px;
       background: #eff6ff;
-      color: #1d4ed8;
-      border: 1px solid #bfdbfe;
+      color: var(--blue2);
       font-size: 11px;
-      line-height: 1.3;
+      line-height: 1;
       font-weight: 950;
+      border: 1px solid #bfdbfe;
     }
 
-    .role-title {
-      margin-top: 12px;
-      color: #0f172a;
+    .pill.green {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #86efac;
+    }
+
+    .pill.purple {
+      background: #ede9fe;
+      color: #6d28d9;
+      border-color: #ddd6fe;
+    }
+
+    .pill.amber {
+      background: #fffbeb;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .card h2 {
+      margin: 0;
       font-size: 24px;
-      line-height: 1.2;
+      line-height: 1.15;
       letter-spacing: -0.06em;
       font-weight: 950;
     }
 
-    .role-text {
-      margin-top: 8px;
+    .card p {
+      margin: 0;
       color: #475569;
       font-size: 13px;
       line-height: 1.75;
-      font-weight: 760;
+      font-weight: 750;
     }
 
-    .role-url {
-      margin-top: 10px;
-      color: #64748b;
+    .url {
+      color: #0f172a;
       font-size: 11px;
-      line-height: 1.55;
-      font-weight: 760;
+      line-height: 1.45;
+      font-weight: 900;
       word-break: break-all;
     }
 
-    .role-actions {
+    .actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
 
-    .role-actions.single {
+    .actions.single {
       grid-template-columns: 1fr;
     }
 
     .btn {
-      min-height: 46px;
-      border-radius: 17px;
+      min-height: 42px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #fff;
+      color: var(--blue2);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 10px 12px;
-      color: #1d4ed8;
-      background: #ffffff;
-      border: 1px solid #bfdbfe;
-      font-size: 12px;
-      line-height: 1.35;
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1;
       font-weight: 950;
-      text-align: center;
+      padding: 10px 12px;
     }
 
     .btn.primary {
-      color: #ffffff;
       background: var(--blue);
-      border-color: var(--blue);
-      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.16);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(37,99,235,0.20);
     }
 
     .btn.green {
-      color: #ffffff;
-      background: var(--line);
-      border-color: var(--line);
+      background: var(--green);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(6,199,85,0.20);
     }
 
     .btn.purple {
-      color: #ffffff;
       background: var(--purple);
-      border-color: var(--purple);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(124,58,237,0.18);
     }
 
-    .btn.orange {
-      color: #78350f;
-      background: #fffbeb;
-      border-color: #fde68a;
-    }
-
-    .wide-section {
+    .flow-wrap {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 14px;
-      margin-bottom: 16px;
+      margin-top: 18px;
     }
 
     .panel {
-      border-radius: var(--radius);
-      background: var(--card);
-      border: 1px solid rgba(219, 234, 254, 0.95);
-      box-shadow: var(--shadow);
+      border-radius: 28px;
+      border: 1px solid rgba(226,232,240,0.95);
+      background: rgba(255,255,255,0.88);
+      box-shadow: 0 14px 42px rgba(15,23,42,0.06);
       overflow: hidden;
     }
 
     .panel-head {
-      padding: 17px 19px;
+      padding: 18px 20px;
       border-bottom: 1px solid #e2e8f0;
-      background: linear-gradient(135deg, #ffffff, #f8fbff);
-      color: #0f172a;
-      font-size: 19px;
-      line-height: 1.35;
-      font-weight: 950;
-      letter-spacing: -0.045em;
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
     .panel-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 14px;
+      width: 34px;
+      height: 34px;
+      border-radius: 13px;
       display: grid;
       place-items: center;
-      background: #dbeafe;
-      color: #1d4ed8;
-      font-size: 13px;
-      font-weight: 950;
-    }
-
-    .panel-body {
-      padding: 18px 19px 20px;
-    }
-
-    .flow-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .flow {
-      border-radius: 18px;
-      border: 1px solid #e2e8f0;
-      background: #ffffff;
-      padding: 13px;
-      display: grid;
-      grid-template-columns: 42px 1fr;
-      gap: 12px;
-      align-items: start;
-    }
-
-    .flow-no {
-      width: 42px;
-      height: 42px;
-      border-radius: 15px;
-      background: var(--blue);
-      color: #ffffff;
-      display: grid;
-      place-items: center;
-      font-size: 15px;
-      font-weight: 950;
-    }
-
-    .flow-title {
-      color: #0f172a;
-      font-size: 14px;
-      line-height: 1.45;
-      font-weight: 950;
-    }
-
-    .flow-text {
-      margin-top: 4px;
-      color: #64748b;
-      font-size: 12px;
-      line-height: 1.65;
-      font-weight: 740;
-    }
-
-    .check-list {
-      display: grid;
-      gap: 9px;
-    }
-
-    .check {
-      border-radius: 18px;
-      border: 1px solid #e2e8f0;
-      background: #ffffff;
-      padding: 13px;
-      display: grid;
-      grid-template-columns: 28px 1fr;
-      gap: 10px;
-      align-items: start;
-    }
-
-    .check-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      background: #dcfce7;
-      color: #166534;
-      display: grid;
-      place-items: center;
+      color: var(--blue2);
+      background: #eff6ff;
       font-size: 12px;
       font-weight: 950;
     }
 
-    .check-title {
-      color: #0f172a;
-      font-size: 13px;
-      line-height: 1.5;
-      font-weight: 950;
-    }
-
-    .check-text {
-      margin-top: 3px;
-      color: #64748b;
-      font-size: 12px;
-      line-height: 1.65;
-      font-weight: 740;
-    }
-
-    .footer {
-      margin-top: 22px;
-      text-align: center;
-      color: #64748b;
-      font-size: 12px;
-      line-height: 1.7;
-      font-weight: 740;
-    }
-
-    @media (max-width: 980px) {
-      .hero,
-      .wide-section {
-        grid-template-columns: 1fr;
-      }
-
-      .role-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 640px) {
-      .page {
-        width: min(100% - 18px, 1180px);
-        padding-top: 12px;
-      }
-
-      .hero {
-        padding: 20px;
-      }
-
-      .role-grid,
-      .role-actions,
-      .feature,
-      .flow,
-      .check {
-        grid-template-columns: 1fr;
-      }
-
-      .role-card {
-        min-height: auto;
-      }
-    }
-  
-    /* =========================================================
-       STEP 30-36B LATEST SCREEN ENTRANCE
-       営業デモで古い画面を開かないための最新版入口
-    ========================================================= */
-
-    .latest-route-note {
-      border-radius: 22px;
-      border: 1px solid #bbf7d0;
-      background:
-        radial-gradient(circle at 92% 8%, rgba(6,199,85,0.13), transparent 34%),
-        linear-gradient(135deg, #f0fdf4, #ffffff);
-      color: #166534;
-      padding: 14px 15px;
-      font-size: 13px;
-      line-height: 1.75;
-      font-weight: 850;
-      margin: 14px 0;
-    }
-
-    .latest-route-note strong {
-      display: block;
-      color: #0f172a;
-      font-size: 16px;
-      line-height: 1.45;
-      font-weight: 950;
-      margin-bottom: 4px;
-      letter-spacing: -0.04em;
-    }
-
-    .latest-route-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      margin: 14px 0 0;
-    }
-
-    .latest-route-pill {
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      background: #ffffff;
-      padding: 10px 11px;
-      color: #0f172a;
-      font-size: 12px;
-      line-height: 1.55;
-      font-weight: 850;
-    }
-
-    .latest-route-pill b {
-      display: block;
-      font-size: 13px;
-      font-weight: 950;
-      margin-bottom: 2px;
-    }
-
-    @media (max-width: 820px) {
-      .latest-route-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 520px) {
-      .latest-route-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-
-  
-    /* =========================================================
-       STEP 30-36B PC RECEPTION READER LINK
-       PC受付リーダーへの導線を追加
-    ========================================================= */
-
-    .pc36-link-card {
-      border-radius: 22px;
-      border: 1px solid #bfdbfe;
-      background:
-        radial-gradient(circle at 96% 8%, rgba(37,99,235,0.13), transparent 34%),
-        linear-gradient(135deg, #eff6ff, #ffffff);
-      color: #0f172a;
-      padding: 14px;
-      display: grid;
-      grid-template-columns: 46px minmax(0, 1fr);
-      gap: 11px;
-      align-items: center;
-      text-decoration: none;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
-    }
-
-    .pc36-link-card:hover {
-      transform: translateY(-1px);
-      border-color: #93c5fd;
-    }
-
-    .pc36-link-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 17px;
-      display: grid;
-      place-items: center;
-      background: #2563eb;
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 950;
-      letter-spacing: -0.03em;
-    }
-
-    .pc36-link-title {
-      display: block;
-      color: #0f172a;
-      font-size: 15px;
+    .panel-title {
+      margin: 0;
+      font-size: 18px;
       line-height: 1.35;
       font-weight: 950;
       letter-spacing: -0.04em;
     }
 
-    .pc36-link-desc {
-      display: block;
-      margin-top: 3px;
-      color: #475569;
-      font-size: 11px;
-      line-height: 1.55;
-      font-weight: 780;
-    }
-
-    .pc36-link-row {
-      margin: 12px 0;
+    .flow-list {
       display: grid;
       gap: 10px;
+      padding: 16px;
     }
 
-    @media (min-width: 760px) {
-      .pc36-link-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .flow-item {
+      border-radius: 18px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      padding: 13px;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 11px;
+      align-items: center;
+    }
+
+    .num {
+      width: 34px;
+      height: 34px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: var(--blue);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .flow-item strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .flow-item span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+      font-weight: 760;
+    }
+
+    .check {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .footer {
+      text-align: center;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.7;
+      font-weight: 760;
+      padding: 28px 0 0;
+    }
+
+    .sub-links {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .small-link {
+      border-radius: 999px;
+      padding: 8px 11px;
+      background: rgba(255,255,255,0.86);
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .flow-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .role-grid {
+        grid-template-columns: 1fr 1fr;
       }
     }
 
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 1120px);
+        padding-top: 14px;
+      }
+
+      .hero {
+        padding: 22px;
+        border-radius: 28px;
+      }
+
+      .role-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
 <body>
   <main class="page">
-
-      <div class="latest-route-note">
-        <strong>最新版の入口に更新済み</strong>
-        受付iPad・先生用・管理トップ・管理画面を、現在の本番API連動版へそろえています。営業デモではこの画面から開くと、古い画面を開きにくくなります。
-        <div class="latest-route-grid">
-          <div class="latest-route-pill"><b>受付iPad</b>QRリーダー対応 / v3029b</div>
-          <div class="latest-route-pill"><b>先生用</b>診療待ち表示 / v3027g</div>
-
-      <section class="latest-route-note" aria-label="最新画面リンク">
-        <strong>営業デモ用：最新画面リンク</strong>
-        まず受付iPadで受付、次に先生用で診療済み、最後に管理トップで数字確認、という順番で見せると伝わりやすいです。
-        <div class="latest-route-grid">
-          <a class="latest-route-pill" href="scan-ipad.html?v=3029b"><b>1. 受付iPad</b>QRリーダー / カメラ / 手入力</a>
-
-<a class="pc36-link-card" href="./scan-pc.html?v=3036">
-  <span class="pc36-link-icon">PC</span>
-  <span>
-    <span class="pc36-link-title">PC受付リーダー</span>
-    <span class="pc36-link-desc">USB/Bluetooth QRリーダー用。PC受付で診察券QRを読み取ります。</span>
-  </span>
-</a>
-
-
-          <a class="latest-route-pill" href="doctor.html?v=3027g"><b>2. 先生用</b>本日の患者・診療待ち</a>
-          <a class="latest-route-pill" href="owner.html?v=3027e"><b>3. 管理トップ</b>全体状況・LINEフォロー</a>
-          <a class="latest-route-pill" href="admin.html?v=3024b"><b>4. 管理画面</b>患者登録・家族診察券</a>
-        </div>
-      </section>
-
-          <div class="latest-route-pill"><b>管理トップ</b>数字API統一 / v3027e</div>
-          <div class="latest-route-pill"><b>管理画面</b>患者管理メイン / v3024b</div>
-        </div>
-      </div>
+    <div class="top-note">
+      STEP 30-36C：上部の見にくい最新版入口を整理。営業先に見せる入口として、受付iPad・PC受付リーダー・先生用・管理画面を分かりやすく並べました。
+    </div>
 
     <section class="hero">
-      <div class="hero-main">
-        <div class="kicker">DPRO SHOP / DEGITAL-QR / STEP 30-36B</div>
+      <div>
+        <div class="kicker">DPRO SHOP / DIGITAL-QR / STEP 30-36C</div>
         <h1>LINEで使える<br>歯科デジタルQR診察券デモ</h1>
-        <div class="lead">
-          患者さんのLINE診察券、受付iPad、先生用画面、管理画面、患者登録をつなげて見せるトップページです。
-          営業デモでは、ここから各画面に進めます。
-        </div>
-        <div class="version">
-          最新版入口：受付iPad H2 / 先生用 D4 / 管理画面 G / 画面一覧 J / 営業ガイド I
+        <p class="lead">
+          患者さんのLINE診察券、受付iPad、PC受付リーダー、先生用画面、医院管理、患者管理をつなげて見せるトップページです。
+          営業先では、まずここから全体の流れを説明できます。
+        </p>
+
+        <div class="hero-badges">
+          <span class="badge green">営業前DEMO設定は system-check</span>
+          <span class="badge">受付はiPad/PCどちらも対応</span>
+          <span class="badge">先生用・管理トップへ即反映</span>
         </div>
       </div>
 
-      <div class="hero-side">
-        <div class="feature">
-          <div class="feature-icon">患</div>
-          <div>
-            <div class="feature-title">患者さんはLINEから診察券を表示</div>
-            <div class="feature-text">お母さんのLINEに本人・子どもの診察券をまとめて表示できます。</div>
-          </div>
+      <div class="hero-panel">
+        <div class="hero-step">
+          <span class="hero-step-icon">患</span>
+          <span>
+            <strong>患者さんはLINEから診察券を表示</strong>
+            <span>お母さんのLINEに家族分の診察券をまとめて表示できます。</span>
+          </span>
         </div>
 
-        <div class="feature">
-          <div class="feature-icon">受</div>
-          <div>
-            <div class="feature-title">受付iPadで受付済みにする</div>
-            <div class="feature-text">受付スタッフがQRを確認し、受付済み状態を保存できます。</div>
-          </div>
+        <div class="hero-step">
+          <span class="hero-step-icon">受</span>
+          <span>
+            <strong>受付でQRを読み取り受付済みにする</strong>
+            <span>iPadでもPCのUSB QRリーダーでも受付できます。</span>
+          </span>
         </div>
 
-        <div class="feature">
-          <div class="feature-icon">先</div>
-          <div>
-            <div class="feature-title">先生用画面で今日やることを確認</div>
-            <div class="feature-text">受付状態、診療前メモ、診療後LINE文面を1画面で確認できます。</div>
-          </div>
+        <div class="hero-step">
+          <span class="hero-step-icon">医</span>
+          <span>
+            <strong>先生用で今日やることを確認</strong>
+            <span>診療待ち、診療済み、LINEフォロー対象を確認できます。</span>
+          </span>
         </div>
       </div>
     </section>
 
-    <div class="notice">
-      営業前は、まず「営業ガイド」または「画面一覧」を開いてください。
-      管理画面で営業前デモリセットを押すと、山田家3名のデモ状態を今日基準に戻せます。
+    <div class="section-note">
+      営業前は、まず <strong>営業前チェック</strong> を開いて「営業前DEMO設定」を押してください。
+      今日の日付で、山田家だけでなく背景患者も混ざった本日の診療データを作成します。
     </div>
 
-    <section class="role-grid">
-      <article class="role-card">
-        <div class="role-top">
-          <span class="role-badge">患者さん・お母さん</span>
-          <div class="role-title">LINE家族診察券</div>
-          <div class="role-text">
-            お母さんのLINEに、本人・子ども2名の診察券をまとめて表示します。
-          </div>
-          <div class="role-url">member.html?t=demo-dental-patient-001</div>
+    <section class="grid role-grid" aria-label="画面入口">
+      <article class="card">
+        <div class="card-head">
+          <span class="pill green">患者さん・お母さん</span>
+          <h2>LINE家族診察券</h2>
+          <p>お母さんのLINEに、本人・子どもの診察券をまとめて表示します。</p>
+          <div class="url">member.html?t=demo-dental-patient-001</div>
         </div>
-        <div class="role-actions">
+        <div class="actions">
           <a class="btn primary" href="./member.html?t=demo-dental-patient-001">開く</a>
           <a class="btn green" href="https://liff.line.me/2010491267-waXBAIje?t=demo-dental-patient-001">LIFF</a>
         </div>
       </article>
 
-      <article class="role-card">
-        <div class="role-top">
-          <span class="role-badge">受付スタッフ</span>
-          <div class="role-title">受付iPad</div>
-          <div class="role-text">
-            QR診察券を確認し、受付済みにします。更新中のまま止まる不具合は修正済みです。
-          </div>
-          <div class="role-url">scan-ipad.html?v=3029bb</div>
+      <article class="card">
+        <div class="card-head">
+          <span class="pill">受付スタッフ</span>
+          <h2>受付iPad</h2>
+          <p>タブレット受付用。QRリーダー入力、カメラ、手入力で受付できます。</p>
+          <div class="url">scan-ipad.html?v=3029b</div>
         </div>
-        <div class="role-actions">
-          <a class="btn primary" href="./scan-ipad.html?v=3029bb">開く</a>
-          <a class="btn" href="./doctor.html?v=3023d4">先生用へ</a>
+        <div class="actions">
+          <a class="btn primary" href="./scan-ipad.html?v=3029b">開く</a>
+          <a class="btn" href="./doctor.html?v=3027g">先生用へ</a>
         </div>
       </article>
 
-      <article class="role-card">
-        <div class="role-top">
-          <span class="role-badge">先生・院長</span>
-          <div class="role-title">今日やること</div>
-          <div class="role-text">
-            受付状態、診療前メモ、家族情報、診療後LINE文面を確認します。
-          </div>
-          <div class="role-url">doctor.html?v=3023d4</div>
+      <article class="card">
+        <div class="card-head">
+          <span class="pill">受付PC・USBリーダー</span>
+          <h2>PC受付リーダー</h2>
+          <p>PCにUSB/Bluetooth QRリーダーを接続して、診察券QRを読み取ります。</p>
+          <div class="url">scan-pc.html?v=3036</div>
         </div>
-        <div class="role-actions">
-          <a class="btn primary" href="./doctor.html?v=3023d4">開く</a>
-          <a class="btn" href="./scan-ipad.html?v=3029bb">受付へ</a>
+        <div class="actions">
+          <a class="btn primary" href="./scan-pc.html?v=3036">開く</a>
+          <a class="btn" href="./scan-ipad.html?v=3029b">iPad版へ</a>
         </div>
       </article>
 
-      <article class="role-card">
-        <div class="role-top">
-          <span class="role-badge">医院管理者</span>
-          <div class="role-title">管理画面</div>
-          <div class="role-text">
-            家族診察券、LINE連携、来院履歴、今日の受付・診療状況を確認します。
-          </div>
-          <div class="role-url">owner.html?v=3023g</div>
+      <article class="card">
+        <div class="card-head">
+          <span class="pill purple">先生・院長</span>
+          <h2>先生用画面</h2>
+          <p>今日の診療待ち、診療済み、診療後LINE文面の確認を行います。</p>
+          <div class="url">doctor.html?v=3027g</div>
         </div>
-        <div class="role-actions">
-          <a class="btn primary" href="./owner.html?v=3023g">開く</a>
-          <a class="btn purple" href="./owner.html?v=3023g#dailyStatusPanel">状況</a>
+        <div class="actions">
+          <a class="btn primary" href="./doctor.html?v=3027g">開く</a>
+          <a class="btn" href="./owner.html?v=3036b">管理トップへ</a>
         </div>
       </article>
 
-      <article class="role-card">
-        <div class="role-top">
-          <span class="role-badge">患者登録・設定</span>
-          <div class="role-title">患者登録</div>
-          <div class="role-text">
-            新規患者、家族・子ども診察券、LINE登録QRの発行を行います。
-          </div>
-          <div class="role-url">admin.html</div>
+      <article class="card">
+        <div class="card-head">
+          <span class="pill purple">医院管理</span>
+          <h2>管理トップ</h2>
+          <p>受付・診療状況、LINEフォロー、未連携、患者管理への入口を確認します。</p>
+          <div class="url">owner.html?v=3036b</div>
         </div>
-        <div class="role-actions">
-          <a class="btn primary" href="./admin.html">開く</a>
-          <a class="btn" href="./owner.html?v=3023g">管理へ</a>
+        <div class="actions">
+          <a class="btn primary" href="./owner.html?v=3036b">開く</a>
+          <a class="btn purple" href="./owner.html?v=3036b#dailyStatus">状況</a>
         </div>
       </article>
 
-      <article class="role-card">
-        <div class="role-top">
-          <span class="role-badge">営業デモ</span>
-          <div class="role-title">営業ガイド</div>
-          <div class="role-text">
-            見せる順番、確認URL、営業前チェック、説明トークを確認できます。
-          </div>
-          <div class="role-url">demo-guide.html?v=3023i</div>
+      <article class="card">
+        <div class="card-head">
+          <span class="pill">患者登録・設定</span>
+          <h2>患者管理</h2>
+          <p>新規患者、家族診察券、LINE登録QR、患者検索を行います。</p>
+          <div class="url">admin.html?v=3035k</div>
         </div>
-        <div class="role-actions">
-          <a class="btn purple" href="./demo-guide.html?v=3023i">開く</a>
-          <a class="btn" href="./index-list.html?v=3023j">一覧へ</a>
+        <div class="actions">
+          <a class="btn primary" href="./admin.html?v=3035k">開く</a>
+          <a class="btn" href="./owner.html?v=3036b">管理へ</a>
         </div>
       </article>
     </section>
 
-    <section class="wide-section">
+    <section class="flow-wrap">
       <div class="panel">
         <div class="panel-head">
           <span class="panel-icon">順</span>
-          営業で見せる流れ
+          <h2 class="panel-title">営業で見せる流れ</h2>
         </div>
 
-        <div class="panel-body">
-          <div class="flow-list">
-            <div class="flow">
-              <div class="flow-no">1</div>
-              <div>
-                <div class="flow-title">管理画面で営業前デモリセット</div>
-                <div class="flow-text">山田家3名のデモ状態を今日基準に戻します。</div>
-              </div>
-            </div>
+        <div class="flow-list">
+          <div class="flow-item">
+            <span class="num">1</span>
+            <span>
+              <strong>営業前チェックでDEMO設定</strong>
+              <span>本日の患者6人、受付済み、診療待ち、診療済み、LINEフォローを作ります。</span>
+            </span>
+          </div>
 
-            <div class="flow">
-              <div class="flow-no">2</div>
-              <div>
-                <div class="flow-title">患者さんのLINE家族診察券</div>
-                <div class="flow-text">お母さんのLINEに家族分の診察券がまとまることを見せます。</div>
-              </div>
-            </div>
+          <div class="flow-item">
+            <span class="num">2</span>
+            <span>
+              <strong>患者さんのLINE家族診察券</strong>
+              <span>お母さんのLINEに家族分の診察券がまとまることを見せます。</span>
+            </span>
+          </div>
 
-            <div class="flow">
-              <div class="flow-no">3</div>
-              <div>
-                <div class="flow-title">受付iPadで受付済みにする</div>
-                <div class="flow-text">受付スタッフがQRを確認して受付済みにする流れを見せます。</div>
-              </div>
-            </div>
+          <div class="flow-item">
+            <span class="num">3</span>
+            <span>
+              <strong>受付iPadまたはPC受付で読み取り</strong>
+              <span>受付スタッフがQRを確認し、受付済みにできる流れを見せます。</span>
+            </span>
+          </div>
 
-            <div class="flow">
-              <div class="flow-no">4</div>
-              <div>
-                <div class="flow-title">先生用画面で受付状態を更新</div>
-                <div class="flow-text">受付済みが先生用画面に反映されることを見せます。</div>
-              </div>
-            </div>
+          <div class="flow-item">
+            <span class="num">4</span>
+            <span>
+              <strong>先生用画面で診療待ちを確認</strong>
+              <span>受付済みの患者が先生画面に反映されるところを見せます。</span>
+            </span>
+          </div>
 
-            <div class="flow">
-              <div class="flow-no">5</div>
-              <div>
-                <div class="flow-title">管理画面で今日の受付・診療状況を確認</div>
-                <div class="flow-text">受付・診療状況が管理画面でも確認できることを見せます。</div>
-              </div>
-            </div>
+          <div class="flow-item">
+            <span class="num">5</span>
+            <span>
+              <strong>管理トップで状況を確認</strong>
+              <span>今日の受付・診療状況とLINEフォロー対象を確認します。</span>
+            </span>
           </div>
         </div>
       </div>
@@ -859,58 +669,62 @@
       <div class="panel">
         <div class="panel-head">
           <span class="panel-icon">確</span>
-          営業前チェック
+          <h2 class="panel-title">営業前チェック</h2>
         </div>
 
-        <div class="panel-body">
-          <div class="check-list">
-            <div class="check">
-              <div class="check-icon">✓</div>
-              <div>
-                <div class="check-title">受付iPadがSTEP 30-23H2になっている</div>
-                <div class="check-text">画面上部にH2表示があり、更新中のまま止まらなければOKです。</div>
-              </div>
-            </div>
+        <div class="flow-list">
+          <div class="flow-item">
+            <span class="num check">✓</span>
+            <span>
+              <strong>営業前DEMO設定を押す</strong>
+              <span>山田家＋背景患者が混ざった本日の診療状態にします。</span>
+            </span>
+          </div>
 
-            <div class="check">
-              <div class="check-icon">✓</div>
-              <div>
-                <div class="check-title">先生用の右上が「受付状態を更新」になっている</div>
-                <div class="check-text">古い「再読込」が出る場合は、doctor.htmlが旧版です。</div>
-              </div>
-            </div>
+          <div class="flow-item">
+            <span class="num check">✓</span>
+            <span>
+              <strong>受付iPad / PC受付リーダーが開ける</strong>
+              <span>受付端末に合わせてどちらかを使います。</span>
+            </span>
+          </div>
 
-            <div class="check">
-              <div class="check-icon">✓</div>
-              <div>
-                <div class="check-title">管理画面の今日の受付・診療状況が0件で止まらない</div>
-                <div class="check-text">山田家3名が表示されれば営業デモとして安心です。</div>
-              </div>
-            </div>
+          <div class="flow-item">
+            <span class="num check">✓</span>
+            <span>
+              <strong>先生用に診療待ちが出る</strong>
+              <span>受付済みの患者が先生用画面に表示されます。</span>
+            </span>
+          </div>
 
-            <div class="check">
-              <div class="check-icon">✓</div>
-              <div>
-                <div class="check-title">患者さん・受付・先生画面に専門用語が出ていない</div>
-                <div class="check-text">画面上では「DB」などの言葉を出さず、分かりやすい表現にしています。</div>
-              </div>
-            </div>
+          <div class="flow-item">
+            <span class="num check">✓</span>
+            <span>
+              <strong>患者管理で検索できる</strong>
+              <span>山田、佐藤、田中などで検索できるか確認します。</span>
+            </span>
+          </div>
 
-            <div class="check">
-              <div class="check-icon">✓</div>
-              <div>
-                <div class="check-title">反映されない時はキャッシュ回避URLで開く</div>
-                <div class="check-text">URL末尾の ?v=3023k のような数字を変えると反映確認しやすいです。</div>
-              </div>
-            </div>
+          <div class="actions single" style="padding-top: 6px;">
+            <a class="btn green" href="./system-check.html?v=3036b">営業前チェックを開く</a>
           </div>
         </div>
       </div>
     </section>
 
     <div class="footer">
-      DPRO SHOP / DEGITAL-QR / STEP 30-36B<br>
-      歯科デジタルQR診察券デモのトップページ。営業時の入口として使用できます。
+      DPRO SHOP / DIGITAL-QR / STEP 30-36C<br>
+      歯科デジタルQR診察券デモのトップページです。営業時の入口として使用できます。
+
+      <div class="sub-links">
+        <a class="small-link" href="./demo-guide.html?v=3031">営業ガイド</a>
+        <a class="small-link" href="./system-check.html?v=3036b">system-check</a>
+        <a class="small-link" href="./scan-pc.html?v=3036">PC受付</a>
+        <a class="small-link" href="./scan-ipad.html?v=3029b">受付iPad</a>
+        <a class="small-link" href="./doctor.html?v=3027g">先生用</a>
+        <a class="small-link" href="./owner.html?v=3036b">管理トップ</a>
+        <a class="small-link" href="./admin.html?v=3035k">患者管理</a>
+      </div>
     </div>
   </main>
 </body>
