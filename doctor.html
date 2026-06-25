@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-27F doctor.html 本番API読込統一</title>
+  <title>DPRO SHOP | STEP 30-27G doctor.html 先生目線の表記整理</title>
 
   <script src="./config.js"></script>
 
@@ -894,6 +894,33 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-27G DOCTOR WORDING
+       先生用は未受付管理ではなく、診療待ち中心に表示
+    ========================================================= */
+
+    .doctor-role-note {
+      border-radius: 18px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+    }
+
+    .doctor-role-note strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
+    }
+
+
   </style>
 </head>
 
@@ -901,7 +928,7 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="kicker">STEP 30-27F / DOCTOR</div>
+        <div class="kicker">STEP 30-27G / DOCTOR</div>
         <div class="brand-title">先生用<br>本番保存フロー</div>
         <div class="date-pill" id="todayDate">本日</div>
       </div>
@@ -911,7 +938,7 @@
           <span class="menu-icon">今</span>
           <span>
             <span class="menu-main">今日の診療</span>
-            <span class="menu-sub">最初に見る</span>
+            <span class="menu-sub">本日の確認</span>
           </span>
           <span class="menu-count" id="countToday">0</span>
         </button>
@@ -970,39 +997,45 @@
             <div class="panel-kicker">TODAY</div>
             <div class="panel-title">今日の診療</div>
             <div class="panel-sub">
-              診療済み・LINE文面コピーはWorker APIへ保存します。保存成功後だけ画面状態を更新します。
+              先生用画面では、本日の患者・診療待ち・診療済み・LINEフォローを確認します。
             </div>
           </div>
 
           <div class="panel-actions">
-            <button class="pill-button primary" id="refreshButton" type="button" onclick="DPRO_doctorRefreshStatus()">受付状態を更新</button>
+            <button class="pill-button primary" id="refreshButton" type="button" onclick="DPRO_doctorRefreshStatus()">診療状況を更新</button>
             <a class="pill-link" href="./scan-ipad.html?v=3023h2">受付iPad</a>
           </div>
         </div>
 
         <div class="panel-body">
           
+          
+          <div class="doctor-role-note">
+            <strong>先生用の見方</strong>
+            未受付の管理は受付iPad・管理トップ側で確認します。先生用では「診療待ち＝受付済みでまだ診療済みではない患者さん」を中心に表示します。
+          </div>
+
           <div class="api-only-note">
             <strong>本番API読込モード</strong>
-            今日の患者一覧・来院予定・受付済み・診療済み・LINEフォローは、Worker API / Supabase から取得した同じ結果だけで表示します。
+            今日の患者一覧・本日の患者・受付済み・診療済み・LINEフォローは、Worker API / Supabase から取得した同じ結果だけで表示します。
           </div>
 
           <div class="feedback" id="updateFeedback">
             <strong>まだ更新していません</strong>
-            受付iPadで受付済みにした後は、「受付状態を更新」を押して最新状態を確認してください。
+            受付iPadで受付済みにした後は、「診療状況を更新」を押して最新状態を確認してください。
           </div>
 
           <div class="kpis">
             <div class="kpi">
-              <div class="kpi-label">来院予定</div>
+              <div class="kpi-label">本日の患者</div>
               <div class="kpi-value" id="kpiTotal">0</div>
-              <div class="kpi-note">今日の患者さん</div>
+              <div class="kpi-note">API読込済み</div>
             </div>
 
             <div class="kpi">
-              <div class="kpi-label">受付済み</div>
+              <div class="kpi-label">診療待ち</div>
               <div class="kpi-value" id="kpiChecked">0</div>
-              <div class="kpi-note">診療待ち</div>
+              <div class="kpi-note">受付済み・未診療</div>
             </div>
 
             <div class="kpi">
@@ -1053,7 +1086,7 @@
         <div class="panel-body">
           <div class="feedback success" id="patientFeedback">
             <strong>患者さんを選択してください</strong>
-            今日の来院予定から確認する患者さんを選びます。
+            今日の本日の患者から確認する患者さんを選びます。
           </div>
 
           <div class="patient-list" id="patientList"></div>
@@ -1576,7 +1609,11 @@
 
       function counts() {
         const total = state.patients.length;
-        const checked = state.patients.filter(isChecked).length;
+
+        // STEP 30-27G:
+        // 先生用の「診療待ち」は、受付済み かつ 未診療の患者さんだけ。
+        // 受付済み全体の数は受付iPad/管理トップ側で確認する。
+        const checked = state.patients.filter((patient) => isChecked(patient) && !isDone(patient)).length;
         const done = state.patients.filter(isDone).length;
         const follow = state.patients.filter(needsFollow).length;
         return { total, checked, done, follow };
@@ -1666,22 +1703,16 @@
         const ready = state.patients.filter((p) => isChecked(p) && !isDone(p));
         const follow = state.patients.filter(needsFollow);
 
-        if (waiting.length) {
-          tasks.push({
-            type: "warning",
-            icon: "受",
-            title: "未受付の患者さんがいます",
-            text: `${waiting.map((p) => p.patient_name).join("、")} が未受付です。受付iPad側の状態を確認してください。`,
-            tag: `${waiting.length}件`
-          });
-        }
+        // STEP 30-27G:
+        // 先生用では未受付を大きなタスクにしない。
+        // 未受付は患者一覧のバッジに残し、受付iPad・管理トップ側で確認する。
 
         if (ready.length) {
           tasks.push({
             type: "",
             icon: "診",
-            title: "受付済みで診療待ちがあります",
-            text: `${ready.map((p) => p.patient_name).join("、")} を診療確認してください。`,
+            title: "診療待ちがあります",
+            text: `${ready.map((p) => p.patient_name).join("、")} を開いて診療内容を確認してください。`,
             tag: `${ready.length}件`
           });
         }
@@ -1701,7 +1732,7 @@
             type: "warning",
             icon: "読",
             title: "本日の患者情報を取得してください",
-            text: "固定デモ件数では表示しません。右上の「受付状態を更新」で Worker API / Supabase から読み込みます。",
+            text: "固定デモ件数では表示しません。右上の「診療状況を更新」で Worker API / Supabase から読み込みます。",
             tag: "API"
           });
         } else if (!tasks.length) {
@@ -1732,7 +1763,7 @@
           list.innerHTML = `
             <div class="empty-api-card">
               <strong>本日の患者情報がありません</strong>
-              固定デモ3件では表示しません。受付・診療状況がSupabaseに登録されているか、右上の「受付状態を更新」で確認してください。
+              固定デモ3件では表示しません。受付・診療状況がSupabaseに登録されているか、右上の「診療状況を更新」で確認してください。
             </div>
           `;
           return;
@@ -1763,7 +1794,7 @@
           list.innerHTML = `
             <div class="empty-api-card">
               <strong>本日の患者情報がありません</strong>
-              doctor.html も owner.html と同じ Worker API / Supabase の結果だけで表示します。右上の「受付状態を更新」を押してください。
+              doctor.html も owner.html と同じ Worker API / Supabase の結果だけで表示します。右上の「診療状況を更新」を押してください。
             </div>
           `;
           return;
@@ -1877,7 +1908,7 @@
 
       window.DPRO_doctorSelectFirstPatient = function() {
         if (!state.patients.length) {
-          setPatientFeedback("error", "患者情報がありません", "先に右上の「受付状態を更新」で Worker API / Supabase から読み込んでください。");
+          setPatientFeedback("error", "患者情報がありません", "先に右上の「診療状況を更新」で Worker API / Supabase から読み込んでください。");
           return;
         }
         window.DPRO_doctorSelectPatient(state.patients[0].token);
@@ -1914,7 +1945,7 @@
           setFeedback(
             "success",
             changed ? `API読込完了 ${now}` : `API最新状態を確認しました ${now}`,
-            `Worker API / Supabase の結果を表示しています。来院予定 ${after.total}件 / 受付済み ${after.checked}件 / 診療済み ${after.done}件 / LINEフォロー ${after.follow}件。`
+            `Worker API / Supabase の結果を表示しています。本日の患者 ${after.total}件 / 診療待ち ${after.checked}件 / 診療済み ${after.done}件 / LINEフォロー ${after.follow}件。`
           );
 
           if (state.patients.length) {
@@ -1935,7 +1966,7 @@
         } finally {
           if (button) {
             button.disabled = false;
-            button.textContent = "受付状態を更新";
+            button.textContent = "診療状況を更新";
           }
         }
       };
