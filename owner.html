@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-27 owner.html 診療・LINEフォロー状態連動確認</title>
+  <title>DPRO SHOP | STEP 30-27B owner.html 右上状況更新ボタン直接反応修正</title>
 
   <script src="./config.js"></script>
 
@@ -2165,6 +2165,73 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-27B TOP REFRESH DIRECT FEEDBACK
+       右上「状況を更新」を押した反応を必ず表示
+    ========================================================= */
+
+    #ownerRefreshMiniButton,
+    #ownerSyncRefreshButton {
+      position: relative;
+      z-index: 20;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    #ownerRefreshMiniButton.is-updating,
+    #ownerSyncRefreshButton.is-updating {
+      opacity: 0.72;
+      cursor: wait;
+    }
+
+    .owner-top-refresh-feedback {
+      margin: 0 0 14px;
+      border-radius: 20px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 12px 13px;
+      display: grid;
+      gap: 5px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+    }
+
+    .owner-top-refresh-feedback strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .owner-top-refresh-feedback.is-loading {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .owner-top-refresh-feedback.is-success {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .owner-top-refresh-feedback.is-warning {
+      border-color: #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .owner-top-refresh-feedback.is-error {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+
   </style>
 </head>
 
@@ -2263,12 +2330,17 @@
               <div class="owner-panel-sub">オーナーが最初に見る画面です。未対応だけすぐ分かるようにまとめます。</div>
             </div>
             <div class="owner-panel-actions">
-              <button class="owner-panel-action" id="ownerRefreshMiniButton" type="button">状況を更新</button>
+              <button class="owner-panel-action" id="ownerRefreshMiniButton" type="button" onclick="DPRO_ownerTopRefreshDirect(event)">状況を更新</button>
               <a class="owner-panel-link primary" href="./admin.html?v=3024b">患者管理</a>
             </div>
           </div>
 
           <div class="owner-panel-body">
+
+            <div class="owner-top-refresh-feedback" id="ownerTopRefreshFeedback">
+              <strong>まだ状況を更新していません</strong>
+              右上の「状況を更新」を押すと、受付・診療・LINEフォロー状況を確認します。
+            </div>
             <div class="owner-compact-kpis">
               <div class="owner-compact-kpi">
                 <div class="owner-compact-label">今日の予定</div>
@@ -2334,7 +2406,7 @@
             </div>
 
             <div class="owner-sync-actions">
-              <button class="owner-sync-button primary" id="ownerSyncRefreshButton" type="button">最新状態を更新</button>
+              <button class="owner-sync-button primary" id="ownerSyncRefreshButton" type="button" onclick="DPRO_ownerTopRefreshDirect(event)">最新状態を更新</button>
               <a class="owner-sync-link" href="./doctor.html?v=3026e">先生用画面を開く</a>
               <a class="owner-sync-link" href="./scan-ipad.html?v=3023h2">受付iPadを開く</a>
             </div>
@@ -2607,7 +2679,7 @@
             受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。読み込み結果が空の場合も、営業デモ用の山田家3名を予備表示します。
           </div>
           <div class="daily-status-version">
-            STEP 30-27：診療・LINEフォロー状態連動確認
+            STEP 30-27B：右上状況更新ボタン直接反応修正
           </div>
         </div>
 
@@ -6259,6 +6331,170 @@
       }
 
       window.DPRO_ownerRefreshDoctorSync = refreshOwnerSync;
+    })();
+  </script>
+
+
+  <script>
+    /* STEP 30-27B TOP REFRESH DIRECT SCRIPT */
+    (function () {
+      "use strict";
+
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      function textNumber(id, fallback) {
+        const el = $(id);
+        if (!el) return fallback || 0;
+        const n = parseInt(String(el.textContent || "").replace(/[^\d-]/g, ""), 10);
+        return Number.isFinite(n) ? n : (fallback || 0);
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function setTopFeedback(type, title, detail) {
+        const el = $("ownerTopRefreshFeedback");
+        if (!el) return;
+        el.className = "owner-top-refresh-feedback" + (type ? " is-" + type : "");
+        el.innerHTML = "<strong>" + escapeHtml(title) + "</strong>" + escapeHtml(detail || "");
+      }
+
+      function snapshot() {
+        return {
+          total: textNumber("owner25bTotal", textNumber("ownerSyncTotal", 3)),
+          waiting: textNumber("owner25bWaiting", 0),
+          checked: textNumber("owner25bChecked", textNumber("ownerSyncChecked", 0)),
+          completed: textNumber("owner25bCompleted", textNumber("ownerSyncDone", 0)),
+          follow: textNumber("owner25bFollow", textNumber("ownerSyncFollow", 0))
+        };
+      }
+
+      function detailText(s) {
+        return "今日の予定 " + s.total + "件 / 未受付 " + s.waiting + "件 / 受付済み " + s.checked + "件 / 診療済み " + s.completed + "件 / LINEフォロー " + s.follow + "件";
+      }
+
+      function markButton(button, isLoading) {
+        if (!button) return;
+        button.disabled = Boolean(isLoading);
+        button.classList.toggle("is-updating", Boolean(isLoading));
+
+        if (isLoading) {
+          button.dataset.originalText = button.dataset.originalText || button.textContent || "状況を更新";
+          button.textContent = "更新中...";
+        } else {
+          button.textContent = button.dataset.originalText || "状況を更新";
+        }
+      }
+
+      async function runExistingRefresh(button) {
+        const hiddenReload = $("dailyStatusReloadButton");
+        const syncButton = $("ownerSyncRefreshButton");
+
+        if (hiddenReload && hiddenReload !== button) {
+          hiddenReload.click();
+        }
+
+        if (typeof window.DPRO_loadDailyStatusPanel === "function") {
+          try {
+            await window.DPRO_loadDailyStatusPanel();
+          } catch (error) {
+            console.warn("DPRO_loadDailyStatusPanel skipped", error);
+          }
+        }
+
+        if (typeof window.DPRO_ownerRefreshDoctorSync === "function") {
+          try {
+            await window.DPRO_ownerRefreshDoctorSync();
+          } catch (error) {
+            console.warn("DPRO_ownerRefreshDoctorSync skipped", error);
+          }
+        } else if (syncButton && syncButton !== button && typeof syncButton.click === "function") {
+          syncButton.click();
+        }
+      }
+
+      window.DPRO_ownerTopRefreshDirect = async function (event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        const button = event && event.currentTarget ? event.currentTarget : $("ownerRefreshMiniButton");
+        const before = snapshot();
+
+        markButton(button, true);
+        setTopFeedback("loading", "状況を更新中です", "受付iPad・先生用画面・LINEフォロー状態を確認しています。");
+
+        try {
+          await runExistingRefresh(button);
+        } catch (error) {
+          console.warn("owner refresh direct skipped", error);
+        }
+
+        setTimeout(function () {
+          if (typeof window.syncOwnerKpis === "function") {
+            try {
+              window.syncOwnerKpis();
+            } catch (error) {
+              console.warn("syncOwnerKpis skipped", error);
+            }
+          }
+        }, 300);
+
+        setTimeout(function () {
+          const after = snapshot();
+          const changed =
+            before.total !== after.total ||
+            before.waiting !== after.waiting ||
+            before.checked !== after.checked ||
+            before.completed !== after.completed ||
+            before.follow !== after.follow;
+
+          const now = new Date().toLocaleTimeString("ja-JP", {
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+
+          setTopFeedback(
+            changed ? "success" : "warning",
+            changed ? "状況を更新しました " + now : "最新状態を確認しました " + now,
+            detailText(after) + (changed ? "" : "。件数に変化はありません。")
+          );
+
+          markButton(button, false);
+        }, 1400);
+      };
+
+      function setupTopRefreshDirect() {
+        const topButton = $("ownerRefreshMiniButton");
+        if (topButton) {
+          topButton.onclick = window.DPRO_ownerTopRefreshDirect;
+        }
+
+        const syncButton = $("ownerSyncRefreshButton");
+        if (syncButton) {
+          syncButton.onclick = window.DPRO_ownerTopRefreshDirect;
+        }
+
+        if ($("ownerTopRefreshFeedback")) {
+          const s = snapshot();
+          setTopFeedback("warning", "まだ状況を更新していません", detailText(s) + "。右上の「状況を更新」を押すと最新確認します。");
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupTopRefreshDirect);
+      } else {
+        setupTopRefreshDirect();
+      }
     })();
   </script>
 
