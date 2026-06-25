@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-35BB admin.html 最新情報を再読込</title>
+  <title>DPRO SHOP | STEP 30-35C admin.html 本番API患者検索</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1295,7 +1295,7 @@
 
   
     /* =========================================================
-       STEP 30-35B OWNER OPERATION OPTIMIZE
+       STEP 30-35C OWNER OPERATION OPTIMIZE
        オーナー実運用向け：患者管理メイン / 初期設定・休日設定は歯車へ
     ========================================================= */
 
@@ -1713,7 +1713,7 @@
 
   
     /* =========================================================
-       STEP 30-35B
+       STEP 30-35C
        患者管理メイン完成版：検索 → 選択中患者 → 新規登録 → 家族/LINE
     ========================================================= */
 
@@ -1839,7 +1839,7 @@
 
   
     /* =========================================================
-       STEP 30-35B DAILY PATIENT MANAGEMENT INDEX
+       STEP 30-35C DAILY PATIENT MANAGEMENT INDEX
        毎日使う患者管理：左インデックス + 右作業エリア
     ========================================================= */
 
@@ -2167,7 +2167,7 @@
 
   
     /* =========================================================
-       STEP 30-35B SAFE REFRESH
+       STEP 30-35C SAFE REFRESH
        admin.htmlにはデモ作成ではなく、最新情報の再読込だけを置く
     ========================================================= */
 
@@ -2225,6 +2225,134 @@
       color: #991b1b;
     }
 
+  
+    /* =========================================================
+       STEP 30-35C PRODUCTION PATIENT SEARCH
+       admin.htmlで本番APIから登録済み患者を検索する
+    ========================================================= */
+
+    .admin35-patient-result {
+      border-radius: 22px;
+      border: 1px solid #dbeafe;
+      background:
+        radial-gradient(circle at 94% 10%, rgba(37,99,235,0.10), transparent 34%),
+        #ffffff;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.055);
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+    }
+
+    .admin35-patient-result:hover {
+      border-color: #93c5fd;
+      transform: translateY(-1px);
+    }
+
+    .admin35-patient-result-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: #1d4ed8;
+      background: #dbeafe;
+      font-size: 15px;
+      font-weight: 950;
+    }
+
+    .admin35-patient-result-name {
+      color: #0f172a;
+      font-size: 16px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .admin35-patient-result-meta {
+      margin-top: 4px;
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 760;
+    }
+
+    .admin35-patient-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .admin35-patient-pill {
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #334155;
+      padding: 6px 8px;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .admin35-patient-pill.green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .admin35-patient-pill.yellow {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .admin35-patient-result-action {
+      min-height: 38px;
+      border-radius: 999px;
+      border: 0;
+      background: #2563eb;
+      color: #ffffff;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .admin35-search-source-note {
+      border-radius: 18px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 820;
+      margin-top: 10px;
+    }
+
+    .admin35-search-source-note strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
+    }
+
+    @media (max-width: 720px) {
+      .admin35-patient-result {
+        grid-template-columns: 1fr;
+      }
+
+      .admin35-patient-result-action {
+        width: 100%;
+      }
+    }
+
   </style>
 </head>
 
@@ -2234,7 +2362,7 @@
     <section class="owner-main-hero" id="ownerMainHero">
       <div class="owner-main-hero-top">
         <div>
-          <div class="owner-main-kicker">STEP 30-35BB / 最新情報を再読込</div>
+          <div class="owner-main-kicker">STEP 30-35CB / 最新情報を再読込</div>
           <div class="owner-main-title">毎日使う<br>患者管理画面</div>
           <div class="owner-main-sub">
             毎日使う「患者検索・選択中の患者確認」を前面に出し、新規登録・家族診察券・LINE連携は必要な時だけ開く形に整理しました。
@@ -2496,7 +2624,7 @@
             患者登録中でも、確認用デモで使う画面へすぐ移動できます。受付iPad・先生用・管理画面は最新版の確認URLで開きます。
           </div>
           <div class="latest-shortcut-version">
-            STEP 30-35B：admin.html 最新ショートカット対応
+            STEP 30-35C：admin.html 最新ショートカット対応
           </div>
         </div>
       </div>
@@ -3125,13 +3253,19 @@
 
               <div class="mini-grid">
                 <button class="btn btn-sub" id="searchButton" type="button">患者検索</button>
-                <button class="btn btn-light" id="showLocalButton" type="button">ローカル一覧</button>
+                <button class="btn btn-light" id="showLocalButton" type="button">全患者表示</button>
               </div>
             </div>
 
             <div id="searchMessage" class="message"></div>
             <div id="patientList" class="list" style="margin-top: 12px;">
               <div class="empty-box">検索すると患者一覧が表示されます。</div>
+
+              <div class="admin35-search-source-note">
+                <strong>本番API検索</strong>
+                登録済み患者は Worker API / Supabase から検索します。営業前DEMO設定後に「山田」と検索すると、山田家の患者情報が表示されます。
+              </div>
+
             </div>
           </div>
         </section>
@@ -3548,7 +3682,7 @@
         const localButton = admin35$("showLocalButton");
 
         /*
-          STEP 30-35B:
+          STEP 30-35C:
           admin.htmlでは営業前DEMO設定を行わない。
           ここでは、既存の検索処理がある場合は同じ検索を再実行する。
           検索処理がない/外部設定読込前の場合でも、画面をキャッシュバスター付きで再読み込みする。
@@ -3707,6 +3841,442 @@
         });
       } else {
         setTimeout(setupAdmin35DailyPatientLayout, 0);
+      }
+    })();
+  </script>
+
+
+  <script>
+    (function () {
+      "use strict";
+
+      const ADMIN35C_DEFAULT_API = "https://dpro-dental-qr-api.dpromstk2000.workers.dev";
+      const ADMIN35C_DEFAULT_ADMIN_CODE = "dpro-dental-2026";
+      const ADMIN35C_DEFAULT_CLINIC_CODE = "dpro_dental_demo";
+
+      let admin35cPatients = [];
+      let admin35cSelectedPatient = null;
+
+      function q35(id) {
+        return document.getElementById(id);
+      }
+
+      function escape35(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function apiBase35() {
+        const saved = localStorage.getItem("dproDentalApiBase") || "";
+        return String(saved || ADMIN35C_DEFAULT_API).trim().replace(/\/+$/, "");
+      }
+
+      function adminCode35() {
+        const input = q35("adminCodeInput");
+        const fromInput = input ? String(input.value || "").trim() : "";
+        const saved = localStorage.getItem("dproDentalAdminCode") || localStorage.getItem("dproDentalAdminToken") || "";
+        return fromInput || saved || ADMIN35C_DEFAULT_ADMIN_CODE;
+      }
+
+      function clinicCode35() {
+        const saved = localStorage.getItem("dproDentalClinicCode") || "";
+        if (saved === "demo-dental") return ADMIN35C_DEFAULT_CLINIC_CODE;
+        return saved || ADMIN35C_DEFAULT_CLINIC_CODE;
+      }
+
+      function setSearchMessage35(type, message) {
+        const box = q35("searchMessage");
+        if (!box) return;
+
+        box.className = "message";
+        if (type) box.classList.add(type);
+        box.textContent = message || "";
+      }
+
+      function memberUrl35(patient) {
+        const token = patient.qr_token || patient.token || patient.member_token || patient.patient_token || "";
+        const rawUrl = patient.member_url || patient.memberUrl || "";
+
+        if (rawUrl) return rawUrl;
+        if (!token) return "";
+
+        const basePath = location.pathname.replace(/\/admin\.html$/, "/");
+        return location.origin + basePath + "member.html?t=" + encodeURIComponent(token);
+      }
+
+      function normalizePatient35(raw) {
+        if (!raw) return null;
+
+        return {
+          id: raw.id || raw.patient_id || "",
+          patient_name: raw.patient_name || raw.patientName || raw.name || raw.display_name || "患者さん",
+          patient_name_kana: raw.patient_name_kana || raw.patientNameKana || raw.kana || "",
+          member_no: raw.member_no || raw.memberNo || raw.card_no || raw.patient_no || "",
+          phone: raw.phone || raw.tel || raw.phone_number || "",
+          qr_token: raw.qr_token || raw.token || raw.member_token || raw.patient_token || "",
+          status: raw.status || raw.patient_status || "active",
+          line_display_name: raw.line_display_name || raw.line_name || "",
+          line_user_id: raw.line_user_id || "",
+          next_appointment_date: raw.next_appointment_date || raw.visit_date || "",
+          next_appointment_time: raw.next_appointment_time || raw.scheduled_time || "",
+          internal_memo: raw.internal_memo || raw.memo || raw.doctor_memo || "",
+          source: raw.source || "patients",
+          raw
+        };
+      }
+
+      function extractPatients35(data) {
+        const arrays = [
+          data?.patients,
+          data?.rows,
+          data?.items,
+          data?.statuses,
+          data?.daily_statuses,
+          Array.isArray(data) ? data : null
+        ];
+
+        const rows = arrays.find((arr) => Array.isArray(arr)) || [];
+        const map = new Map();
+
+        rows.map(normalizePatient35).filter(Boolean).forEach((patient) => {
+          const key = patient.id || patient.qr_token || patient.member_no || patient.patient_name;
+          if (!map.has(key)) map.set(key, patient);
+        });
+
+        return Array.from(map.values());
+      }
+
+      async function fetchJson35(path, params) {
+        const url = new URL(apiBase35() + path);
+        Object.entries(params || {}).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== "") {
+            url.searchParams.set(key, String(value));
+          }
+        });
+
+        const res = await fetch(url.toString(), {
+          method: "GET",
+          headers: { "Accept": "application/json" },
+          cache: "no-store"
+        });
+
+        let data = null;
+        try {
+          data = await res.json();
+        } catch (error) {
+          data = { ok: false, message: "JSONとして読めませんでした" };
+        }
+
+        if (!res.ok || data.ok === false) {
+          const err = new Error(data.message || data.error || ("HTTP " + res.status));
+          err.status = res.status;
+          err.data = data;
+          throw err;
+        }
+
+        return data;
+      }
+
+      function renderPatientList35(patients, q) {
+        const list = q35("patientList");
+        if (!list) return;
+
+        if (!patients.length) {
+          list.innerHTML = `
+            <div class="empty-box">
+              該当する患者さんが見つかりませんでした。<br>
+              ${escape35(q || "別のキーワード")} で検索するか、「全患者表示」を押してください。
+            </div>
+          `;
+          return;
+        }
+
+        list.innerHTML = patients.map((patient, index) => {
+          const lineLinked = Boolean(patient.line_user_id || patient.line_display_name);
+          const memberUrl = memberUrl35(patient);
+          const appointment = [patient.next_appointment_date, patient.next_appointment_time].filter(Boolean).join(" ");
+
+          return `
+            <button class="admin35-patient-result" type="button" data-admin35c-patient-index="${index}">
+              <span class="admin35-patient-result-icon">患</span>
+
+              <span>
+                <span class="admin35-patient-result-name">${escape35(patient.patient_name)}</span>
+                <span class="admin35-patient-result-meta">
+                  ${escape35(patient.member_no || "---")}
+                  ${patient.phone ? " / " + escape35(patient.phone) : ""}
+                  ${appointment ? " / 次回 " + escape35(appointment) : ""}
+                </span>
+                <span class="admin35-patient-pills">
+                  <span class="admin35-patient-pill green">登録済み</span>
+                  <span class="admin35-patient-pill ${lineLinked ? "green" : "yellow"}">${lineLinked ? "LINE連携済み" : "LINE案内必要"}</span>
+                  ${patient.source === "daily_status" ? '<span class="admin35-patient-pill yellow">本日来院</span>' : ""}
+                </span>
+              </span>
+
+              <span class="admin35-patient-result-action">開く</span>
+            </button>
+          `;
+        }).join("");
+
+        list.querySelectorAll("[data-admin35c-patient-index]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const index = Number(button.getAttribute("data-admin35c-patient-index"));
+            selectPatient35(index);
+          });
+        });
+      }
+
+      function fillText35(id, value) {
+        const el = q35(id);
+        if (el) el.textContent = value || "---";
+      }
+
+      function selectPatient35(index) {
+        const patient = admin35cPatients[index];
+        if (!patient) return;
+
+        admin35cSelectedPatient = patient;
+
+        const selectedArea = q35("selectedArea");
+        const emptySelectedBox = q35("emptySelectedBox");
+        const resultArea = q35("resultArea");
+        const emptyResultBox = q35("emptyResultBox");
+
+        if (selectedArea) selectedArea.classList.remove("hidden");
+        if (emptySelectedBox) emptySelectedBox.classList.add("hidden");
+        if (resultArea) resultArea.classList.remove("hidden");
+        if (emptyResultBox) emptyResultBox.classList.add("hidden");
+
+        const url = memberUrl35(patient);
+        const token = patient.qr_token || "";
+
+        fillText35("selectedPatientName", patient.patient_name);
+        fillText35("selectedMemberNo", patient.member_no);
+        fillText35("selectedPhone", patient.phone);
+        fillText35("selectedMemberUrl", url);
+
+        fillText35("resultPatientName", patient.patient_name);
+        fillText35("resultPatientKana", patient.patient_name_kana);
+        fillText35("resultMemberNo", patient.member_no);
+        fillText35("resultPhone", patient.phone);
+        fillText35("resultNextAppointment", [patient.next_appointment_date, patient.next_appointment_time].filter(Boolean).join(" ") || "---");
+        fillText35("resultInternalMemo", patient.internal_memo);
+        fillText35("memberUrlText", url);
+        fillText35("qrTokenText", token);
+        fillText35("currentMemberNo", patient.member_no);
+
+        const resultStatus = q35("resultStatus");
+        if (resultStatus) resultStatus.textContent = patient.status === "active" ? "通院中" : patient.status;
+
+        const qrImage = q35("qrImage");
+        if (qrImage && url) {
+          qrImage.src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(url);
+          qrImage.classList.remove("hidden");
+        }
+
+        const openSelected = q35("openSelectedMemberButton");
+        if (openSelected) {
+          openSelected.onclick = () => {
+            if (url) window.open(url, "_blank", "noopener");
+          };
+        }
+
+        const openMember = q35("openMemberPageButton");
+        if (openMember) {
+          openMember.onclick = () => {
+            if (url) window.open(url, "_blank", "noopener");
+          };
+        }
+
+        const copySelected = q35("copySelectedUrlButton");
+        if (copySelected) {
+          copySelected.onclick = () => copyToClipboard35(url, "selectedMessage", "診察券URLをコピーしました。");
+        }
+
+        const copyMember = q35("copyMemberUrlButton");
+        if (copyMember) {
+          copyMember.onclick = () => copyToClipboard35(url, "resultMessage", "診察券URLをコピーしました。");
+        }
+
+        setSearchMessage35("success", `${patient.patient_name} 様を開きました。左メニューの「選択中の患者」から確認できます。`);
+
+        const openButton = document.querySelector('[data-admin35-open="selected"]');
+        if (openButton) openButton.click();
+      }
+
+      async function copyToClipboard35(value, messageId, doneMessage) {
+        if (!value) return;
+        try {
+          await navigator.clipboard.writeText(value);
+          const box = q35(messageId);
+          if (box) {
+            box.className = "message success";
+            box.textContent = doneMessage || "コピーしました。";
+          }
+        } catch (error) {
+          const box = q35(messageId);
+          if (box) {
+            box.className = "message error";
+            box.textContent = "コピーできませんでした。手動でコピーしてください。";
+          }
+        }
+      }
+
+      async function searchPatients35({ all = false } = {}) {
+        const input = q35("searchInput");
+        const query = all ? "" : String(input?.value || "").trim();
+
+        const searchButton = q35("searchButton");
+        const allButton = q35("showLocalButton");
+        [searchButton, allButton].filter(Boolean).forEach((button) => {
+          button.disabled = true;
+        });
+
+        setSearchMessage35("info", all ? "全患者をWorker API / Supabaseから取得しています..." : `「${query}」で登録済み患者を検索しています...`);
+
+        try {
+          let patients = [];
+
+          const data = await fetchJson35("/api/admin/patients", {
+            clinic_code: clinicCode35(),
+            clinic: clinicCode35(),
+            shop_code: clinicCode35(),
+            q: query,
+            limit: 100,
+            admin_code: adminCode35(),
+            token: adminCode35(),
+            admin_token: adminCode35()
+          });
+
+          patients = extractPatients35(data);
+
+          /*
+            STEP 30-35C:
+            営業前DEMO設定直後など、patient_summary側の反映が遅い/0件の場合に備えて、
+            本日の受付・診療ステータスAPIも読み、患者検索の補助にする。
+            これはデータ作成ではなく読み取り専用。
+          */
+          if (!patients.length) {
+            const todayData = await fetchJson35("/api/owner/daily-statuses", {
+              clinic_code: clinicCode35(),
+              clinic: clinicCode35(),
+              shop_code: clinicCode35(),
+              date: todayJST35(),
+              visit_date: todayJST35(),
+              limit: 100,
+              admin_code: adminCode35(),
+              token: adminCode35(),
+              admin_token: adminCode35()
+            });
+
+            patients = extractPatients35(todayData).map((patient) => ({
+              ...patient,
+              source: "daily_status"
+            }));
+
+            if (query) {
+              const q = query.toLowerCase();
+              patients = patients.filter((patient) => {
+                return [
+                  patient.patient_name,
+                  patient.patient_name_kana,
+                  patient.member_no,
+                  patient.phone,
+                  patient.line_display_name
+                ].some((value) => String(value || "").toLowerCase().includes(q));
+              });
+            }
+          }
+
+          admin35cPatients = patients;
+          renderPatientList35(patients, query);
+
+          if (patients.length) {
+            setSearchMessage35("success", `${patients.length}件見つかりました。患者カードを押すと詳細を開きます。`);
+          } else {
+            setSearchMessage35("error", "該当患者が見つかりませんでした。営業前DEMO設定後は system-check.html で一括チェックも確認してください。");
+          }
+        } catch (error) {
+          admin35cPatients = [];
+          renderPatientList35([], query);
+          setSearchMessage35("error", "患者検索に失敗しました。\n\n詳細：" + (error.message || error));
+        } finally {
+          [searchButton, allButton].filter(Boolean).forEach((button) => {
+            button.disabled = false;
+          });
+        }
+      }
+
+      function todayJST35() {
+        const parts = new Intl.DateTimeFormat("ja-JP", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }).formatToParts(new Date());
+
+        const map = {};
+        parts.forEach((part) => {
+          if (part.type !== "literal") map[part.type] = part.value;
+        });
+
+        return `${map.year}-${map.month}-${map.day}`;
+      }
+
+      function setupAdmin35CProductionSearch() {
+        const searchButton = q35("searchButton");
+        const showLocalButton = q35("showLocalButton");
+        const input = q35("searchInput");
+
+        if (searchButton) {
+          searchButton.onclick = () => searchPatients35({ all: false });
+        }
+
+        if (showLocalButton) {
+          showLocalButton.onclick = () => searchPatients35({ all: true });
+        }
+
+        if (input) {
+          input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              searchPatients35({ all: false });
+            }
+          });
+        }
+
+        const refreshButton = q35("admin35RefreshButton");
+        if (refreshButton) {
+          refreshButton.addEventListener("click", () => {
+            setTimeout(() => {
+              const q = String(q35("searchInput")?.value || "").trim();
+              if (q) searchPatients35({ all: false });
+            }, 500);
+          });
+        }
+
+        const refreshMini = q35("admin35RefreshMiniButton");
+        if (refreshMini) {
+          refreshMini.addEventListener("click", () => {
+            setTimeout(() => {
+              const q = String(q35("searchInput")?.value || "").trim();
+              if (q) searchPatients35({ all: false });
+            }, 500);
+          });
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", function () {
+          setTimeout(setupAdmin35CProductionSearch, 50);
+        });
+      } else {
+        setTimeout(setupAdmin35CProductionSearch, 50);
       }
     })();
   </script>
