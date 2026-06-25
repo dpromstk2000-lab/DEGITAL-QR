@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-35J admin.html 管理コード送信修正</title>
+  <title>DPRO SHOP | STEP 30-35K admin.html 検索なし本番向け調整</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1295,7 +1295,7 @@
 
   
     /* =========================================================
-       STEP 30-35J OWNER OPERATION OPTIMIZE
+       STEP 30-35K OWNER OPERATION OPTIMIZE
        オーナー実運用向け：患者管理メイン / 初期設定・休日設定は歯車へ
     ========================================================= */
 
@@ -1713,7 +1713,7 @@
 
   
     /* =========================================================
-       STEP 30-35J
+       STEP 30-35K
        患者管理メイン完成版：検索 → 選択中患者 → 新規登録 → 家族/LINE
     ========================================================= */
 
@@ -1839,7 +1839,7 @@
 
   
     /* =========================================================
-       STEP 30-35J DAILY PATIENT MANAGEMENT INDEX
+       STEP 30-35K DAILY PATIENT MANAGEMENT INDEX
        毎日使う患者管理：左インデックス + 右作業エリア
     ========================================================= */
 
@@ -2167,7 +2167,7 @@
 
   
     /* =========================================================
-       STEP 30-35J SAFE REFRESH
+       STEP 30-35K SAFE REFRESH
        admin.htmlにはデモ作成ではなく、最新情報の再読込だけを置く
     ========================================================= */
 
@@ -2227,7 +2227,7 @@
 
   
     /* =========================================================
-       STEP 30-35J PRODUCTION PATIENT SEARCH
+       STEP 30-35K PRODUCTION PATIENT SEARCH
        admin.htmlで本番APIから登録済み患者を検索する
     ========================================================= */
 
@@ -2355,7 +2355,7 @@
 
   
     /* =========================================================
-       STEP 30-35J SEARCH FEEDBACK / DIAGNOSTICS
+       STEP 30-35K SEARCH FEEDBACK / DIAGNOSTICS
        検索ボタンを押した反応と、APIエラーの見える化
     ========================================================= */
 
@@ -2397,7 +2397,7 @@
 
   
     /* =========================================================
-       STEP 30-35J ADMIN CODE FIX
+       STEP 30-35K ADMIN CODE FIX
        古いlocalStorageの管理コードを自動補正する
     ========================================================= */
 
@@ -2425,6 +2425,33 @@
       color: #991b1b;
     }
 
+  
+    /* =========================================================
+       STEP 30-35K SEARCH EMPTY QUERY PRODUCTION RULE
+       キーワードなし検索では全員表示しない
+    ========================================================= */
+
+    .admin35k-search-rule {
+      margin-top: 10px;
+      border-radius: 18px;
+      border: 1px solid #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 820;
+    }
+
+    .admin35k-search-rule strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
+    }
+
   </style>
 </head>
 
@@ -2434,7 +2461,7 @@
     <section class="owner-main-hero" id="ownerMainHero">
       <div class="owner-main-hero-top">
         <div>
-          <div class="owner-main-kicker">STEP 30-35JB / 最新情報を再読込</div>
+          <div class="owner-main-kicker">STEP 30-35KB / 最新情報を再読込</div>
           <div class="owner-main-title">毎日使う<br>患者管理画面</div>
           <div class="owner-main-sub">
             毎日使う「患者検索・選択中の患者確認」を前面に出し、新規登録・家族診察券・LINE連携は必要な時だけ開く形に整理しました。
@@ -2700,7 +2727,7 @@
             患者登録中でも、確認用デモで使う画面へすぐ移動できます。受付iPad・先生用・管理画面は最新版の確認URLで開きます。
           </div>
           <div class="latest-shortcut-version">
-            STEP 30-35J：admin.html 最新ショートカット対応
+            STEP 30-35K：admin.html 最新ショートカット対応
           </div>
         </div>
       </div>
@@ -3329,18 +3356,23 @@
 
               <div class="mini-grid">
                 <button class="btn btn-sub" id="searchButton" type="button" onclick="window.admin35iSearchPatients && window.admin35iSearchPatients(false)">患者検索</button>
-                <button class="btn btn-light" id="showLocalButton" type="button" onclick="window.admin35iSearchPatients && window.admin35iSearchPatients(true)">全患者表示</button>
+                <button class="btn btn-light" id="showLocalButton" type="button" onclick="window.admin35iSearchPatients && window.admin35iSearchPatients(true)">全患者表示（最大50件）</button>
               </div>
             </div>
 
             <div id="searchMessage" class="message"></div>
             <div id="admin35iSearchDebug" class="admin35i-search-debug hidden"></div>
+
+            <div class="admin35k-search-rule">
+              <strong>本番向け検索ルール</strong>
+              キーワードなしで「患者検索」を押しても全員表示しません。全員を確認する時だけ「全患者表示（最大50件）」を押してください。
+            </div>
             <div id="patientList" class="list" style="margin-top: 12px;">
               <div class="empty-box">検索すると患者一覧が表示されます。</div>
 
               <div class="admin35-search-source-note">
                 <strong>本番API検索</strong>
-                登録済み患者は Worker API / Supabase から検索します。営業前DEMO設定後に「山田」と検索すると、山田家の患者情報が表示されます。
+                登録済み患者は Worker API / Supabase から検索します。キーワードなしの患者検索では全員表示せず、必要な時だけ「全患者表示（最大50件）」を使います。
               </div>
 
             </div>
@@ -3759,7 +3791,7 @@
         const localButton = admin35$("showLocalButton");
 
         /*
-          STEP 30-35J:
+          STEP 30-35K:
           admin.htmlでは営業前DEMO設定を行わない。
           ここでは、既存の検索処理がある場合は同じ検索を再実行する。
           検索処理がない/外部設定読込前の場合でも、画面をキャッシュバスター付きで再読み込みする。
@@ -3769,8 +3801,12 @@
 
           if (searchText && searchButton) {
             clicked = admin35SafeClick(searchButton);
-          } else if (localButton) {
-            clicked = admin35SafeClick(localButton);
+          } else {
+            admin35SetRefreshStatus("最新情報を再読込しました。患者検索はキーワードを入力してから行ってください。", "is-done");
+            buttons.forEach(function (button) {
+              button.disabled = false;
+            });
+            return;
           }
 
           if (clicked) {
@@ -4233,7 +4269,7 @@
           patients = extractPatients35(data);
 
           /*
-            STEP 30-35J:
+            STEP 30-35K:
             営業前DEMO設定直後など、patient_summary側の反映が遅い/0件の場合に備えて、
             本日の受付・診療ステータスAPIも読み、患者検索の補助にする。
             これはデータ作成ではなく読み取り専用。
@@ -4389,7 +4425,7 @@
 
       function i35AdminCode() {
         /*
-          STEP 30-35J:
+          STEP 30-35K:
           以前の画面で localStorage に古い管理コードが残っていると、
           Workerから「管理コードが正しくありません」と返る。
           このデモ環境では正しい管理コードを dpro-dental-2026 に統一する。
@@ -4765,10 +4801,32 @@
         const input = i35("searchInput");
         const query = all ? "" : String(input?.value || "").trim();
 
+        /*
+          STEP 30-35K:
+          本番では、空検索で全患者を出さない。
+          通常の「患者検索」はキーワード必須。
+          全員確認は「全患者表示（最大50件）」を明示的に押した時だけ。
+        */
+        if (!all && !query) {
+          admin35iPatients = [];
+          i35RenderPatients([], "", "");
+          i35SetMessage("error", "検索キーワードを入力してください。例：山田、山田花、診察券番号、電話番号");
+          i35SetDebug(
+            "warn",
+            [
+              "キーワードなしの患者検索は本番向けに停止しています。",
+              "全員を確認する場合は「全患者表示（最大50件）」を押してください。",
+              "患者数が増えた時に個人情報が一覧で出すぎないようにするためです。"
+            ].join("\n")
+          );
+          if (input) input.focus();
+          return;
+        }
+
         const buttons = [i35("searchButton"), i35("showLocalButton")].filter(Boolean);
         buttons.forEach((button) => { button.disabled = true; });
 
-        i35SetMessage("info", all ? "全患者を検索しています..." : `「${query}」で検索しています...`);
+        i35SetMessage("info", all ? "全患者を最大50件まで表示しています..." : `「${query}」で検索しています...`);
         i35SetDebug("info", "検索ボタンは反応しています。\nWorker APIへ問い合わせ中です。");
 
         try {
@@ -4777,7 +4835,7 @@
             clinic: i35ClinicCode(),
             shop_code: i35ClinicCode(),
             q: query,
-            limit: 100,
+            limit: all ? 50 : 100,
             admin_code: i35AdminCode(),
             token: i35AdminCode(),
             admin_token: i35AdminCode()
@@ -4815,7 +4873,7 @@
           }
         } catch (error) {
           /*
-            STEP 30-35J:
+            STEP 30-35K:
             検索ビュー/RPCが失敗しても画面が無反応に見えないようにする。
             さらに本日の来院ステータスAPIを読み取り専用で補助表示する。
           */
@@ -4838,7 +4896,7 @@
               shop_code: i35ClinicCode(),
               date: i35Today(),
               visit_date: i35Today(),
-              limit: 100,
+              limit: all ? 50 : 100,
               admin_code: i35AdminCode(),
               token: i35AdminCode(),
               admin_token: i35AdminCode()
