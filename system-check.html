@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-32CB Failed to fetch 判定修正</title>
+  <title>DPRO SHOP | STEP 30-32DB Failed to fetch 判定修正</title>
   <style>
     :root {
       --line: #06c755;
@@ -435,12 +435,33 @@
       margin-bottom: 4px;
     }
 
+  
+    .clinic-code-note {
+      border-radius: 24px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.8;
+      font-weight: 800;
+    }
+
+    .clinic-code-note strong {
+      display: block;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 4px;
+    }
+
   </style>
 </head>
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-32CB / Failed to fetch 判定修正</div>
+      <div class="badge">STEP 30-32DB / Failed to fetch 判定修正</div>
       <h1>API・数字・画面リンクを<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
@@ -457,8 +478,8 @@
           <input id="adminCodeInput" type="text" value="dpro-dental-2026" />
         </div>
         <div class="field">
-          <label for="clinicCodeInput">医院コード</label>
-          <input id="clinicCodeInput" type="text" value="demo-dental" />
+          <label for="clinicCodeInput">医院コード（通常 dpro_dental_demo）</label>
+          <input id="clinicCodeInput" type="text" value="dpro_dental_demo" />
         </div>
         <button class="btn" id="runButton" type="button">一括チェック</button>
       </div>
@@ -467,7 +488,7 @@
     
     <section class="section">
       <div class="cors-note">
-        <strong>STEP 30-32C 修正内容</strong>
+        <strong>STEP 30-32D 修正内容</strong>
         API確認は、Workerが読めるように admin_code / token / admin_token をURLパラメータで渡すシンプルGETで実行します。
         これにより、ブラウザのCORSプリフライトによる Failed to fetch を避けやすくします。
         また、受付iPad・先生用・管理トップのいずれかが取得失敗した場合は、総合判定をOKにしません。
@@ -584,7 +605,7 @@
     const DEFAULTS = {
       apiBase: "https://dpro-dental-qr-api.dpromstk2000.workers.dev",
       adminCode: "dpro-dental-2026",
-      clinicCode: "demo-dental"
+      clinicCode: "dpro_dental_demo"
     };
 
     function $(id) {
@@ -723,7 +744,7 @@
         }
       });
 
-      // STEP 30-32C:
+      // STEP 30-32D:
       // 診断ページではまず「シンプルGET」で確認する。管理コードは admin_code / token / admin_token の3種類で送る。
       // x-admin-token などのカスタムヘッダーを付けると、ブラウザがCORSプリフライトを行い、
       // エンドポイント側のOPTIONS/CORS差分で Failed to fetch になりやすいため。
@@ -788,6 +809,8 @@
         const date = todayJST();
         const { data, url } = await fetchJson(path, {
           clinic_code: clinicCode(),
+          clinic: clinicCode(),
+          shop_code: clinicCode(),
           visit_date: date,
           date,
           admin_code: adminCode(),
@@ -862,7 +885,7 @@
         log("総合判定 NG", {
           message: "受付iPad・先生用・管理トップのうち、取得に失敗しているAPIがあります。0件同士でもOK判定にはしません。",
           failed,
-          next: "Worker APIのCORS、対象エンドポイント、管理コード、clinic_code、Supabaseビューを確認してください。"
+          next: "Worker APIのCORS、対象エンドポイント、管理コード、clinic_code=dpro_dental_demo、Supabaseビューを確認してください。"
         });
         return;
       }
@@ -925,7 +948,8 @@
     function init() {
       $("apiBaseInput").value = localStorage.getItem("dproDentalApiBase") || DEFAULTS.apiBase;
       $("adminCodeInput").value = localStorage.getItem("dproDentalAdminCode") || DEFAULTS.adminCode;
-      $("clinicCodeInput").value = localStorage.getItem("dproDentalClinicCode") || DEFAULTS.clinicCode;
+      const savedClinicCode = localStorage.getItem("dproDentalClinicCode") || DEFAULTS.clinicCode;
+      $("clinicCodeInput").value = savedClinicCode === "demo-dental" ? "dpro_dental_demo" : savedClinicCode;
 
       $("runButton").addEventListener("click", runAllChecks);
     }
