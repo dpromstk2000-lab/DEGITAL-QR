@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-27D owner.html 本番API読込版</title>
+  <title>DPRO SHOP | STEP 30-27E owner.html 数字の取得元を本番APIに統一</title>
 
   <script src="./config.js"></script>
 
@@ -2229,6 +2229,34 @@
       border-color: #fecaca;
       background: #fef2f2;
       color: #991b1b;
+    }
+
+
+  
+    /* =========================================================
+       STEP 30-27E UNIFIED API COUNTS
+       旧カウント処理で上書きしない。本番API結果だけを今日の状況に反映
+    ========================================================= */
+
+    .owner-unified-api-note {
+      margin: 0 0 14px;
+      border-radius: 18px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+    }
+
+    .owner-unified-api-note strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
     }
 
 
@@ -5970,20 +5998,41 @@
       }
 
       function syncOwnerKpis() {
-        const total = textNumber("dailyStatusTotal", 3);
-        const waiting = textNumber("dailyStatusWaitingReception", Math.max(total, 0));
-        const checked = textNumber("dailyStatusCheckedIn", 0);
-        const completed = textNumber("dailyStatusCompleted", 0);
-        const follow = textNumber("dailyStatusFollow", 0);
+        // STEP 30-27E:
+        // 古い dailyStatusTotal 側の数字で、上部の今日の状況を上書きしない。
+        // ownerSyncTotal が存在する場合は、Worker API / Supabase の統一結果を優先する。
+        const apiTotal = textNumber("ownerSyncTotal", NaN);
+        const apiChecked = textNumber("ownerSyncChecked", NaN);
+        const apiCompleted = textNumber("ownerSyncDone", NaN);
+        const apiFollow = textNumber("ownerSyncFollow", NaN);
 
-        setText("owner25bTotal", total || 3);
+        let total;
+        let checked;
+        let completed;
+        let follow;
+
+        if (Number.isFinite(apiTotal) && apiTotal > 0) {
+          total = apiTotal;
+          checked = Number.isFinite(apiChecked) ? apiChecked : 0;
+          completed = Number.isFinite(apiCompleted) ? apiCompleted : 0;
+          follow = Number.isFinite(apiFollow) ? apiFollow : 0;
+        } else {
+          total = textNumber("dailyStatusTotal", 3);
+          checked = textNumber("dailyStatusCheckedIn", 0);
+          completed = textNumber("dailyStatusCompleted", 0);
+          follow = textNumber("dailyStatusFollow", 0);
+        }
+
+        const waiting = Math.max(total - checked, 0);
+
+        setText("owner25bTotal", total);
         setText("owner25bWaiting", waiting);
         setText("owner25bChecked", checked);
         setText("owner25bCompleted", completed);
         setText("owner25bFollow", follow);
 
         setText("menuCountTodo", Math.max(waiting + follow, 0));
-        setText("menuCountStatus", total || 3);
+        setText("menuCountStatus", total);
         setText("menuCountFollow", follow);
 
         buildActionList();
@@ -6243,13 +6292,23 @@
         }).join("");
 
         try {
+          const waiting = Math.max(total - checked, 0);
+
+          // STEP 30-27E:
+          // 今日の状況の上部数字も、同じAPI結果から統一して反映する。
           setText("owner25bTotal", total);
+          setText("owner25bWaiting", waiting);
           setText("owner25bChecked", checked);
           setText("owner25bCompleted", done);
           setText("owner25bFollow", follow);
+
           setText("menuCountStatus", total);
           setText("menuCountFollow", follow);
-          setText("menuCountTodo", Math.max(total - done + follow, 0));
+          setText("menuCountTodo", Math.max(waiting + follow, 0));
+
+          if (typeof buildActionList === "function") {
+            buildActionList();
+          }
         } catch (error) {
           console.warn("owner 25b count sync skipped", error);
         }
@@ -6456,13 +6515,9 @@
         }
 
         setTimeout(function () {
-          if (typeof window.syncOwnerKpis === "function") {
-            try {
-              window.syncOwnerKpis();
-            } catch (error) {
-              console.warn("syncOwnerKpis skipped", error);
-            }
-          }
+          // STEP 30-27E:
+          // 旧カウント処理でAPI統一結果を上書きしない。
+          // renderRows() 側で、上部の今日の状況・左メニュー数字まで反映済み。
         }, 300);
 
         setTimeout(function () {
@@ -6511,6 +6566,79 @@
       } else {
         setupTopRefreshDirect();
       }
+    })();
+  </script>
+
+
+  <script>
+    /* STEP 30-27E FINAL UNIFIED API REFRESH GUARD */
+    (function () {
+      "use strict";
+
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      function num(id, fallback) {
+        const el = $(id);
+        if (!el) return fallback || 0;
+        const n = parseInt(String(el.textContent || "").replace(/[^\d-]/g, ""), 10);
+        return Number.isFinite(n) ? n : (fallback || 0);
+      }
+
+      function setText(id, value) {
+        const el = $(id);
+        if (el) el.textContent = String(value);
+      }
+
+      function updateTopFromSync() {
+        const total = num("ownerSyncTotal", num("owner25bTotal", 0));
+        const checked = num("ownerSyncChecked", num("owner25bChecked", 0));
+        const done = num("ownerSyncDone", num("owner25bCompleted", 0));
+        const follow = num("ownerSyncFollow", num("owner25bFollow", 0));
+        const waiting = Math.max(total - checked, 0);
+
+        setText("owner25bTotal", total);
+        setText("owner25bWaiting", waiting);
+        setText("owner25bChecked", checked);
+        setText("owner25bCompleted", done);
+        setText("owner25bFollow", follow);
+
+        setText("menuCountStatus", total);
+        setText("menuCountFollow", follow);
+        setText("menuCountTodo", Math.max(waiting + follow, 0));
+      }
+
+      function protectAfterRefresh() {
+        setTimeout(updateTopFromSync, 350);
+        setTimeout(updateTopFromSync, 900);
+        setTimeout(updateTopFromSync, 1800);
+      }
+
+      const originalDirect = window.DPRO_ownerTopRefreshDirect;
+      if (typeof originalDirect === "function" && !window.__DPRO_3027E_DIRECT_PATCHED__) {
+        window.__DPRO_3027E_DIRECT_PATCHED__ = true;
+
+        window.DPRO_ownerTopRefreshDirect = async function (event) {
+          const result = await originalDirect(event);
+          protectAfterRefresh();
+          return result;
+        };
+
+        const topButton = $("ownerRefreshMiniButton");
+        if (topButton) topButton.onclick = window.DPRO_ownerTopRefreshDirect;
+
+        const syncButton = $("ownerSyncRefreshButton");
+        if (syncButton) syncButton.onclick = window.DPRO_ownerTopRefreshDirect;
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", updateTopFromSync);
+      } else {
+        updateTopFromSync();
+      }
+
+      window.DPRO_ownerUnifyTopCountsFromApi = updateTopFromSync;
     })();
   </script>
 
