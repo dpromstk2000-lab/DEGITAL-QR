@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-32 本番前チェック診断</title>
+  <title>DPRO SHOP | STEP 30-32BB Failed to fetch 判定修正</title>
   <style>
     :root {
       --line: #06c755;
@@ -393,12 +393,33 @@
         grid-template-columns: 1fr;
       }
     }
+  
+    .cors-note {
+      border-radius: 24px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.8;
+      font-weight: 800;
+    }
+
+    .cors-note strong {
+      display: block;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 4px;
+    }
+
   </style>
 </head>
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-32 / 本番前チェック診断</div>
+      <div class="badge">STEP 30-32BB / Failed to fetch 判定修正</div>
       <h1>API・数字・画面リンクを<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
@@ -422,7 +443,17 @@
       </div>
     </section>
 
+    
     <section class="section">
+      <div class="cors-note">
+        <strong>STEP 30-32B 修正内容</strong>
+        API確認は、まず admin_token をURLパラメータで渡すシンプルGETで実行します。
+        これにより、ブラウザのCORSプリフライトによる Failed to fetch を避けやすくします。
+        また、受付iPad・先生用・管理トップのいずれかが取得失敗した場合は、総合判定をOKにしません。
+      </div>
+    </section>
+
+<section class="section">
       <h2 class="section-title">総合判定</h2>
       <div class="grid">
         <div class="card">
@@ -515,8 +546,8 @@
     <section class="section">
       <div class="notice">
         <strong>見方</strong>
-        受付iPad・先生用・管理トップで件数が違う場合、まずこの診断ページでAPIレスポンス件数を確認します。
-        ここでAPI件数が違う場合は Worker / Supabase 側、ここでは一致しているのに画面で違う場合は各HTML側の表示ロジックを確認します。
+        受付iPad・先生用・管理トップで件数が違う場合、まずこの診断ページでAPIレスポンス件数と取得失敗の有無を確認します。
+        ここで取得失敗やAPI件数違いがある場合は Worker / Supabase 側、ここでは一致しているのに画面で違う場合は各HTML側の表示ロジックを確認します。
       </div>
     </section>
 
@@ -671,11 +702,25 @@
         }
       });
 
-      const res = await fetch(url.toString(), {
-        headers: {
-          "x-admin-token": adminCode()
-        }
-      });
+      // STEP 30-32B:
+      // 診断ページではまず「シンプルGET」で確認する。
+      // x-admin-token などのカスタムヘッダーを付けると、ブラウザがCORSプリフライトを行い、
+      // エンドポイント側のOPTIONS/CORS差分で Failed to fetch になりやすいため。
+      let res;
+      try {
+        res = await fetch(url.toString(), {
+          method: "GET",
+          headers: {
+            "Accept": "application/json"
+          },
+          cache: "no-store"
+        });
+      } catch (networkError) {
+        const err = new Error(networkError.message || "Failed to fetch");
+        err.reason = "network_or_cors";
+        err.url = url.toString();
+        throw err;
+      }
 
       let data = null;
       try {
@@ -705,12 +750,12 @@
         setStatus("healthStatus", "ok", "OK");
         setText("healthText", `version: ${data.version || data.name || "確認済み"}`);
         log("Worker health OK: " + url, data);
-        return data;
+        return { ok: true, data };
       } catch (error) {
         setStatus("healthStatus", "bad", "NG");
         setText("healthText", error.message || "API確認に失敗しました");
         log("Worker health NG", { message: error.message, status: error.status, data: error.data });
-        return null;
+        return { ok: false, data: null };
       }
     }
 
@@ -735,12 +780,12 @@
         setText(prefix + "Text", `${rows.length}件取得 / ${date}`);
         log(kind + " OK: " + url, { counts, sample: counts.rows.slice(0, 3) });
 
-        return counts;
+        return { ...counts, ok: true };
       } catch (error) {
         setStatus(prefix + "Status", "bad", "NG");
         setText(prefix + "Text", error.message || "API確認に失敗しました");
         log(kind + " NG", { message: error.message, status: error.status, data: error.data });
-        return { total: 0, checked: 0, done: 0, waiting: 0, follow: 0, rows: [] };
+        return { total: 0, checked: 0, done: 0, waiting: 0, follow: 0, rows: [], ok: false, error: error.message || String(error) };
       }
     }
 
@@ -773,6 +818,20 @@
     }
 
     function compareCounts(scan, doctor, owner) {
+      const endpoints = { scan, doctor, owner };
+      const failed = Object.entries(endpoints)
+        .filter(([, value]) => !value.ok)
+        .map(([key, value]) => ({ key, error: value.error || "取得失敗" }));
+
+      if (failed.length) {
+        log("総合判定 NG", {
+          message: "受付iPad・先生用・管理トップのうち、取得に失敗しているAPIがあります。0件同士でもOK判定にはしません。",
+          failed,
+          next: "Worker APIのCORS、対象エンドポイント、管理コード、clinic_code、Supabaseビューを確認してください。"
+        });
+        return;
+      }
+
       const totals = [scan.total, doctor.total, owner.total];
       const done = [scan.done, doctor.done, owner.done];
       const follow = [scan.follow, doctor.follow, owner.follow];
