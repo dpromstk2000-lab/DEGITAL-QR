@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-23H2 受付iPad 更新中停止修正</title>
+  <title>DPRO SHOP | STEP 30-28 scan-ipad.html 受付iPad本番API統一</title>
 
   <script src="./config.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -805,6 +805,49 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-28 PRODUCTION API ONLY RECEPTION
+       受付iPadも固定デモ/ローカル状態ではなくWorker API/Supabaseを正にする
+    ========================================================= */
+    .production-reception-note {
+      border-radius: 20px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 12px 13px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+      margin: 0 0 14px;
+    }
+    .production-reception-note strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
+    }
+    .api-empty-reception {
+      border-radius: 22px;
+      border: 1px dashed #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 18px;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 850;
+    }
+    .api-empty-reception strong {
+      display: block;
+      color: #0f172a;
+      font-size: 16px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 4px;
+    }
+
   </style>
 </head>
 
@@ -818,7 +861,7 @@
           QRを読む → 患者確認 → LINE連携確認 → 受付済みにする。受付スタッフ向けに、操作を大きくシンプルにしています。
         </div>
         <div class="version-check-badge">
-          STEP 30-23H2：更新中のまま止まる不具合を修正済み
+          STEP 30-28：受付iPad本番API統一
         </div>
       </div>
 
@@ -886,7 +929,7 @@
           </div>
 
           <div class="big-actions">
-            <button class="btn btn-light" id="reloadDailyStatusButton" type="button">受付状態を更新</button>
+            <button class="btn btn-light" id="reloadDailyStatusButton" type="button">受付状況を更新</button>
             <span class="reload-status" id="dailyStatusReloadStatus">未更新</span>
             <button class="btn btn-light" id="openDoctorButton" type="button">先生用画面を開く</button>
           </div>
@@ -901,6 +944,12 @@
             <button type="button" data-demo-token="demo-dental-child-taro">山田 太郎</button>
             <button type="button" data-demo-token="demo-dental-child-sakura">山田 さくら</button>
           </div>
+
+          
+        <div class="production-reception-note">
+          <strong>本番API受付モード</strong>
+          今日の来院予定・受付待ち・受付済みは、Worker API / Supabase から取得した同じ結果だけで表示します。受付済み保存後もAPIから再読込します。
+        </div>
 
           <div class="message" id="scanMessage"></div>
 
@@ -1011,57 +1060,10 @@
 
       const CONFIG = window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
 
-      const DEMO_PATIENTS = [
-        {
-          role: "お母さん",
-          token: "demo-dental-patient-001",
-          member_no: "D260600001",
-          patient_name: "山田 花子",
-          patient_name_kana: "ヤマダ ハナコ",
-          patient_kind: "adult",
-          phone: "090-0000-0000",
-          next_appointment_date: "",
-          next_appointment_time: "09:30",
-          next_appointment_memo: "定期検診・クリーニング",
-          patient_memo: "お母さん本人の診察券。家族3名分をこのLINEにまとめています。",
-          internal_memo: "受付ではLINE連携済みであることを確認。子ども2名の診察券も切替可能。",
-          line_link_status: "linked"
-        },
-        {
-          role: "長男・太郎くん",
-          token: "demo-dental-child-taro",
-          member_no: "D260600002",
-          patient_name: "山田 太郎",
-          patient_name_kana: "ヤマダ タロウ",
-          patient_kind: "child",
-          school_grade: "小学3年生",
-          guardian_name: "山田 花子",
-          guardian_phone: "090-0000-0000",
-          next_appointment_date: "",
-          next_appointment_time: "10:00",
-          next_appointment_memo: "フッ素塗布・定期チェック",
-          patient_memo: "長男。お母さんのLINEに診察券を紐づけ。",
-          internal_memo: "保護者同席。怖がりやすいので声かけを丁寧に。",
-          line_link_status: "linked"
-        },
-        {
-          role: "長女・さくらちゃん",
-          token: "demo-dental-child-sakura",
-          member_no: "D260600003",
-          patient_name: "山田 さくら",
-          patient_name_kana: "ヤマダ サクラ",
-          patient_kind: "child",
-          school_grade: "年長",
-          guardian_name: "山田 花子",
-          guardian_phone: "090-0000-0000",
-          next_appointment_date: "",
-          next_appointment_time: "10:30",
-          next_appointment_memo: "定期チェック・ブラッシング確認",
-          patient_memo: "長女。お母さんのLINEに診察券を紐づけ。",
-          internal_memo: "初回説明は短めに。兄と一緒に来院予定。",
-          line_link_status: "linked"
-        }
-      ];
+      // STEP 30-28:
+      // 本番環境に寄せるため、固定デモ患者では受付一覧を表示しない。
+      // 受付一覧と数字は Worker API / Supabase から取得した daily_status rows のみで作る。
+      const DEMO_PATIENTS = [];
 
       const FAMILY_CONTEXT = {
         family: {
@@ -1073,17 +1075,7 @@
           line_link_status: "linked",
           line_link_source: "demo"
         },
-        cards: DEMO_PATIENTS.map((p) => ({
-          role_label: p.role,
-          qr_token: p.token,
-          member_no: p.member_no,
-          patient_name: p.patient_name,
-          patient_name_kana: p.patient_name_kana,
-          patient_kind: p.patient_kind,
-          school_grade: p.school_grade || "",
-          guardian_name: p.guardian_name || "",
-          is_primary: p.token === "demo-dental-patient-001"
-        }))
+        cards: []
       };
 
       const state = {
@@ -1284,7 +1276,7 @@
         if (!els.reloadDailyStatusButton) return;
 
         els.reloadDailyStatusButton.disabled = Boolean(isLoading);
-        els.reloadDailyStatusButton.textContent = isLoading ? "更新中..." : "受付状態を更新";
+        els.reloadDailyStatusButton.textContent = isLoading ? "更新中..." : "受付状況を更新";
       }
 
 
@@ -1525,24 +1517,31 @@
         setDailyStatusReloadStatus("loading", "更新中...");
 
         if (showResultMessage) {
-          showMessage(els.scanMessage, "info", "今日の受付状態を確認しています...");
+          showMessage(els.scanMessage, "info", "今日の受付状況をWorker API / Supabaseから確認しています...");
         }
 
         try {
           const result = await apiFetch("/api/scan/today", {
             method: "GET",
             params: {
+              visit_date: getTodayJST(),
               date: getTodayJST(),
               limit: 100
             }
           });
 
-          const rows = Array.isArray(result.statuses)
-            ? result.statuses
-            : Array.isArray(result.daily_statuses)
-              ? result.daily_statuses
-              : [];
+          const rows = Array.isArray(result.rows)
+            ? result.rows
+            : Array.isArray(result.items)
+              ? result.items
+              : Array.isArray(result.statuses)
+                ? result.statuses
+                : Array.isArray(result.daily_statuses)
+                  ? result.daily_statuses
+                  : [];
 
+          // STEP 30-28:
+          // 固定デモ/ローカル受付ではなく、API結果のみを画面の正にする。
           state.dbStatuses = rows.map(normalizeDailyStatusRow);
           state.dbAvailable = true;
 
@@ -1556,19 +1555,20 @@
             showMessage(
               els.scanMessage,
               "success",
-              `今日の受付状態を更新しました。\n最終更新：${updatedAt}\n表示が変わらない場合は、受付状況に変更がない状態です。`
+              `今日の受付状況を更新しました。\n最終更新：${updatedAt}\n表示が変わらない場合は、受付状況に変更がない状態です。`
             );
           }
         } catch (error) {
           console.error(error);
           state.dbAvailable = false;
+          state.dbStatuses = [];
           setDailyStatusReloadStatus("error", "更新失敗");
 
           if (showResultMessage) {
             showMessage(
               els.scanMessage,
               "error",
-              "受付状態の更新に失敗しました。\n\n" +
+              "受付状況の更新に失敗しました。\n\n" +
               "確認すること：\n" +
               "・受付・診療ステータス用SQLが完了しているか\n" +
               "・連携APIが最新版か\n" +
@@ -1590,87 +1590,74 @@
       }
 
       function loadLocalReceptions() {
-        try {
-          const raw = localStorage.getItem(getReceptionStorageKey());
-          state.localReceptions = raw ? JSON.parse(raw) : [];
-          if (!Array.isArray(state.localReceptions)) state.localReceptions = [];
-        } catch (error) {
-          state.localReceptions = [];
-        }
+        // STEP 30-28:
+        // 本番環境では受付状態の正を localStorage にしない。
+        // 受付済み状態は Worker API / Supabase から読み込む。
+        state.localReceptions = [];
       }
 
       function saveLocalReceptions() {
-        try {
-          localStorage.setItem(getReceptionStorageKey(), JSON.stringify(state.localReceptions || []));
-        } catch (error) {
-          console.warn(error);
-        }
+        // STEP 30-28:
+        // 本番環境では受付済み状態を localStorage に保存しない。
+        // Worker API / Supabase への保存成功後、API再読込で反映する。
       }
 
       function isReceived(token) {
         const dbRow = getDailyStatusByToken(token);
-
-        if (dbRow) {
-          return dbRow.reception_status === "checked_in";
-        }
-
-        return state.localReceptions.some((item) => item.qr_token === token || item.member_no === token);
+        return Boolean(dbRow && dbRow.reception_status === "checked_in");
       }
 
       function getLineUnlinkedCount() {
-        return DEMO_PATIENTS.filter((p) => p.line_link_status !== "linked").length;
+        if (!Array.isArray(state.dbStatuses)) return 0;
+        return state.dbStatuses.filter((row) => {
+          const userId = row.family_line_user_id || "";
+          const status = row.family_line_link_status || row.line_link_status || "";
+          return !userId || status === "unlinked" || status === "not_linked";
+        }).length;
       }
 
       function updateStats() {
-        if (state.dbAvailable && Array.isArray(state.dbStatuses) && state.dbStatuses.length) {
-          const schedule = state.dbStatuses.length;
-          const received = state.dbStatuses.filter((row) => row.reception_status === "checked_in").length;
-          const waiting = Math.max(schedule - received, 0);
-          const lineUnlinked = state.dbStatuses.filter((row) => {
-            const userId = row.family_line_user_id || "";
-            const status = row.family_line_link_status || "";
-            return !userId || status === "unlinked" || status === "not_linked";
-          }).length;
-
-          els.statSchedule.textContent = String(schedule);
-          els.statReceived.textContent = String(received);
-          els.statWaiting.textContent = String(waiting);
-          els.statLineUnlinked.textContent = String(lineUnlinked);
-          return;
-        }
-
-        const schedule = DEMO_PATIENTS.length;
-        const received = state.localReceptions.length;
+        // STEP 30-28:
+        // 受付iPadの数字も Worker API / Supabase の結果だけで集計する。
+        const rows = Array.isArray(state.dbStatuses) ? state.dbStatuses : [];
+        const schedule = rows.length;
+        const received = rows.filter((row) => row.reception_status === "checked_in").length;
         const waiting = Math.max(schedule - received, 0);
+        const lineUnlinked = rows.filter((row) => {
+          const userId = row.family_line_user_id || "";
+          const status = row.family_line_link_status || row.line_link_status || "";
+          return !userId || status === "unlinked" || status === "not_linked";
+        }).length;
 
         els.statSchedule.textContent = String(schedule);
         els.statReceived.textContent = String(received);
         els.statWaiting.textContent = String(waiting);
-        els.statLineUnlinked.textContent = String(getLineUnlinkedCount());
+        els.statLineUnlinked.textContent = String(lineUnlinked);
       }
 
       function renderQueue() {
-        const sourceRows = (state.dbAvailable && Array.isArray(state.dbStatuses) && state.dbStatuses.length)
-          ? state.dbStatuses.map((row) => ({
-              token: row.qr_token,
-              member_no: row.member_no,
-              patient_name: row.patient_name,
-              role: row.family_display_label || row.family_relationship || (row.patient_kind === "child" ? "子ども診察券" : "本人診察券"),
-              next_appointment_time: String(row.scheduled_time || "").slice(0, 5),
-              next_appointment_memo: row.scheduled_label || row.task_summary,
-              done: row.reception_status === "checked_in",
-              source: "db"
-            }))
-          : DEMO_PATIENTS.map((p) => ({
-              token: p.token,
-              member_no: p.member_no,
-              patient_name: p.patient_name,
-              role: p.role,
-              next_appointment_time: p.next_appointment_time,
-              next_appointment_memo: p.next_appointment_memo,
-              done: isReceived(p.token),
-              source: "demo"
-            }));
+        const apiRows = Array.isArray(state.dbStatuses) ? state.dbStatuses : [];
+
+        if (!apiRows.length) {
+          els.queueList.innerHTML = `
+            <div class="api-empty-reception">
+              <strong>本日の受付予定がありません</strong>
+              固定デモ患者では表示しません。右上の「受付状況を更新」で Worker API / Supabase から本日の受付予定を取得してください。
+            </div>
+          `;
+          return;
+        }
+
+        const sourceRows = apiRows.map((row) => ({
+          token: row.qr_token,
+          member_no: row.member_no,
+          patient_name: row.patient_name,
+          role: row.family_display_label || row.family_relationship || (row.patient_kind === "child" ? "子ども診察券" : "本人診察券"),
+          next_appointment_time: String(row.scheduled_time || "").slice(0, 5),
+          next_appointment_memo: row.scheduled_label || row.task_summary,
+          done: row.reception_status === "checked_in",
+          source: "api"
+        }));
 
         const rows = sourceRows.map((p) => {
           return `
@@ -1915,19 +1902,9 @@
             return;
           }
 
-          const isDemo =
-            parsed.raw === "demo" ||
-            parsed.token.startsWith("demo-dental-") ||
-            parsed.member_no.startsWith("D260600") ||
-            DEMO_PATIENTS.some((p) => p.patient_name.includes(parsed.raw) || p.member_no === parsed.raw || p.token === parsed.raw);
-
-          if (isDemo) {
-            const data = makeDemoData(parsed.token || parsed.member_no || parsed.raw);
-            renderPatient(data);
-            await logScan(parsed.raw, "demo_success", data.patient);
-            showMessage(els.scanMessage, "success", "デモ患者を表示しました。");
-            return;
-          }
+          // STEP 30-28:
+          // 本番寄せのため、固定デモ患者へのフォールバック表示は行わない。
+          // 今日の受付予定にいない患者は、SCAN_LOOKUP API で確認する。
 
           if (!getAdminCode()) {
             showMessage(els.scanMessage, "warning", "実データ検索には管理コードが必要です。左下の管理設定に管理コードを保存してください。");
@@ -2090,22 +2067,14 @@
             throw new Error(result.message || result.error || "受付保存に失敗しました。");
           }
 
-          state.localReceptions.push({
-            qr_token: patient.qr_token,
-            member_no: patient.member_no,
-            patient_name: patient.patient_name,
-            received_at: new Date().toISOString(),
-            staff_name: getStaffName()
-          });
-
-          saveLocalReceptions();
-
+          // STEP 30-28:
+          // ローカル保存ではなく、API保存成功後にSupabaseから再読込して反映する。
           await loadDailyStatuses(false);
 
           showMessage(
             els.patientMessage,
             "success",
-            `${patient.patient_name} 様を受付済みにしました。\\n先生用画面にも受付済みとして反映されます。`
+            `${patient.patient_name} 様を受付済みにしました。\\nSupabaseに保存しました。先生用画面・管理トップにも受付済みとして反映されます。`
           );
 
           const dbRow = getDailyStatusByToken(patient.qr_token);
@@ -2222,7 +2191,7 @@
         els.saveAdminCodeButton.addEventListener("click", () => {
           setAdminCode(els.adminCodeInput.value.trim());
           setStaffName(els.staffNameInput.value.trim() || "受付スタッフ");
-          showMessage(els.scanMessage, "success", "管理コードとスタッフ名を保存しました。受付状態を更新します。");
+          showMessage(els.scanMessage, "success", "管理コードとスタッフ名を保存しました。受付状況を更新します。");
           loadDailyStatuses(true);
         });
 
@@ -2250,7 +2219,7 @@
 
         if (getAdminCode()) {
           loadDailyStatuses(false);
-          showMessage(els.scanMessage, "info", "受付iPad画面を開きました。今日の受付状態を更新します。");
+          showMessage(els.scanMessage, "info", "受付iPad画面を開きました。今日の受付状況を更新します。");
         } else {
           showMessage(els.scanMessage, "info", "受付iPad画面を開きました。受付状態の共有には左下で管理コードを保存してください。まずはデモ患者ボタンでも動作確認できます。");
         }
