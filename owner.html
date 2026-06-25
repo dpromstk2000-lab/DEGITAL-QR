@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-34BB owner.html 古い今日の受付削除</title>
+  <title>DPRO SHOP | STEP 30-34C owner.html LINEフォロー対象一覧</title>
 
   <script src="./config.js"></script>
 
@@ -2167,7 +2167,7 @@
 
   
     /* =========================================================
-       STEP 30-34B TOP REFRESH DIRECT FEEDBACK
+       STEP 30-34C TOP REFRESH DIRECT FEEDBACK
        右上「状況を更新」を押した反応を必ず表示
     ========================================================= */
 
@@ -2234,7 +2234,7 @@
 
   
     /* =========================================================
-       STEP 30-34B UNIFIED API COUNTS
+       STEP 30-34C UNIFIED API COUNTS
        旧カウント処理で上書きしない。本番API結果だけを今日の状況に反映
     ========================================================= */
 
@@ -2262,7 +2262,7 @@
 
   
     /* =========================================================
-       STEP 30-34B PRODUCTION OWNER CLEANUP
+       STEP 30-34C PRODUCTION OWNER CLEANUP
        owner.htmlから営業前DEMO操作を外し、医院管理画面として整理
     ========================================================= */
 
@@ -2287,6 +2287,152 @@
       margin-bottom: 2px;
     }
 
+  
+    /* =========================================================
+       STEP 30-34C LINE FOLLOW TARGET LIST
+       LINEフォロー数がある時に対象者が見えるようにする
+    ========================================================= */
+
+    .owner-follow-target-note {
+      border-radius: 20px;
+      border: 1px solid #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+      padding: 12px 13px;
+      font-size: 12px;
+      line-height: 1.7;
+      font-weight: 850;
+      margin-bottom: 12px;
+    }
+
+    .owner-follow-target-note strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
+    }
+
+    .owner-follow-target-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .owner-follow-target-card {
+      border-radius: 22px;
+      border: 1px solid #fde68a;
+      background:
+        radial-gradient(circle at 94% 8%, rgba(250,204,21,0.13), transparent 34%),
+        #ffffff;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 10px 28px rgba(15,23,42,0.055);
+    }
+
+    .owner-follow-target-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 15px;
+      font-weight: 950;
+    }
+
+    .owner-follow-target-name {
+      color: #0f172a;
+      font-size: 16px;
+      line-height: 1.4;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .owner-follow-target-meta {
+      margin-top: 4px;
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 760;
+    }
+
+    .owner-follow-target-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .owner-follow-target-pill {
+      border-radius: 999px;
+      padding: 6px 8px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .owner-follow-target-pill.yellow {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .owner-follow-target-pill.green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .owner-follow-target-pill.blue {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .owner-follow-target-action {
+      min-height: 40px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #2563eb;
+      color: #ffffff;
+      padding: 10px 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 950;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .owner-follow-empty {
+      border-radius: 22px;
+      border: 1px dashed #cbd5e1;
+      background: #f8fafc;
+      color: #64748b;
+      padding: 18px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 820;
+    }
+
+    @media (max-width: 740px) {
+      .owner-follow-target-card {
+        grid-template-columns: 1fr;
+      }
+
+      .owner-follow-target-action {
+        width: 100%;
+      }
+    }
+
   </style>
 </head>
 
@@ -2296,7 +2442,7 @@
     <section class="owner-left-app" id="ownerLeftApp">
       <aside class="owner-left-sidebar">
         <div class="owner-left-brand">
-          <div class="owner-left-kicker">DPRO SHOP / OWNER 30-34B</div>
+          <div class="owner-left-kicker">DPRO SHOP / OWNER 30-34C</div>
           <div class="owner-left-title">医院管理</div>
           <div class="owner-left-date" id="ownerTodayDate">本日</div>
         </div>
@@ -2502,13 +2648,25 @@
             <div>
               <div class="owner-panel-kicker">LINE FOLLOW</div>
               <div class="owner-panel-title">LINEフォロー</div>
-              <div class="owner-panel-sub">診療後に送るLINE文面コピー対象をまとめます。</div>
+              <div class="owner-panel-sub">診療後に送るLINE文面コピー対象を一覧で確認します。</div>
             </div>
             <div class="owner-panel-actions">
               <a class="owner-panel-link" href="./doctor.html?v=3027g">先生用で確認</a>
             </div>
           </div>
           <div class="owner-panel-body">
+            <div class="owner-follow-target-note">
+              <strong>LINEフォロー対象</strong>
+              ここでは「誰にLINEフォローが必要か」だけを確認します。文面作成・コピーは先生用画面で行います。
+            </div>
+
+            <div class="owner-follow-target-list" id="ownerLineFollowTargetList">
+              <div class="owner-follow-empty">
+                まだLINEフォロー対象を読み込んでいません。<br>
+                「受付・診療状況を更新」を押してください。
+              </div>
+            </div>
+
             <div class="owner-panel-mount" id="owner25bFollowMount"></div>
           </div>
         </section>
@@ -2702,7 +2860,7 @@
             受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。読み込み結果が空の場合も、APIの保存済み状態を表示します。
           </div>
           <div class="daily-status-version">
-            STEP 30-34B：受付操作は受付iPadへ集約。ここでは受付・診療状況の確認だけを行います。
+            STEP 30-34C：受付操作は受付iPadへ集約。LINEフォロー対象は左メニューから一覧確認できます。
           </div>
         </div>
 
@@ -3892,7 +4050,7 @@
       }
 
       async function loadToday() {
-        // STEP 30-34B:
+        // STEP 30-34C:
         // 古い「今日の受付」セクションは削除済み。
         // 受付の実操作は scan-ipad.html、管理確認は受付・診療状況パネルに集約。
         if (!els.loadTodayButton || !els.todayList || !els.todayMessage) {
@@ -5685,7 +5843,12 @@
           received_by_staff: raw.received_by_staff || "",
           exam_status: raw.exam_status || "waiting",
           line_follow_status: raw.line_follow_status || "none",
-          line_linked: linked
+          line_follow_message: raw.line_follow_message || raw.line_message_text || raw.line_follow_text || "",
+          line_follow_copied_at: raw.line_follow_copied_at || raw.line_follow_done_at || "",
+          line_linked: linked,
+          patient_id: raw.patient_id || raw.id || "",
+          qr_token: raw.qr_token || raw.token || "",
+          source_screen: raw.source_screen || ""
         };
       }
 
@@ -5703,6 +5866,70 @@
         return "未診療";
       }
 
+
+      function isLineFollowTarget(row) {
+        if (!row) return false;
+        return row.line_follow_status === "needed" || row.line_follow_status === "copied";
+      }
+
+      function getLineFollowStatusLabel(status) {
+        if (status === "copied") return "コピー済み";
+        if (status === "sent") return "送信済み";
+        if (status === "done") return "完了";
+        if (status === "needed") return "LINEフォロー待ち";
+        return "対象外";
+      }
+
+      function renderOwnerLineFollowTargets(statuses) {
+        const list = document.getElementById("ownerLineFollowTargetList");
+        if (!list) return;
+
+        const targets = (statuses || []).filter(isLineFollowTarget);
+
+        if (!targets.length) {
+          list.innerHTML = `
+            <div class="owner-follow-empty">
+              LINEフォロー対象はありません。<br>
+              診療済みにした患者さんでLINE文面コピー待ちが出ると、ここに表示されます。
+            </div>
+          `;
+          return;
+        }
+
+        list.innerHTML = targets.map((row) => {
+          const statusLabel = getLineFollowStatusLabel(row.line_follow_status);
+          const followClass = row.line_follow_status === "copied" ? "green" : "yellow";
+          const doctorUrl = "./doctor.html?v=3027g";
+          const lineLinkedLabel = row.line_linked ? "LINE連携済み" : "LINE案内必要";
+
+          return `
+            <div class="owner-follow-target-card">
+              <div class="owner-follow-target-icon">L</div>
+
+              <div>
+                <div class="owner-follow-target-name">${escapeHtml(row.patient_name)}</div>
+                <div class="owner-follow-target-meta">
+                  ${escapeHtml(row.member_no || "---")}
+                  ${row.scheduled_time ? " / " + escapeHtml(row.scheduled_time) : ""}
+                  ${row.scheduled_label ? " / " + escapeHtml(row.scheduled_label) : ""}
+                </div>
+                <div class="owner-follow-target-meta">
+                  ${row.family_display_label ? escapeHtml(row.family_display_label) : "患者さん"}
+                  ${row.task_summary ? " / " + escapeHtml(row.task_summary) : ""}
+                </div>
+                <div class="owner-follow-target-pills">
+                  <span class="owner-follow-target-pill ${followClass}">${escapeHtml(statusLabel)}</span>
+                  <span class="owner-follow-target-pill ${row.exam_status === "completed" ? "green" : ""}">${escapeHtml(getExamLabel(row.exam_status))}</span>
+                  <span class="owner-follow-target-pill ${row.line_linked ? "green" : "yellow"}">${escapeHtml(lineLinkedLabel)}</span>
+                </div>
+              </div>
+
+              <a class="owner-follow-target-action" href="${doctorUrl}">先生用で確認</a>
+            </div>
+          `;
+        }).join("");
+      }
+
       function renderDailyStatuses(rows, mode = "api") {
         const statuses = (rows || []).map(normalizeStatus);
         const total = statuses.length;
@@ -5716,6 +5943,10 @@
         if (dailyEls.waitingReception) dailyEls.waitingReception.textContent = String(waitingReception);
         if (dailyEls.completed) dailyEls.completed.textContent = String(completed);
         if (dailyEls.follow) dailyEls.follow.textContent = String(follow);
+
+        // STEP 30-34C:
+        // LINEフォロー画面にも対象者一覧を表示する。
+        renderOwnerLineFollowTargets(statuses);
 
         if (!dailyEls.list) return;
 
@@ -5974,7 +6205,7 @@
       }
 
       function syncOwnerKpis() {
-        // STEP 30-34B:
+        // STEP 30-34C:
         // 古い dailyStatusTotal 側の数字で、上部の今日の状況を上書きしない。
         // ownerSyncTotal が存在する場合は、Worker API / Supabase の統一結果を優先する。
         const apiTotal = textNumber("ownerSyncTotal", NaN);
@@ -6031,7 +6262,7 @@
           moveInto(followCard, "owner25bFollowMount");
         }
 
-        // STEP 30-34B:
+        // STEP 30-34C:
         // 営業前DEMO設定・営業用説明モードは system-check.html に集約。
         // owner.html は医院の日常管理画面として使うため、デモ用カードを移動・表示しない。
         const demoResetCard = findCardByTitle("営業前デモリセット");
@@ -6267,7 +6498,7 @@
         try {
           const waiting = Math.max(total - checked, 0);
 
-          // STEP 30-34B:
+          // STEP 30-34C:
           // 今日の状況の上部数字も、同じAPI結果から統一して反映する。
           setText("owner25bTotal", total);
           setText("owner25bWaiting", waiting);
@@ -6384,7 +6615,7 @@
 
 
   <script>
-    /* STEP 30-34B TOP REFRESH DIRECT SCRIPT */
+    /* STEP 30-34C TOP REFRESH DIRECT SCRIPT */
     (function () {
       "use strict";
 
@@ -6488,7 +6719,7 @@
         }
 
         setTimeout(function () {
-          // STEP 30-34B:
+          // STEP 30-34C:
           // 旧カウント処理でAPI統一結果を上書きしない。
           // renderRows() 側で、上部の今日の状況・左メニュー数字まで反映済み。
         }, 300);
@@ -6544,7 +6775,7 @@
 
 
   <script>
-    /* STEP 30-34B FINAL UNIFIED API REFRESH GUARD */
+    /* STEP 30-34C FINAL UNIFIED API REFRESH GUARD */
     (function () {
       "use strict";
 
