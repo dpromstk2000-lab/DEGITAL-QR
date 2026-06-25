@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-24B 患者管理メイン完成版 / 初期設定・休日設定</title>
+  <title>DPRO SHOP | STEP 30-35 admin.html 毎日使う患者管理画面</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1295,7 +1295,7 @@
 
   
     /* =========================================================
-       STEP 30-24 OWNER OPERATION OPTIMIZE
+       STEP 30-35 OWNER OPERATION OPTIMIZE
        オーナー実運用向け：患者管理メイン / 初期設定・休日設定は歯車へ
     ========================================================= */
 
@@ -1713,7 +1713,7 @@
 
   
     /* =========================================================
-       STEP 30-24B
+       STEP 30-35
        患者管理メイン完成版：検索 → 選択中患者 → 新規登録 → 家族/LINE
     ========================================================= */
 
@@ -1837,6 +1837,334 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-35 DAILY PATIENT MANAGEMENT INDEX
+       毎日使う患者管理：左インデックス + 右作業エリア
+    ========================================================= */
+
+    body.admin35-daily .owner-daily-summary {
+      display: none !important;
+    }
+
+    body.admin35-daily .owner-work-grid {
+      display: none !important;
+    }
+
+    .admin35-shell {
+      margin: 16px 0 18px;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .admin35-index {
+      position: sticky;
+      top: 14px;
+      border-radius: 28px;
+      border: 1px solid #dbeafe;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 16px 42px rgba(15, 23, 42, 0.08);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .admin35-index-title {
+      padding: 10px 11px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .admin35-index-title strong {
+      color: #0f172a;
+      font-size: 17px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+    }
+
+    .admin35-index-title span {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.55;
+      font-weight: 760;
+    }
+
+    .admin35-nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .admin35-nav-button {
+      width: 100%;
+      min-height: 58px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 9px 10px;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 9px;
+      align-items: center;
+      color: #0f172a;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.035);
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .admin35-nav-button:hover {
+      transform: translateY(-1px);
+      border-color: #bfdbfe;
+      background: #f8fbff;
+    }
+
+    .admin35-nav-button.is-active {
+      color: #ffffff;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-color: transparent;
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
+    }
+
+    .admin35-nav-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: #1d4ed8;
+      background: #eff6ff;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .admin35-nav-button.is-active .admin35-nav-icon {
+      color: #ffffff;
+      background: rgba(255,255,255,0.18);
+    }
+
+    .admin35-nav-main {
+      display: block;
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .admin35-nav-sub {
+      display: block;
+      margin-top: 2px;
+      color: #64748b;
+      font-size: 10px;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    .admin35-nav-button.is-active .admin35-nav-sub {
+      color: rgba(255,255,255,0.82);
+    }
+
+    .admin35-content {
+      min-width: 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    .admin35-panel {
+      display: none;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .admin35-panel.is-active {
+      display: grid;
+    }
+
+    .admin35-panel-head {
+      border-radius: 26px;
+      border: 1px solid #bbf7d0;
+      background:
+        radial-gradient(circle at 96% 10%, rgba(6,199,85,0.13), transparent 34%),
+        linear-gradient(135deg, #f0fdf4, #ffffff);
+      padding: 16px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .admin35-panel-kicker {
+      color: #16a34a;
+      font-size: 11px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .admin35-panel-title {
+      margin: 0;
+      color: #0f172a;
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: -0.06em;
+      font-weight: 950;
+    }
+
+    .admin35-panel-sub {
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.75;
+      font-weight: 770;
+    }
+
+    .admin35-panel-mount {
+      display: grid;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .admin35-panel-mount > .card {
+      margin: 0 !important;
+    }
+
+    .admin35-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .admin35-quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .admin35-mini-action {
+      min-height: 34px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      color: #1d4ed8;
+      padding: 8px 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      line-height: 1;
+      font-weight: 950;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .admin35-mini-action.primary {
+      border-color: transparent;
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 10px 20px rgba(37,99,235,0.18);
+    }
+
+    .admin35-empty-guide {
+      border-radius: 22px;
+      border: 1px dashed #cbd5e1;
+      background: #f8fafc;
+      color: #64748b;
+      padding: 18px;
+      font-size: 13px;
+      line-height: 1.75;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    body.admin35-daily #patientCreateCard,
+    body.admin35-daily #familyCardSection {
+      box-shadow: 0 10px 30px rgba(15,23,42,0.055);
+    }
+
+    body.admin35-daily #patientSearchCard {
+      border: 2px solid #bbf7d0;
+    }
+
+    body.admin35-daily #selectedPatientCard {
+      border: 2px solid #bfdbfe;
+    }
+
+    body.admin35-daily [data-owner-section="result"] {
+      border: 1px solid #bfdbfe;
+    }
+
+    body.admin35-daily #familyCardSection {
+      border: 2px solid #ddd6fe;
+    }
+
+    body.admin35-daily #patientCreateCard {
+      border: 2px solid #bfdbfe;
+    }
+
+    body.admin35-daily .owner-main-actions {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    body.admin35-daily .owner-action-card.orange {
+      display: none;
+    }
+
+    .admin35-settings-note {
+      border-radius: 20px;
+      border: 1px solid #fed7aa;
+      background: #fff7ed;
+      color: #9a3412;
+      padding: 12px 13px;
+      font-size: 12px;
+      line-height: 1.7;
+      font-weight: 850;
+    }
+
+    .admin35-settings-note strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
+    }
+
+    @media (max-width: 1040px) {
+      .admin35-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .admin35-index {
+        position: static;
+      }
+
+      .admin35-nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .admin35-nav {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      body.admin35-daily .owner-main-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .admin35-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .admin35-shell {
+        gap: 10px;
+      }
+    }
+
   </style>
 </head>
 
@@ -1846,20 +2174,20 @@
     <section class="owner-main-hero" id="ownerMainHero">
       <div class="owner-main-hero-top">
         <div>
-          <div class="owner-main-kicker">STEP 30-24B / 患者管理メイン完成版</div>
+          <div class="owner-main-kicker">STEP 30-35 / 毎日使う患者管理画面</div>
           <div class="owner-main-title">毎日使う<br>患者管理画面</div>
           <div class="owner-main-sub">
-            毎日使う「患者検索・選択中の患者確認・新規登録・家族診察券・LINE連携」を前面に出しました。
+            毎日使う「患者検索・選択中の患者確認」を前面に出し、新規登録・家族診察券・LINE連携は必要な時だけ開く形に整理しました。
             医院設定・休日設定・CSV一括取込など、最初だけ使うものは右上の歯車にまとめています。
           </div>
-          <div class="owner-mode-badge">患者管理メイン / 初期設定・休日設定は歯車へ格納</div>
+          <div class="owner-mode-badge">患者検索メイン / 新規登録・家族LINEは左インデックスから開く</div>
         </div>
 
         <div class="owner-gear-area">
           <button class="owner-gear-button" id="ownerSettingsToggleButton" type="button">⚙ 初期設定・休日設定</button>
-          <a class="owner-mini-link" href="./owner.html?v=3023g">管理画面</a>
-          <a class="owner-mini-link" href="./scan-ipad.html?v=3023h2">受付iPad</a>
-          <a class="owner-mini-link" href="./doctor.html?v=3023d4">先生用</a>
+          <a class="owner-mini-link" href="./owner.html?v=3034cc">管理トップ</a>
+          <a class="owner-mini-link" href="./scan-ipad.html?v=3029bb">受付iPad</a>
+          <a class="owner-mini-link" href="./doctor.html?v=3027g">先生用</a>
         </div>
       </div>
 
@@ -1917,6 +2245,139 @@
       </div>
     </section>
 
+    <section class="admin35-shell" id="admin35Shell" aria-label="毎日使う患者管理">
+      <aside class="admin35-index" aria-label="患者管理インデックス">
+        <div class="admin35-index-title">
+          <strong>患者管理メニュー</strong>
+          <span>毎日使う順番に整理しています。</span>
+        </div>
+
+        <nav class="admin35-nav">
+          <button class="admin35-nav-button is-active" type="button" data-admin35-tab="search">
+            <span class="admin35-nav-icon">検</span>
+            <span>
+              <span class="admin35-nav-main">患者検索</span>
+              <span class="admin35-nav-sub">最初に使う</span>
+            </span>
+          </button>
+
+          <button class="admin35-nav-button" type="button" data-admin35-tab="selected">
+            <span class="admin35-nav-icon">患</span>
+            <span>
+              <span class="admin35-nav-main">選択中の患者</span>
+              <span class="admin35-nav-sub">QR・LINE確認</span>
+            </span>
+          </button>
+
+          <button class="admin35-nav-button" type="button" data-admin35-tab="create">
+            <span class="admin35-nav-icon">登</span>
+            <span>
+              <span class="admin35-nav-main">新規登録</span>
+              <span class="admin35-nav-sub">必要な時だけ</span>
+            </span>
+          </button>
+
+          <button class="admin35-nav-button" type="button" data-admin35-tab="family">
+            <span class="admin35-nav-icon">家</span>
+            <span>
+              <span class="admin35-nav-main">家族・LINE</span>
+              <span class="admin35-nav-sub">家族診察券</span>
+            </span>
+          </button>
+
+          <button class="admin35-nav-button" type="button" data-admin35-tab="settings">
+            <span class="admin35-nav-icon">設</span>
+            <span>
+              <span class="admin35-nav-main">医院設定</span>
+              <span class="admin35-nav-sub">初回・変更時</span>
+            </span>
+          </button>
+        </nav>
+      </aside>
+
+      <section class="admin35-content">
+        <div class="admin35-panel is-active" data-admin35-panel="search">
+          <div class="admin35-panel-head">
+            <div class="admin35-panel-kicker">DAILY WORK</div>
+            <h2 class="admin35-panel-title">まず患者さんを検索</h2>
+            <div class="admin35-panel-sub">
+              来院時はここから始めます。診察券番号・名前・電話番号などで患者さんを探します。
+            </div>
+            <div class="admin35-quick-actions">
+              <button class="admin35-mini-action primary" type="button" data-admin35-open="selected">選択中の患者を見る</button>
+              <button class="admin35-mini-action" type="button" data-admin35-open="create">新規患者を登録</button>
+              <button class="admin35-mini-action" type="button" data-admin35-open="family">家族診察券</button>
+            </div>
+          </div>
+          <div class="admin35-panel-mount" id="admin35SearchMount"></div>
+        </div>
+
+        <div class="admin35-panel" data-admin35-panel="selected">
+          <div class="admin35-panel-head">
+            <div class="admin35-panel-kicker">SELECTED PATIENT</div>
+            <h2 class="admin35-panel-title">選択中の患者情報</h2>
+            <div class="admin35-panel-sub">
+              検索結果から選んだ患者さんのQR診察券・LINE連携・メモを確認します。
+            </div>
+            <div class="admin35-quick-actions">
+              <button class="admin35-mini-action primary" type="button" data-admin35-open="search">検索に戻る</button>
+              <button class="admin35-mini-action" type="button" data-admin35-open="family">家族・LINE連携</button>
+            </div>
+          </div>
+          <div class="admin35-panel-mount" id="admin35SelectedMount"></div>
+        </div>
+
+        <div class="admin35-panel" data-admin35-panel="create">
+          <div class="admin35-panel-head">
+            <div class="admin35-panel-kicker">NEW PATIENT</div>
+            <h2 class="admin35-panel-title">新規患者を登録</h2>
+            <div class="admin35-panel-sub">
+              既存患者が見つからない時だけ開きます。普段は閉じておくことで画面を短くします。
+            </div>
+            <div class="admin35-quick-actions">
+              <button class="admin35-mini-action primary" type="button" data-admin35-open="search">検索に戻る</button>
+              <button class="admin35-mini-action" type="button" data-admin35-open="selected">選択中の患者</button>
+            </div>
+          </div>
+          <div class="admin35-panel-mount" id="admin35CreateMount"></div>
+        </div>
+
+        <div class="admin35-panel" data-admin35-panel="family">
+          <div class="admin35-panel-head">
+            <div class="admin35-panel-kicker">FAMILY / LINE</div>
+            <h2 class="admin35-panel-title">家族診察券・LINE連携</h2>
+            <div class="admin35-panel-sub">
+              保護者LINEに家族分の診察券をまとめる時に使います。患者を選択してから確認します。
+            </div>
+            <div class="admin35-quick-actions">
+              <button class="admin35-mini-action primary" type="button" data-admin35-open="search">検索に戻る</button>
+              <a class="admin35-mini-action" href="./member.html">患者画面を開く</a>
+            </div>
+          </div>
+          <div class="admin35-panel-mount" id="admin35FamilyMount"></div>
+        </div>
+
+        <div class="admin35-panel" data-admin35-panel="settings">
+          <div class="admin35-panel-head">
+            <div class="admin35-panel-kicker">SETTINGS</div>
+            <h2 class="admin35-panel-title">医院設定・休診日設定</h2>
+            <div class="admin35-panel-sub">
+              毎日使う画面からは分けています。医院情報・休診日・CSV取込は右上の歯車で開きます。
+            </div>
+            <div class="admin35-quick-actions">
+              <button class="admin35-mini-action primary" type="button" id="admin35OpenSettingsButton">歯車設定を開く</button>
+              <button class="admin35-mini-action" type="button" data-admin35-open="search">検索に戻る</button>
+            </div>
+          </div>
+          <div class="admin35-settings-note">
+            <strong>設定はたまに使う項目です</strong>
+            毎日の受付・患者確認では基本的に触りません。初期導入時や休診日を変更する時だけ開きます。
+          </div>
+        </div>
+      </section>
+    </section>
+
+
     <section class="owner-setting-drawer" id="ownerSettingDrawer">
       <div class="owner-setting-drawer-head">
         <div>
@@ -1964,10 +2425,10 @@
             最新版の画面へすぐ移動
           </div>
           <div class="latest-shortcut-sub">
-            患者登録中でも、営業デモで使う画面へすぐ移動できます。受付iPad・先生用・管理画面は最新版の確認URLで開きます。
+            患者登録中でも、確認用デモで使う画面へすぐ移動できます。受付iPad・先生用・管理画面は最新版の確認URLで開きます。
           </div>
           <div class="latest-shortcut-version">
-            STEP 30-23L：admin.html 最新ショートカット対応
+            STEP 30-35：admin.html 最新ショートカット対応
           </div>
         </div>
       </div>
@@ -1993,17 +2454,17 @@
           <span>member.html?t=demo-dental-patient-001</span>
         </a>
 
-        <a class="latest-shortcut-link" href="./scan-ipad.html?v=3023h2">
+        <a class="latest-shortcut-link" href="./scan-ipad.html?v=3029bb">
           <strong>受付iPad</strong>
           <span>scan-ipad.html?v=3023h2</span>
         </a>
 
-        <a class="latest-shortcut-link" href="./doctor.html?v=3023d4">
+        <a class="latest-shortcut-link" href="./doctor.html?v=3027g">
           <strong>先生用画面</strong>
           <span>doctor.html?v=3023d4</span>
         </a>
 
-        <a class="latest-shortcut-link purple" href="./owner.html?v=3023g">
+        <a class="latest-shortcut-link purple" href="./owner.html?v=3034cc">
           <strong>管理画面</strong>
           <span>owner.html?v=3023g</span>
         </a>
@@ -2025,7 +2486,7 @@
       </div>
 
       <div class="top-actions">
-        <a class="badge-link" id="ownerLink" href="./owner.html?v=3023g">管理画面</a>
+        <a class="badge-link" id="ownerLink" href="./owner.html?v=3034cc">管理トップ</a>
         <a class="badge-link" id="scanLink" href="./scan.html">受付QR読取</a>
         <a class="badge-link" id="memberLink" href="./member.html?t=demo">患者画面</a>
         <button class="badge" id="demoModeButton" type="button">デモ登録</button>
@@ -2041,7 +2502,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./scan-ipad.html?v=3023h2">
+      <a class="role-shortcut" href="./scan-ipad.html?v=3029bb">
         <span class="role-shortcut-icon">受</span>
         <span>
           <span class="role-shortcut-title">受付iPad用</span>
@@ -2049,7 +2510,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./doctor.html?v=3023d4">
+      <a class="role-shortcut" href="./doctor.html?v=3027g">
         <span class="role-shortcut-icon doctor">医</span>
         <span>
           <span class="role-shortcut-title">先生・院長用</span>
@@ -2057,7 +2518,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./owner.html?v=3023g">
+      <a class="role-shortcut" href="./owner.html?v=3034cc">
         <span class="role-shortcut-icon">管</span>
         <span>
           <span class="role-shortcut-title">管理画面</span>
@@ -2420,7 +2881,7 @@
 
                 <div class="mini-grid">
                   <button class="btn btn-light" id="clearFormButton" type="button">入力をクリア</button>
-                  <button class="btn btn-warning" id="fillDemoFormButton" type="button">デモ入力</button>
+                  <button class="btn btn-warning" id="fillDemoFormButton" type="button">入力例</button>
                 </div>
               </div>
             </div>
@@ -2449,7 +2910,7 @@
                     お母さんのLINEに、家族の診察券をまとめる
                   </div>
                   <div class="family-demo-sub">
-                    営業デモでは、山田花子様のLINEに「お母さん・太郎くん・さくらちゃん」の3枚の診察券を追加します。
+                    家族で通院される場合は、保護者のLINEに家族分の診察券をまとめて追加できます。
                     患者さんはLINE公式のリッチメニューから診察券を開き、家族分を切り替えて受付できます。
                   </div>
                 </div>
@@ -2936,6 +3397,125 @@
     })();
   </script>
 
+
+
+  <script>
+    (function () {
+      "use strict";
+
+      function admin35$(id) {
+        return document.getElementById(id);
+      }
+
+      function admin35Move(card, mount) {
+        if (!card || !mount) return;
+        mount.appendChild(card);
+      }
+
+      function admin35Open(tab) {
+        const safeTab = tab || "search";
+
+        document.querySelectorAll("[data-admin35-panel]").forEach(function (panel) {
+          panel.classList.toggle("is-active", panel.getAttribute("data-admin35-panel") === safeTab);
+        });
+
+        document.querySelectorAll("[data-admin35-tab]").forEach(function (button) {
+          button.classList.toggle("is-active", button.getAttribute("data-admin35-tab") === safeTab);
+        });
+
+        const shell = admin35$("admin35Shell");
+        if (shell) {
+          shell.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      function setupAdmin35DailyPatientLayout() {
+        document.body.classList.add("admin35-daily");
+
+        const shell = admin35$("admin35Shell");
+        if (!shell || shell.dataset.ready === "1") return;
+        shell.dataset.ready = "1";
+
+        const searchCard = admin35$("patientSearchCard");
+        const selectedCard = admin35$("selectedPatientCard");
+        const createCard = admin35$("patientCreateCard");
+        const familyCard = admin35$("familyCardSection");
+        const resultCard = document.querySelector('[data-owner-section="result"]');
+
+        admin35Move(searchCard, admin35$("admin35SearchMount"));
+        admin35Move(selectedCard, admin35$("admin35SelectedMount"));
+        admin35Move(resultCard, admin35$("admin35SelectedMount"));
+        admin35Move(createCard, admin35$("admin35CreateMount"));
+        admin35Move(familyCard, admin35$("admin35FamilyMount"));
+
+        document.querySelectorAll("[data-admin35-tab]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            const tab = button.getAttribute("data-admin35-tab");
+            if (tab === "settings") {
+              admin35Open("settings");
+              return;
+            }
+            admin35Open(tab);
+          });
+        });
+
+        document.querySelectorAll("[data-admin35-open]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            admin35Open(button.getAttribute("data-admin35-open"));
+          });
+        });
+
+        const settingsButton = admin35$("admin35OpenSettingsButton");
+        if (settingsButton) {
+          settingsButton.addEventListener("click", function () {
+            const drawerButton = admin35$("ownerSettingsToggleButton");
+            if (drawerButton) {
+              drawerButton.click();
+            }
+          });
+        }
+
+        document.querySelectorAll('a[href="#patientCreateCard"], a[href="#patientSearchCard"], a[href="#familyCardSection"], a[href="#selectedPatientCard"]').forEach(function (link) {
+          link.addEventListener("click", function (event) {
+            const href = link.getAttribute("href");
+            const map = {
+              "#patientSearchCard": "search",
+              "#selectedPatientCard": "selected",
+              "#patientCreateCard": "create",
+              "#familyCardSection": "family"
+            };
+
+            if (map[href]) {
+              event.preventDefault();
+              admin35Open(map[href]);
+            }
+          });
+        });
+
+        const patientList = admin35$("patientList");
+        if (patientList) {
+          patientList.addEventListener("click", function () {
+            setTimeout(function () {
+              const selectedArea = admin35$("selectedArea");
+              if (selectedArea && !selectedArea.classList.contains("hidden")) {
+                admin35Open("selected");
+              }
+            }, 280);
+          });
+        }
+
+        admin35Open("search");
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", function () {
+          setTimeout(setupAdmin35DailyPatientLayout, 0);
+        });
+      } else {
+        setTimeout(setupAdmin35DailyPatientLayout, 0);
+      }
+    })();
+  </script>
 
 </body>
 </html>
