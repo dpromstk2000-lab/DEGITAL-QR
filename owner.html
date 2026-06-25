@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-27E owner.html 数字の取得元を本番APIに統一</title>
+  <title>DPRO SHOP | STEP 30-34 owner.html 本番医院管理画面整理</title>
 
   <script src="./config.js"></script>
 
@@ -2167,7 +2167,7 @@
 
   
     /* =========================================================
-       STEP 30-27B TOP REFRESH DIRECT FEEDBACK
+       STEP 30-34 TOP REFRESH DIRECT FEEDBACK
        右上「状況を更新」を押した反応を必ず表示
     ========================================================= */
 
@@ -2234,7 +2234,7 @@
 
   
     /* =========================================================
-       STEP 30-27E UNIFIED API COUNTS
+       STEP 30-34 UNIFIED API COUNTS
        旧カウント処理で上書きしない。本番API結果だけを今日の状況に反映
     ========================================================= */
 
@@ -2260,6 +2260,33 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-34 PRODUCTION OWNER CLEANUP
+       owner.htmlから営業前DEMO操作を外し、医院管理画面として整理
+    ========================================================= */
+
+    .owner-production-note {
+      margin: 0 0 14px;
+      border-radius: 18px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+    }
+
+    .owner-production-note strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
+    }
+
   </style>
 </head>
 
@@ -2269,7 +2296,7 @@
     <section class="owner-left-app" id="ownerLeftApp">
       <aside class="owner-left-sidebar">
         <div class="owner-left-brand">
-          <div class="owner-left-kicker">DPRO SHOP / OWNER 30-27</div>
+          <div class="owner-left-kicker">DPRO SHOP / OWNER 30-34</div>
           <div class="owner-left-title">医院管理</div>
           <div class="owner-left-date" id="ownerTodayDate">本日</div>
         </div>
@@ -2320,7 +2347,7 @@
             <span class="owner-menu-count">開</span>
           </a>
 
-          <a class="owner-menu-link" href="./scan-ipad.html?v=3023h2">
+          <a class="owner-menu-link" href="./scan-ipad.html?v=3029bb">
             <span class="owner-menu-icon">受</span>
             <span>
               <span class="owner-menu-main">受付iPadへ</span>
@@ -2329,7 +2356,7 @@
             <span class="owner-menu-count">開</span>
           </a>
 
-          <a class="owner-menu-link" href="./doctor.html?v=3023d4">
+          <a class="owner-menu-link" href="./doctor.html?v=3027g">
             <span class="owner-menu-icon">医</span>
             <span>
               <span class="owner-menu-main">先生用画面へ</span>
@@ -2337,15 +2364,6 @@
             </span>
             <span class="owner-menu-count">開</span>
           </a>
-
-          <button class="owner-menu-button" type="button" data-owner-tab="demo">
-            <span class="owner-menu-icon">デ</span>
-            <span>
-              <span class="owner-menu-main">デモ・確認</span>
-              <span class="owner-menu-sub">営業用/確認用</span>
-            </span>
-            <span class="owner-menu-count">奥</span>
-          </button>
         </nav>
       </aside>
 
@@ -2355,7 +2373,7 @@
             <div>
               <div class="owner-panel-kicker">TODAY</div>
               <div class="owner-panel-title">今日の状況</div>
-              <div class="owner-panel-sub">オーナーが最初に見る画面です。未対応だけすぐ分かるようにまとめます。</div>
+              <div class="owner-panel-sub">医院の管理者が最初に見る画面です。今日の状況だけを分かりやすくまとめます。</div>
             </div>
             <div class="owner-panel-actions">
               <button class="owner-panel-action" id="ownerRefreshMiniButton" type="button" onclick="DPRO_ownerTopRefreshDirect(event)">状況を更新</button>
@@ -2364,6 +2382,12 @@
           </div>
 
           <div class="owner-panel-body">
+
+            
+            <div class="owner-production-note">
+              <strong>本番医院管理モード</strong>
+              この画面は医院の日常管理用です。営業前DEMO設定や本番前チェックは system-check.html 側に集約しています。
+            </div>
 
             <div class="owner-top-refresh-feedback" id="ownerTopRefreshFeedback">
               <strong>まだ状況を更新していません</strong>
@@ -2422,8 +2446,8 @@
               <div class="owner-panel-sub">受付iPadと先生用画面の状態をここで確認します。</div>
             </div>
             <div class="owner-panel-actions">
-              <a class="owner-panel-link" href="./scan-ipad.html?v=3023h2">受付iPad</a>
-              <a class="owner-panel-link" href="./doctor.html?v=3023d4">先生用</a>
+              <a class="owner-panel-link" href="./scan-ipad.html?v=3029bb">受付iPad</a>
+              <a class="owner-panel-link" href="./doctor.html?v=3027g">先生用</a>
             </div>
           </div>
           <div class="owner-panel-body">
@@ -2433,12 +2457,12 @@
               先生用画面で「診療済み」や「LINE文面コピー」を行った後は、ここで最新状態を更新してください。
             </div>
 
-            <div class="owner-local-sync-note" style="margin-top:8px;border-radius:16px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;padding:9px 11px;font-size:12px;line-height:1.6;font-weight:850;">本番寄せ：この画面はブラウザ内の一時状態ではなく、Worker API / Supabase の保存済み状態だけを読み込みます。</div>
+            <div class="owner-local-sync-note" style="margin-top:8px;border-radius:16px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;padding:9px 11px;font-size:12px;line-height:1.6;font-weight:850;">本番寄せ：この画面はWorker API / Supabase の保存済み状態だけを読み込みます。</div>
 
             <div class="owner-sync-actions">
               <button class="owner-sync-button primary" id="ownerSyncRefreshButton" type="button" onclick="DPRO_ownerTopRefreshDirect(event)">最新状態を更新</button>
-              <a class="owner-sync-link" href="./doctor.html?v=3027d">先生用画面を開く</a>
-              <a class="owner-sync-link" href="./scan-ipad.html?v=3023h2">受付iPadを開く</a>
+              <a class="owner-sync-link" href="./doctor.html?v=3027g">先生用画面を開く</a>
+              <a class="owner-sync-link" href="./scan-ipad.html?v=3029bb">受付iPadを開く</a>
             </div>
 
             <div class="owner-sync-grid">
@@ -2481,7 +2505,7 @@
               <div class="owner-panel-sub">診療後に送るLINE文面コピー対象をまとめます。</div>
             </div>
             <div class="owner-panel-actions">
-              <a class="owner-panel-link" href="./doctor.html?v=3023d4">先生用で確認</a>
+              <a class="owner-panel-link" href="./doctor.html?v=3027g">先生用で確認</a>
             </div>
           </div>
           <div class="owner-panel-body">
@@ -2516,35 +2540,7 @@
             </div>
           </div>
         </section>
-
-        <section class="owner-left-panel" data-owner-panel="demo">
-          <div class="owner-panel-head">
-            <div>
-              <div class="owner-panel-kicker">DEMO / CHECK</div>
-              <div class="owner-panel-title">デモ・確認</div>
-              <div class="owner-panel-sub">営業前デモリセット、営業ガイド、画面一覧など、毎日使わないものをここにまとめます。</div>
-            </div>
-            <div class="owner-panel-actions">
-              <a class="owner-panel-link" href="./demo-guide.html?v=3023i">営業ガイド</a>
-              <a class="owner-panel-link" href="./index-list.html?v=3023j">画面一覧</a>
-              <a class="owner-panel-link" href="./index.html?v=3023k">トップ</a>
-            </div>
-          </div>
-          <div class="owner-panel-body">
-            <div class="owner-demo-grid" style="margin-bottom: 12px;">
-              <div class="owner-info-card">
-                <strong>営業前に使う</strong>
-                <span>営業前デモリセットや説明モードは、通常業務ではなくデモ前だけ使います。</span>
-              </div>
-              <div class="owner-info-card">
-                <strong>本番では奥へ</strong>
-                <span>本番導入後は、このメニューは目立たない場所に置くか、非表示にする想定です。</span>
-              </div>
-            </div>
-            <div class="owner-panel-mount" id="owner25bDemoMount"></div>
-          </div>
-        </section>
-      </section>
+</section>
     </section>
 
     <header class="top-bar">
@@ -2559,9 +2555,6 @@
         <a class="badge-link" id="scanLink" href="./scan.html">受付QR読取</a>
         <a class="badge-link" id="memberLink" href="./member.html?t=demo">患者画面</a>
         <button class="badge" id="reloadSettingsButton" type="button">設定更新</button>
-        <button class="badge" id="salesGuideToggleButton" type="button">説明モードON</button>
-        <button class="badge" id="demoResetButton" type="button">営業前デモリセット</button>
-        <button class="badge" id="demoButton" type="button">デモ表示</button>
       </div>
     </header>
 
@@ -2574,7 +2567,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./scan-ipad.html?v=3023h2">
+      <a class="role-shortcut" href="./scan-ipad.html?v=3029bb">
         <span class="role-shortcut-icon reception">受</span>
         <span>
           <span class="role-shortcut-title">受付iPad用</span>
@@ -2582,7 +2575,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./doctor.html?v=3023d4">
+      <a class="role-shortcut" href="./doctor.html?v=3027g">
         <span class="role-shortcut-icon doctor">医</span>
         <span>
           <span class="role-shortcut-title">先生・院長用</span>
@@ -2706,17 +2699,17 @@
             今日の受付・診療状況
           </div>
           <div class="daily-status-sub">
-            受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。読み込み結果が空の場合も、営業デモ用の山田家3名を予備表示します。
+            受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。読み込み結果が空の場合も、APIの保存済み状態を表示します。
           </div>
           <div class="daily-status-version">
-            STEP 30-27D：本番API読込版
+            STEP 30-34：本番API読込版
           </div>
         </div>
 
         <div class="daily-status-actions">
           <button class="btn btn-primary" id="dailyStatusReloadButton" type="button">受付・診療状況を更新</button>
-          <a class="btn btn-light" href="./scan-ipad.html?v=3023h2">受付iPad</a>
-          <a class="btn btn-light" href="./doctor.html?v=3023d4">先生用</a>
+          <a class="btn btn-light" href="./scan-ipad.html?v=3029bb">受付iPad</a>
+          <a class="btn btn-light" href="./doctor.html?v=3027g">先生用</a>
         </div>
       </div>
 
@@ -2841,26 +2834,6 @@
             <div id="followupsList" class="list" style="margin-top: 12px;">
               <div class="empty-box">まだ読み込んでいません。</div>
             </div>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <span class="icon">整</span>
-              営業前デモリセット
-            </h2>
-            <div class="card-subtitle">
-              営業前に押すと、デモ患者・今日の受付・フォロー対象を今日基準に整えます。
-            </div>
-          </div>
-
-          <div class="card-body">
-            <div class="actions" style="margin-top: 0;">
-              <button class="btn btn-warning" id="demoResetMainButton" type="button">デモデータを今日基準にリセット</button>
-            </div>
-
-            <div id="demoResetMessage" class="message"></div>
           </div>
         </section>
 
@@ -5420,7 +5393,9 @@
 
       function bindEvents() {
         els.reloadSettingsButton.addEventListener("click", loadSettings);
-        els.demoButton.addEventListener("click", showDemo);
+        if (els.demoButton) {
+          els.demoButton.addEventListener("click", showDemo);
+        }
 
         if (els.salesGuideToggleButton) {
           els.salesGuideToggleButton.addEventListener("click", toggleSalesGuideMode);
@@ -5788,8 +5763,8 @@
               </div>
 
               <div class="daily-status-side">
-                <a class="btn btn-light" href="./doctor.html?v=3023d4">先生用</a>
-                <a class="btn btn-light" href="./scan-ipad.html?v=3023h2">受付iPad</a>
+                <a class="btn btn-light" href="./doctor.html?v=3027g">先生用</a>
+                <a class="btn btn-light" href="./scan-ipad.html?v=3029bb">受付iPad</a>
               </div>
             </div>
           `;
@@ -5998,7 +5973,7 @@
       }
 
       function syncOwnerKpis() {
-        // STEP 30-27E:
+        // STEP 30-34:
         // 古い dailyStatusTotal 側の数字で、上部の今日の状況を上書きしない。
         // ownerSyncTotal が存在する場合は、Worker API / Supabase の統一結果を優先する。
         const apiTotal = textNumber("ownerSyncTotal", NaN);
@@ -6055,20 +6030,17 @@
           moveInto(followCard, "owner25bFollowMount");
         }
 
+        // STEP 30-34:
+        // 営業前DEMO設定・営業用説明モードは system-check.html に集約。
+        // owner.html は医院の日常管理画面として使うため、デモ用カードを移動・表示しない。
         const demoResetCard = findCardByTitle("営業前デモリセット");
         if (demoResetCard) {
-          moveInto(demoResetCard, "owner25bDemoMount");
-        }
-
-        const adminCodeCard = findCardByTitle("管理設定");
-        if (adminCodeCard) {
-          moveInto(adminCodeCard, "owner25bDemoMount");
+          demoResetCard.remove();
         }
 
         const salesGuidePanel = $("salesGuidePanel");
         if (salesGuidePanel) {
-          salesGuidePanel.classList.remove("hidden");
-          moveInto(salesGuidePanel, "owner25bDemoMount");
+          salesGuidePanel.classList.add("hidden");
         }
 
         document.querySelectorAll("[data-owner-tab]").forEach(function (button) {
@@ -6294,7 +6266,7 @@
         try {
           const waiting = Math.max(total - checked, 0);
 
-          // STEP 30-27E:
+          // STEP 30-34:
           // 今日の状況の上部数字も、同じAPI結果から統一して反映する。
           setText("owner25bTotal", total);
           setText("owner25bWaiting", waiting);
@@ -6411,7 +6383,7 @@
 
 
   <script>
-    /* STEP 30-27B TOP REFRESH DIRECT SCRIPT */
+    /* STEP 30-34 TOP REFRESH DIRECT SCRIPT */
     (function () {
       "use strict";
 
@@ -6515,7 +6487,7 @@
         }
 
         setTimeout(function () {
-          // STEP 30-27E:
+          // STEP 30-34:
           // 旧カウント処理でAPI統一結果を上書きしない。
           // renderRows() 側で、上部の今日の状況・左メニュー数字まで反映済み。
         }, 300);
@@ -6571,7 +6543,7 @@
 
 
   <script>
-    /* STEP 30-27E FINAL UNIFIED API REFRESH GUARD */
+    /* STEP 30-34 FINAL UNIFIED API REFRESH GUARD */
     (function () {
       "use strict";
 
