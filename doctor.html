@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-26F doctor.html 今日の診療に患者一覧</title>
+  <title>DPRO SHOP | STEP 30-27D doctor.html 本番API保存版</title>
 
   <script src="./config.js"></script>
 
@@ -854,8 +854,8 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="kicker">STEP 30-26F / DOCTOR</div>
-        <div class="brand-title">先生用<br>今日の患者確認</div>
+        <div class="kicker">STEP 30-27D / DOCTOR</div>
+        <div class="brand-title">先生用<br>本番保存フロー</div>
         <div class="date-pill" id="todayDate">本日</div>
       </div>
 
@@ -923,7 +923,7 @@
             <div class="panel-kicker">TODAY</div>
             <div class="panel-title">今日の診療</div>
             <div class="panel-sub">
-              今日の患者一覧からそのまま患者を開けます。受付状態の更新結果も必ず表示されます。
+              診療済み・LINE文面コピーはWorker APIへ保存します。保存成功後だけ画面状態を更新します。
             </div>
           </div>
 
@@ -971,7 +971,7 @@
             <div class="today-patient-head">
               <div class="today-patient-title">今日の患者一覧</div>
               <div class="today-patient-note">
-                ここから患者さんを開けます。患者を開くと「患者確認」画面に切り替わり、選択中の患者として診療済み・LINE文面作成ができます。
+                ここから患者さんを開けます。診療済み・LINE文面コピーはWorker API経由でSupabaseへ保存します。
               </div>
             </div>
 
@@ -1351,8 +1351,10 @@
 
       function getApiBase() {
         const candidates = [
+          window.DPRO_CONFIG && window.DPRO_CONFIG.API && window.DPRO_CONFIG.API.BASE_URL,
           window.DPRO_CONFIG && window.DPRO_CONFIG.API_BASE,
           window.DPRO_CONFIG && window.DPRO_CONFIG.API_BASE_URL,
+          window.APP_CONFIG && window.APP_CONFIG.API && window.APP_CONFIG.API.BASE_URL,
           window.APP_CONFIG && window.APP_CONFIG.API_BASE,
           window.API_BASE,
           DEFAULT_API_BASE
@@ -1362,9 +1364,11 @@
 
       function getClinicCode() {
         return (
+          (window.DPRO_CONFIG && window.DPRO_CONFIG.CLINIC && window.DPRO_CONFIG.CLINIC.CLINIC_CODE) ||
           (window.DPRO_CONFIG && window.DPRO_CONFIG.CLINIC_CODE) ||
+          (window.APP_CONFIG && window.APP_CONFIG.CLINIC && window.APP_CONFIG.CLINIC.CLINIC_CODE) ||
           (window.APP_CONFIG && window.APP_CONFIG.CLINIC_CODE) ||
-          "dpro-dental"
+          "dpro_dental_demo"
         );
       }
 
@@ -1767,41 +1771,81 @@
       };
 
       async function postJson(path, body) {
+        const res = await fetch(getApiBase() + path, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-admin-token": getAdminCode()
+          },
+          body: JSON.stringify(body)
+        });
+
+        let data = null;
         try {
-          await fetch(getApiBase() + path, {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
-              "x-admin-token": getAdminCode()
-            },
-            body: JSON.stringify(body)
-          });
+          data = await res.json();
         } catch (error) {
-          console.warn(path + " skipped", error);
+          data = null;
         }
+
+        if (!res.ok || !data || data.ok === false) {
+          const message = (data && (data.message || data.error)) || `API保存に失敗しました。HTTP ${res.status}`;
+          const error = new Error(message);
+          error.response = data;
+          throw error;
+        }
+
+        return data;
       }
 
       async function markDoneCore(token) {
         const patient = getPatient(token || state.selectedToken);
+        const button = $("markDoneButton");
+
         state.selectedToken = patient.token;
-        state.done[patient.token] = true;
-        state.checkedIn[patient.token] = true;
-        saveLocal();
-
-        await postJson("/api/doctor/exam-complete", {
-          clinic_code: getClinicCode(),
-          visit_date: getTodayJST(),
-          qr_token: patient.token,
-          member_no: patient.member_no,
-          doctor_memo: $("doctorMemo").value || patient.doctor_note || "",
-          doctor_name: getDoctorName(),
-          staff_name: getDoctorName(),
-          source_screen: "doctor.html"
-        });
-
         renderAll();
-        setPatientFeedback("success", `${patient.patient_name} 様を診療済みにしました`, "この患者さんのLINEフォロー文面を作成できます。診療済みにした患者さんだけがLINEフォロー対象になります。");
-        window.DPRO_doctorOpenLineFor(patient.token);
+
+        if (button) {
+          button.disabled = true;
+          button.textContent = "保存中...";
+        }
+
+        setPatientFeedback("warning", `${patient.patient_name} 様を診療済みに保存中です`, "Worker APIを通じて保存しています。保存成功後だけ診療済みに切り替えます。");
+
+        try {
+          const data = await postJson("/api/doctor/exam-complete", {
+            clinic_code: getClinicCode(),
+            visit_date: getTodayJST(),
+            date: getTodayJST(),
+            qr_token: patient.token,
+            member_no: patient.member_no,
+            doctor_memo: $("doctorMemo").value || patient.doctor_note || "",
+            doctor_name: getDoctorName(),
+            staff_name: getDoctorName(),
+            line_follow_status: "needed",
+            source_screen: "doctor.html"
+          });
+
+          state.done[patient.token] = true;
+          state.checkedIn[patient.token] = true;
+          saveLocal();
+          renderAll();
+
+          const savedStatus = data.daily_status || data.status || null;
+          const savedMessage = savedStatus
+            ? "Supabaseに保存済みです。owner.htmlの状況更新で反映されます。"
+            : "保存成功しました。owner.htmlの状況更新で反映されます。";
+
+          setPatientFeedback("success", `${patient.patient_name} 様を診療済みにしました`, savedMessage);
+          window.DPRO_doctorOpenLineFor(patient.token);
+        } catch (error) {
+          console.error("exam complete failed", error);
+          setPatientFeedback("error", "診療済みを保存できませんでした", error.message || "通信または保存に失敗しました。管理コード、Worker、Supabaseを確認してください。");
+        } finally {
+          if (button) {
+            button.disabled = false;
+            button.textContent = "診療済みにする";
+          }
+        }
       }
 
       window.DPRO_doctorMarkDone = function() {
@@ -1896,28 +1940,50 @@
       window.DPRO_doctorCopyLineMessage = async function() {
         const patient = getPatient(state.selectedToken);
         const message = $("lineMessage").value || "";
+        const button = $("copyLineButton");
 
         if (!message.trim()) {
           setStatus("lineStatus", "コピーするLINE文面がありません。");
           return;
         }
 
-        state.lineCopied[patient.token] = true;
-        saveLocal();
+        if (button) {
+          button.disabled = true;
+          button.textContent = "保存中...";
+        }
 
-        await postJson("/api/doctor/line-follow-copied", {
-          clinic_code: getClinicCode(),
-          visit_date: getTodayJST(),
-          qr_token: patient.token,
-          member_no: patient.member_no,
-          line_follow_message: message,
-          line_follow_template: $("templateSelect").value,
-          doctor_name: getDoctorName(),
-          source_screen: "doctor.html"
-        });
+        setStatus("lineStatus", "LINE文面コピー済み状態をWorker APIへ保存中です。");
 
-        await copyText(message, "lineStatus", "編集後のLINE文面をコピーしました。LINE公式チャットへ貼り付けて送信してください。自動送信はしていません。");
-        renderAll();
+        try {
+          await postJson("/api/doctor/line-follow-copied", {
+            clinic_code: getClinicCode(),
+            visit_date: getTodayJST(),
+            date: getTodayJST(),
+            qr_token: patient.token,
+            member_no: patient.member_no,
+            line_follow_message: message,
+            line_follow_template: $("templateSelect").value,
+            doctor_name: getDoctorName(),
+            ensure_exam_completed: true,
+            source_screen: "doctor.html"
+          });
+
+          state.lineCopied[patient.token] = true;
+          state.done[patient.token] = true;
+          state.checkedIn[patient.token] = true;
+          saveLocal();
+
+          await copyText(message, "lineStatus", "LINE文面コピー済みをSupabaseに保存しました。文面もコピーしました。LINE公式チャットへ貼り付けて送信してください。自動送信はしていません。");
+          renderAll();
+        } catch (error) {
+          console.error("line follow copied failed", error);
+          setStatus("lineStatus", error.message || "LINE文面コピー済み状態を保存できませんでした。");
+        } finally {
+          if (button) {
+            button.disabled = false;
+            button.textContent = "編集後の文面をコピー";
+          }
+        }
       };
 
       window.DPRO_doctorSaveAdminCode = function() {
