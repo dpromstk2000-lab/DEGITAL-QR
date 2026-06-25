@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-27B owner.html 右上状況更新ボタン直接反応修正</title>
+  <title>DPRO SHOP | STEP 30-27D owner.html 本番API読込版</title>
 
   <script src="./config.js"></script>
 
@@ -2339,7 +2339,7 @@
 
             <div class="owner-top-refresh-feedback" id="ownerTopRefreshFeedback">
               <strong>まだ状況を更新していません</strong>
-              右上の「状況を更新」を押すと、受付・診療・LINEフォロー状況を確認します。
+              右上の「状況を更新」を押すと、Worker APIからSupabase保存済みの受付・診療・LINEフォロー状況を確認します。
             </div>
             <div class="owner-compact-kpis">
               <div class="owner-compact-kpi">
@@ -2405,9 +2405,11 @@
               先生用画面で「診療済み」や「LINE文面コピー」を行った後は、ここで最新状態を更新してください。
             </div>
 
+            <div class="owner-local-sync-note" style="margin-top:8px;border-radius:16px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;padding:9px 11px;font-size:12px;line-height:1.6;font-weight:850;">本番寄せ：この画面はブラウザ内の一時状態ではなく、Worker API / Supabase の保存済み状態だけを読み込みます。</div>
+
             <div class="owner-sync-actions">
               <button class="owner-sync-button primary" id="ownerSyncRefreshButton" type="button" onclick="DPRO_ownerTopRefreshDirect(event)">最新状態を更新</button>
-              <a class="owner-sync-link" href="./doctor.html?v=3026e">先生用画面を開く</a>
+              <a class="owner-sync-link" href="./doctor.html?v=3027d">先生用画面を開く</a>
               <a class="owner-sync-link" href="./scan-ipad.html?v=3023h2">受付iPadを開く</a>
             </div>
 
@@ -2679,7 +2681,7 @@
             受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。読み込み結果が空の場合も、営業デモ用の山田家3名を予備表示します。
           </div>
           <div class="daily-status-version">
-            STEP 30-27B：右上状況更新ボタン直接反応修正
+            STEP 30-27D：本番API読込版
           </div>
         </div>
 
@@ -6104,8 +6106,10 @@
 
       function getApiBase() {
         const candidates = [
+          window.DPRO_CONFIG && window.DPRO_CONFIG.API && window.DPRO_CONFIG.API.BASE_URL,
           window.DPRO_CONFIG && window.DPRO_CONFIG.API_BASE,
           window.DPRO_CONFIG && window.DPRO_CONFIG.API_BASE_URL,
+          window.APP_CONFIG && window.APP_CONFIG.API && window.APP_CONFIG.API.BASE_URL,
           window.APP_CONFIG && window.APP_CONFIG.API_BASE,
           window.API_BASE,
           DEFAULT_API_BASE
@@ -6116,9 +6120,11 @@
 
       function getClinicCode() {
         return (
+          (window.DPRO_CONFIG && window.DPRO_CONFIG.CLINIC && window.DPRO_CONFIG.CLINIC.CLINIC_CODE) ||
           (window.DPRO_CONFIG && window.DPRO_CONFIG.CLINIC_CODE) ||
+          (window.APP_CONFIG && window.APP_CONFIG.CLINIC && window.APP_CONFIG.CLINIC.CLINIC_CODE) ||
           (window.APP_CONFIG && window.APP_CONFIG.CLINIC_CODE) ||
-          "dpro-dental"
+          "dpro_dental_demo"
         );
       }
 
@@ -6252,6 +6258,7 @@
       async function fetchRows() {
         const url = new URL(getApiBase() + "/api/owner/daily-statuses");
         url.searchParams.set("clinic_code", getClinicCode());
+        url.searchParams.set("date", getTodayJST());
         url.searchParams.set("visit_date", getTodayJST());
         url.searchParams.set("admin_token", getAdminCode());
 
@@ -6261,13 +6268,22 @@
           }
         });
 
-        if (!res.ok) {
-          throw new Error("HTTP " + res.status);
+        let data = null;
+        try {
+          data = await res.json();
+        } catch (error) {
+          data = null;
         }
 
-        const data = await res.json();
+        if (!res.ok || !data || data.ok === false) {
+          const message = (data && (data.message || data.error)) || `API読込に失敗しました。HTTP ${res.status}`;
+          throw new Error(message);
+        }
+
         if (Array.isArray(data.rows)) return data.rows;
         if (Array.isArray(data.items)) return data.items;
+        if (Array.isArray(data.statuses)) return data.statuses;
+        if (Array.isArray(data.daily_statuses)) return data.daily_statuses;
         if (Array.isArray(data)) return data;
         return [];
       }
@@ -6303,9 +6319,9 @@
         const follow = Number($("ownerSyncFollow")?.textContent || 0);
 
         setFeedback(
-          usedApi ? "success" : "warning",
-          usedApi ? "最新状態を更新しました " + now : "画面内デモ状態を表示しました " + now,
-          `診療済み ${done}件 / LINEフォロー待ち ${follow}件。先生用で操作後はこのボタンで再確認できます。`
+          "success",
+          "最新状態を更新しました " + now,
+          `診療済み ${done}件 / LINEフォロー待ち ${follow}件。Worker APIからSupabase保存済み状態を読み込みました。`
         );
 
         if (button) {
@@ -6431,7 +6447,7 @@
         const before = snapshot();
 
         markButton(button, true);
-        setTopFeedback("loading", "状況を更新中です", "受付iPad・先生用画面・LINEフォロー状態を確認しています。");
+        setTopFeedback("loading", "状況を更新中です", "Worker APIからSupabase保存済みの受付・診療・LINEフォロー状態を確認しています。");
 
         try {
           await runExistingRefresh(button);
