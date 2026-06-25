@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-30 最新画面入口</title>
+  <title>DPRO SHOP | STEP 30-36B index.html PC受付リーダーリンク追加</title>
 
   <style>
     :root {
@@ -492,7 +492,7 @@
     }
   
     /* =========================================================
-       STEP 30-30 LATEST SCREEN ENTRANCE
+       STEP 30-36B LATEST SCREEN ENTRANCE
        営業デモで古い画面を開かないための最新版入口
     ========================================================= */
 
@@ -558,6 +558,76 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-36B PC RECEPTION READER LINK
+       PC受付リーダーへの導線を追加
+    ========================================================= */
+
+    .pc36-link-card {
+      border-radius: 22px;
+      border: 1px solid #bfdbfe;
+      background:
+        radial-gradient(circle at 96% 8%, rgba(37,99,235,0.13), transparent 34%),
+        linear-gradient(135deg, #eff6ff, #ffffff);
+      color: #0f172a;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr);
+      gap: 11px;
+      align-items: center;
+      text-decoration: none;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+    }
+
+    .pc36-link-card:hover {
+      transform: translateY(-1px);
+      border-color: #93c5fd;
+    }
+
+    .pc36-link-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 17px;
+      display: grid;
+      place-items: center;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+    }
+
+    .pc36-link-title {
+      display: block;
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .pc36-link-desc {
+      display: block;
+      margin-top: 3px;
+      color: #475569;
+      font-size: 11px;
+      line-height: 1.55;
+      font-weight: 780;
+    }
+
+    .pc36-link-row {
+      margin: 12px 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    @media (min-width: 760px) {
+      .pc36-link-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
   </style>
 </head>
 
@@ -576,6 +646,16 @@
         まず受付iPadで受付、次に先生用で診療済み、最後に管理トップで数字確認、という順番で見せると伝わりやすいです。
         <div class="latest-route-grid">
           <a class="latest-route-pill" href="scan-ipad.html?v=3029b"><b>1. 受付iPad</b>QRリーダー / カメラ / 手入力</a>
+
+<a class="pc36-link-card" href="./scan-pc.html?v=3036">
+  <span class="pc36-link-icon">PC</span>
+  <span>
+    <span class="pc36-link-title">PC受付リーダー</span>
+    <span class="pc36-link-desc">USB/Bluetooth QRリーダー用。PC受付で診察券QRを読み取ります。</span>
+  </span>
+</a>
+
+
           <a class="latest-route-pill" href="doctor.html?v=3027g"><b>2. 先生用</b>本日の患者・診療待ち</a>
           <a class="latest-route-pill" href="owner.html?v=3027e"><b>3. 管理トップ</b>全体状況・LINEフォロー</a>
           <a class="latest-route-pill" href="admin.html?v=3024b"><b>4. 管理画面</b>患者登録・家族診察券</a>
@@ -589,7 +669,7 @@
 
     <section class="hero">
       <div class="hero-main">
-        <div class="kicker">DPRO SHOP / DEGITAL-QR / STEP 30-30</div>
+        <div class="kicker">DPRO SHOP / DEGITAL-QR / STEP 30-36B</div>
         <h1>LINEで使える<br>歯科デジタルQR診察券デモ</h1>
         <div class="lead">
           患者さんのLINE診察券、受付iPad、先生用画面、管理画面、患者登録をつなげて見せるトップページです。
@@ -829,7 +909,7 @@
     </section>
 
     <div class="footer">
-      DPRO SHOP / DEGITAL-QR / STEP 30-30<br>
+      DPRO SHOP / DEGITAL-QR / STEP 30-36B<br>
       歯科デジタルQR診察券デモのトップページ。営業時の入口として使用できます。
     </div>
   </main>
