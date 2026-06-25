@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-29 scan-ipad.html QRリーダー入力モード</title>
+  <title>DPRO SHOP | STEP 30-29BB scan-ipad.html 受付状況更新ボタン直接反応修正</title>
 
   <script src="./config.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -807,7 +807,7 @@
 
   
     /* =========================================================
-       STEP 30-29 PRODUCTION API ONLY RECEPTION
+       STEP 30-29B PRODUCTION API ONLY RECEPTION
        受付iPadも固定デモ/ローカル状態ではなくWorker API/Supabaseを正にする
     ========================================================= */
     .production-reception-note {
@@ -850,7 +850,7 @@
 
   
     /* =========================================================
-       STEP 30-29 HARDWARE QR READER MODE
+       STEP 30-29B HARDWARE QR READER MODE
        USB/Bluetooth QRリーダーをキーボード入力として受ける
     ========================================================= */
 
@@ -957,6 +957,46 @@
       display: none !important;
     }
 
+  
+    /* =========================================================
+       STEP 30-29B DIRECT RELOAD BUTTON
+       受付状況を更新ボタンを必ず押せる・反応が出るようにする
+    ========================================================= */
+
+    #reloadDailyStatusButton {
+      position: relative;
+      z-index: 30;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    #reloadDailyStatusButton.is-force-loading {
+      opacity: 0.72;
+      cursor: wait;
+    }
+
+    .reload-direct-note {
+      border-radius: 18px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+      margin: 10px 0 0;
+    }
+
+    .reload-direct-note strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 2px;
+    }
+
+
   </style>
 </head>
 
@@ -970,7 +1010,7 @@
           QRを読む → 患者確認 → LINE連携確認 → 受付済みにする。受付スタッフ向けに、操作を大きくシンプルにしています。
         </div>
         <div class="version-check-badge">
-          STEP 30-29：QRリーダー入力モード
+          STEP 30-29BB：受付状況更新ボタン直接反応修正
         </div>
       </div>
 
@@ -1072,7 +1112,7 @@
           </div>
 
           <div class="big-actions">
-            <button class="btn btn-light" id="reloadDailyStatusButton" type="button">受付状況を更新</button>
+            <button class="btn btn-light" id="reloadDailyStatusButton" type="button" onclick="DPRO_scanIpadReloadDailyStatus(event)">受付状況を更新</button>
             <span class="reload-status" id="dailyStatusReloadStatus">未更新</span>
             <button class="btn btn-light" id="openDoctorButton" type="button">先生用画面を開く</button>
           </div>
@@ -1203,7 +1243,7 @@
 
       const CONFIG = window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
 
-      // STEP 30-29:
+      // STEP 30-29B:
       // 本番環境に寄せるため、固定デモ患者では受付一覧を表示しない。
       // 受付一覧と数字は Worker API / Supabase から取得した daily_status rows のみで作る。
       const DEMO_PATIENTS = [];
@@ -1688,7 +1728,7 @@
                   ? result.daily_statuses
                   : [];
 
-          // STEP 30-29:
+          // STEP 30-29B:
           // 固定デモ/ローカル受付ではなく、API結果のみを画面の正にする。
           state.dbStatuses = rows.map(normalizeDailyStatusRow);
           state.dbAvailable = true;
@@ -1738,14 +1778,14 @@
       }
 
       function loadLocalReceptions() {
-        // STEP 30-29:
+        // STEP 30-29B:
         // 本番環境では受付状態の正を localStorage にしない。
         // 受付済み状態は Worker API / Supabase から読み込む。
         state.localReceptions = [];
       }
 
       function saveLocalReceptions() {
-        // STEP 30-29:
+        // STEP 30-29B:
         // 本番環境では受付済み状態を localStorage に保存しない。
         // Worker API / Supabase への保存成功後、API再読込で反映する。
       }
@@ -1765,7 +1805,7 @@
       }
 
       function updateStats() {
-        // STEP 30-29:
+        // STEP 30-29B:
         // 受付iPadの数字も Worker API / Supabase の結果だけで集計する。
         const rows = Array.isArray(state.dbStatuses) ? state.dbStatuses : [];
         const schedule = rows.length;
@@ -2129,7 +2169,7 @@
             return;
           }
 
-          // STEP 30-29:
+          // STEP 30-29B:
           // 本番寄せのため、固定デモ患者へのフォールバック表示は行わない。
           // 今日の受付予定にいない患者は、SCAN_LOOKUP API で確認する。
 
@@ -2294,7 +2334,7 @@
             throw new Error(result.message || result.error || "受付保存に失敗しました。");
           }
 
-          // STEP 30-29:
+          // STEP 30-29B:
           // ローカル保存ではなく、API保存成功後にSupabaseから再読込して反映する。
           await loadDailyStatuses(false);
           setTimeout(() => focusReaderInput(false), 400);
@@ -2393,12 +2433,96 @@
         showMessage(els.scanMessage, "success", "このiPad内の受付済みリストをリセットしました。共有されている受付状態は変更していません。");
       }
 
+
+      let reloadDirectRunId = 0;
+
+      window.DPRO_scanIpadReloadDailyStatus = async function(event, options = {}) {
+        if (event && typeof event.preventDefault === "function") {
+          event.preventDefault();
+        }
+
+        if (event && typeof event.stopPropagation === "function") {
+          event.stopPropagation();
+        }
+
+        const runId = ++reloadDirectRunId;
+        const button = els.reloadDailyStatusButton;
+        const showResultMessage = options.showResultMessage !== false;
+
+        if (button) {
+          button.disabled = true;
+          button.classList.add("is-force-loading");
+          button.textContent = "更新中...";
+        }
+
+        setDailyStatusReloadStatus("loading", "更新中...");
+
+        if (showResultMessage) {
+          showMessage(
+            els.scanMessage,
+            "info",
+            "受付状況を更新中です。Worker API / Supabase から本日の受付予定を取得しています。"
+          );
+        }
+
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("更新がタイムアウトしました。通信状況またはWorker APIを確認してください。")), 12000);
+        });
+
+        try {
+          await Promise.race([
+            loadDailyStatuses(showResultMessage),
+            timeoutPromise
+          ]);
+
+          setTimeout(() => {
+            if (runId !== reloadDirectRunId) return;
+            if (button) {
+              button.disabled = false;
+              button.classList.remove("is-force-loading");
+              button.textContent = "受付状況を更新";
+            }
+            setDailyStatusReloadStatus("", "更新完了 " + formatNowTime());
+            focusReaderInput(false);
+          }, 120);
+        } catch (error) {
+          if (runId !== reloadDirectRunId) return;
+
+          state.dbAvailable = false;
+          state.dbStatuses = [];
+          updateStats();
+          renderQueue();
+
+          if (button) {
+            button.disabled = false;
+            button.classList.remove("is-force-loading");
+            button.textContent = "受付状況を更新";
+          }
+
+          setDailyStatusReloadStatus("error", "更新失敗");
+          showMessage(
+            els.scanMessage,
+            "error",
+            "受付状況の更新に失敗しました。\n\n" +
+            "確認すること：\n" +
+            "・Worker API が最新版か\n" +
+            "・管理コードが正しいか\n" +
+            "・Supabase に本日の受付予定があるか\n\n" +
+            "詳細：" + (error.message || error)
+          );
+
+          focusReaderInput(false);
+        }
+      };
+
       function bindEvents() {
         els.startScanButton.addEventListener("click", startScanner);
         els.stopScanButton.addEventListener("click", () => stopScanner(true));
 
         if (els.reloadDailyStatusButton) {
-          els.reloadDailyStatusButton.addEventListener("click", () => loadDailyStatuses(true));
+          els.reloadDailyStatusButton.disabled = false;
+          els.reloadDailyStatusButton.onclick = window.DPRO_scanIpadReloadDailyStatus;
+          els.reloadDailyStatusButton.addEventListener("click", window.DPRO_scanIpadReloadDailyStatus);
         }
 
         if (els.openDoctorButton) {
@@ -2422,7 +2546,7 @@
           setAdminCode(els.adminCodeInput.value.trim());
           setStaffName(els.staffNameInput.value.trim() || "受付スタッフ");
           showMessage(els.scanMessage, "success", "管理コードとスタッフ名を保存しました。受付状況を更新します。");
-          loadDailyStatuses(true);
+          window.DPRO_scanIpadReloadDailyStatus(null, { showResultMessage: true });
         });
 
         els.staffNameInput.addEventListener("change", () => {
@@ -2448,10 +2572,16 @@
         bindEvents();
 
         if (getAdminCode()) {
-          loadDailyStatuses(false);
           showMessage(els.scanMessage, "info", "受付iPad画面を開きました。今日の受付状況を更新します。");
+          setTimeout(() => {
+            window.DPRO_scanIpadReloadDailyStatus(null, { showResultMessage: false });
+          }, 250);
         } else {
-          showMessage(els.scanMessage, "info", "受付iPad画面を開きました。受付状態の共有には左下で管理コードを保存してください。まずはデモ患者ボタンでも動作確認できます。");
+          showMessage(els.scanMessage, "info", "受付iPad画面を開きました。受付状態の共有には左下で管理コードを保存してください。");
+          if (els.reloadDailyStatusButton) {
+            els.reloadDailyStatusButton.disabled = false;
+            els.reloadDailyStatusButton.textContent = "受付状況を更新";
+          }
         }
       }
 
