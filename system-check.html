@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-32BB Failed to fetch 判定修正</title>
+  <title>DPRO SHOP | STEP 30-32CB Failed to fetch 判定修正</title>
   <style>
     :root {
       --line: #06c755;
@@ -414,12 +414,33 @@
       margin-bottom: 4px;
     }
 
+  
+    .admin-code-note {
+      border-radius: 24px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.8;
+      font-weight: 800;
+    }
+
+    .admin-code-note strong {
+      display: block;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 950;
+      margin-bottom: 4px;
+    }
+
   </style>
 </head>
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-32BB / Failed to fetch 判定修正</div>
+      <div class="badge">STEP 30-32CB / Failed to fetch 判定修正</div>
       <h1>API・数字・画面リンクを<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
@@ -446,8 +467,8 @@
     
     <section class="section">
       <div class="cors-note">
-        <strong>STEP 30-32B 修正内容</strong>
-        API確認は、まず admin_token をURLパラメータで渡すシンプルGETで実行します。
+        <strong>STEP 30-32C 修正内容</strong>
+        API確認は、Workerが読めるように admin_code / token / admin_token をURLパラメータで渡すシンプルGETで実行します。
         これにより、ブラウザのCORSプリフライトによる Failed to fetch を避けやすくします。
         また、受付iPad・先生用・管理トップのいずれかが取得失敗した場合は、総合判定をOKにしません。
       </div>
@@ -702,8 +723,8 @@
         }
       });
 
-      // STEP 30-32B:
-      // 診断ページではまず「シンプルGET」で確認する。
+      // STEP 30-32C:
+      // 診断ページではまず「シンプルGET」で確認する。管理コードは admin_code / token / admin_token の3種類で送る。
       // x-admin-token などのカスタムヘッダーを付けると、ブラウザがCORSプリフライトを行い、
       // エンドポイント側のOPTIONS/CORS差分で Failed to fetch になりやすいため。
       let res;
@@ -769,6 +790,8 @@
           clinic_code: clinicCode(),
           visit_date: date,
           date,
+          admin_code: adminCode(),
+          token: adminCode(),
           admin_token: adminCode(),
           limit: 100
         });
@@ -784,7 +807,19 @@
       } catch (error) {
         setStatus(prefix + "Status", "bad", "NG");
         setText(prefix + "Text", error.message || "API確認に失敗しました");
-        log(kind + " NG", { message: error.message, status: error.status, data: error.data });
+        log(kind + " NG", {
+          message: error.message,
+          status: error.status,
+          data: error.data,
+          sent_admin_params: {
+            admin_code: "送信済み",
+            token: "送信済み",
+            admin_token: "送信済み"
+          },
+          hint: error.status === 401
+            ? "401の場合は、Worker側が読む管理コード名、またはADMIN_TOKEN環境変数を確認してください。"
+            : "API側のレスポンスを確認してください。"
+        });
         return { total: 0, checked: 0, done: 0, waiting: 0, follow: 0, rows: [], ok: false, error: error.message || String(error) };
       }
     }
