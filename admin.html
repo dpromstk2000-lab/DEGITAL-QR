@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-35 admin.html 毎日使う患者管理画面</title>
+  <title>DPRO SHOP | STEP 30-35BB admin.html 最新情報を再読込</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1295,7 +1295,7 @@
 
   
     /* =========================================================
-       STEP 30-35 OWNER OPERATION OPTIMIZE
+       STEP 30-35B OWNER OPERATION OPTIMIZE
        オーナー実運用向け：患者管理メイン / 初期設定・休日設定は歯車へ
     ========================================================= */
 
@@ -1713,7 +1713,7 @@
 
   
     /* =========================================================
-       STEP 30-35
+       STEP 30-35B
        患者管理メイン完成版：検索 → 選択中患者 → 新規登録 → 家族/LINE
     ========================================================= */
 
@@ -1839,7 +1839,7 @@
 
   
     /* =========================================================
-       STEP 30-35 DAILY PATIENT MANAGEMENT INDEX
+       STEP 30-35B DAILY PATIENT MANAGEMENT INDEX
        毎日使う患者管理：左インデックス + 右作業エリア
     ========================================================= */
 
@@ -2165,6 +2165,66 @@
       }
     }
 
+  
+    /* =========================================================
+       STEP 30-35B SAFE REFRESH
+       admin.htmlにはデモ作成ではなく、最新情報の再読込だけを置く
+    ========================================================= */
+
+    .admin35-refresh-button {
+      width: 100%;
+      min-height: 38px;
+      margin-top: 8px;
+      border: 0;
+      border-radius: 999px;
+      background: #06c755;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 950;
+      box-shadow: 0 10px 22px rgba(6,199,85,0.20);
+    }
+
+    .admin35-refresh-button:disabled {
+      opacity: 0.66;
+      cursor: wait;
+    }
+
+    .admin35-refresh-status {
+      border-radius: 14px;
+      border: 1px solid #dcfce7;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 8px 9px;
+      font-size: 10px;
+      line-height: 1.55;
+      font-weight: 820;
+      white-space: pre-wrap;
+    }
+
+    .admin35-refresh-status.is-loading {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .admin35-refresh-status.is-done {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .admin35-refresh-status.is-error {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
   </style>
 </head>
 
@@ -2174,7 +2234,7 @@
     <section class="owner-main-hero" id="ownerMainHero">
       <div class="owner-main-hero-top">
         <div>
-          <div class="owner-main-kicker">STEP 30-35 / 毎日使う患者管理画面</div>
+          <div class="owner-main-kicker">STEP 30-35BB / 最新情報を再読込</div>
           <div class="owner-main-title">毎日使う<br>患者管理画面</div>
           <div class="owner-main-sub">
             毎日使う「患者検索・選択中の患者確認」を前面に出し、新規登録・家族診察券・LINE連携は必要な時だけ開く形に整理しました。
@@ -2250,6 +2310,13 @@
         <div class="admin35-index-title">
           <strong>患者管理メニュー</strong>
           <span>毎日使う順番に整理しています。</span>
+
+          <button class="admin35-refresh-button" id="admin35RefreshButton" type="button">
+            最新情報を再読込
+          </button>
+          <div class="admin35-refresh-status" id="admin35RefreshStatus">
+            system-check.html の営業前DEMO設定後も、ここではデータ作成せず最新表示だけ行います。
+          </div>
         </div>
 
         <nav class="admin35-nav">
@@ -2307,6 +2374,7 @@
               <button class="admin35-mini-action primary" type="button" data-admin35-open="selected">選択中の患者を見る</button>
               <button class="admin35-mini-action" type="button" data-admin35-open="create">新規患者を登録</button>
               <button class="admin35-mini-action" type="button" data-admin35-open="family">家族診察券</button>
+              <button class="admin35-mini-action" type="button" id="admin35RefreshMiniButton">最新情報を再読込</button>
             </div>
           </div>
           <div class="admin35-panel-mount" id="admin35SearchMount"></div>
@@ -2428,7 +2496,7 @@
             患者登録中でも、確認用デモで使う画面へすぐ移動できます。受付iPad・先生用・管理画面は最新版の確認URLで開きます。
           </div>
           <div class="latest-shortcut-version">
-            STEP 30-35：admin.html 最新ショートカット対応
+            STEP 30-35B：admin.html 最新ショートカット対応
           </div>
         </div>
       </div>
@@ -3429,12 +3497,137 @@
         }
       }
 
+
+      function admin35SetRefreshStatus(message, type) {
+        const status = admin35$("admin35RefreshStatus");
+        if (!status) return;
+
+        status.classList.remove("is-loading", "is-done", "is-error");
+        if (type) {
+          status.classList.add(type);
+        }
+        status.textContent = message || "";
+      }
+
+      function admin35GetCurrentSearchText() {
+        const input = admin35$("searchInput");
+        return input ? String(input.value || "").trim() : "";
+      }
+
+      function admin35SafeClick(element) {
+        if (!element) return false;
+
+        try {
+          element.click();
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function admin35ReloadLatestInfo() {
+        const refreshButton = admin35$("admin35RefreshButton");
+        const miniButton = admin35$("admin35RefreshMiniButton");
+        const buttons = [refreshButton, miniButton].filter(Boolean);
+
+        buttons.forEach(function (button) {
+          button.disabled = true;
+        });
+
+        admin35SetRefreshStatus("最新情報を再読込中です。デモデータ作成は行わず、現在の患者情報を読み直します。", "is-loading");
+
+        const searchText = admin35GetCurrentSearchText();
+        try {
+          sessionStorage.setItem("admin35RefreshSearchText", searchText);
+          sessionStorage.setItem("admin35RefreshAt", String(Date.now()));
+        } catch (error) {
+          // ignore
+        }
+
+        const searchButton = admin35$("searchButton");
+        const localButton = admin35$("showLocalButton");
+
+        /*
+          STEP 30-35B:
+          admin.htmlでは営業前DEMO設定を行わない。
+          ここでは、既存の検索処理がある場合は同じ検索を再実行する。
+          検索処理がない/外部設定読込前の場合でも、画面をキャッシュバスター付きで再読み込みする。
+        */
+        setTimeout(function () {
+          let clicked = false;
+
+          if (searchText && searchButton) {
+            clicked = admin35SafeClick(searchButton);
+          } else if (localButton) {
+            clicked = admin35SafeClick(localButton);
+          }
+
+          if (clicked) {
+            admin35SetRefreshStatus("最新情報を再読込しました。必要に応じて患者検索を続けてください。", "is-done");
+            buttons.forEach(function (button) {
+              button.disabled = false;
+            });
+            return;
+          }
+
+          const url = new URL(window.location.href);
+          url.searchParams.set("v", "3035b");
+          url.searchParams.set("refresh", String(Date.now()));
+          window.location.replace(url.toString());
+        }, 180);
+      }
+
+      function admin35RestoreAfterRefresh() {
+        let refreshAt = "";
+        let searchText = "";
+
+        try {
+          refreshAt = sessionStorage.getItem("admin35RefreshAt") || "";
+          searchText = sessionStorage.getItem("admin35RefreshSearchText") || "";
+        } catch (error) {
+          return;
+        }
+
+        if (!refreshAt) return;
+
+        try {
+          sessionStorage.removeItem("admin35RefreshAt");
+          sessionStorage.removeItem("admin35RefreshSearchText");
+        } catch (error) {
+          // ignore
+        }
+
+        const input = admin35$("searchInput");
+        if (input && searchText) {
+          input.value = searchText;
+        }
+
+        admin35SetRefreshStatus("最新情報を再読込しました。営業前DEMO設定は system-check.html に集約しています。", "is-done");
+
+        const searchButton = admin35$("searchButton");
+        if (searchText && searchButton) {
+          setTimeout(function () {
+            admin35SafeClick(searchButton);
+          }, 350);
+        }
+      }
+
       function setupAdmin35DailyPatientLayout() {
         document.body.classList.add("admin35-daily");
 
         const shell = admin35$("admin35Shell");
         if (!shell || shell.dataset.ready === "1") return;
         shell.dataset.ready = "1";
+
+        const refreshButton = admin35$("admin35RefreshButton");
+        if (refreshButton) {
+          refreshButton.addEventListener("click", admin35ReloadLatestInfo);
+        }
+
+        const refreshMiniButton = admin35$("admin35RefreshMiniButton");
+        if (refreshMiniButton) {
+          refreshMiniButton.addEventListener("click", admin35ReloadLatestInfo);
+        }
 
         const searchCard = admin35$("patientSearchCard");
         const selectedCard = admin35$("selectedPatientCard");
@@ -3504,6 +3697,7 @@
           });
         }
 
+        admin35RestoreAfterRefresh();
         admin35Open("search");
       }
 
