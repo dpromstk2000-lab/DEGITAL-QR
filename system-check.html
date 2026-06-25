@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-33B Failed to fetch 判定修正</title>
+  <title>DPRO SHOP | STEP 30-35N system-check 営業前DEMO混在版</title>
   <style>
     :root {
       --line: #06c755;
@@ -544,7 +544,7 @@
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-33B / Failed to fetch 判定修正</div>
+      <div class="badge">STEP 30-35N / Failed to fetch 判定修正</div>
       <h1>API・数字・画面リンクを<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
@@ -571,7 +571,7 @@
     
     <section class="section">
       <div class="cors-note">
-        <strong>STEP 30-33 修正内容</strong>
+        <strong>STEP 30-35N 修正内容</strong>
         API確認は、Workerが読めるように admin_code / token / admin_token をURLパラメータで渡すシンプルGETで実行します。
         これにより、ブラウザのCORSプリフライトによる Failed to fetch を避けやすくします。
         また、受付iPad・先生用・管理トップのいずれかが取得失敗した場合は、総合判定をOKにしません。
@@ -581,17 +581,23 @@
       <div class="demo-setup-panel">
         <h2>営業前DEMO設定</h2>
         <p>
-          営業前にここを押すと、山田家の家族診察券デモと、本日の受付・診療ステータスを見せやすい状態に整えます。
-          受付0件の寂しい状態ではなく、受付済み・診療待ち・診療済み・LINEフォローが見える状態にします。
+          営業前にここを押すと、山田家・背景患者だけでなく佐藤家・田中家・単独患者も混ざった、実際感ある本日の受付・診療ステータスに整えます。
+          受付iPad・先生用・管理トップに、本日の患者6人が自然に混ざって表示される状態にします。
         </p>
 
         <div class="demo-setup-stats">
-          <div class="demo-setup-stat">本日の患者<b>3</b></div>
-          <div class="demo-setup-stat">未受付<b>1</b></div>
-          <div class="demo-setup-stat">受付済み<b>2</b></div>
-          <div class="demo-setup-stat">診療待ち<b>1</b></div>
-          <div class="demo-setup-stat">診療済み<b>1</b></div>
+          <div class="demo-setup-stat">本日の患者<b>6</b></div>
+          <div class="demo-setup-stat">未受付<b>2</b></div>
+          <div class="demo-setup-stat">受付済み<b>4</b></div>
+          <div class="demo-setup-stat">診療待ち<b>2</b></div>
+          <div class="demo-setup-stat">診療済み<b>2</b></div>
           <div class="demo-setup-stat">LINEフォロー<b>1</b></div>
+        </div>
+
+
+        <div class="demo-setup-status" style="border-color:#bfdbfe;background:#eff6ff;color:#1d4ed8;">
+          本日デモ例：鈴木 一郎 / 山田 花子 / 佐藤 結衣 / 田中 蒼 / 山田 太郎 / 高橋 由美<br>
+          山田家・背景患者だけが順番に並ばないよう、実際の医院らしく患者さんを混在させます。
         </div>
 
         <div class="demo-setup-actions">
@@ -855,7 +861,7 @@
         }
       });
 
-      // STEP 30-33:
+      // STEP 30-35N:
       // 診断ページではまず「シンプルGET」で確認する。管理コードは admin_code / token / admin_token の3種類で送る。
       // x-admin-token などのカスタムヘッダーを付けると、ブラウザがCORSプリフライトを行い、
       // エンドポイント側のOPTIONS/CORS差分で Failed to fetch になりやすいため。
@@ -1038,7 +1044,7 @@
         button.disabled = true;
       });
 
-      setDemoSetupStatus("営業前DEMO設定を実行中です。山田家デモと本日の受付・診療状態を作り直しています...");
+      setDemoSetupStatus("営業前DEMO設定を実行中です。山田家・背景患者デモと本日の受付・診療状態を作り直しています...");
       log("営業前DEMO設定 開始");
 
       try {
