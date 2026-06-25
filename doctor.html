@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-26E doctor.html 患者選択フロー安全化</title>
+  <title>DPRO SHOP | STEP 30-26F doctor.html 今日の診療に患者一覧</title>
 
   <script src="./config.js"></script>
 
@@ -810,6 +810,43 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-26F TODAY PATIENT LIST
+       今日の診療から直接「患者を開く」
+    ========================================================= */
+
+    .today-patient-section {
+      margin-top: 16px;
+      border-radius: 24px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(135deg, #ffffff, #f8fbff);
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .today-patient-head { display: grid; gap: 4px; }
+
+    .today-patient-title {
+      color: #0f172a;
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .today-patient-note {
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 760;
+    }
+
+    .today-patient-list { display: grid; gap: 10px; }
+    .today-open-button { min-width: 150px; min-height: 44px; }
+
+
   </style>
 </head>
 
@@ -817,8 +854,8 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="kicker">STEP 30-26E / DOCTOR</div>
-        <div class="brand-title">先生用<br>患者選択フロー</div>
+        <div class="kicker">STEP 30-26F / DOCTOR</div>
+        <div class="brand-title">先生用<br>今日の患者確認</div>
         <div class="date-pill" id="todayDate">本日</div>
       </div>
 
@@ -886,7 +923,7 @@
             <div class="panel-kicker">TODAY</div>
             <div class="panel-title">今日の診療</div>
             <div class="panel-sub">
-              受付状態を更新すると、押したこと・確認中・完了時刻・結果が必ず表示されます。
+              今日の患者一覧からそのまま患者を開けます。受付状態の更新結果も必ず表示されます。
             </div>
           </div>
 
@@ -929,6 +966,18 @@
           </div>
 
           <div class="task-list" id="taskList"></div>
+
+          <div class="today-patient-section">
+            <div class="today-patient-head">
+              <div class="today-patient-title">今日の患者一覧</div>
+              <div class="today-patient-note">
+                ここから患者さんを開けます。患者を開くと「患者確認」画面に切り替わり、選択中の患者として診療済み・LINE文面作成ができます。
+              </div>
+            </div>
+
+            <div class="today-patient-list" id="todayPatientList"></div>
+          </div>
+
         </div>
       </section>
 
@@ -1546,6 +1595,27 @@
         `).join("");
       }
 
+
+      function renderTodayPatients() {
+        const list = $("todayPatientList");
+        if (!list) return;
+
+        list.innerHTML = state.patients.map((patient) => `
+          <div class="patient-card ${patient.token === state.selectedToken ? "is-selected" : ""}" id="todayPatientCard-${escapeHtml(patient.token)}">
+            <div class="patient-main">
+              <div class="patient-name">${escapeHtml(patient.patient_name)}</div>
+              <div class="patient-meta">
+                ${escapeHtml(patient.member_no)} / ${escapeHtml(patient.time)} / ${escapeHtml(patient.treatment)}
+              </div>
+              <div class="badges">${statusBadges(patient)}</div>
+            </div>
+            <div class="patient-actions safe-single">
+              <button class="small-button primary patient-open-button today-open-button" type="button" onclick="DPRO_doctorSelectPatient('${escapeHtml(patient.token)}')">患者を開く</button>
+            </div>
+          </div>
+        `).join("");
+      }
+
       function renderSelected() {
         const patient = getPatient(state.selectedToken);
         $("selectedPatientSummary").innerHTML = patient
@@ -1594,6 +1664,7 @@
         renderKpis();
         renderTasks();
         renderPatients();
+        renderTodayPatients();
         renderSelected();
         renderFollowList();
       }
@@ -1607,7 +1678,7 @@
         setPatientFeedback(
           "success",
           `${patient.patient_name} 様を開きました`,
-          `${patient.time} / ${patient.treatment}。この下の「選択中の患者」エリアでメモ確認・診療済み・LINE文面作成を行います。`
+          `${patient.time} / ${patient.treatment}。この下の「選択中の患者」エリアでメモ確認・診療済み・LINE文面作成を行います。今日の診療から直接開けるようになりました。`
         );
 
         window.DPRO_doctorSwitchTab("patients");
@@ -1896,7 +1967,7 @@
         applyTemplate(inferTemplateKey(getPatient(state.selectedToken)));
 
         // 初回でも確認ボタンが効いていることが分かるように患者確認メッセージだけ準備
-        setPatientFeedback("success", "患者さんを開いて確認できます", "一覧では「患者を開く」だけ表示します。診療済み・LINE文面作成は、選択中の患者エリアで行います。");
+        setPatientFeedback("success", "患者さんを開いて確認できます", "今日の診療と患者確認の両方に「患者を開く」を表示します。診療済み・LINE文面作成は、選択中の患者エリアで行います。");
       }
 
       if (document.readyState === "loading") {
