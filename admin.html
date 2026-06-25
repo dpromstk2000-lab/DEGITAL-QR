@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-35I admin.html 患者検索反応・診断強化</title>
+  <title>DPRO SHOP | STEP 30-35J admin.html 管理コード送信修正</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1295,7 +1295,7 @@
 
   
     /* =========================================================
-       STEP 30-35I OWNER OPERATION OPTIMIZE
+       STEP 30-35J OWNER OPERATION OPTIMIZE
        オーナー実運用向け：患者管理メイン / 初期設定・休日設定は歯車へ
     ========================================================= */
 
@@ -1713,7 +1713,7 @@
 
   
     /* =========================================================
-       STEP 30-35I
+       STEP 30-35J
        患者管理メイン完成版：検索 → 選択中患者 → 新規登録 → 家族/LINE
     ========================================================= */
 
@@ -1839,7 +1839,7 @@
 
   
     /* =========================================================
-       STEP 30-35I DAILY PATIENT MANAGEMENT INDEX
+       STEP 30-35J DAILY PATIENT MANAGEMENT INDEX
        毎日使う患者管理：左インデックス + 右作業エリア
     ========================================================= */
 
@@ -2167,7 +2167,7 @@
 
   
     /* =========================================================
-       STEP 30-35I SAFE REFRESH
+       STEP 30-35J SAFE REFRESH
        admin.htmlにはデモ作成ではなく、最新情報の再読込だけを置く
     ========================================================= */
 
@@ -2227,7 +2227,7 @@
 
   
     /* =========================================================
-       STEP 30-35I PRODUCTION PATIENT SEARCH
+       STEP 30-35J PRODUCTION PATIENT SEARCH
        admin.htmlで本番APIから登録済み患者を検索する
     ========================================================= */
 
@@ -2355,7 +2355,7 @@
 
   
     /* =========================================================
-       STEP 30-35I SEARCH FEEDBACK / DIAGNOSTICS
+       STEP 30-35J SEARCH FEEDBACK / DIAGNOSTICS
        検索ボタンを押した反応と、APIエラーの見える化
     ========================================================= */
 
@@ -2395,6 +2395,36 @@
       color: #92400e;
     }
 
+  
+    /* =========================================================
+       STEP 30-35J ADMIN CODE FIX
+       古いlocalStorageの管理コードを自動補正する
+    ========================================================= */
+
+    .admin35j-code-status {
+      border-radius: 14px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 8px 9px;
+      font-size: 10px;
+      line-height: 1.55;
+      font-weight: 850;
+      white-space: pre-wrap;
+    }
+
+    .admin35j-code-status.warn {
+      border-color: #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .admin35j-code-status.error {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
   </style>
 </head>
 
@@ -2404,7 +2434,7 @@
     <section class="owner-main-hero" id="ownerMainHero">
       <div class="owner-main-hero-top">
         <div>
-          <div class="owner-main-kicker">STEP 30-35IB / 最新情報を再読込</div>
+          <div class="owner-main-kicker">STEP 30-35JB / 最新情報を再読込</div>
           <div class="owner-main-title">毎日使う<br>患者管理画面</div>
           <div class="owner-main-sub">
             毎日使う「患者検索・選択中の患者確認」を前面に出し、新規登録・家族診察券・LINE連携は必要な時だけ開く形に整理しました。
@@ -2486,6 +2516,10 @@
           </button>
           <div class="admin35-refresh-status" id="admin35RefreshStatus">
             system-check.html の営業前DEMO設定後も、ここではデータ作成せず最新表示だけ行います。
+          </div>
+
+          <div class="admin35j-code-status" id="admin35jCodeStatus">
+            管理コード：確認中
           </div>
         </div>
 
@@ -2666,7 +2700,7 @@
             患者登録中でも、確認用デモで使う画面へすぐ移動できます。受付iPad・先生用・管理画面は最新版の確認URLで開きます。
           </div>
           <div class="latest-shortcut-version">
-            STEP 30-35I：admin.html 最新ショートカット対応
+            STEP 30-35J：admin.html 最新ショートカット対応
           </div>
         </div>
       </div>
@@ -3725,7 +3759,7 @@
         const localButton = admin35$("showLocalButton");
 
         /*
-          STEP 30-35I:
+          STEP 30-35J:
           admin.htmlでは営業前DEMO設定を行わない。
           ここでは、既存の検索処理がある場合は同じ検索を再実行する。
           検索処理がない/外部設定読込前の場合でも、画面をキャッシュバスター付きで再読み込みする。
@@ -4199,7 +4233,7 @@
           patients = extractPatients35(data);
 
           /*
-            STEP 30-35I:
+            STEP 30-35J:
             営業前DEMO設定直後など、patient_summary側の反映が遅い/0件の場合に備えて、
             本日の受付・診療ステータスAPIも読み、患者検索の補助にする。
             これはデータ作成ではなく読み取り専用。
@@ -4354,10 +4388,28 @@
       }
 
       function i35AdminCode() {
+        /*
+          STEP 30-35J:
+          以前の画面で localStorage に古い管理コードが残っていると、
+          Workerから「管理コードが正しくありません」と返る。
+          このデモ環境では正しい管理コードを dpro-dental-2026 に統一する。
+        */
+        const correct = ADMIN35I_ADMIN_CODE;
+
+        try {
+          localStorage.setItem("dproDentalAdminCode", correct);
+          localStorage.setItem("dproDentalAdminToken", correct);
+          localStorage.setItem("dproDentalOwnerCode", correct);
+        } catch (error) {
+          // ignore
+        }
+
         const input = i35("adminCodeInput");
-        const inputValue = input ? String(input.value || "").trim() : "";
-        const saved = localStorage.getItem("dproDentalAdminCode") || localStorage.getItem("dproDentalAdminToken") || "";
-        return inputValue || saved || ADMIN35I_ADMIN_CODE;
+        if (input) {
+          input.value = correct;
+        }
+
+        return correct;
       }
 
       function i35ClinicCode() {
@@ -4763,7 +4815,7 @@
           }
         } catch (error) {
           /*
-            STEP 30-35I:
+            STEP 30-35J:
             検索ビュー/RPCが失敗しても画面が無反応に見えないようにする。
             さらに本日の来院ステータスAPIを読み取り専用で補助表示する。
           */
@@ -4842,7 +4894,49 @@
         }
       }
 
+
+      function i35FixAdminCodeStorage() {
+        const correct = ADMIN35I_ADMIN_CODE;
+        const status = i35("admin35jCodeStatus");
+        let oldCode = "";
+
+        try {
+          oldCode =
+            localStorage.getItem("dproDentalAdminCode") ||
+            localStorage.getItem("dproDentalAdminToken") ||
+            localStorage.getItem("dproDentalOwnerCode") ||
+            "";
+        } catch (error) {
+          oldCode = "";
+        }
+
+        try {
+          localStorage.setItem("dproDentalAdminCode", correct);
+          localStorage.setItem("dproDentalAdminToken", correct);
+          localStorage.setItem("dproDentalOwnerCode", correct);
+        } catch (error) {
+          // ignore
+        }
+
+        const input = i35("adminCodeInput");
+        if (input) {
+          input.value = correct;
+        }
+
+        if (status) {
+          if (oldCode && oldCode !== correct) {
+            status.classList.add("warn");
+            status.textContent = "管理コードを正しい値に自動補正しました。";
+          } else {
+            status.classList.remove("warn", "error");
+            status.textContent = "管理コード：OK";
+          }
+        }
+      }
+
       function setupAdmin35I() {
+        i35FixAdminCodeStorage();
+
         const searchButton = i35("searchButton");
         const allButton = i35("showLocalButton");
         const input = i35("searchInput");
