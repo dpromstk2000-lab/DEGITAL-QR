@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-25B オーナー左メニュー型コンパクト管理トップ</title>
+  <title>DPRO SHOP | STEP 30-27 owner.html 診療・LINEフォロー状態連動確認</title>
 
   <script src="./config.js"></script>
 
@@ -1951,6 +1951,220 @@
     }
 
 
+  
+    /* =========================================================
+       STEP 30-27 OWNER STATUS SYNC FEEDBACK
+       doctor.html → owner.html 状態連動を見える化
+    ========================================================= */
+
+    .owner-sync-feedback {
+      margin: 0 0 14px;
+      border-radius: 20px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 12px 13px;
+      display: grid;
+      gap: 5px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+    }
+
+    .owner-sync-feedback strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .owner-sync-feedback.is-loading {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .owner-sync-feedback.is-success {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .owner-sync-feedback.is-warning {
+      border-color: #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .owner-sync-feedback.is-error {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .owner-sync-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0 0 14px;
+    }
+
+    .owner-sync-card {
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+      padding: 13px;
+    }
+
+    .owner-sync-label {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .owner-sync-value {
+      margin-top: 5px;
+      color: #0f172a;
+      font-size: 25px;
+      line-height: 1.1;
+      font-weight: 950;
+      letter-spacing: -0.055em;
+    }
+
+    .owner-sync-note {
+      margin-top: 5px;
+      color: #475569;
+      font-size: 11px;
+      line-height: 1.45;
+      font-weight: 740;
+    }
+
+    .owner-sync-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .owner-sync-button,
+    .owner-sync-link {
+      min-height: 42px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      color: #1d4ed8;
+      padding: 9px 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 950;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .owner-sync-button.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .owner-sync-button:disabled {
+      opacity: 0.64;
+      cursor: wait;
+    }
+
+    .owner-sync-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .owner-sync-item {
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .owner-sync-item.done {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }
+
+    .owner-sync-item.follow {
+      border-color: #fde68a;
+      background: #fffbeb;
+    }
+
+    .owner-sync-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 14px;
+      font-weight: 950;
+    }
+
+    .owner-sync-title {
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 950;
+    }
+
+    .owner-sync-text {
+      margin-top: 3px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 740;
+    }
+
+    .owner-sync-tag {
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 11px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 840px) {
+      .owner-sync-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .owner-sync-item {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .owner-sync-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .owner-sync-button,
+      .owner-sync-link {
+        width: 100%;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -1960,7 +2174,7 @@
     <section class="owner-left-app" id="ownerLeftApp">
       <aside class="owner-left-sidebar">
         <div class="owner-left-brand">
-          <div class="owner-left-kicker">DPRO SHOP / OWNER</div>
+          <div class="owner-left-kicker">DPRO SHOP / OWNER 30-27</div>
           <div class="owner-left-title">医院管理</div>
           <div class="owner-left-date" id="ownerTodayDate">本日</div>
         </div>
@@ -2113,6 +2327,46 @@
             </div>
           </div>
           <div class="owner-panel-body">
+            
+            <div class="owner-sync-feedback" id="ownerSyncFeedback">
+              <strong>まだ最新状態を確認していません</strong>
+              先生用画面で「診療済み」や「LINE文面コピー」を行った後は、ここで最新状態を更新してください。
+            </div>
+
+            <div class="owner-sync-actions">
+              <button class="owner-sync-button primary" id="ownerSyncRefreshButton" type="button">最新状態を更新</button>
+              <a class="owner-sync-link" href="./doctor.html?v=3026e">先生用画面を開く</a>
+              <a class="owner-sync-link" href="./scan-ipad.html?v=3023h2">受付iPadを開く</a>
+            </div>
+
+            <div class="owner-sync-grid">
+              <div class="owner-sync-card">
+                <div class="owner-sync-label">今日の予定</div>
+                <div class="owner-sync-value" id="ownerSyncTotal">3</div>
+                <div class="owner-sync-note">来院予定</div>
+              </div>
+
+              <div class="owner-sync-card">
+                <div class="owner-sync-label">受付済み</div>
+                <div class="owner-sync-value" id="ownerSyncChecked">0</div>
+                <div class="owner-sync-note">受付iPadから反映</div>
+              </div>
+
+              <div class="owner-sync-card">
+                <div class="owner-sync-label">診療済み</div>
+                <div class="owner-sync-value" id="ownerSyncDone">0</div>
+                <div class="owner-sync-note">先生用から反映</div>
+              </div>
+
+              <div class="owner-sync-card">
+                <div class="owner-sync-label">LINEフォロー</div>
+                <div class="owner-sync-value" id="ownerSyncFollow">0</div>
+                <div class="owner-sync-note">文面コピー待ち</div>
+              </div>
+            </div>
+
+            <div class="owner-sync-list" id="ownerSyncList"></div>
+
             <div class="owner-panel-mount" id="owner25bStatusMount"></div>
           </div>
         </section>
@@ -2353,7 +2607,7 @@
             受付iPadで受付済みにした患者さん、先生用画面で診療済みにした状態を、この管理画面でも確認できます。読み込み結果が空の場合も、営業デモ用の山田家3名を予備表示します。
           </div>
           <div class="daily-status-version">
-            STEP 30-25B：左メニュー型コンパクト管理トップ
+            STEP 30-27：診療・LINEフォロー状態連動確認
           </div>
         </div>
 
@@ -5732,6 +5986,279 @@
       } else {
         setupOwnerLeftMenu();
       }
+    })();
+  </script>
+
+
+  <script>
+    (function () {
+      "use strict";
+
+      const DEFAULT_API_BASE = "https://dpro-dental-qr-api.dpromstk2000.workers.dev";
+
+      const DEMO_PATIENTS = [
+        {
+          token: "demo-dental-patient-001",
+          member_no: "D260600001",
+          patient_name: "山田 花子",
+          time: "09:30",
+          treatment: "定期検診"
+        },
+        {
+          token: "demo-dental-child-taro",
+          member_no: "D260600002",
+          patient_name: "山田 太郎",
+          time: "10:00",
+          treatment: "フッ素塗布"
+        },
+        {
+          token: "demo-dental-child-sakura",
+          member_no: "D260600003",
+          patient_name: "山田 さくら",
+          time: "10:30",
+          treatment: "クリーニング"
+        }
+      ];
+
+      function $(id) {
+        return document.getElementById(id);
+      }
+
+      function getTodayJST() {
+        const now = new Date();
+        const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+        return jst.toISOString().slice(0, 10);
+      }
+
+      function getApiBase() {
+        const candidates = [
+          window.DPRO_CONFIG && window.DPRO_CONFIG.API_BASE,
+          window.DPRO_CONFIG && window.DPRO_CONFIG.API_BASE_URL,
+          window.APP_CONFIG && window.APP_CONFIG.API_BASE,
+          window.API_BASE,
+          DEFAULT_API_BASE
+        ];
+
+        return String(candidates.find(Boolean) || DEFAULT_API_BASE).replace(/\/$/, "");
+      }
+
+      function getClinicCode() {
+        return (
+          (window.DPRO_CONFIG && window.DPRO_CONFIG.CLINIC_CODE) ||
+          (window.APP_CONFIG && window.APP_CONFIG.CLINIC_CODE) ||
+          "dpro-dental"
+        );
+      }
+
+      function getAdminCode() {
+        return localStorage.getItem("dpro_dental_admin_code") || "dpro-dental-2026";
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function setText(id, value) {
+        const el = $(id);
+        if (el) el.textContent = String(value);
+      }
+
+      function setFeedback(type, title, detail) {
+        const el = $("ownerSyncFeedback");
+        if (!el) return;
+
+        el.className = "owner-sync-feedback" + (type ? " is-" + type : "");
+        el.innerHTML = "<strong>" + escapeHtml(title) + "</strong>" + escapeHtml(detail || "");
+      }
+
+      function normalizeRows(rows) {
+        if (!Array.isArray(rows) || rows.length === 0) {
+          return DEMO_PATIENTS.map((p) => ({
+            qr_token: p.token,
+            member_no: p.member_no,
+            patient_name: p.patient_name,
+            visit_time: p.time,
+            treatment_name: p.treatment,
+            reception_status: "",
+            exam_status: "",
+            checked_in_at: "",
+            exam_completed_at: "",
+            line_follow_copied_at: ""
+          }));
+        }
+
+        return rows.map((row) => ({
+          qr_token: row.qr_token || row.token || row.qrToken || "",
+          member_no: row.member_no || row.memberNo || "",
+          patient_name: row.patient_name || row.patientName || row.name || "患者さん",
+          visit_time: row.visit_time || row.time || row.appointment_time || "",
+          treatment_name: row.treatment_name || row.treatment || row.menu_name || "",
+          reception_status: row.reception_status || row.checkin_status || row.status || "",
+          exam_status: row.exam_status || row.treatment_status || "",
+          checked_in_at: row.checked_in_at || row.reception_at || "",
+          exam_completed_at: row.exam_completed_at || row.completed_at || "",
+          line_follow_copied_at: row.line_follow_copied_at || row.line_copied_at || ""
+        }));
+      }
+
+      function isChecked(row) {
+        return Boolean(
+          row.checked_in_at ||
+          row.reception_status === "checked_in" ||
+          row.reception_status === "受付済み"
+        );
+      }
+
+      function isDone(row) {
+        return Boolean(
+          row.exam_completed_at ||
+          row.exam_status === "completed" ||
+          row.exam_status === "exam_completed" ||
+          row.exam_status === "診療済み"
+        );
+      }
+
+      function isLineCopied(row) {
+        return Boolean(row.line_follow_copied_at);
+      }
+
+      function renderRows(rows) {
+        const normalized = normalizeRows(rows);
+        const total = normalized.length;
+        const checked = normalized.filter(isChecked).length;
+        const done = normalized.filter(isDone).length;
+        const follow = normalized.filter((row) => isDone(row) && !isLineCopied(row)).length;
+
+        setText("ownerSyncTotal", total);
+        setText("ownerSyncChecked", checked);
+        setText("ownerSyncDone", done);
+        setText("ownerSyncFollow", follow);
+
+        const list = $("ownerSyncList");
+        if (!list) return;
+
+        list.innerHTML = normalized.map((row) => {
+          const checkedText = isChecked(row) ? "受付済み" : "未受付";
+          const doneText = isDone(row) ? "診療済み" : "診療前";
+          const lineText = isLineCopied(row) ? "LINE文面コピー済み" : (isDone(row) ? "LINEフォロー待ち" : "診療後に確認");
+          const type = isDone(row) && !isLineCopied(row) ? "follow" : isDone(row) ? "done" : "";
+          const icon = isDone(row) ? "診" : isChecked(row) ? "受" : "待";
+
+          return `
+            <div class="owner-sync-item ${type}">
+              <div class="owner-sync-icon">${escapeHtml(icon)}</div>
+              <div>
+                <div class="owner-sync-title">${escapeHtml(row.patient_name)}</div>
+                <div class="owner-sync-text">
+                  ${escapeHtml(row.visit_time || "-")} / ${escapeHtml(row.treatment_name || "-")} /
+                  ${escapeHtml(checkedText)} / ${escapeHtml(doneText)} / ${escapeHtml(lineText)}
+                </div>
+              </div>
+              <span class="owner-sync-tag">${escapeHtml(lineText)}</span>
+            </div>
+          `;
+        }).join("");
+
+        try {
+          setText("owner25bTotal", total);
+          setText("owner25bChecked", checked);
+          setText("owner25bCompleted", done);
+          setText("owner25bFollow", follow);
+          setText("menuCountStatus", total);
+          setText("menuCountFollow", follow);
+          setText("menuCountTodo", Math.max(total - done + follow, 0));
+        } catch (error) {
+          console.warn("owner 25b count sync skipped", error);
+        }
+      }
+
+      async function fetchRows() {
+        const url = new URL(getApiBase() + "/api/owner/daily-statuses");
+        url.searchParams.set("clinic_code", getClinicCode());
+        url.searchParams.set("visit_date", getTodayJST());
+        url.searchParams.set("admin_token", getAdminCode());
+
+        const res = await fetch(url.toString(), {
+          headers: {
+            "x-admin-token": getAdminCode()
+          }
+        });
+
+        if (!res.ok) {
+          throw new Error("HTTP " + res.status);
+        }
+
+        const data = await res.json();
+        if (Array.isArray(data.rows)) return data.rows;
+        if (Array.isArray(data.items)) return data.items;
+        if (Array.isArray(data)) return data;
+        return [];
+      }
+
+      async function refreshOwnerSync() {
+        const button = $("ownerSyncRefreshButton");
+        if (button) {
+          button.disabled = true;
+          button.textContent = "更新中...";
+        }
+
+        setFeedback("loading", "最新状態を更新中です", "先生用画面・受付iPadの状態を確認しています。");
+
+        let rows = [];
+        let usedApi = false;
+
+        try {
+          rows = await fetchRows();
+          usedApi = true;
+        } catch (error) {
+          console.warn("owner sync fetch skipped", error);
+          rows = [];
+        }
+
+        renderRows(rows);
+
+        const now = new Date().toLocaleTimeString("ja-JP", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+
+        const done = Number($("ownerSyncDone")?.textContent || 0);
+        const follow = Number($("ownerSyncFollow")?.textContent || 0);
+
+        setFeedback(
+          usedApi ? "success" : "warning",
+          usedApi ? "最新状態を更新しました " + now : "画面内デモ状態を表示しました " + now,
+          `診療済み ${done}件 / LINEフォロー待ち ${follow}件。先生用で操作後はこのボタンで再確認できます。`
+        );
+
+        if (button) {
+          button.disabled = false;
+          button.textContent = "最新状態を更新";
+        }
+      }
+
+      function setupOwnerSyncPanel() {
+        const button = $("ownerSyncRefreshButton");
+        if (button && !button.__ownerSyncReady) {
+          button.__ownerSyncReady = true;
+          button.addEventListener("click", refreshOwnerSync);
+        }
+
+        renderRows([]);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupOwnerSyncPanel);
+      } else {
+        setupOwnerSyncPanel();
+      }
+
+      window.DPRO_ownerRefreshDoctorSync = refreshOwnerSync;
     })();
   </script>
 
