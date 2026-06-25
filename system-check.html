@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-32DB Failed to fetch 判定修正</title>
+  <title>DPRO SHOP | STEP 30-33B Failed to fetch 判定修正</title>
   <style>
     :root {
       --line: #06c755;
@@ -456,12 +456,95 @@
       margin-bottom: 4px;
     }
 
+  
+    .demo-setup-panel {
+      border-radius: 30px;
+      border: 1px solid #bbf7d0;
+      background:
+        radial-gradient(circle at 92% 12%, rgba(6,199,85,0.13), transparent 34%),
+        linear-gradient(135deg, #f0fdf4, #ffffff);
+      box-shadow: 0 16px 44px rgba(15,23,42,0.07);
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .demo-setup-panel h2 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.35;
+      letter-spacing: -0.06em;
+      font-weight: 950;
+    }
+
+    .demo-setup-panel p {
+      margin: 0;
+      color: #166534;
+      font-size: 13px;
+      line-height: 1.85;
+      font-weight: 820;
+    }
+
+    .demo-setup-stats {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .demo-setup-stat {
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid #dcfce7;
+      padding: 10px;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 900;
+      color: #166534;
+    }
+
+    .demo-setup-stat b {
+      display: block;
+      color: #0f172a;
+      font-size: 22px;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      font-weight: 950;
+      margin-top: 4px;
+    }
+
+    .demo-setup-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .demo-setup-status {
+      color: #166534;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 780px) {
+      .demo-setup-stats {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .demo-setup-stats {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
   </style>
 </head>
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-32DB / Failed to fetch 判定修正</div>
+      <div class="badge">STEP 30-33B / Failed to fetch 判定修正</div>
       <h1>API・数字・画面リンクを<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
@@ -488,12 +571,39 @@
     
     <section class="section">
       <div class="cors-note">
-        <strong>STEP 30-32D 修正内容</strong>
+        <strong>STEP 30-33 修正内容</strong>
         API確認は、Workerが読めるように admin_code / token / admin_token をURLパラメータで渡すシンプルGETで実行します。
         これにより、ブラウザのCORSプリフライトによる Failed to fetch を避けやすくします。
         また、受付iPad・先生用・管理トップのいずれかが取得失敗した場合は、総合判定をOKにしません。
       </div>
     </section>
+    <section class="section">
+      <div class="demo-setup-panel">
+        <h2>営業前DEMO設定</h2>
+        <p>
+          営業前にここを押すと、山田家の家族診察券デモと、本日の受付・診療ステータスを見せやすい状態に整えます。
+          受付0件の寂しい状態ではなく、受付済み・診療待ち・診療済み・LINEフォローが見える状態にします。
+        </p>
+
+        <div class="demo-setup-stats">
+          <div class="demo-setup-stat">本日の患者<b>3</b></div>
+          <div class="demo-setup-stat">未受付<b>1</b></div>
+          <div class="demo-setup-stat">受付済み<b>2</b></div>
+          <div class="demo-setup-stat">診療待ち<b>1</b></div>
+          <div class="demo-setup-stat">診療済み<b>1</b></div>
+          <div class="demo-setup-stat">LINEフォロー<b>1</b></div>
+        </div>
+
+        <div class="demo-setup-actions">
+          <button class="btn dark" id="demoSetupButton" type="button">営業前DEMO設定を実行</button>
+          <button class="btn" id="demoSetupAndCheckButton" type="button">DEMO設定して一括チェック</button>
+        </div>
+
+        <div class="demo-setup-status" id="demoSetupStatus">まだ実行していません。</div>
+      </div>
+    </section>
+
+
 
 <section class="section">
       <h2 class="section-title">総合判定</h2>
@@ -578,6 +688,7 @@
           <b>管理トップ</b>
           <span>owner.html?v=3027e</span>
         </a>
+        <a class="link-card" href="system-check.html?v=3033"><b>本番前チェック</b><span>system-check.html?v=3033</span></a>
         <a class="link-card" href="admin.html?v=3024b">
           <b>管理画面</b>
           <span>admin.html?v=3024b</span>
@@ -744,7 +855,7 @@
         }
       });
 
-      // STEP 30-32D:
+      // STEP 30-33:
       // 診断ページではまず「シンプルGET」で確認する。管理コードは admin_code / token / admin_token の3種類で送る。
       // x-admin-token などのカスタムヘッダーを付けると、ブラウザがCORSプリフライトを行い、
       // エンドポイント側のOPTIONS/CORS差分で Failed to fetch になりやすいため。
@@ -915,6 +1026,60 @@
       }
     }
 
+
+    function setDemoSetupStatus(message) {
+      const el = $("demoSetupStatus");
+      if (el) el.textContent = message || "";
+    }
+
+    async function runDemoSetup({ checkAfter = false } = {}) {
+      const buttons = [$("demoSetupButton"), $("demoSetupAndCheckButton")].filter(Boolean);
+      buttons.forEach((button) => {
+        button.disabled = true;
+      });
+
+      setDemoSetupStatus("営業前DEMO設定を実行中です。山田家デモと本日の受付・診療状態を作り直しています...");
+      log("営業前DEMO設定 開始");
+
+      try {
+        const { data, url } = await fetchJson("/api/admin/demo/sales-setup", {
+          clinic_code: clinicCode(),
+          clinic: clinicCode(),
+          shop_code: clinicCode(),
+          admin_code: adminCode(),
+          token: adminCode(),
+          admin_token: adminCode(),
+          mode: "sales_demo"
+        });
+
+        setDemoSetupStatus(
+          "営業前DEMO設定が完了しました。\n" +
+          "本日の患者3件 / 未受付1件 / 受付済み2件 / 診療待ち1件 / 診療済み1件 / LINEフォロー1件 の想定です。"
+        );
+
+        log("営業前DEMO設定 OK: " + url, {
+          message: data.message,
+          daily_status_summary: data.daily_status_summary,
+          sales_demo_message: data.sales_demo_message
+        });
+
+        if (checkAfter) {
+          await runAllChecks();
+        }
+      } catch (error) {
+        setDemoSetupStatus("営業前DEMO設定に失敗しました。\n" + (error.message || error));
+        log("営業前DEMO設定 NG", {
+          message: error.message,
+          status: error.status,
+          data: error.data
+        });
+      } finally {
+        buttons.forEach((button) => {
+          button.disabled = false;
+        });
+      }
+    }
+
     async function runAllChecks() {
       const button = $("runButton");
       button.disabled = true;
@@ -952,6 +1117,16 @@
       $("clinicCodeInput").value = savedClinicCode === "demo-dental" ? "dpro_dental_demo" : savedClinicCode;
 
       $("runButton").addEventListener("click", runAllChecks);
+
+      const demoSetupButton = $("demoSetupButton");
+      if (demoSetupButton) {
+        demoSetupButton.addEventListener("click", () => runDemoSetup({ checkAfter: false }));
+      }
+
+      const demoSetupAndCheckButton = $("demoSetupAndCheckButton");
+      if (demoSetupAndCheckButton) {
+        demoSetupAndCheckButton.addEventListener("click", () => runDemoSetup({ checkAfter: true }));
+      }
     }
 
     if (document.readyState === "loading") {
