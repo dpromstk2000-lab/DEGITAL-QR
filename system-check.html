@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-35N system-check 営業前DEMO混在版</title>
+  <title>DPRO SHOP | STEP 30-36B system-check.html PC受付リーダーリンク追加</title>
   <style>
     :root {
       --line: #06c755;
@@ -539,12 +539,82 @@
       }
     }
 
+  
+    /* =========================================================
+       STEP 30-36B PC RECEPTION READER LINK
+       PC受付リーダーへの導線を追加
+    ========================================================= */
+
+    .pc36-link-card {
+      border-radius: 22px;
+      border: 1px solid #bfdbfe;
+      background:
+        radial-gradient(circle at 96% 8%, rgba(37,99,235,0.13), transparent 34%),
+        linear-gradient(135deg, #eff6ff, #ffffff);
+      color: #0f172a;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr);
+      gap: 11px;
+      align-items: center;
+      text-decoration: none;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+    }
+
+    .pc36-link-card:hover {
+      transform: translateY(-1px);
+      border-color: #93c5fd;
+    }
+
+    .pc36-link-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 17px;
+      display: grid;
+      place-items: center;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+    }
+
+    .pc36-link-title {
+      display: block;
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+    }
+
+    .pc36-link-desc {
+      display: block;
+      margin-top: 3px;
+      color: #475569;
+      font-size: 11px;
+      line-height: 1.55;
+      font-weight: 780;
+    }
+
+    .pc36-link-row {
+      margin: 12px 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    @media (min-width: 760px) {
+      .pc36-link-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
   </style>
 </head>
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-35N / Failed to fetch 判定修正</div>
+      <div class="badge">STEP 30-36B / Failed to fetch 判定修正</div>
       <h1>API・数字・画面リンクを<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
@@ -556,6 +626,17 @@
           <label for="apiBaseInput">Worker API URL</label>
           <input id="apiBaseInput" type="text" value="https://dpro-dental-qr-api.dpromstk2000.workers.dev" />
         </div>
+
+<div class="pc36-link-row">
+  <a class="pc36-link-card" href="./scan-pc.html?v=3036">
+    <span class="pc36-link-icon">PC</span>
+    <span>
+      <span class="pc36-link-title">PC受付リーダー確認</span>
+      <span class="pc36-link-desc">営業前DEMO設定後、PC受付でQRリーダー入力を確認します。</span>
+    </span>
+  </a>
+</div>
+
         <div class="field">
           <label for="adminCodeInput">管理コード</label>
           <input id="adminCodeInput" type="text" value="dpro-dental-2026" />
@@ -571,7 +652,7 @@
     
     <section class="section">
       <div class="cors-note">
-        <strong>STEP 30-35N 修正内容</strong>
+        <strong>STEP 30-36B 修正内容</strong>
         API確認は、Workerが読めるように admin_code / token / admin_token をURLパラメータで渡すシンプルGETで実行します。
         これにより、ブラウザのCORSプリフライトによる Failed to fetch を避けやすくします。
         また、受付iPad・先生用・管理トップのいずれかが取得失敗した場合は、総合判定をOKにしません。
@@ -686,6 +767,16 @@
           <b>受付iPad</b>
           <span>scan-ipad.html?v=3029b</span>
         </a>
+
+<a class="pc36-link-card" href="./scan-pc.html?v=3036">
+  <span class="pc36-link-icon">PC</span>
+  <span>
+    <span class="pc36-link-title">PC受付リーダー</span>
+    <span class="pc36-link-desc">USB/Bluetooth QRリーダー用。PC受付で診察券QRを読み取ります。</span>
+  </span>
+</a>
+
+
         <a class="link-card" href="doctor.html?v=3027g">
           <b>先生用</b>
           <span>doctor.html?v=3027g</span>
@@ -861,7 +952,7 @@
         }
       });
 
-      // STEP 30-35N:
+      // STEP 30-36B:
       // 診断ページではまず「シンプルGET」で確認する。管理コードは admin_code / token / admin_token の3種類で送る。
       // x-admin-token などのカスタムヘッダーを付けると、ブラウザがCORSプリフライトを行い、
       // エンドポイント側のOPTIONS/CORS差分で Failed to fetch になりやすいため。
