@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-27G doctor.html 先生目線の表記整理</title>
+  <title>DPRO SHOP | STEP 30-38B doctor.html 先生目線の表記整理</title>
 
   <script src="./config.js"></script>
 
@@ -896,7 +896,7 @@
 
   
     /* =========================================================
-       STEP 30-27G DOCTOR WORDING
+       STEP 30-38B DOCTOR WORDING
        先生用は未受付管理ではなく、診療待ち中心に表示
     ========================================================= */
 
@@ -928,7 +928,7 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="kicker">STEP 30-27G / DOCTOR</div>
+        <div class="kicker">STEP 30-38B / DOCTOR</div>
         <div class="brand-title">先生用<br>本番保存フロー</div>
         <div class="date-pill" id="todayDate">本日</div>
       </div>
@@ -1198,9 +1198,10 @@
           <div class="settings-grid">
             <div class="info-card">
               <div class="field-title">管理コード</div>
-              <div class="field-note">通常は dpro-dental-2026 です。共有保存する時に使います。</div>
+              <div class="field-note">医院スタッフから共有された管理コードを入力します。このタブだけに保存します。</div>
               <input class="input" id="adminCodeInput" type="password" placeholder="管理コード" />
-              <button class="pill-button primary" id="saveAdminCodeButton" type="button" style="margin-top: 8px;" onclick="DPRO_doctorSaveAdminCode()">保存</button>
+              <button class="pill-button primary" id="saveAdminCodeButton" type="button" style="margin-top: 8px;" onclick="DPRO_doctorSaveAdminCode()">このタブに保存</button>
+              <button class="pill-button" id="forgetAdminCodeButton" type="button" style="margin-top: 8px;" onclick="DPRO_doctorForgetAdminCode()">管理コードを忘れる</button>
               <div class="status-line" id="settingsStatus"></div>
             </div>
 
@@ -1427,8 +1428,65 @@
         );
       }
 
+      function readSessionAdminCode38b() {
+        try {
+          return (
+            sessionStorage.getItem("dproDentalAdminCode") ||
+            sessionStorage.getItem("dproDentalAdminToken") ||
+            sessionStorage.getItem("dpro_dental_qr_admin_code") ||
+            sessionStorage.getItem("dpro_dental_admin_code") ||
+            ""
+          ).trim();
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function setSessionAdminCode38b(code) {
+        const value = String(code || "").trim();
+        try {
+          if (value) {
+            sessionStorage.setItem("dproDentalAdminCode", value);
+            sessionStorage.setItem("dproDentalAdminToken", value);
+            sessionStorage.setItem("dpro_dental_qr_admin_code", value);
+            sessionStorage.setItem("dpro_dental_admin_code", value);
+          } else {
+            sessionStorage.removeItem("dproDentalAdminCode");
+            sessionStorage.removeItem("dproDentalAdminToken");
+            sessionStorage.removeItem("dpro_dental_qr_admin_code");
+            sessionStorage.removeItem("dpro_dental_admin_code");
+          }
+          localStorage.removeItem("dpro_dental_admin_code");
+          localStorage.removeItem("dproDentalAdminCode");
+          localStorage.removeItem("dproDentalAdminToken");
+          localStorage.removeItem("dproDentalOwnerCode");
+          localStorage.removeItem("dpro_dental_qr_admin_code");
+        } catch (error) {
+          // ignore
+        }
+        return value;
+      }
+
+      function readLegacyAdminCodeOnce38b() {
+        let value = "";
+        try {
+          value = (
+            localStorage.getItem("dpro_dental_admin_code") ||
+            localStorage.getItem("dproDentalAdminCode") ||
+            localStorage.getItem("dproDentalAdminToken") ||
+            localStorage.getItem("dproDentalOwnerCode") ||
+            localStorage.getItem("dpro_dental_qr_admin_code") ||
+            ""
+          ).trim();
+        } catch (error) {
+          value = "";
+        }
+        if (value) setSessionAdminCode38b(value);
+        return value;
+      }
+
       function getAdminCode() {
-        return localStorage.getItem("dpro_dental_admin_code") || "dpro-dental-2026";
+        return readSessionAdminCode38b() || readLegacyAdminCodeOnce38b();
       }
 
       function getDoctorName() {
@@ -1547,15 +1605,22 @@
       }
 
       async function fetchTodayRowsFromApi() {
+        const adminCode = getAdminCode();
+        if (!adminCode) {
+          throw new Error("管理コードが未入力です。設定・確認で入力してから更新してください。");
+        }
+
         const url = new URL(getApiBase() + "/api/owner/daily-statuses");
         url.searchParams.set("clinic_code", getClinicCode());
         url.searchParams.set("visit_date", getTodayJST());
         url.searchParams.set("date", getTodayJST());
-        url.searchParams.set("admin_token", getAdminCode());
 
         const res = await fetch(url.toString(), {
           headers: {
-            "x-admin-token": getAdminCode()
+            "Accept": "application/json",
+            "x-admin-token": adminCode,
+            "x-admin-code": adminCode,
+            "x-dpro-admin-code": adminCode
           }
         });
 
@@ -1610,7 +1675,7 @@
       function counts() {
         const total = state.patients.length;
 
-        // STEP 30-27G:
+        // STEP 30-38B:
         // 先生用の「診療待ち」は、受付済み かつ 未診療の患者さんだけ。
         // 受付済み全体の数は受付iPad/管理トップ側で確認する。
         const checked = state.patients.filter((patient) => isChecked(patient) && !isDone(patient)).length;
@@ -1703,7 +1768,7 @@
         const ready = state.patients.filter((p) => isChecked(p) && !isDone(p));
         const follow = state.patients.filter(needsFollow);
 
-        // STEP 30-27G:
+        // STEP 30-38B:
         // 先生用では未受付を大きなタスクにしない。
         // 未受付は患者一覧のバッジに残し、受付iPad・管理トップ側で確認する。
 
@@ -1972,11 +2037,18 @@
       };
 
       async function postJson(path, body) {
+        const adminCode = getAdminCode();
+        if (!adminCode) {
+          throw new Error("管理コードが未入力です。設定・確認で入力してから操作してください。");
+        }
+
         const res = await fetch(getApiBase() + path, {
           method: "POST",
           headers: {
             "content-type": "application/json",
-            "x-admin-token": getAdminCode()
+            "x-admin-token": adminCode,
+            "x-admin-code": adminCode,
+            "x-dpro-admin-code": adminCode
           },
           body: JSON.stringify(body)
         });
@@ -2211,11 +2283,17 @@
       window.DPRO_doctorSaveAdminCode = function() {
         const value = $("adminCodeInput").value.trim();
         if (value) {
-          localStorage.setItem("dpro_dental_admin_code", value);
-          setStatus("settingsStatus", "管理コードを保存しました。");
+          setSessionAdminCode38b(value);
+          setStatus("settingsStatus", "管理コードをこのタブだけに保存しました。ブラウザを閉じると残りません。");
         } else {
           setStatus("settingsStatus", "管理コードを入力してください。");
         }
+      };
+
+      window.DPRO_doctorForgetAdminCode = function() {
+        setSessionAdminCode38b("");
+        $("adminCodeInput").value = "";
+        setStatus("settingsStatus", "管理コードをこのタブから削除しました。");
       };
 
       window.DPRO_doctorSaveDoctorName = function() {
