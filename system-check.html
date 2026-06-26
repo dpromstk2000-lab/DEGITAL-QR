@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-37B system-check.html 本番安全ガード総点検</title>
+  <title>DPRO SHOP | STEP 30-38A system-check.html 本番認証チェック強化</title>
   <style>
     :root {
       --line: #06c755;
@@ -614,11 +614,11 @@
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-37B / 本番安全ガード総点検</div>
+      <div class="badge">STEP 30-38A / 本番認証チェック強化</div>
       <h1>API・数字・画面リンクを<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
-        営業デモ前にこのページを開いて、APIの生存確認・件数一致・最新版画面リンク・本番安全ガードを確認します。
+        営業デモ前・本番導入前にこのページを開いて、APIの生存確認・件数一致・最新版画面リンク・本番安全ガード・管理コード保護状態を確認します。
       </p>
 
       <div class="settings">
@@ -639,21 +639,24 @@
 
         <div class="field">
           <label for="adminCodeInput">管理コード</label>
-          <input id="adminCodeInput" type="text" value="dpro-dental-2026" />
+          <input id="adminCodeInput" type="password" value="" placeholder="管理コードを入力" autocomplete="off" />
         </div>
         <div class="field">
           <label for="clinicCodeInput">医院コード（通常 dpro_dental_demo）</label>
           <input id="clinicCodeInput" type="text" value="dpro_dental_demo" />
         </div>
-        <button class="btn" id="runButton" type="button">一括チェック</button>
+        <div class="demo-setup-actions" style="margin-top:10px;">
+          <button class="btn" id="runButton" type="button">一括チェック</button>
+          <button class="btn ghost" id="forgetAdminCodeButton" type="button">管理コードをこのタブから削除</button>
+        </div>
       </div>
     </section>
 
     
     <section class="section">
       <div class="cors-note">
-        <strong>STEP 30-37B 修正内容</strong>
-        通常チェックは、Workerが読めるように admin_code / token / admin_token をURLパラメータで渡すシンプルGETで実行します。
+        <strong>STEP 30-38A 修正内容</strong>
+        通常チェックは、管理コードをURLに残しにくいヘッダー送信で実行します。
         営業前DEMO設定だけは危険操作として、POST + 確認文言 + Worker側 clinic_code ガードで実行します。
         本番医院コードの場合、この画面ではDEMO設定ボタンを非表示にし、Worker側でも /api/admin/demo/sales-setup を拒否します。
       </div>
@@ -667,6 +670,20 @@
         </p>
         <div class="demo-setup-status" id="prodSafetyStatus" style="border-color:#bfdbfe;background:#ffffff;color:#1e3a8a;">
           未確認です。医院コードを確認しています。
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section">
+      <div class="demo-setup-panel" id="authSafetyPanel" style="border-color:#fde68a;background:#fffbeb;">
+        <h2>本番認証チェック</h2>
+        <p>
+          管理コードがWorkerで通るか、URLに管理コードが残りにくい送信方式になっているか、Cloudflare Accessが検出されているかを確認します。
+          本番では最終的に Cloudflare Access + Worker管理コード の二重保護を推奨します。
+        </p>
+        <div class="demo-setup-status" id="authSafetyStatus" style="border-color:#fde68a;background:#ffffff;color:#92400e;">
+          未確認です。管理コードを入力して一括チェックしてください。
         </div>
       </div>
     </section>
@@ -798,7 +815,7 @@
           <b>管理トップ</b>
           <span>owner.html?v=3027e</span>
         </a>
-        <a class="link-card" href="system-check.html?v=3033"><b>本番前チェック</b><span>system-check.html?v=3033</span></a>
+        <a class="link-card" href="system-check.html?v=3038a"><b>本番前チェック</b><span>system-check.html?v=3038a</span></a>
         <a class="link-card" href="admin.html?v=3024b">
           <b>管理画面</b>
           <span>admin.html?v=3024b</span>
@@ -825,7 +842,7 @@
 
     const DEFAULTS = {
       apiBase: "https://dpro-dental-qr-api.dpromstk2000.workers.dev",
-      adminCode: "dpro-dental-2026",
+      adminCode: "",
       clinicCode: "dpro_dental_demo"
     };
 
@@ -855,7 +872,7 @@
     }
 
     function adminCode() {
-      return String($("adminCodeInput").value || DEFAULTS.adminCode).trim();
+      return String($("adminCodeInput").value || "").trim();
     }
 
     function clinicCode() {
@@ -864,6 +881,32 @@
 
     function apiBase() {
       return cleanBase($("apiBaseInput").value);
+    }
+
+    function adminHeaders() {
+      const code = adminCode();
+      const headers = { "Accept": "application/json" };
+      if (code) headers["X-DPRO-Admin-Code"] = code;
+      return headers;
+    }
+
+    function setAuthSafetyStatus(text, tone) {
+      const el = $("authSafetyStatus");
+      if (!el) return;
+      el.textContent = String(text || "");
+      if (tone === "ok") {
+        el.style.color = "#166534";
+        el.style.borderColor = "#bbf7d0";
+        el.style.background = "#f0fdf4";
+      } else if (tone === "danger") {
+        el.style.color = "#991b1b";
+        el.style.borderColor = "#fecaca";
+        el.style.background = "#fef2f2";
+      } else {
+        el.style.color = "#92400e";
+        el.style.borderColor = "#fde68a";
+        el.style.background = "#fffbeb";
+      }
     }
 
     function setStatus(id, type, text) {
@@ -965,17 +1008,14 @@
         }
       });
 
-      // STEP 30-36B:
-      // 診断ページではまず「シンプルGET」で確認する。管理コードは admin_code / token / admin_token の3種類で送る。
-      // x-admin-token などのカスタムヘッダーを付けると、ブラウザがCORSプリフライトを行い、
-      // エンドポイント側のOPTIONS/CORS差分で Failed to fetch になりやすいため。
+      // STEP 30-38A:
+      // 管理コードはURLパラメータに残さず、ヘッダー送信を優先する。
+      // Worker側のCORSは X-DPRO-Admin-Code を許可済み。
       let res;
       try {
         res = await fetch(url.toString(), {
           method: "GET",
-          headers: {
-            "Accept": "application/json"
-          },
+          headers: adminHeaders(),
           cache: "no-store"
         });
       } catch (networkError) {
@@ -1007,25 +1047,17 @@
     async function fetchJsonPost(path, body = {}) {
       const url = new URL(apiBase() + path);
 
-      // 管理コードはURL側にも残す。Workerの既存認証に合わせるため。
-      url.searchParams.set("admin_code", adminCode());
-      url.searchParams.set("token", adminCode());
-      url.searchParams.set("admin_token", adminCode());
-
       let res;
       try {
         res = await fetch(url.toString(), {
           method: "POST",
           headers: {
-            "Accept": "application/json",
+            ...adminHeaders(),
             "Content-Type": "application/json"
           },
           cache: "no-store",
           body: JSON.stringify({
-            ...body,
-            admin_code: adminCode(),
-            token: adminCode(),
-            admin_token: adminCode()
+            ...body
           })
         });
       } catch (networkError) {
@@ -1058,6 +1090,14 @@
       const el = $("prodSafetyStatus");
       const isDemo = clinicCode() === "dpro_dental_demo";
 
+      if (!adminCode()) {
+        setAuthSafetyStatus(
+          "管理コードが未入力です。/api/admin/safety-check と各管理APIの確認には管理コードが必要です。\n" +
+          "STEP 30-38Aでは、管理コードはlocalStorageに長期保存せず、このタブのsessionStorageのみ使用します。",
+          "danger"
+        );
+      }
+
       if (el) {
         el.textContent = isDemo
           ? "DEMO医院コードです。営業前DEMO設定ボタンを表示します。"
@@ -1072,30 +1112,51 @@
 
       try {
         const { data, url } = await fetchJson("/api/admin/safety-check", {
-          clinic_code: clinicCode(),
-          admin_code: adminCode(),
-          token: adminCode(),
-          admin_token: adminCode()
+          clinic_code: clinicCode()
+        });
+
+        const safety = data.safety || {};
+        const auth = data.auth || safety.auth || {};
+        const access = data.cloudflare_access || safety.cloudflare_access || {};
+        const checks = Array.isArray(data.checks) ? data.checks : [];
+        const checkLines = checks.map((item) => {
+          const icon = item.status === "pass" ? "✅" : item.status === "warn" ? "⚠️" : item.status === "fail" ? "❌" : "・";
+          return `${icon} ${item.label}: ${item.message}`;
         });
 
         if (el) {
-          const safety = data.safety || {};
           el.textContent =
             (data.message || "本番安全チェックを確認しました。") + "\n" +
             `clinic_code: ${safety.requested_clinic_code || clinicCode()}\n` +
             `demo_clinic: ${safety.demo_clinic_code || "dpro_dental_demo"}\n` +
-            `demo実行可: ${safety.can_run_demo_operations ? "はい" : "いいえ"}`;
+            `demo実行可: ${safety.can_run_demo_operations ? "はい" : "いいえ"}\n` +
+            `DEMO停止スイッチ: ${safety.demo_operations_disabled ? "ON" : "OFF"}`;
         }
 
-        log("本番安全チェック OK: " + url, data);
+        setAuthSafetyStatus(
+          `保護モード: ${data.protection_mode_label || safety.protection_mode || "確認済み"}\n` +
+          `管理コード: ${auth.admin_token_configured ? "Worker設定あり" : "未設定"} / ${auth.admin_code_provided ? "入力あり" : "未入力"}\n` +
+          `送信方式: ${auth.transport || "不明"}${auth.query_param_used ? "（URL送信のため改善推奨）" : "（URLに残りにくい）"}\n` +
+          `Cloudflare Access: ${access.detected ? "検出" : "未検出・簡易保護中"}\n\n` +
+          checkLines.join("\n"),
+          auth.admin_token_configured && !auth.query_param_used ? "ok" : "warn"
+        );
+
+        log("本番安全・認証チェック OK: " + url, data);
         return { ok: true, data };
       } catch (error) {
-        // STEP 30-37B導入前のWorkerでは /api/admin/safety-check がまだ無い可能性がある。
+        // STEP 30-38A導入前のWorkerでは /api/admin/safety-check がまだ無い可能性がある。
         // 画面側の表示制御は継続し、ログでWorker更新が必要なことを知らせる。
         if (el) {
-          el.textContent += "\n\n注意：Worker側の /api/admin/safety-check が未反映、または確認に失敗しました。STEP 30-37B Workerを先に反映してください。";
+          el.textContent += "\n\n注意：Worker側の /api/admin/safety-check が未反映、管理コード不一致、または確認に失敗しました。STEP 30-38A Workerを先に反映してください。";
         }
-        log("本番安全チェック 注意", {
+        setAuthSafetyStatus(
+          "本番認証チェックに失敗しました。\n" +
+          `理由: ${error.message || error}\n` +
+          "401の場合は、管理コード・Cloudflare WorkerのADMIN_TOKEN・ヘッダー認証のCORS許可を確認してください。",
+          "danger"
+        );
+        log("本番安全・認証チェック 注意", {
           message: error.message,
           status: error.status,
           data: error.data
@@ -1325,8 +1386,9 @@
       button.textContent = "チェック中...";
 
       localStorage.setItem("dproDentalApiBase", apiBase());
-      localStorage.setItem("dproDentalAdminCode", adminCode());
       localStorage.setItem("dproDentalClinicCode", clinicCode());
+      localStorage.removeItem("dproDentalAdminCode");
+      sessionStorage.setItem("dproDentalAdminCodeSession", adminCode());
 
       resetLog();
 
@@ -1352,11 +1414,29 @@
 
     function init() {
       $("apiBaseInput").value = localStorage.getItem("dproDentalApiBase") || DEFAULTS.apiBase;
-      $("adminCodeInput").value = localStorage.getItem("dproDentalAdminCode") || DEFAULTS.adminCode;
+      localStorage.removeItem("dproDentalAdminCode");
+      $("adminCodeInput").value = sessionStorage.getItem("dproDentalAdminCodeSession") || DEFAULTS.adminCode;
       const savedClinicCode = localStorage.getItem("dproDentalClinicCode") || DEFAULTS.clinicCode;
       $("clinicCodeInput").value = savedClinicCode === "demo-dental" ? "dpro_dental_demo" : savedClinicCode;
 
       $("runButton").addEventListener("click", runAllChecks);
+
+      const adminInput = $("adminCodeInput");
+      if (adminInput) {
+        adminInput.addEventListener("input", () => {
+          sessionStorage.setItem("dproDentalAdminCodeSession", adminCode());
+        });
+      }
+
+      const forgetButton = $("forgetAdminCodeButton");
+      if (forgetButton) {
+        forgetButton.addEventListener("click", () => {
+          sessionStorage.removeItem("dproDentalAdminCodeSession");
+          localStorage.removeItem("dproDentalAdminCode");
+          $("adminCodeInput").value = "";
+          setAuthSafetyStatus("管理コードをこのタブから削除しました。必要な時だけ再入力してください。", "warn");
+        });
+      }
 
       const clinicInput = $("clinicCodeInput");
       if (clinicInput) {
