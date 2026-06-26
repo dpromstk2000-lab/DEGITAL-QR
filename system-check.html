@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-38A system-check.html 本番認証チェック強化</title>
+  <title>DPRO SHOP | STEP 30-39D system-check.html 本番認証チェック強化</title>
   <style>
     :root {
       --line: #06c755;
@@ -609,13 +609,116 @@
       }
     }
 
+  
+
+    /* STEP 30-39D 操作履歴チェック */
+    .audit-check-panel {
+      border: 1px solid #dbe3ef;
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
+      overflow: hidden;
+    }
+
+    .audit-check-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px;
+      border-bottom: 1px solid #edf2f7;
+      background: linear-gradient(135deg, #f8fafc 0%, #eef6ff 100%);
+    }
+
+    .audit-check-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .audit-check-sub {
+      margin-top: 6px;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .audit-check-body {
+      padding: 18px;
+    }
+
+    .audit-check-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .audit-check-row {
+      display: grid;
+      grid-template-columns: 118px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      background: #ffffff;
+    }
+
+    .audit-check-time {
+      font-size: 12px;
+      font-weight: 900;
+      color: #475569;
+    }
+
+    .audit-check-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .audit-check-detail {
+      margin-top: 4px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .audit-check-pill {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 5px 9px;
+      border: 1px solid #fed7aa;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .audit-check-empty {
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 16px;
+      color: #64748b;
+      background: #f8fafc;
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    @media (max-width: 720px) {
+      .audit-check-head,
+      .audit-check-row {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-38A / 本番認証チェック強化</div>
-      <h1>API・数字・画面リンクを<br>一括チェック</h1>
+      <div class="badge">STEP 30-39D / 本番認証チェック強化</div>
+      <h1>API・数字・画面リンク・操作履歴を<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
         営業デモ前・本番導入前にこのページを開いて、APIの生存確認・件数一致・最新版画面リンク・本番安全ガード・管理コード保護状態を確認します。
@@ -655,7 +758,7 @@
     
     <section class="section">
       <div class="cors-note">
-        <strong>STEP 30-38A 修正内容</strong>
+        <strong>STEP 30-39D 修正内容</strong>
         通常チェックは、管理コードをURLに残しにくいヘッダー送信で実行します。
         営業前DEMO設定だけは危険操作として、POST + 確認文言 + Worker側 clinic_code ガードで実行します。
         本番医院コードの場合、この画面ではDEMO設定ボタンを非表示にし、Worker側でも /api/admin/demo/sales-setup を拒否します。
@@ -828,6 +931,32 @@
         <strong>見方</strong>
         受付iPad・先生用・管理トップで件数が違う場合、まずこの診断ページでAPIレスポンス件数と取得失敗の有無を確認します。
         ここで取得失敗やAPI件数違いがある場合は Worker / Supabase 側、ここでは一致しているのに画面で違う場合は各HTML側の表示ロジックを確認します。
+      </div>
+    </section>
+
+
+
+    <section class="section">
+      <div class="audit-check-panel">
+        <div class="audit-check-head">
+          <div>
+            <div class="audit-check-title">受付取消・操作履歴チェック</div>
+            <div class="audit-check-sub">
+              受付取消が Worker API → Supabase の操作ログに残っているか確認します。本番運用では、誰が・いつ・どの画面で・どの理由で取消したかを確認できることが重要です。
+            </div>
+          </div>
+          <div>
+            <button class="btn" id="auditLogCheckButton" type="button">操作履歴を確認</button>
+          </div>
+        </div>
+        <div class="audit-check-body">
+          <div id="auditLogCheckStatus" class="demo-setup-status" style="border-color:#dbeafe;background:#eff6ff;color:#1d4ed8;">
+            未確認です。一括チェック、または「操作履歴を確認」を押してください。
+          </div>
+          <div class="audit-check-list" id="auditLogCheckList">
+            <div class="audit-check-empty">本日の受付取消履歴をまだ読み込んでいません。</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1008,7 +1137,7 @@
         }
       });
 
-      // STEP 30-38A:
+      // STEP 30-39D:
       // 管理コードはURLパラメータに残さず、ヘッダー送信を優先する。
       // Worker側のCORSは X-DPRO-Admin-Code を許可済み。
       let res;
@@ -1093,7 +1222,7 @@
       if (!adminCode()) {
         setAuthSafetyStatus(
           "管理コードが未入力です。/api/admin/safety-check と各管理APIの確認には管理コードが必要です。\n" +
-          "STEP 30-38Aでは、管理コードはlocalStorageに長期保存せず、このタブのsessionStorageのみ使用します。",
+          "STEP 30-39Dでは、管理コードはlocalStorageに長期保存せず、このタブのsessionStorageのみ使用します。",
           "danger"
         );
       }
@@ -1145,10 +1274,10 @@
         log("本番安全・認証チェック OK: " + url, data);
         return { ok: true, data };
       } catch (error) {
-        // STEP 30-38A導入前のWorkerでは /api/admin/safety-check がまだ無い可能性がある。
+        // STEP 30-39D導入前のWorkerでは /api/admin/safety-check がまだ無い可能性がある。
         // 画面側の表示制御は継続し、ログでWorker更新が必要なことを知らせる。
         if (el) {
-          el.textContent += "\n\n注意：Worker側の /api/admin/safety-check が未反映、管理コード不一致、または確認に失敗しました。STEP 30-38A Workerを先に反映してください。";
+          el.textContent += "\n\n注意：Worker側の /api/admin/safety-check が未反映、管理コード不一致、または確認に失敗しました。STEP 30-39D Workerを先に反映してください。";
         }
         setAuthSafetyStatus(
           "本番認証チェックに失敗しました。\n" +
@@ -1380,6 +1509,161 @@
       }
     }
 
+
+
+    function escapeAuditHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function auditStatusFromLog(log, key) {
+      const value = log && typeof log[key] === "object" ? log[key] : {};
+      return value || {};
+    }
+
+    function auditPatientName(log) {
+      const after = auditStatusFromLog(log, "after_status");
+      const before = auditStatusFromLog(log, "before_status");
+      return after.patient_name || before.patient_name || log.patient_name || "患者さん";
+    }
+
+    function auditMemberNo(log) {
+      const after = auditStatusFromLog(log, "after_status");
+      const before = auditStatusFromLog(log, "before_status");
+      return after.member_no || before.member_no || log.member_no || "";
+    }
+
+    function auditScheduledTime(log) {
+      const after = auditStatusFromLog(log, "after_status");
+      const before = auditStatusFromLog(log, "before_status");
+      return String(after.scheduled_time || before.scheduled_time || "").slice(0, 5);
+    }
+
+    function formatAuditTime(value) {
+      if (!value) return "時刻不明";
+      try {
+        return new Date(value).toLocaleString("ja-JP", {
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      } catch (error) {
+        return String(value).slice(0, 16);
+      }
+    }
+
+    function setAuditCheckStatus(message, tone) {
+      const el = $("auditLogCheckStatus");
+      if (!el) return;
+      el.textContent = String(message || "");
+      if (tone === "ok") {
+        el.style.color = "#166534";
+        el.style.borderColor = "#bbf7d0";
+        el.style.background = "#f0fdf4";
+      } else if (tone === "danger") {
+        el.style.color = "#991b1b";
+        el.style.borderColor = "#fecaca";
+        el.style.background = "#fef2f2";
+      } else {
+        el.style.color = "#1d4ed8";
+        el.style.borderColor = "#dbeafe";
+        el.style.background = "#eff6ff";
+      }
+    }
+
+    function renderAuditCheckLogs(logs) {
+      const list = $("auditLogCheckList");
+      if (!list) return;
+      const rows = Array.isArray(logs) ? logs : [];
+
+      if (!rows.length) {
+        list.innerHTML = '<div class="audit-check-empty">本日の受付取消履歴はありません。受付取消APIは反映済みでも、まだ取消操作がなければ0件で正常です。</div>';
+        return;
+      }
+
+      list.innerHTML = rows.map((log) => {
+        const name = auditPatientName(log);
+        const memberNo = auditMemberNo(log);
+        const scheduled = auditScheduledTime(log);
+        const staff = log.staff_name || "受付スタッフ";
+        const source = log.source_screen || "受付画面";
+        const memo = log.memo || "理由未入力";
+        return `
+          <div class="audit-check-row">
+            <div class="audit-check-time">${escapeAuditHtml(formatAuditTime(log.created_at))}</div>
+            <div>
+              <div class="audit-check-name">${escapeAuditHtml(name)}</div>
+              <div class="audit-check-detail">
+                ${memberNo ? escapeAuditHtml(memberNo) : "診察券番号なし"}
+                ${scheduled ? " / 予定 " + escapeAuditHtml(scheduled) : ""}
+                / 担当：${escapeAuditHtml(staff)}
+              </div>
+              <div class="audit-check-detail">理由：${escapeAuditHtml(memo)} / 操作元：${escapeAuditHtml(source)}</div>
+            </div>
+            <div><span class="audit-check-pill">受付取消</span></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function checkAuditLogs() {
+      const button = $("auditLogCheckButton");
+      if (button) {
+        button.disabled = true;
+        button.textContent = "確認中...";
+      }
+
+      try {
+        if (!adminCode()) {
+          setAuditCheckStatus("管理コードが未入力です。操作履歴の確認には管理コードが必要です。", "danger");
+          renderAuditCheckLogs([]);
+          return { ok: false, logs: [] };
+        }
+
+        setAuditCheckStatus("受付取消の操作履歴を確認しています...", "info");
+        const { data, url } = await fetchJson("/api/admin/daily-status-logs", {
+          clinic_code: clinicCode(),
+          date: todayJST(),
+          action_type: "check_in_cancel",
+          limit: 20
+        });
+
+        const logs = Array.isArray(data.logs)
+          ? data.logs
+          : Array.isArray(data.audit_logs)
+            ? data.audit_logs
+            : [];
+
+        renderAuditCheckLogs(logs);
+        setAuditCheckStatus(`受付取消履歴を確認しました。本日 ${logs.length}件。`, "ok");
+        log("受付取消・操作履歴チェック OK: " + url, {
+          summary: data.summary,
+          count: logs.length,
+          sample: logs.slice(0, 3)
+        });
+        return { ok: true, logs };
+      } catch (error) {
+        setAuditCheckStatus("受付取消・操作履歴チェックに失敗しました。\n" + (error.message || error), "danger");
+        renderAuditCheckLogs([]);
+        log("受付取消・操作履歴チェック NG", {
+          message: error.message,
+          status: error.status,
+          data: error.data
+        });
+        return { ok: false, logs: [] };
+      } finally {
+        if (button) {
+          button.disabled = false;
+          button.textContent = "操作履歴を確認";
+        }
+      }
+    }
+
     async function runAllChecks() {
       const button = $("runButton");
       button.disabled = true;
@@ -1406,6 +1690,7 @@
         renderCounts("doctor", doctor, true);
         renderCounts("owner", owner);
         compareCounts(scan, doctor, owner);
+        await checkAuditLogs();
       } finally {
         button.disabled = false;
         button.textContent = "一括チェック";
@@ -1420,6 +1705,11 @@
       $("clinicCodeInput").value = savedClinicCode === "demo-dental" ? "dpro_dental_demo" : savedClinicCode;
 
       $("runButton").addEventListener("click", runAllChecks);
+
+      const auditLogCheckButton = $("auditLogCheckButton");
+      if (auditLogCheckButton) {
+        auditLogCheckButton.addEventListener("click", checkAuditLogs);
+      }
 
       const adminInput = $("adminCodeInput");
       if (adminInput) {
