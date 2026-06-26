@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-39D system-check.html 本番認証チェック強化</title>
+  <title>DPRO SHOP | STEP 30-45A system-check.html 本番医院追加・初期設定チェック</title>
   <style>
     :root {
       --line: #06c755;
@@ -611,6 +611,89 @@
 
   
 
+    /* STEP 30-45A 本番医院追加・初期設定チェック */
+    .readiness-panel {
+      border: 1px solid #bfdbfe;
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+      border-radius: 24px;
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .readiness-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .readiness-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .readiness-metric {
+      border: 1px solid #dbeafe;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 12px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #475569;
+    }
+
+    .readiness-metric b {
+      display: block;
+      margin-top: 5px;
+      color: #0f172a;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .readiness-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .readiness-row {
+      display: grid;
+      grid-template-columns: 116px 180px 1fr;
+      gap: 10px;
+      align-items: start;
+      border: 1px solid #e2e8f0;
+      background: rgba(255,255,255,0.95);
+      border-radius: 16px;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 800;
+    }
+
+    .readiness-pill {
+      width: fit-content;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 950;
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .readiness-pill.pass { background: #dcfce7; color: #166534; }
+    .readiness-pill.warn { background: #fef3c7; color: #92400e; }
+    .readiness-pill.fail { background: #fee2e2; color: #991b1b; }
+    .readiness-pill.info { background: #dbeafe; color: #1d4ed8; }
+
+    @media (max-width: 720px) {
+      .readiness-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .readiness-row { grid-template-columns: 1fr; }
+    }
+
     /* STEP 30-39D 操作履歴チェック */
     .audit-check-panel {
       border: 1px solid #dbe3ef;
@@ -717,11 +800,11 @@
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-39D / 本番認証チェック強化</div>
-      <h1>API・数字・画面リンク・操作履歴を<br>一括チェック</h1>
+      <div class="badge">STEP 30-45A / 本番医院追加・初期設定チェック</div>
+      <h1>API・数字・操作履歴・本番導入設定を<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
-        営業デモ前・本番導入前にこのページを開いて、APIの生存確認・件数一致・最新版画面リンク・本番安全ガード・管理コード保護状態を確認します。
+        営業デモ前・本番導入前にこのページを開いて、APIの生存確認・件数一致・操作履歴・本番安全ガード・管理コード保護状態・本番医院の初期設定漏れを確認します。
       </p>
 
       <div class="settings">
@@ -758,10 +841,10 @@
     
     <section class="section">
       <div class="cors-note">
-        <strong>STEP 30-39D 修正内容</strong>
+        <strong>STEP 30-45A 修正内容</strong>
         通常チェックは、管理コードをURLに残しにくいヘッダー送信で実行します。
         営業前DEMO設定だけは危険操作として、POST + 確認文言 + Worker側 clinic_code ガードで実行します。
-        本番医院コードの場合、この画面ではDEMO設定ボタンを非表示にし、Worker側でも /api/admin/demo/sales-setup を拒否します。
+        本番医院コードの場合、この画面ではDEMO設定ボタンを非表示にし、Worker側でも /api/admin/demo/sales-setup を拒否します。さらに本番医院追加時の初期設定漏れを /api/admin/production-readiness-check で確認します。
       </div>
     </section>
     <section class="section">
@@ -787,6 +870,37 @@
         </p>
         <div class="demo-setup-status" id="authSafetyStatus" style="border-color:#fde68a;background:#ffffff;color:#92400e;">
           未確認です。管理コードを入力して一括チェックしてください。
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section" id="productionReadinessSection">
+      <div class="readiness-panel">
+        <div class="readiness-head">
+          <div>
+            <h2 class="section-title" style="margin:0;">本番医院追加・初期設定チェック</h2>
+            <p class="small" style="margin:6px 0 0;">
+              本番医院を追加する時に、医院コード・医院情報・診療時間・管理コード・LIFF URL・DEMO操作ガードの取り違えを確認します。
+              本番医院コードを入力して確認してください。
+            </p>
+          </div>
+          <button class="btn" id="productionReadinessButton" type="button">本番導入チェック</button>
+        </div>
+
+        <div class="demo-setup-status" id="productionReadinessStatus" style="border-color:#bfdbfe;background:#ffffff;color:#1e3a8a;">
+          未確認です。一括チェック、または「本番導入チェック」を押してください。
+        </div>
+
+        <div class="readiness-summary">
+          <div class="readiness-metric">PASS<b id="readinessPass">-</b></div>
+          <div class="readiness-metric">WARN<b id="readinessWarn">-</b></div>
+          <div class="readiness-metric">FAIL<b id="readinessFail">-</b></div>
+          <div class="readiness-metric">判定<b id="readinessResult" style="font-size:16px;line-height:1.25;">未確認</b></div>
+        </div>
+
+        <div class="readiness-list" id="productionReadinessList">
+          <div class="empty">本番導入チェックを実行すると、医院情報・診療時間・認証・LIFF設定の確認結果が表示されます。</div>
         </div>
       </div>
     </section>
@@ -918,7 +1032,7 @@
           <b>管理トップ</b>
           <span>owner.html?v=3027e</span>
         </a>
-        <a class="link-card" href="system-check.html?v=3038a"><b>本番前チェック</b><span>system-check.html?v=3038a</span></a>
+        <a class="link-card" href="system-check.html?v=3045a"><b>本番前チェック</b><span>system-check.html?v=3045a</span></a>
         <a class="link-card" href="admin.html?v=3024b">
           <b>管理画面</b>
           <span>admin.html?v=3024b</span>
@@ -1324,9 +1438,6 @@
           shop_code: clinicCode(),
           visit_date: date,
           date,
-          admin_code: adminCode(),
-          token: adminCode(),
-          admin_token: adminCode(),
           limit: 100
         });
 
@@ -1664,6 +1775,124 @@
       }
     }
 
+
+    function escapeReadinessHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function setProductionReadinessStatus(message, tone = "info") {
+      const el = $("productionReadinessStatus");
+      if (!el) return;
+      el.textContent = message || "";
+      if (tone === "ok") {
+        el.style.borderColor = "#bbf7d0";
+        el.style.background = "#f0fdf4";
+        el.style.color = "#166534";
+      } else if (tone === "danger") {
+        el.style.borderColor = "#fecaca";
+        el.style.background = "#fef2f2";
+        el.style.color = "#991b1b";
+      } else if (tone === "warn") {
+        el.style.borderColor = "#fde68a";
+        el.style.background = "#fffbeb";
+        el.style.color = "#92400e";
+      } else {
+        el.style.borderColor = "#bfdbfe";
+        el.style.background = "#eff6ff";
+        el.style.color = "#1d4ed8";
+      }
+    }
+
+    function renderProductionReadiness(data) {
+      const list = $("productionReadinessList");
+      const checks = Array.isArray(data?.checks) ? data.checks : [];
+      const summary = data?.summary || {};
+      setText("readinessPass", summary.pass ?? checks.filter((item) => item.status === "pass").length);
+      setText("readinessWarn", summary.warn ?? checks.filter((item) => item.status === "warn").length);
+      setText("readinessFail", summary.fail ?? checks.filter((item) => item.status === "fail").length);
+      setText("readinessResult", data?.production_ready ? "本番OK" : "要確認");
+
+      if (!list) return;
+      if (!checks.length) {
+        list.innerHTML = '<div class="empty">チェック結果がありません。</div>';
+        return;
+      }
+
+      list.innerHTML = checks.map((item) => {
+        const status = item.status || "info";
+        const pillClass = ["pass", "warn", "fail"].includes(status) ? status : "info";
+        const label = item.label || item.id || "チェック";
+        const message = item.message || "";
+        return `
+          <div class="readiness-row">
+            <div><span class="readiness-pill ${pillClass}">${escapeReadinessHtml(status.toUpperCase())}</span></div>
+            <div><strong>${escapeReadinessHtml(label)}</strong></div>
+            <div>${escapeReadinessHtml(message)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function checkProductionReadiness() {
+      const button = $("productionReadinessButton");
+      if (button) {
+        button.disabled = true;
+        button.textContent = "確認中...";
+      }
+
+      try {
+        if (!adminCode()) {
+          setProductionReadinessStatus("管理コードが未入力です。本番導入チェックには管理コードが必要です。", "danger");
+          renderProductionReadiness({ checks: [] });
+          return { ok: false };
+        }
+
+        setProductionReadinessStatus("本番医院追加・初期設定を確認しています...", "info");
+        const { data, url } = await fetchJson("/api/admin/production-readiness-check", {
+          clinic_code: clinicCode()
+        });
+
+        renderProductionReadiness(data);
+        const summary = data.summary || {};
+        const tone = data.production_ready ? "ok" : (summary.fail > 0 ? "danger" : "warn");
+        setProductionReadinessStatus(
+          `${data.message || "本番導入チェックを確認しました。"}\nPASS: ${summary.pass ?? "-"} / WARN: ${summary.warn ?? "-"} / FAIL: ${summary.fail ?? "-"}`,
+          tone
+        );
+        log("本番医院追加・初期設定チェック OK: " + url, {
+          production_ready: data.production_ready,
+          summary: data.summary,
+          recommendations: data.recommendations,
+          checks: data.checks
+        });
+        return { ok: true, data };
+      } catch (error) {
+        setProductionReadinessStatus(
+          "本番医院追加・初期設定チェックに失敗しました。\n" +
+          (error.message || error) +
+          "\nWorker が STEP 30-45A に更新済みか確認してください。",
+          "danger"
+        );
+        renderProductionReadiness({ checks: [] });
+        log("本番医院追加・初期設定チェック NG", {
+          message: error.message,
+          status: error.status,
+          data: error.data
+        });
+        return { ok: false, error };
+      } finally {
+        if (button) {
+          button.disabled = false;
+          button.textContent = "本番導入チェック";
+        }
+      }
+    }
+
     async function runAllChecks() {
       const button = $("runButton");
       button.disabled = true;
@@ -1679,6 +1908,7 @@
       try {
         await checkHealth();
         await checkSafetyGuard();
+        await checkProductionReadiness();
 
         const [scan, doctor, owner] = await Promise.all([
           checkEndpoint("受付iPad", "/api/scan/today", "scan"),
@@ -1709,6 +1939,11 @@
       const auditLogCheckButton = $("auditLogCheckButton");
       if (auditLogCheckButton) {
         auditLogCheckButton.addEventListener("click", checkAuditLogs);
+      }
+
+      const productionReadinessButton = $("productionReadinessButton");
+      if (productionReadinessButton) {
+        productionReadinessButton.addEventListener("click", checkProductionReadiness);
       }
 
       const adminInput = $("adminCodeInput");
