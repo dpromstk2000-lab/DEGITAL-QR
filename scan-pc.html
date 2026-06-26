@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-36 PC受付QRリーダー</title>
+  <title>DPRO SHOP | STEP 30-39A PC受付QRリーダー 受付前確認・二重受付警告</title>
 
   <script src="./config.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -1061,6 +1061,104 @@
       }
     }
 
+  
+
+    /* STEP 30-39A：受付ミス対策（受付前確認・二重受付警告） */
+    .reception-safety-panel {
+      margin-top: 14px;
+      border-radius: 22px;
+      border: 1px solid #fed7aa;
+      background: linear-gradient(135deg, rgba(255, 251, 235, 0.96), rgba(255, 247, 237, 0.92));
+      padding: 14px;
+      box-shadow: 0 12px 24px rgba(245, 158, 11, 0.08);
+    }
+
+    .reception-safety-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #9a3412;
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+    }
+
+    .reception-safety-title::before {
+      content: "確認";
+      min-width: 42px;
+      height: 24px;
+      border-radius: 999px;
+      background: #f97316;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .reception-safety-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .reception-safety-item {
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(251, 146, 60, 0.24);
+      padding: 10px;
+      min-height: 68px;
+    }
+
+    .reception-safety-label {
+      color: #9a3412;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .reception-safety-value {
+      margin-top: 4px;
+      color: #0f172a;
+      font-size: 16px;
+      line-height: 1.35;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      word-break: break-word;
+    }
+
+    .reception-safety-note {
+      margin-top: 10px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px dashed rgba(154, 52, 18, 0.22);
+      color: #7c2d12;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 820;
+      padding: 10px;
+      white-space: pre-line;
+    }
+
+    .reception-safety-note.warn {
+      color: #991b1b;
+      border-color: rgba(220, 38, 38, 0.32);
+      background: rgba(254, 242, 242, 0.82);
+    }
+
+    .btn[disabled] {
+      cursor: not-allowed;
+      opacity: 0.62;
+      filter: grayscale(0.12);
+    }
+
+    @media (max-width: 760px) {
+      .reception-safety-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 
@@ -1271,6 +1369,28 @@
 
               <div class="family-list" id="familyList"></div>
 
+              <div class="reception-safety-panel" id="receptionSafetyPanel">
+                <div class="reception-safety-title">受付済みにする前に、ここだけ確認してください</div>
+                <div class="reception-safety-grid">
+                  <div class="reception-safety-item">
+                    <div class="reception-safety-label">患者名</div>
+                    <div class="reception-safety-value" id="confirmPatientName">---</div>
+                  </div>
+                  <div class="reception-safety-item">
+                    <div class="reception-safety-label">診察券番号</div>
+                    <div class="reception-safety-value" id="confirmMemberNo">---</div>
+                  </div>
+                  <div class="reception-safety-item">
+                    <div class="reception-safety-label">本日の予定</div>
+                    <div class="reception-safety-value" id="confirmSchedule">---</div>
+                  </div>
+                </div>
+                <div class="reception-safety-note" id="receptionSafetyNote">
+                  受付済みにする前に、患者名・診察券番号・本日の予定を確認します。
+                </div>
+              </div>
+
+
               <div class="reception-actions">
                 <button class="btn btn-green" id="markReceivedButton" type="button">
                   受付済みにする
@@ -1381,6 +1501,10 @@
         patientName: $("patientName"),
         patientKana: $("patientKana"),
         patientMeta: $("patientMeta"),
+        confirmPatientName: $("confirmPatientName"),
+        confirmMemberNo: $("confirmMemberNo"),
+        confirmSchedule: $("confirmSchedule"),
+        receptionSafetyNote: $("receptionSafetyNote"),
         checkList: $("checkList"),
         nextAppointment: $("nextAppointment"),
         lineStatus: $("lineStatus"),
@@ -2074,9 +2198,155 @@
 
         renderCheckList(patient, family);
         renderFamilyCards(patient, cards);
+        updateReceptionSafetyPanel(patient);
 
         updateStats();
         renderQueue();
+      }
+
+
+
+      // STEP 30-39A：受付ミス対策
+      function getDailyRowsForPatient(patient) {
+        if (!patient || !Array.isArray(state.dbStatuses)) return [];
+
+        const patientId = String(patient.id || "").trim();
+        const qrToken = String(patient.qr_token || "").trim();
+        const memberNo = String(patient.member_no || "").trim();
+        const name = String(patient.patient_name || "").trim();
+
+        return state.dbStatuses.filter((row) => {
+          return (
+            (patientId && String(row.patient_id || "") === patientId) ||
+            (qrToken && String(row.qr_token || "") === qrToken) ||
+            (memberNo && String(row.member_no || "") === memberNo) ||
+            (name && String(row.patient_name || "") === name)
+          );
+        });
+      }
+
+      function getPrimaryDailyRowForPatient(patient) {
+        if (!patient) return null;
+        return getDailyStatusByToken(patient.qr_token) ||
+          getDailyStatusByToken(patient.member_no) ||
+          getDailyRowsForPatient(patient)[0] ||
+          null;
+      }
+
+      function formatScheduleTextFromRow(row, patient) {
+        const time = String(row?.scheduled_time || patient?.next_appointment_time || "").slice(0, 5);
+        const label = row?.scheduled_label || row?.task_summary || patient?.next_appointment_memo || "本日の予定";
+        if (time && label) return `${time}　${label}`;
+        if (time) return `${time}`;
+        return label || "本日の予定未確認";
+      }
+
+      function buildReceptionSafetyStatus(patient) {
+        const row = getPrimaryDailyRowForPatient(patient);
+        const rows = getDailyRowsForPatient(patient);
+        const checkedRows = rows.filter((item) => item.reception_status === "checked_in");
+        const pendingRows = rows.filter((item) => item.reception_status !== "checked_in");
+        const already = checkedRows.length > 0 || isReceived(patient?.qr_token);
+        const isTodayScheduled = Boolean(row);
+        const scheduleText = formatScheduleTextFromRow(row, patient);
+
+        let level = "ok";
+        const notes = [];
+
+        if (already) {
+          level = "warn";
+          notes.push("この患者さんは本日すでに受付済みです。二重受付を防ぐため、通常はもう一度受付済みにしません。");
+        } else {
+          notes.push("この内容で間違いなければ、下の「受付済みにする」を押してください。押した後に確認ダイアログが出ます。");
+        }
+
+        if (!isTodayScheduled) {
+          level = "warn";
+          notes.push("本日の受付予定一覧には見つかっていません。予定外来院の場合だけ受付してください。");
+        }
+
+        if (rows.length > 1) {
+          level = "warn";
+          notes.push(`同じ患者さんの本日予定が ${rows.length} 件あります。受付する予定時間が正しいか確認してください。`);
+        }
+
+        if (pendingRows.length > 1) {
+          level = "warn";
+          notes.push("未受付の予定が複数あります。間違った予約枠で受付しないように注意してください。");
+        }
+
+        return {
+          row,
+          rows,
+          checkedRows,
+          pendingRows,
+          already,
+          isTodayScheduled,
+          scheduleText,
+          level,
+          note: notes.join("\n")
+        };
+      }
+
+      function updateReceptionSafetyPanel(patient) {
+        if (!patient) return;
+
+        const status = buildReceptionSafetyStatus(patient);
+
+        if (els.confirmPatientName) els.confirmPatientName.textContent = patient.patient_name || "患者さま";
+        if (els.confirmMemberNo) els.confirmMemberNo.textContent = patient.member_no || "---";
+        if (els.confirmSchedule) els.confirmSchedule.textContent = status.scheduleText || "---";
+
+        if (els.receptionSafetyNote) {
+          els.receptionSafetyNote.textContent = status.note;
+          els.receptionSafetyNote.classList.toggle("warn", status.level === "warn");
+        }
+
+        if (els.markReceivedButton) {
+          if (status.already) {
+            els.markReceivedButton.textContent = "本日受付済み";
+          } else {
+            els.markReceivedButton.textContent = "受付済みにする";
+          }
+        }
+      }
+
+      function buildReceptionConfirmText(patient) {
+        const status = buildReceptionSafetyStatus(patient);
+        const warnings = [];
+
+        if (!status.isTodayScheduled) warnings.push("・本日の受付予定一覧にない患者です");
+        if (status.rows.length > 1) warnings.push(`・同じ患者さんの本日予定が ${status.rows.length} 件あります`);
+        if (status.checkedRows.length > 0) warnings.push("・すでに受付済みの記録があります");
+
+        const warningText = warnings.length
+          ? "\n\n注意：\n" + warnings.join("\n")
+          : "";
+
+        return [
+          "この患者さんを受付済みにしますか？",
+          "",
+          `患者名：${patient.patient_name || "---"}`,
+          `診察券番号：${patient.member_no || "---"}`,
+          `本日の予定：${status.scheduleText || "---"}`,
+          `受付スタッフ：${getStaffName() || "受付スタッフ"}`,
+          warningText,
+          "",
+          "OKを押すと、Worker API → Supabase に保存し、先生用画面・管理トップへ反映します。"
+        ].join("\n");
+      }
+
+      function setMarkReceivedButtonLoading(isLoading) {
+        if (!els.markReceivedButton) return;
+        els.markReceivedButton.disabled = Boolean(isLoading);
+        if (isLoading) {
+          els.markReceivedButton.dataset.originalText = els.markReceivedButton.textContent || "受付済みにする";
+          els.markReceivedButton.textContent = "保存中...";
+        } else {
+          els.markReceivedButton.textContent = els.markReceivedButton.dataset.originalText || "受付済みにする";
+          delete els.markReceivedButton.dataset.originalText;
+          if (state.currentPatient) updateReceptionSafetyPanel(state.currentPatient);
+        }
       }
 
       function buildDefaultHandoffMemo(patient, family) {
@@ -2375,10 +2645,15 @@
           return;
         }
 
-        const already = isReceived(patient.qr_token);
+        const status = buildReceptionSafetyStatus(patient);
 
-        if (already) {
-          showMessage(els.patientMessage, "success", "すでに受付済みです。");
+        if (status.already) {
+          showMessage(
+            els.patientMessage,
+            "warning",
+            "この患者さんは本日すでに受付済みです。\n二重受付を防ぐため、もう一度受付済みにはしません。\n間違えて受付済みにした場合の取消は、次のSTEP 30-39Bで追加します。"
+          );
+          updateReceptionSafetyPanel(patient);
           return;
         }
 
@@ -2387,7 +2662,14 @@
           return;
         }
 
-        showMessage(els.patientMessage, "info", "受付済みを保存しています...");
+        const ok = window.confirm(buildReceptionConfirmText(patient));
+        if (!ok) {
+          showMessage(els.patientMessage, "info", "受付済み操作をキャンセルしました。患者名・診察券番号・予定時間を確認してください。");
+          return;
+        }
+
+        setMarkReceivedButtonLoading(true);
+        showMessage(els.patientMessage, "info", "受付済みを保存しています...\nWorker API → Supabase に保存後、受付状況を再読込します。");
 
         try {
           const result = await apiFetch("/api/scan/check-in", {
@@ -2408,18 +2690,22 @@
             throw new Error(result.message || result.error || "受付保存に失敗しました。");
           }
 
-          // STEP 30-36:
-          // ローカル保存ではなく、API保存成功後にSupabaseから再読込して反映する。
+          // STEP 30-39A:
+          // ローカル保存ではなく、API保存成功後にSupabaseから再読込して、先生用画面へ反映されたか確認する。
           await loadDailyStatuses(false);
           setTimeout(() => focusReaderInput(false), 400);
 
+          const dbRow = getDailyStatusByToken(patient.qr_token) || getDailyStatusByToken(patient.member_no);
+          const reflected = Boolean(dbRow && dbRow.reception_status === "checked_in");
+
           showMessage(
             els.patientMessage,
-            "success",
-            `${patient.patient_name} 様を受付済みにしました。\\nSupabaseに保存しました。先生用画面・管理トップにも受付済みとして反映されます。`
+            reflected ? "success" : "warning",
+            reflected
+              ? `${patient.patient_name} 様を受付済みにしました。\nSupabaseに保存しました。先生用画面・管理トップにも受付済みとして反映済みです。`
+              : `${patient.patient_name} 様の受付保存は完了しましたが、再読込結果で受付済み状態を確認できませんでした。受付状況を更新して確認してください。`
           );
 
-          const dbRow = getDailyStatusByToken(patient.qr_token);
           if (dbRow) {
             renderPatient(statusRowToPatientData(dbRow));
           } else {
@@ -2436,15 +2722,18 @@
           showMessage(
             els.patientMessage,
             "error",
-            "受付済みの保存に失敗しました。\\n\\n" +
-            "確認すること：\\n" +
-            "・STEP 30-23A SQLが完了しているか\\n" +
-            "・Workerが step-30-23b か\\n" +
-            "・管理コードが正しいか\\n\\n" +
+            "受付済みの保存に失敗しました。\n\n" +
+            "確認すること：\n" +
+            "・Worker API が最新版か\n" +
+            "・Supabase の受付ステータステーブルがあるか\n" +
+            "・管理コードが正しいか\n\n" +
             "詳細：" + (error.message || error)
           );
+        } finally {
+          setMarkReceivedButtonLoading(false);
         }
       }
+
 
       function copyLineGuide() {
         const patient = state.currentPatient;
