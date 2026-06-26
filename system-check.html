@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-36B system-check.html PC受付リーダーリンク追加</title>
+  <title>DPRO SHOP | STEP 30-37B system-check.html 本番安全ガード総点検</title>
   <style>
     :root {
       --line: #06c755;
@@ -614,11 +614,11 @@
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-36B / Failed to fetch 判定修正</div>
+      <div class="badge">STEP 30-37B / 本番安全ガード総点検</div>
       <h1>API・数字・画面リンクを<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
-        営業デモ前にこのページを開いて、APIの生存確認・件数一致・最新版画面リンクを確認します。
+        営業デモ前にこのページを開いて、APIの生存確認・件数一致・最新版画面リンク・本番安全ガードを確認します。
       </p>
 
       <div class="settings">
@@ -652,13 +652,26 @@
     
     <section class="section">
       <div class="cors-note">
-        <strong>STEP 30-36B 修正内容</strong>
-        API確認は、Workerが読めるように admin_code / token / admin_token をURLパラメータで渡すシンプルGETで実行します。
-        これにより、ブラウザのCORSプリフライトによる Failed to fetch を避けやすくします。
-        また、受付iPad・先生用・管理トップのいずれかが取得失敗した場合は、総合判定をOKにしません。
+        <strong>STEP 30-37B 修正内容</strong>
+        通常チェックは、Workerが読めるように admin_code / token / admin_token をURLパラメータで渡すシンプルGETで実行します。
+        営業前DEMO設定だけは危険操作として、POST + 確認文言 + Worker側 clinic_code ガードで実行します。
+        本番医院コードの場合、この画面ではDEMO設定ボタンを非表示にし、Worker側でも /api/admin/demo/sales-setup を拒否します。
       </div>
     </section>
     <section class="section">
+      <div class="demo-setup-panel" id="prodSafetyPanel" style="border-color:#bfdbfe;background:#eff6ff;">
+        <h2>本番安全チェック</h2>
+        <p>
+          医院コードを見て、営業前DEMO設定を出してよいか確認します。
+          <b>dpro_dental_demo</b> の時だけDEMO操作を表示し、本番医院コードでは非表示にします。
+        </p>
+        <div class="demo-setup-status" id="prodSafetyStatus" style="border-color:#bfdbfe;background:#ffffff;color:#1e3a8a;">
+          未確認です。医院コードを確認しています。
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="demoSetupSection">
       <div class="demo-setup-panel">
         <h2>営業前DEMO設定</h2>
         <p>
@@ -991,6 +1004,106 @@
       return { data, url: url.toString() };
     }
 
+    async function fetchJsonPost(path, body = {}) {
+      const url = new URL(apiBase() + path);
+
+      // 管理コードはURL側にも残す。Workerの既存認証に合わせるため。
+      url.searchParams.set("admin_code", adminCode());
+      url.searchParams.set("token", adminCode());
+      url.searchParams.set("admin_token", adminCode());
+
+      let res;
+      try {
+        res = await fetch(url.toString(), {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          cache: "no-store",
+          body: JSON.stringify({
+            ...body,
+            admin_code: adminCode(),
+            token: adminCode(),
+            admin_token: adminCode()
+          })
+        });
+      } catch (networkError) {
+        const err = new Error(networkError.message || "Failed to fetch");
+        err.reason = "network_or_cors";
+        err.url = url.toString();
+        throw err;
+      }
+
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (error) {
+        data = { ok: false, error: "JSONとして読めませんでした" };
+      }
+
+      if (!res.ok || data.ok === false) {
+        const message = data.message || data.error || `HTTP ${res.status}`;
+        const err = new Error(message);
+        err.data = data;
+        err.status = res.status;
+        err.url = url.toString();
+        throw err;
+      }
+
+      return { data, url: url.toString() };
+    }
+
+    async function checkSafetyGuard() {
+      const el = $("prodSafetyStatus");
+      const isDemo = clinicCode() === "dpro_dental_demo";
+
+      if (el) {
+        el.textContent = isDemo
+          ? "DEMO医院コードです。営業前DEMO設定ボタンを表示します。"
+          : "本番医院コードです。営業前DEMO設定ボタンは非表示にします。";
+        el.style.color = isDemo ? "#166534" : "#991b1b";
+        el.style.borderColor = isDemo ? "#bbf7d0" : "#fecaca";
+        el.style.background = isDemo ? "#f0fdf4" : "#fef2f2";
+      }
+
+      const demoSection = $("demoSetupSection");
+      if (demoSection) demoSection.style.display = isDemo ? "" : "none";
+
+      try {
+        const { data, url } = await fetchJson("/api/admin/safety-check", {
+          clinic_code: clinicCode(),
+          admin_code: adminCode(),
+          token: adminCode(),
+          admin_token: adminCode()
+        });
+
+        if (el) {
+          const safety = data.safety || {};
+          el.textContent =
+            (data.message || "本番安全チェックを確認しました。") + "\n" +
+            `clinic_code: ${safety.requested_clinic_code || clinicCode()}\n` +
+            `demo_clinic: ${safety.demo_clinic_code || "dpro_dental_demo"}\n` +
+            `demo実行可: ${safety.can_run_demo_operations ? "はい" : "いいえ"}`;
+        }
+
+        log("本番安全チェック OK: " + url, data);
+        return { ok: true, data };
+      } catch (error) {
+        // STEP 30-37B導入前のWorkerでは /api/admin/safety-check がまだ無い可能性がある。
+        // 画面側の表示制御は継続し、ログでWorker更新が必要なことを知らせる。
+        if (el) {
+          el.textContent += "\n\n注意：Worker側の /api/admin/safety-check が未反映、または確認に失敗しました。STEP 30-37B Workerを先に反映してください。";
+        }
+        log("本番安全チェック 注意", {
+          message: error.message,
+          status: error.status,
+          data: error.data
+        });
+        return { ok: false, error };
+      }
+    }
+
     async function checkHealth() {
       setStatus("healthStatus", "", "確認中");
       setText("healthText", "Worker API を確認中です...");
@@ -1135,27 +1248,56 @@
         button.disabled = true;
       });
 
-      setDemoSetupStatus("営業前DEMO設定を実行中です。山田家・背景患者デモと本日の受付・診療状態を作り直しています...");
-      log("営業前DEMO設定 開始");
-
       try {
-        const { data, url } = await fetchJson("/api/admin/demo/sales-setup", {
+        if (clinicCode() !== "dpro_dental_demo") {
+          setDemoSetupStatus(
+            "本番安全ガードにより停止しました。\n" +
+            "営業前DEMO設定は dpro_dental_demo の時だけ実行できます。\n" +
+            `現在の医院コード：${clinicCode()}`
+          );
+          log("営業前DEMO設定 ブロック", {
+            reason: "non_demo_clinic",
+            clinic_code: clinicCode()
+          });
+          await checkSafetyGuard();
+          return;
+        }
+
+        const confirmText = window.prompt(
+          "営業前DEMO設定を実行します。\n\n" +
+          "この操作はデモ医院の患者・受付・診療ステータスを作り直します。\n" +
+          "本番医院では絶対に実行しないでください。\n\n" +
+          "実行する場合は次の文言をそのまま入力してください：\n\n" +
+          "DEMO医院だけ実行"
+        );
+
+        if (confirmText !== "DEMO医院だけ実行") {
+          setDemoSetupStatus("営業前DEMO設定をキャンセルしました。確認文言が一致しません。");
+          log("営業前DEMO設定 キャンセル", {
+            reason: "confirm_text_mismatch"
+          });
+          return;
+        }
+
+        setDemoSetupStatus("営業前DEMO設定を実行中です。山田家・背景患者デモと本日の受付・診療状態を作り直しています...");
+        log("営業前DEMO設定 開始");
+
+        const { data, url } = await fetchJsonPost("/api/admin/demo/sales-setup", {
           clinic_code: clinicCode(),
           clinic: clinicCode(),
           shop_code: clinicCode(),
-          admin_code: adminCode(),
-          token: adminCode(),
-          admin_token: adminCode(),
-          mode: "sales_demo"
+          mode: "sales_demo",
+          confirm_text: confirmText
         });
 
         setDemoSetupStatus(
           "営業前DEMO設定が完了しました。\n" +
-          "本日の患者3件 / 未受付1件 / 受付済み2件 / 診療待ち1件 / 診療済み1件 / LINEフォロー1件 の想定です。"
+          "本日の患者6件 / 未受付2件 / 受付済み4件 / 診療待ち2件 / 診療済み2件 / LINEフォロー1件 の想定です。"
         );
 
         log("営業前DEMO設定 OK: " + url, {
           message: data.message,
+          safety_guard: data.safety_guard,
           daily_status_summary: data.daily_status_summary,
           sales_demo_message: data.sales_demo_message
         });
@@ -1190,6 +1332,7 @@
 
       try {
         await checkHealth();
+        await checkSafetyGuard();
 
         const [scan, doctor, owner] = await Promise.all([
           checkEndpoint("受付iPad", "/api/scan/today", "scan"),
@@ -1214,6 +1357,14 @@
       $("clinicCodeInput").value = savedClinicCode === "demo-dental" ? "dpro_dental_demo" : savedClinicCode;
 
       $("runButton").addEventListener("click", runAllChecks);
+
+      const clinicInput = $("clinicCodeInput");
+      if (clinicInput) {
+        clinicInput.addEventListener("input", checkSafetyGuard);
+        clinicInput.addEventListener("change", checkSafetyGuard);
+      }
+
+      checkSafetyGuard();
 
       const demoSetupButton = $("demoSetupButton");
       if (demoSetupButton) {
