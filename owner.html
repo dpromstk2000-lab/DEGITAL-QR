@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-39D owner.html 受付取消履歴表示</title>
+  <title>DPRO SHOP | STEP 30-42A owner.html 操作履歴統合表示</title>
 
   <script src="./config.js"></script>
 
@@ -2507,7 +2507,7 @@
 
     /* =========================================================
       STEP 30-39D
-      受付取消・操作履歴パネル
+      操作履歴・ログ見える化パネル
     ========================================================= */
     .audit-log-panel {
       margin: 22px 0;
@@ -3204,20 +3204,20 @@
         <div>
           <div class="audit-log-title">
             <span class="icon">履</span>
-            受付取消の操作履歴
+            最近の操作履歴
           </div>
           <div class="audit-log-sub">
-            受付iPad・PC受付で取り消した履歴を、Worker API → Supabase の操作ログから確認します。誰が、いつ、どの患者さんを、どの理由で取消したかを日常画面でも確認できます。
+            受付・診療・LINE文面コピー・QR再発行・診察券停止・患者無効化/統合などを、Worker API → Supabase の操作ログからまとめて確認します。
           </div>
         </div>
         <div class="audit-log-actions">
-          <button class="btn btn-light" id="auditLogReloadButton" type="button">操作履歴を更新</button>
+          <button class="btn btn-light" id="auditLogReloadButton" type="button">全体履歴を更新</button>
         </div>
       </div>
       <div class="audit-log-body">
         <div class="audit-log-message" id="auditLogMessage"></div>
         <div class="audit-log-list" id="auditLogList">
-          <div class="audit-log-empty">まだ読み込んでいません。「操作履歴を更新」を押してください。</div>
+          <div class="audit-log-empty">まだ読み込んでいません。「全体履歴を更新」を押してください。</div>
         </div>
       </div>
     </section>
@@ -3614,6 +3614,7 @@
     <footer class="footer">
       <strong id="footerClinicName">DPRO歯科クリニック</strong><br />
       DPRO SHOP 歯科デジタルQR診察券 / owner.html<br />
+      STEP 30-42A 操作履歴・ログ見える化の全体統合<br />
       この画面には Supabase Service Role Key や ADMIN_TOKEN は直書きしていません。
     </footer>
   </main>
@@ -6388,7 +6389,7 @@
       function setLoading(isLoading) {
         if (!auditEls.reloadButton) return;
         auditEls.reloadButton.disabled = Boolean(isLoading);
-        auditEls.reloadButton.textContent = isLoading ? "更新中..." : "操作履歴を更新";
+        auditEls.reloadButton.textContent = isLoading ? "更新中..." : "全体履歴を更新";
       }
 
       function formatDateTime(value) {
@@ -6498,7 +6499,7 @@
       async function loadAuditLogs(showMessage = true) {
         if (!auditEls.list) return;
         setLoading(true);
-        if (showMessage) showAuditMessage("", "受付取消の操作履歴を確認しています...");
+        if (showMessage) showAuditMessage("", "最近の操作履歴を確認しています...");
         try {
           const logs = await fetchAuditLogs();
           renderAuditLogs(logs);
@@ -7306,6 +7307,191 @@
       }
 
       window.DPRO_ownerUnifyTopCountsFromApi = updateTopFromSync;
+    })();
+  </script>
+
+
+  <script>
+    (function () {
+      "use strict";
+
+      const DEFAULT_API_BASE = "https://dpro-dental-qr-api.dpromstk2000.workers.dev";
+      const $ = (id) => document.getElementById(id);
+
+      function getConfig() {
+        return window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
+      }
+
+      function getApiBaseUrl() {
+        const config = getConfig();
+        const value = config?.API?.BASE_URL || config?.API_BASE_URL || DEFAULT_API_BASE;
+        return String(value || DEFAULT_API_BASE).replace(/\/+$/, "");
+      }
+
+      function getClinicCode() {
+        const config = getConfig();
+        return String(config?.CLINIC?.CLINIC_CODE || config?.CLINIC_CODE || "dpro_dental_demo").trim() || "dpro_dental_demo";
+      }
+
+      function getAdminCode() {
+        try {
+          return String(
+            (window.readSessionAdminCode38b && window.readSessionAdminCode38b()) ||
+            sessionStorage.getItem("dproDentalAdminCode") ||
+            sessionStorage.getItem("dproDentalAdminToken") ||
+            sessionStorage.getItem("dproDentalAdminCodeSession") ||
+            sessionStorage.getItem("dpro_dental_qr_admin_code") ||
+            sessionStorage.getItem("dpro_dental_admin_code") ||
+            ""
+          ).trim();
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function formatDateTime(value) {
+        if (!value) return "時刻不明";
+        try {
+          return new Date(value).toLocaleString("ja-JP", {
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+        } catch (error) {
+          return String(value).slice(0, 16);
+        }
+      }
+
+      function sourceLabel(item) {
+        if (item.source_label) return item.source_label;
+        if (item.source_type === "daily") return "受付・診療";
+        if (item.source_type === "card") return "QR診察券";
+        if (item.source_type === "patient") return "患者管理";
+        return "操作";
+      }
+
+      function showMessage(type, text) {
+        const message = $("auditLogMessage");
+        if (!message) return;
+        message.className = "audit-log-message show " + (type || "");
+        message.textContent = String(text || "");
+      }
+
+      function setLoading(isLoading) {
+        const button = $("auditLogReloadButton");
+        if (!button) return;
+        button.disabled = Boolean(isLoading);
+        button.textContent = isLoading ? "更新中..." : "全体履歴を更新";
+      }
+
+      async function fetchOperationLogs() {
+        const adminCode = getAdminCode();
+        if (!adminCode) throw new Error("管理コードが未入力です。管理コードを保存してから更新してください。");
+
+        const url = new URL(getApiBaseUrl() + "/api/owner/operation-logs");
+        url.searchParams.set("clinic_code", getClinicCode());
+        url.searchParams.set("limit", "60");
+        url.searchParams.set("_t", String(Date.now()));
+
+        const res = await fetch(url.toString(), {
+          method: "GET",
+          headers: {
+            "Accept": "application/json",
+            "x-admin-code": adminCode,
+            "x-dpro-admin-code": adminCode,
+            "Authorization": "Bearer " + adminCode
+          },
+          cache: "no-store"
+        });
+
+        const data = await res.json().catch(() => ({ ok: false, message: "JSONとして読めませんでした。" }));
+        if (!res.ok || data.ok === false) throw new Error(data.message || data.error || "操作履歴の取得に失敗しました。");
+        return data;
+      }
+
+      function renderOperationLogs(data) {
+        const list = $("auditLogList");
+        if (!list) return;
+        const rows = Array.isArray(data?.operation_logs) ? data.operation_logs : Array.isArray(data?.logs) ? data.logs : [];
+        const warnings = Array.isArray(data?.warnings) ? data.warnings : [];
+
+        if (!rows.length) {
+          const warningHtml = warnings.length ? `<div class="audit-log-empty">一部の履歴テーブルが未作成です。${escapeHtml(warnings.map((w) => w.message).join(" / "))}</div>` : "";
+          list.innerHTML = warningHtml + '<div class="audit-log-empty">操作履歴はまだありません。受付・診療・QR操作・患者操作を行うとここに表示されます。</div>';
+          return;
+        }
+
+        list.innerHTML = rows.map((item) => {
+          const name = item.patient_name || "患者さん";
+          const memberNo = item.member_no || "";
+          const staff = item.staff_name || "---";
+          const detail = item.detail_text || item.reason || "";
+          const source = sourceLabel(item);
+          const action = item.action_label || item.action_type || "操作";
+          const schedule = item.scheduled_time ? ` / 予定 ${escapeHtml(item.scheduled_time)}` : "";
+          return `
+            <div class="audit-log-row">
+              <div class="audit-log-time">${escapeHtml(formatDateTime(item.created_at))}</div>
+              <div>
+                <div class="audit-log-name">${escapeHtml(name)} <span class="audit-log-pill">${escapeHtml(action)}</span></div>
+                <div class="audit-log-detail">
+                  ${memberNo ? "診察券番号：" + escapeHtml(memberNo) : "診察券番号なし"}${schedule} / 操作：${escapeHtml(staff)}
+                </div>
+                <div class="audit-log-detail">
+                  分類：${escapeHtml(source)}${detail ? " / " + escapeHtml(detail) : ""}
+                </div>
+              </div>
+              <div><span class="audit-log-pill">${escapeHtml(source)}</span></div>
+            </div>`;
+        }).join("");
+      }
+
+      async function loadOperationLogs() {
+        setLoading(true);
+        showMessage("", "最近の操作履歴を確認しています...");
+        try {
+          const data = await fetchOperationLogs();
+          renderOperationLogs(data);
+          const total = data?.summary?.total ?? (data?.operation_logs || data?.logs || []).length;
+          const warn = data?.summary?.warnings ? ` / 警告 ${data.summary.warnings}件` : "";
+          showMessage("success", `操作履歴を更新しました。${total}件${warn}`);
+        } catch (error) {
+          console.error(error);
+          showMessage("error", error.message || String(error));
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      function initStep3042AOwnerLogs() {
+        const button = $("auditLogReloadButton");
+        const title = document.querySelector("#auditLogPanel .audit-log-title");
+        const sub = document.querySelector("#auditLogPanel .audit-log-sub");
+        if (title) title.innerHTML = '<span class="icon">履</span>最近の操作履歴';
+        if (sub) sub.textContent = "受付・診療・LINE文面コピー・QR再発行・診察券停止・患者無効化/統合などを、Worker API → Supabase の操作ログからまとめて確認します。";
+        if (button) {
+          const clone = button.cloneNode(true);
+          clone.textContent = "全体履歴を更新";
+          button.parentNode.replaceChild(clone, button);
+          clone.addEventListener("click", loadOperationLogs);
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initStep3042AOwnerLogs);
+      } else {
+        initStep3042AOwnerLogs();
+      }
     })();
   </script>
 
