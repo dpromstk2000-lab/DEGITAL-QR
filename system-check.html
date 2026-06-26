@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-45A system-check.html 本番医院追加・初期設定チェック</title>
+  <title>DPRO SHOP | STEP 30-45C system-check.html 本番医院URLセット自動生成</title>
   <style>
     :root {
       --line: #06c755;
@@ -689,6 +689,129 @@
     .readiness-pill.fail { background: #fee2e2; color: #991b1b; }
     .readiness-pill.info { background: #dbeafe; color: #1d4ed8; }
 
+    /* STEP 30-45C 医院別URLセット */
+    .url-kit-panel {
+      border: 1px solid #bfdbfe;
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 55%, #ecfeff 100%);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 18px 60px rgba(30, 64, 175, 0.10);
+    }
+
+    .url-kit-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .url-kit-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .url-kit-metric {
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 14px;
+      padding: 12px;
+      color: #334155;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .url-kit-metric b {
+      display: block;
+      color: #0f172a;
+      font-size: 15px;
+      margin-top: 4px;
+      word-break: break-all;
+    }
+
+    .url-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .url-row {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr) auto auto;
+      gap: 10px;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .url-label {
+      font-weight: 900;
+      color: #0f172a;
+      font-size: 13px;
+    }
+
+    .url-desc {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.5;
+      margin-top: 2px;
+      font-weight: 700;
+    }
+
+    .url-value {
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 800;
+      word-break: break-all;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .url-warning {
+      border: 1px solid #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 12px;
+      line-height: 1.7;
+      font-weight: 800;
+      margin-top: 12px;
+      white-space: pre-wrap;
+    }
+
+    .url-copy-all {
+      width: 100%;
+      min-height: 160px;
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 12px;
+      background: #0f172a;
+      color: #dbeafe;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      resize: vertical;
+      white-space: pre;
+      overflow: auto;
+    }
+
+    @media (max-width: 900px) {
+      .url-kit-summary {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .url-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 720px) {
       .readiness-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .readiness-row { grid-template-columns: 1fr; }
@@ -800,11 +923,11 @@
 <body>
   <main class="page">
     <section class="hero">
-      <div class="badge">STEP 30-45A / 本番医院追加・初期設定チェック</div>
-      <h1>API・数字・操作履歴・本番導入設定を<br>一括チェック</h1>
+      <div class="badge">STEP 30-45C / 本番医院URLセット自動生成</div>
+      <h1>API・数字・操作履歴・本番導入設定・医院URLを<br>一括チェック</h1>
       <p class="lead">
         受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
-        営業デモ前・本番導入前にこのページを開いて、APIの生存確認・件数一致・操作履歴・本番安全ガード・管理コード保護状態・本番医院の初期設定漏れを確認します。
+        営業デモ前・本番導入前にこのページを開いて、APIの生存確認・件数一致・操作履歴・本番安全ガード・管理コード保護状態・本番医院の初期設定漏れ・医院別URLセットを確認します。
       </p>
 
       <div class="settings">
@@ -841,10 +964,10 @@
     
     <section class="section">
       <div class="cors-note">
-        <strong>STEP 30-45A 修正内容</strong>
+        <strong>STEP 30-45C 修正内容</strong>
         通常チェックは、管理コードをURLに残しにくいヘッダー送信で実行します。
         営業前DEMO設定だけは危険操作として、POST + 確認文言 + Worker側 clinic_code ガードで実行します。
-        本番医院コードの場合、この画面ではDEMO設定ボタンを非表示にし、Worker側でも /api/admin/demo/sales-setup を拒否します。さらに本番医院追加時の初期設定漏れを /api/admin/production-readiness-check で確認します。
+        本番医院コードの場合、この画面ではDEMO設定ボタンを非表示にし、Worker側でも /api/admin/demo/sales-setup を拒否します。さらに本番医院追加時の初期設定漏れを /api/admin/production-readiness-check で確認し、医院コード別の admin / owner / doctor / 受付 / 患者用URLを自動生成します。
       </div>
     </section>
     <section class="section">
@@ -904,6 +1027,52 @@
         </div>
       </div>
     </section>
+
+    <section class="section" id="productionUrlSetSection">
+      <div class="url-kit-panel">
+        <div class="url-kit-head">
+          <div>
+            <h2 class="section-title" style="margin:0;">本番医院URLセット自動生成</h2>
+            <p class="small" style="margin:6px 0 0;">
+              契約後に医院コードを作成したら、ここで admin / owner / doctor / 受付 / 患者用URLをまとめて生成します。
+              本番医院では <b>dpro_dental_demo</b> を使わず、STEP 30-45B のSQLで作成した医院コードを使います。
+            </p>
+          </div>
+          <button class="btn" id="generateUrlSetButton" type="button">URLセットを生成</button>
+        </div>
+
+        <div class="url-kit-summary">
+          <div class="url-kit-metric">医院コード<b id="urlKitClinicCode">-</b></div>
+          <div class="url-kit-metric">GitHub Pages<b>DEGITAL-QR</b></div>
+          <div class="url-kit-metric">Worker API<b id="urlKitWorkerBase">-</b></div>
+          <div class="url-kit-metric">LIFF ID<b>2010491267-waXBAIje</b></div>
+        </div>
+
+        <div class="demo-setup-status" id="urlKitStatus" style="border-color:#bfdbfe;background:#ffffff;color:#1e3a8a;">
+          未生成です。医院コードを入力して「URLセットを生成」を押してください。
+        </div>
+
+        <div class="url-warning" id="urlKitWarning">
+          本番医院用URLを作る時は、医院コードが dpro_dental_demo のままになっていないか必ず確認してください。
+        </div>
+
+        <div class="url-list" id="productionUrlList">
+          <div class="audit-check-empty">URLセットを生成すると、ここに各画面のフルURLが表示されます。</div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label class="small" for="productionUrlCopyBox" style="display:block;margin-bottom:6px;font-weight:900;color:#0f172a;">コピペ用URL一覧</label>
+          <textarea id="productionUrlCopyBox" class="url-copy-all" readonly>まだ生成していません。</textarea>
+        </div>
+
+        <div class="demo-setup-actions" style="margin-top:12px;">
+          <button class="btn" id="copyUrlSetButton" type="button">URL一覧をコピー</button>
+          <button class="btn ghost" id="openAdminUrlButton" type="button">管理画面を開く</button>
+          <button class="btn ghost" id="openOwnerUrlButton" type="button">管理トップを開く</button>
+        </div>
+      </div>
+    </section>
+
 
     <section class="section" id="demoSetupSection">
       <div class="demo-setup-panel">
@@ -1893,6 +2062,236 @@
       }
     }
 
+    const PAGE_VERSION_SET = {
+      index: "3036c",
+      systemCheck: "3045c",
+      admin: "3044c",
+      owner: "3043",
+      doctor: "3039c",
+      scanIpad: "3039b",
+      scanPc: "3039b",
+      member: "3044c"
+    };
+
+    const GITHUB_PAGES_BASE = "https://dpromstk2000-lab.github.io/DEGITAL-QR";
+    const LIFF_ID = "2010491267-waXBAIje";
+
+    function buildPageUrl(page, params = {}) {
+      const url = new URL(`${GITHUB_PAGES_BASE}/${page}`);
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && String(value).trim() !== "") {
+          url.searchParams.set(key, String(value).trim());
+        }
+      });
+      return url.toString();
+    }
+
+    function buildLiffUrl(params = {}) {
+      const url = new URL(`https://liff.line.me/${LIFF_ID}`);
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && String(value).trim() !== "") {
+          url.searchParams.set(key, String(value).trim());
+        }
+      });
+      return url.toString();
+    }
+
+    function buildProductionUrls() {
+      const code = clinicCode() || DEFAULTS.clinicCode;
+      const common = { clinic_code: code };
+
+      return [
+        {
+          key: "index",
+          label: "入口トップ",
+          desc: "営業・院内確認用の入口です。",
+          url: buildPageUrl("index.html", { ...common, v: PAGE_VERSION_SET.index })
+        },
+        {
+          key: "system-check",
+          label: "本番前チェック",
+          desc: "API・認証・初期設定を確認します。日常利用ではなく管理者用です。",
+          url: buildPageUrl("system-check.html", { ...common, v: PAGE_VERSION_SET.systemCheck })
+        },
+        {
+          key: "admin",
+          label: "患者管理",
+          desc: "毎日使う患者管理画面です。",
+          url: buildPageUrl("admin.html", { ...common, v: PAGE_VERSION_SET.admin })
+        },
+        {
+          key: "owner",
+          label: "医院管理トップ",
+          desc: "今日の状況・LINE未連携・操作履歴を確認します。",
+          url: buildPageUrl("owner.html", { ...common, v: PAGE_VERSION_SET.owner })
+        },
+        {
+          key: "doctor",
+          label: "先生用画面",
+          desc: "本日の患者・診療メモ・診療済み処理を行います。",
+          url: buildPageUrl("doctor.html", { ...common, v: PAGE_VERSION_SET.doctor })
+        },
+        {
+          key: "scan-ipad",
+          label: "受付iPad",
+          desc: "iPad受付・カメラ読み取り用です。",
+          url: buildPageUrl("scan-ipad.html", { ...common, v: PAGE_VERSION_SET.scanIpad })
+        },
+        {
+          key: "scan-pc",
+          label: "PC受付リーダー",
+          desc: "USB/Bluetooth QRリーダー用です。",
+          url: buildPageUrl("scan-pc.html", { ...common, v: PAGE_VERSION_SET.scanPc })
+        },
+        {
+          key: "member-template",
+          label: "患者用診察券URLテンプレ",
+          desc: "患者ごとのQR tokenを t= に入れて使います。",
+          url: buildPageUrl("member.html", { ...common, t: "PATIENT_QR_TOKEN", v: PAGE_VERSION_SET.member })
+        },
+        {
+          key: "liff-template",
+          label: "LIFF診察券URLテンプレ",
+          desc: "LINE内で開く患者用テンプレです。患者ごとのQR tokenを t= に入れます。",
+          url: buildLiffUrl({ clinic_code: code, t: "PATIENT_QR_TOKEN" })
+        }
+      ];
+    }
+
+    function setUrlKitStatus(message, tone = "info") {
+      const el = $("urlKitStatus");
+      if (!el) return;
+      el.textContent = message || "";
+      if (tone === "ok") {
+        el.style.borderColor = "#bbf7d0";
+        el.style.background = "#f0fdf4";
+        el.style.color = "#166534";
+      } else if (tone === "danger") {
+        el.style.borderColor = "#fecaca";
+        el.style.background = "#fef2f2";
+        el.style.color = "#991b1b";
+      } else if (tone === "warn") {
+        el.style.borderColor = "#fde68a";
+        el.style.background = "#fffbeb";
+        el.style.color = "#92400e";
+      } else {
+        el.style.borderColor = "#bfdbfe";
+        el.style.background = "#eff6ff";
+        el.style.color = "#1d4ed8";
+      }
+    }
+
+    function urlSetText(urls) {
+      const code = clinicCode() || DEFAULTS.clinicCode;
+      const lines = [
+        `DPRO歯科QR診察券 本番医院URLセット`,
+        `医院コード: ${code}`,
+        `作成日: ${todayJST()}`,
+        ``,
+        `重要: 本番医院では dpro_dental_demo を使わないこと。`,
+        `重要: 患者用URLの PATIENT_QR_TOKEN は、患者ごとのQR tokenに置き換えること。`,
+        ``
+      ];
+
+      urls.forEach((item) => {
+        lines.push(`${item.label}`);
+        lines.push(item.url);
+        lines.push("");
+      });
+
+      return lines.join("\n");
+    }
+
+    function renderProductionUrlSet() {
+      const urls = buildProductionUrls();
+      const list = $("productionUrlList");
+      const copyBox = $("productionUrlCopyBox");
+      const code = clinicCode() || DEFAULTS.clinicCode;
+
+      setText("urlKitClinicCode", code);
+      setText("urlKitWorkerBase", apiBase());
+
+      const isDemo = code === "dpro_dental_demo";
+      const warning = $("urlKitWarning");
+      if (warning) {
+        warning.textContent = isDemo
+          ? "現在の医院コードは dpro_dental_demo です。これは営業デモ専用です。本番医院URLを作る時は、STEP 30-45B SQLで作成した本番医院コードに変更してください。"
+          : "本番医院コードでURLを生成しています。system-check.html の本番導入チェックで、DEMO操作が非表示・拒否されることも確認してください。";
+      }
+
+      if (list) {
+        list.innerHTML = urls.map((item) => `
+          <div class="url-row">
+            <div>
+              <div class="url-label">${escapeReadinessHtml(item.label)}</div>
+              <div class="url-desc">${escapeReadinessHtml(item.desc)}</div>
+            </div>
+            <div class="url-value">${escapeReadinessHtml(item.url)}</div>
+            <button class="btn ghost" type="button" data-copy-url="${escapeReadinessHtml(item.url)}">コピー</button>
+            <a class="btn" href="${escapeReadinessHtml(item.url)}" target="_blank" rel="noopener">開く</a>
+          </div>
+        `).join("");
+
+        list.querySelectorAll("[data-copy-url]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const url = button.getAttribute("data-copy-url") || "";
+            await copyText(url);
+            setUrlKitStatus(`コピーしました: ${url}`, "ok");
+          });
+        });
+      }
+
+      if (copyBox) {
+        copyBox.value = urlSetText(urls);
+      }
+
+      setUrlKitStatus(
+        isDemo
+          ? "DEMO医院コードでURLセットを生成しました。本番医院では医院コードを変更してください。"
+          : "本番医院用URLセットを生成しました。各画面のURLを契約医院の設定資料に貼り付けて使えます。",
+        isDemo ? "warn" : "ok"
+      );
+
+      log("本番医院URLセットを生成しました。", {
+        clinic_code: code,
+        urls
+      });
+
+      return urls;
+    }
+
+    async function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(String(text || ""));
+        return true;
+      }
+
+      const temp = document.createElement("textarea");
+      temp.value = String(text || "");
+      temp.style.position = "fixed";
+      temp.style.left = "-9999px";
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      document.execCommand("copy");
+      temp.remove();
+      return true;
+    }
+
+    async function copyProductionUrlSet() {
+      const box = $("productionUrlCopyBox");
+      const text = box ? box.value : urlSetText(buildProductionUrls());
+      await copyText(text);
+      setUrlKitStatus("URL一覧をコピーしました。契約医院の構築手順や設定メモに貼り付けてください。", "ok");
+    }
+
+    function openGeneratedUrl(key) {
+      const urls = buildProductionUrls();
+      const item = urls.find((row) => row.key === key);
+      if (item) window.open(item.url, "_blank", "noopener");
+    }
+
+
     async function runAllChecks() {
       const button = $("runButton");
       button.disabled = true;
@@ -1936,6 +2335,12 @@
 
       $("runButton").addEventListener("click", runAllChecks);
 
+      const apiInput = $("apiBaseInput");
+      if (apiInput) {
+        apiInput.addEventListener("input", renderProductionUrlSet);
+        apiInput.addEventListener("change", renderProductionUrlSet);
+      }
+
       const auditLogCheckButton = $("auditLogCheckButton");
       if (auditLogCheckButton) {
         auditLogCheckButton.addEventListener("click", checkAuditLogs);
@@ -1945,6 +2350,28 @@
       if (productionReadinessButton) {
         productionReadinessButton.addEventListener("click", checkProductionReadiness);
       }
+
+      const generateUrlSetButton = $("generateUrlSetButton");
+      if (generateUrlSetButton) {
+        generateUrlSetButton.addEventListener("click", renderProductionUrlSet);
+      }
+
+      const copyUrlSetButton = $("copyUrlSetButton");
+      if (copyUrlSetButton) {
+        copyUrlSetButton.addEventListener("click", copyProductionUrlSet);
+      }
+
+      const openAdminUrlButton = $("openAdminUrlButton");
+      if (openAdminUrlButton) {
+        openAdminUrlButton.addEventListener("click", () => openGeneratedUrl("admin"));
+      }
+
+      const openOwnerUrlButton = $("openOwnerUrlButton");
+      if (openOwnerUrlButton) {
+        openOwnerUrlButton.addEventListener("click", () => openGeneratedUrl("owner"));
+      }
+
+      renderProductionUrlSet();
 
       const adminInput = $("adminCodeInput");
       if (adminInput) {
@@ -1965,8 +2392,14 @@
 
       const clinicInput = $("clinicCodeInput");
       if (clinicInput) {
-        clinicInput.addEventListener("input", checkSafetyGuard);
-        clinicInput.addEventListener("change", checkSafetyGuard);
+        clinicInput.addEventListener("input", () => {
+          checkSafetyGuard();
+          renderProductionUrlSet();
+        });
+        clinicInput.addEventListener("change", () => {
+          checkSafetyGuard();
+          renderProductionUrlSet();
+        });
       }
 
       checkSafetyGuard();
