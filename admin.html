@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-38G admin.html 管理コードを左メニューへ小さく配置</title>
+  <title>DPRO SHOP | STEP 30-44 admin.html 印刷用QR診察券・案内カード</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -3395,6 +3395,155 @@
       .admin43-mini-actions { justify-content: flex-start; }
     }
 
+
+    /* STEP 30-44 印刷用QR診察券・案内カード */
+    .admin44-print-panel {
+      margin-top: 18px;
+      border: 1px solid #dbe4ff;
+      background: linear-gradient(180deg, #f8fbff, #ffffff);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.06);
+    }
+    .admin44-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .admin44-title {
+      font-weight: 950;
+      color: #1e3a8a;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+    .admin44-sub {
+      margin-top: 4px;
+      color: #526985;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .admin44-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #1d4ed8;
+      background: #dbeafe;
+      white-space: nowrap;
+    }
+    .admin44-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, .85fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .admin44-preview {
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      background: #fff;
+      padding: 16px;
+      min-height: 210px;
+    }
+    .admin44-preview-label {
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+    .admin44-preview-name {
+      margin-top: 8px;
+      color: #0f172a;
+      font-size: 24px;
+      font-weight: 950;
+      letter-spacing: -.04em;
+      line-height: 1.25;
+    }
+    .admin44-preview-meta {
+      margin-top: 8px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.7;
+      word-break: break-word;
+    }
+    .admin44-preview-note {
+      margin-top: 12px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      padding: 10px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .admin44-actions {
+      display: grid;
+      gap: 8px;
+    }
+    .admin44-button {
+      width: 100%;
+      text-align: left;
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      color: #1e3a8a;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: 950;
+      cursor: pointer;
+      font: inherit;
+      box-shadow: 0 8px 16px rgba(37, 99, 235, .05);
+    }
+    .admin44-button strong {
+      display: block;
+      font-size: 14px;
+      color: #1d4ed8;
+    }
+    .admin44-button span {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+    .admin44-button.primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-color: #2563eb;
+      color: #fff;
+    }
+    .admin44-button.primary strong,
+    .admin44-button.primary span { color: #fff; }
+    .admin44-button.warning {
+      border-color: #facc15;
+      background: #fffbeb;
+    }
+    .admin44-button:disabled {
+      opacity: .52;
+      cursor: not-allowed;
+    }
+    .admin44-message {
+      display: none;
+      margin-top: 12px;
+      border-radius: 14px;
+      padding: 10px 12px;
+      white-space: pre-wrap;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .admin44-message.show { display: block; }
+    .admin44-message.success { background: #dcfce7; color: #166534; }
+    .admin44-message.error { background: #fee2e2; color: #991b1b; }
+    .admin44-message.warning { background: #fef3c7; color: #92400e; }
+    .admin44-message.info { background: #e0f2fe; color: #075985; }
+    @media (max-width: 860px) {
+      .admin44-grid { grid-template-columns: 1fr; }
+    }
+
+
   </style>
 </head>
 
@@ -4633,6 +4782,50 @@
                 </div>
               </div>
 
+              <div class="admin44-print-panel" id="admin44PrintPanel">
+                <div class="admin44-head">
+                  <div>
+                    <div class="admin44-title">印刷用QR診察券・案内カード</div>
+                    <div class="admin44-sub">
+                      LINEが苦手な患者さんにも渡せる紙のQR診察券です。A4・はがき風・家族登録案内カードを、患者名・診察券番号・QR付きで印刷できます。
+                    </div>
+                  </div>
+                  <div class="admin44-pill" id="admin44PrintStatus">患者選択後に印刷できます</div>
+                </div>
+
+                <div class="admin44-grid">
+                  <div class="admin44-preview" id="admin44Preview">
+                    <div class="admin44-preview-label">PRINT QR PATIENT CARD</div>
+                    <div class="admin44-preview-name" id="admin44PreviewName">患者未選択</div>
+                    <div class="admin44-preview-meta" id="admin44PreviewMeta">
+                      患者を検索して選択すると、ここに印刷対象が表示されます。
+                    </div>
+                    <div class="admin44-preview-note">
+                      印刷はこのブラウザ内で作成します。患者名・診察券番号はWorkerへ新規保存せず、選択中患者の情報から印刷画面を作ります。
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="admin44-actions">
+                      <button class="admin44-button primary" id="admin44PrintA4Button" type="button">
+                        <strong>A4用 QR診察券を印刷</strong>
+                        <span>受付で渡しやすい説明付き。大きめQRで高齢の患者さんにも見やすい形式です。</span>
+                      </button>
+                      <button class="admin44-button" id="admin44PrintPostcardButton" type="button">
+                        <strong>はがきサイズ風 診察券を印刷</strong>
+                        <span>小さく切って保管しやすい紙診察券として渡せます。</span>
+                      </button>
+                      <button class="admin44-button warning" id="admin44PrintFamilyGuideButton" type="button">
+                        <strong>家族診察券 登録案内カードを印刷</strong>
+                        <span>保護者のLINEで家族の診察券を開けることを説明する案内カードです。</span>
+                      </button>
+                    </div>
+                    <div class="admin44-message" id="admin44PrintMessage"></div>
+                  </div>
+                </div>
+              </div>
+
+
               <div id="selectedMessage" class="message"></div>
             </div>
           </div>
@@ -4689,7 +4882,7 @@
     <footer class="footer">
       <strong id="footerClinicName">DPRO歯科クリニック</strong><br />
       DPRO SHOP 歯科デジタルQR診察券 / admin.html<br />
-        STEP 30-42A 操作履歴・ログ見える化の全体統合<br />
+        STEP 30-44 印刷用QR診察券・案内カード<br />
       この画面には Supabase Service Role Key や ADMIN_TOKEN は直書きしていません。
     </footer>
   </main>
@@ -5373,6 +5566,7 @@
         window.dproDentalSelectedPatient = patient;
         if (window.dproDentalRenderCardOps) window.dproDentalRenderCardOps(patient);
         if (window.dproDentalRenderPatientOps) window.dproDentalRenderPatientOps(patient);
+        if (window.dproDentalRenderPrintCards) window.dproDentalRenderPrintCards(patient);
 
         const selectedArea = q35("selectedArea");
         const emptySelectedBox = q35("emptySelectedBox");
@@ -7593,6 +7787,268 @@
       } else {
         init();
       }
+    })();
+  </script>
+
+
+  <script>
+    // =========================================================
+    // STEP 30-44
+    // 印刷用QR診察券・家族登録案内カード UI
+    // =========================================================
+    (function () {
+      const DEMO_CLINIC_CODE = "dpro_dental_demo";
+
+      function $(id) { return document.getElementById(id); }
+      function clean(value) { return String(value || "").trim(); }
+      function clinicCode() {
+        const el = $("clinicCodeInput");
+        return clean(el && el.value) || DEMO_CLINIC_CODE;
+      }
+      function clinicName() {
+        const candidates = [
+          $("clinicNameInput"),
+          $("resultClinicName"),
+          $("footerClinicName")
+        ];
+        for (const el of candidates) {
+          const text = clean(el && (el.value || el.textContent));
+          if (text) return text;
+        }
+        return "DPRO歯科クリニック";
+      }
+      function normalizePatient(patient) {
+        const raw = patient?.raw || {};
+        return {
+          ...raw,
+          ...patient,
+          id: patient?.id || patient?.patient_id || raw.id || raw.patient_id || "",
+          patient_id: patient?.id || patient?.patient_id || raw.id || raw.patient_id || "",
+          patient_name: patient?.patient_name || raw.patient_name || "患者さん",
+          patient_name_kana: patient?.patient_name_kana || raw.patient_name_kana || "",
+          member_no: patient?.member_no || raw.member_no || "",
+          phone: patient?.phone || raw.phone || "",
+          guardian_name: patient?.guardian_name || raw.guardian_name || "",
+          family_name: patient?.family_name || raw.family_name || "",
+          family_code: patient?.family_code || raw.family_code || "",
+          qr_token: patient?.qr_token || raw.qr_token || "",
+          card_enabled: patient?.card_enabled !== undefined ? patient.card_enabled : raw.card_enabled
+        };
+      }
+      function memberUrl(patient) {
+        const token = clean(patient?.qr_token);
+        if (!token) return "";
+        const basePath = location.pathname.replace(/\/admin\.html$/, "/");
+        return location.origin + basePath + "member.html?clinic_code=" + encodeURIComponent(clinicCode()) + "&t=" + encodeURIComponent(token);
+      }
+      function escapeHtml(value) {
+        return String(value || "").replace(/[&<>'"]/g, (ch) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          "'": "&#039;",
+          '"': "&quot;"
+        }[ch]));
+      }
+      function setMessage(type, message) {
+        const box = $("admin44PrintMessage");
+        if (!box) return;
+        box.className = "admin44-message show";
+        if (type) box.classList.add(type);
+        box.textContent = message || "";
+      }
+      function clearMessage() {
+        const box = $("admin44PrintMessage");
+        if (!box) return;
+        box.className = "admin44-message";
+        box.textContent = "";
+      }
+      function setBusy(busy) {
+        ["admin44PrintA4Button", "admin44PrintPostcardButton", "admin44PrintFamilyGuideButton"].forEach((id) => {
+          const button = $(id);
+          if (button) button.disabled = Boolean(busy);
+        });
+      }
+      async function qrDataUrl(text, size) {
+        const value = clean(text);
+        if (!value) return "";
+        if (window.QRCode && typeof window.QRCode.toDataURL === "function") {
+          return window.QRCode.toDataURL(value, {
+            width: size || 260,
+            margin: 2,
+            errorCorrectionLevel: "M"
+          });
+        }
+        return "https://api.qrserver.com/v1/create-qr-code/?size=" + (size || 260) + "x" + (size || 260) + "&data=" + encodeURIComponent(value);
+      }
+      function buildGuideText(patient, url) {
+        const name = patient.patient_name || "患者さん";
+        return `${name} 様\n\nこのQRコードをスマートフォンで読み取ると、デジタルQR診察券を開けます。\nLINE内で開くと、次回からLINEで診察券を出しやすくなります。\n\nご家族で通院されている場合は、保護者のLINEから家族の診察券をまとめて確認できます。\n\n診察券番号：${patient.member_no || "---"}\nURL：${url}`;
+      }
+      function printCss(mode) {
+        const page = mode === "postcard" ? "100mm 148mm" : "A4";
+        return `
+          @page { size: ${page}; margin: ${mode === "postcard" ? "8mm" : "12mm"}; }
+          * { box-sizing: border-box; }
+          body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #111827; background: #fff; }
+          .sheet { width: 100%; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+          .a4 { width: 186mm; min-height: 265mm; padding: 10mm; border: 1px solid #e5e7eb; border-radius: 10mm; }
+          .postcard { width: 86mm; min-height: 132mm; padding: 7mm; border: 1px solid #e5e7eb; border-radius: 6mm; }
+          .family { width: 186mm; min-height: 265mm; padding: 11mm; border: 1px solid #dbeafe; border-radius: 10mm; background: linear-gradient(180deg, #f8fbff, #fff); }
+          .kicker { font-size: 10px; letter-spacing: .12em; color: #64748b; font-weight: 900; }
+          .clinic { margin-top: 4px; font-size: ${mode === "postcard" ? "12px" : "16px"}; color: #1d4ed8; font-weight: 900; }
+          .title { margin-top: ${mode === "postcard" ? "8mm" : "12mm"}; font-size: ${mode === "postcard" ? "21px" : "34px"}; font-weight: 950; letter-spacing: -.04em; line-height: 1.22; }
+          .kana { margin-top: 2mm; font-size: ${mode === "postcard" ? "11px" : "14px"}; color: #64748b; font-weight: 700; }
+          .member { display: inline-flex; margin-top: 5mm; padding: 3mm 5mm; border-radius: 999px; background: #eff6ff; color: #1d4ed8; font-size: ${mode === "postcard" ? "12px" : "16px"}; font-weight: 950; }
+          .main { display: grid; grid-template-columns: ${mode === "postcard" ? "1fr" : "1fr 74mm"}; gap: 8mm; align-items: center; margin-top: 8mm; }
+          .qrbox { text-align: center; border: 1px solid #e5e7eb; border-radius: ${mode === "postcard" ? "5mm" : "8mm"}; padding: ${mode === "postcard" ? "5mm" : "7mm"}; background: #fff; }
+          .qrbox img { width: ${mode === "postcard" ? "48mm" : "62mm"}; height: ${mode === "postcard" ? "48mm" : "62mm"}; display: block; margin: 0 auto; }
+          .readme { margin-top: 4mm; color: #475569; font-size: ${mode === "postcard" ? "10px" : "13px"}; line-height: 1.75; }
+          .steps { display: grid; gap: 3mm; margin-top: 5mm; }
+          .step { border-radius: 4mm; background: #f8fafc; padding: 4mm; font-size: ${mode === "postcard" ? "10px" : "13px"}; line-height: 1.65; color: #334155; }
+          .url { margin-top: 5mm; padding: 3mm; border-radius: 3mm; background: #f8fafc; color: #64748b; font-size: 9px; line-height: 1.45; word-break: break-all; }
+          .footer { margin-top: 7mm; padding-top: 4mm; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; gap: 5mm; color: #64748b; font-size: ${mode === "postcard" ? "9px" : "11px"}; line-height: 1.5; }
+          .family-title { margin-top: 8mm; font-size: 32px; font-weight: 950; letter-spacing: -.05em; color: #0f172a; }
+          .family-lead { margin-top: 4mm; font-size: 16px; line-height: 1.9; color: #334155; }
+          .family-grid { display: grid; grid-template-columns: 1fr 68mm; gap: 10mm; align-items: center; margin-top: 10mm; }
+          .badge { display: inline-block; margin-top: 5mm; padding: 3mm 5mm; border-radius: 999px; color: #166534; background: #dcfce7; font-size: 14px; font-weight: 950; }
+          .no-print { position: fixed; right: 12px; top: 12px; display: flex; gap: 8px; }
+          .no-print button { border: 0; border-radius: 999px; padding: 10px 14px; background: #2563eb; color: #fff; font-weight: 900; cursor: pointer; }
+          @media print { .no-print { display: none; } .sheet { min-height: auto; } .a4, .postcard, .family { border-color: transparent; } }
+        `;
+      }
+      function buildPrintHtml(mode, patient, url, qr) {
+        const name = escapeHtml(patient.patient_name || "患者さん");
+        const kana = escapeHtml(patient.patient_name_kana || "");
+        const memberNo = escapeHtml(patient.member_no || "---");
+        const clinic = escapeHtml(clinicName());
+        const safeUrl = escapeHtml(url);
+        const qrSrc = escapeHtml(qr);
+        const familyName = escapeHtml(patient.family_name || "ご家族");
+        const today = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" });
+        const isFamily = mode === "family";
+
+        const body = isFamily ? `
+          <div class="family">
+            <div class="kicker">DPRO SHOP / FAMILY QR CARD GUIDE</div>
+            <div class="clinic">${clinic}</div>
+            <div class="family-title">LINEで家族の診察券をまとめて表示できます</div>
+            <div class="family-lead">
+              ${familyName} の診察券案内です。スマートフォンでQRを読み取ると、${name} 様のデジタルQR診察券を開けます。<br>
+              お子さま・ご家族の診察券も、受付で案内されたLINE連携後に切り替えて確認できます。
+            </div>
+            <div class="family-grid">
+              <div>
+                <span class="badge">受付でこの紙を見せてもOK</span>
+                <div class="steps">
+                  <div class="step"><strong>1.</strong> 右のQRコードをスマートフォンで読み取ります。</div>
+                  <div class="step"><strong>2.</strong> LINE内で開いた場合は、LINE診察券として登録できます。</div>
+                  <div class="step"><strong>3.</strong> 次回来院時は、LINEから診察券を表示して受付に見せてください。</div>
+                </div>
+                <div class="member">診察券番号 ${memberNo}</div>
+              </div>
+              <div class="qrbox"><img src="${qrSrc}" alt="QR"><div class="readme">このQRから診察券を開けます</div></div>
+            </div>
+            <div class="url">${safeUrl}</div>
+            <div class="footer"><span>発行日：${today}</span><span>紛失時は受付へお申し出ください。</span></div>
+          </div>` : `
+          <div class="${mode === "postcard" ? "postcard" : "a4"}">
+            <div class="kicker">DPRO SHOP / DIGITAL QR PATIENT CARD</div>
+            <div class="clinic">${clinic}</div>
+            <div class="title">${name} 様</div>
+            ${kana ? `<div class="kana">${kana}</div>` : ""}
+            <div class="member">診察券番号 ${memberNo}</div>
+            <div class="main">
+              <div>
+                <div class="readme">
+                  次回来院時は、このQR診察券を受付にご提示ください。<br>
+                  スマートフォンで開けない場合は、この紙をそのまま受付へお持ちください。
+                </div>
+                <div class="steps">
+                  <div class="step"><strong>受付方法</strong><br>右のQRコードを受付iPadまたはPCリーダーで読み取ります。</div>
+                  <div class="step"><strong>LINEが苦手な方へ</strong><br>紙のまま保管していただいても受付できます。</div>
+                </div>
+              </div>
+              <div class="qrbox"><img src="${qrSrc}" alt="QR"><div class="readme">QR診察券</div></div>
+            </div>
+            <div class="url">${safeUrl}</div>
+            <div class="footer"><span>発行日：${today}</span><span>紛失・再発行は受付へお申し出ください。</span></div>
+          </div>`;
+
+        return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>印刷用QR診察券 - ${name}</title><style>${printCss(mode)}</style></head><body><div class="no-print"><button onclick="window.print()">印刷する</button><button onclick="window.close()">閉じる</button></div><div class="sheet">${body}</div><script>setTimeout(()=>window.focus(),100);<\/script></body></html>`;
+      }
+      function renderPrintPanel(patientInput) {
+        const patient = normalizePatient(patientInput || window.dproDentalSelectedPatient || null);
+        const status = $("admin44PrintStatus");
+        const name = $("admin44PreviewName");
+        const meta = $("admin44PreviewMeta");
+        const buttons = ["admin44PrintA4Button", "admin44PrintPostcardButton", "admin44PrintFamilyGuideButton"].map($).filter(Boolean);
+
+        if (!patient?.id) {
+          if (status) status.textContent = "患者選択後に印刷できます";
+          if (name) name.textContent = "患者未選択";
+          if (meta) meta.textContent = "患者を検索して選択すると、ここに印刷対象が表示されます。";
+          buttons.forEach((button) => button.disabled = true);
+          return;
+        }
+
+        const url = memberUrl(patient);
+        const disabled = patient.card_enabled === false || !url;
+        if (status) status.textContent = disabled ? "診察券停止中またはURLなし" : "印刷できます";
+        if (name) name.textContent = `${patient.patient_name || "患者さん"} 様`;
+        if (meta) {
+          meta.textContent = `診察券番号：${patient.member_no || "---"}\n電話：${patient.phone || "---"}\n家族：${patient.family_name || "未設定"}`;
+        }
+        buttons.forEach((button) => button.disabled = disabled);
+        clearMessage();
+      }
+      async function openPrint(mode) {
+        const patient = normalizePatient(window.dproDentalSelectedPatient || null);
+        const url = memberUrl(patient);
+        if (!patient?.id) {
+          setMessage("warning", "先に患者を検索して選択してください。");
+          return;
+        }
+        if (!url) {
+          setMessage("error", "QR token がないため印刷できません。必要に応じてQR診察券を再発行してください。");
+          return;
+        }
+        if (patient.card_enabled === false) {
+          setMessage("warning", "この患者さんのQR診察券は停止中です。再開してから印刷してください。");
+          return;
+        }
+
+        setBusy(true);
+        setMessage("info", "印刷画面を作成しています...");
+        try {
+          const qr = await qrDataUrl(url, mode === "postcard" ? 240 : 320);
+          const html = buildPrintHtml(mode, patient, url, qr);
+          const w = window.open("", "_blank", "noopener,noreferrer,width=980,height=760");
+          if (!w) throw new Error("ポップアップがブロックされました。ブラウザのポップアップ許可を確認してください。");
+          w.document.open();
+          w.document.write(html);
+          w.document.close();
+          setMessage("success", "印刷画面を開きました。表示された画面で「印刷する」を押してください。");
+        } catch (error) {
+          setMessage("error", "印刷画面を作成できませんでした。\n" + (error.message || error));
+        } finally {
+          setBusy(false);
+          renderPrintPanel(window.dproDentalSelectedPatient || null);
+        }
+      }
+      function setup() {
+        window.dproDentalRenderPrintCards = renderPrintPanel;
+        const bind = (id, mode) => {
+          const button = $(id);
+          if (button) button.addEventListener("click", () => openPrint(mode));
+        };
+        bind("admin44PrintA4Button", "a4");
+        bind("admin44PrintPostcardButton", "postcard");
+        bind("admin44PrintFamilyGuideButton", "family");
+        renderPrintPanel(window.dproDentalSelectedPatient || null);
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setup);
+      else setup();
     })();
   </script>
 
