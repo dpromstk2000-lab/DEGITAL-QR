@@ -2820,6 +2820,144 @@
 
   
 
+
+
+    /* =========================================================
+       STEP 30-41: 患者無効化・重複候補・安全統合 UI
+       ========================================================= */
+    .admin41-patient-ops {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    .admin41-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .admin41-title {
+      font-size: 15px;
+      font-weight: 950;
+      color: #0f172a;
+    }
+
+    .admin41-sub {
+      margin-top: 4px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 750;
+    }
+
+    .admin41-status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .admin41-status-pill.is-archived {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .admin41-op-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .admin41-op-button {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      background: #fff;
+      color: #0f172a;
+      padding: 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .admin41-op-button:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08); }
+    .admin41-op-button:disabled { opacity: 0.48; cursor: not-allowed; transform: none; box-shadow: none; }
+    .admin41-op-button strong { display: block; font-size: 13px; font-weight: 950; margin-bottom: 4px; }
+    .admin41-op-button span { display: block; color: #64748b; font-size: 12px; line-height: 1.5; font-weight: 750; }
+    .admin41-op-button.danger { border-color: #fecaca; background: #fff7f7; }
+    .admin41-op-button.warning { border-color: #fde68a; background: #fffdf3; }
+    .admin41-op-button.success { border-color: #bbf7d0; background: #f7fff9; }
+    .admin41-op-button.primary { border-color: #bfdbfe; background: #eff6ff; }
+
+    .admin41-message {
+      margin-top: 10px;
+      white-space: pre-wrap;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 800;
+      background: #f8fafc;
+      color: #475569;
+      border: 1px solid #e5e7eb;
+    }
+
+    .admin41-message.success { border-color: #bbf7d0; background: #f0fdf4; color: #166534; }
+    .admin41-message.warning { border-color: #fde68a; background: #fffbeb; color: #92400e; }
+    .admin41-message.error { border-color: #fecaca; background: #fef2f2; color: #991b1b; }
+
+    .admin41-duplicates {
+      margin-top: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .admin41-dup-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .admin41-dup-card.is-self {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+    }
+
+    .admin41-dup-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .admin41-dup-name { font-weight: 950; color: #0f172a; font-size: 14px; }
+    .admin41-dup-meta { margin-top: 4px; color: #64748b; font-size: 12px; line-height: 1.55; font-weight: 750; }
+    .admin41-dup-reasons { margin-top: 8px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 8px; font-size: 12px; line-height: 1.5; font-weight: 850; }
+    .admin41-dup-actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .admin41-small-btn { border: 0; border-radius: 999px; padding: 8px 10px; font-size: 12px; font-weight: 950; cursor: pointer; background: #0f172a; color: #fff; }
+    .admin41-small-btn.danger { background: #b91c1c; }
+    .admin41-small-btn.light { background: #e5e7eb; color: #0f172a; }
+
+    @media (max-width: 760px) {
+      .admin41-head { flex-direction: column; }
+      .admin41-op-grid { grid-template-columns: 1fr; }
+      .admin41-dup-top { flex-direction: column; }
+    }
+
+
     /* =========================================================
        STEP 30-40: QR診察券 再発行・停止・解除 操作UI
        ========================================================= */
@@ -4130,6 +4268,46 @@
                 </div>
               </div>
 
+              <div class="admin41-patient-ops" id="admin41PatientOps">
+                <div class="admin41-head">
+                  <div>
+                    <div class="admin41-title">患者無効化・重複候補・安全統合</div>
+                    <div class="admin41-sub">
+                      患者情報は削除せず、無効化・統合履歴を残します。重複候補は電話番号・診察券番号・氏名から確認します。
+                    </div>
+                  </div>
+                  <div class="admin41-status-pill" id="admin41PatientStatus">患者状態：確認中</div>
+                </div>
+
+                <div class="admin41-op-grid">
+                  <button class="admin41-op-button danger" id="admin41ArchiveButton" type="button">
+                    <strong>患者を無効化</strong>
+                    <span>削除せず、患者状態を archived にしてQR診察券も停止します。</span>
+                  </button>
+
+                  <button class="admin41-op-button success" id="admin41RestoreButton" type="button">
+                    <strong>患者を再有効化</strong>
+                    <span>無効化した患者を active に戻し、QR診察券も再開します。</span>
+                  </button>
+
+                  <button class="admin41-op-button primary" id="admin41DuplicateButton" type="button">
+                    <strong>重複候補を確認</strong>
+                    <span>同じ電話番号・似た名前・同じ診察券番号の候補を表示します。</span>
+                  </button>
+
+                  <button class="admin41-op-button warning" id="admin41LogsButton" type="button">
+                    <strong>患者操作履歴を見る</strong>
+                    <span>無効化・再有効化・統合の履歴を確認します。</span>
+                  </button>
+                </div>
+
+                <div class="admin41-message" id="admin41OperationMessage">
+                  患者を選択すると操作できます。
+                </div>
+
+                <div class="admin41-duplicates" id="admin41DuplicateList"></div>
+              </div>
+
               <div id="selectedMessage" class="message"></div>
             </div>
           </div>
@@ -4163,6 +4341,7 @@
     <footer class="footer">
       <strong id="footerClinicName">DPRO歯科クリニック</strong><br />
       DPRO SHOP 歯科デジタルQR診察券 / admin.html<br />
+        STEP 30-41 患者無効化・重複候補・安全統合<br />
       この画面には Supabase Service Role Key や ADMIN_TOKEN は直書きしていません。
     </footer>
   </main>
@@ -4845,6 +5024,7 @@
         admin35cSelectedPatient = patient;
         window.dproDentalSelectedPatient = patient;
         if (window.dproDentalRenderCardOps) window.dproDentalRenderCardOps(patient);
+        if (window.dproDentalRenderPatientOps) window.dproDentalRenderPatientOps(patient);
 
         const selectedArea = q35("selectedArea");
         const emptySelectedBox = q35("emptySelectedBox");
@@ -5506,6 +5686,7 @@
 
         window.dproDentalSelectedPatient = patient;
         if (window.dproDentalRenderCardOps) window.dproDentalRenderCardOps(patient);
+        if (window.dproDentalRenderPatientOps) window.dproDentalRenderPatientOps(patient);
 
         const selectedArea = i35("selectedArea");
         const emptySelectedBox = i35("emptySelectedBox");
@@ -6192,6 +6373,304 @@
         renderCardOps(window.dproDentalSelectedPatient || null);
       }
 
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setup);
+      } else {
+        setup();
+      }
+    })();
+  </script>
+
+  <script>
+    // =========================================================
+    // STEP 30-41
+    // 患者削除ではなく無効化・重複候補・安全統合 UI
+    // =========================================================
+    (function () {
+      const API_BASE = "https://dpro-dental-qr-api.dpromstk2000.workers.dev";
+      const DEMO_CLINIC_CODE = "dpro_dental_demo";
+      const SESSION_ADMIN_KEY = "dpro_dental_admin_code_session";
+
+      function $(id) { return document.getElementById(id); }
+      function clean(value) { return String(value || "").trim(); }
+      function clinicCode() {
+        const el = $("clinicCodeInput");
+        return clean(el && el.value) || DEMO_CLINIC_CODE;
+      }
+      function staffName() {
+        const candidates = [$("staffNameInput"), $("operatorNameInput"), $("adminStaffNameInput")];
+        for (const el of candidates) {
+          if (el && clean(el.value)) return clean(el.value);
+        }
+        return "管理スタッフ";
+      }
+      function readAdminCode() {
+        const input = $("adminCodeInput") || $("adminCodeTopInput") || $("admin35AuthCodeInput");
+        const sessionValue = sessionStorage.getItem(SESSION_ADMIN_KEY) || sessionStorage.getItem("dproDentalAdminCode") || "";
+        return clean(input && input.value) || clean(sessionValue);
+      }
+      function normalizePatient(patient) {
+        const raw = patient?.raw || {};
+        return {
+          ...raw,
+          ...patient,
+          id: patient?.id || patient?.patient_id || raw.id || raw.patient_id || "",
+          patient_id: patient?.id || patient?.patient_id || raw.id || raw.patient_id || "",
+          patient_name: patient?.patient_name || raw.patient_name || "患者さん",
+          member_no: patient?.member_no || raw.member_no || "",
+          phone: patient?.phone || raw.phone || "",
+          guardian_phone: patient?.guardian_phone || raw.guardian_phone || "",
+          qr_token: patient?.qr_token || raw.qr_token || "",
+          status: patient?.status || raw.status || "active",
+          card_enabled: patient?.card_enabled !== undefined ? patient.card_enabled : raw.card_enabled
+        };
+      }
+      function setMessage(type, message) {
+        const box = $("admin41OperationMessage");
+        if (!box) return;
+        box.className = "admin41-message";
+        if (type) box.classList.add(type);
+        box.textContent = message || "";
+      }
+      function setBusy(busy) {
+        ["admin41ArchiveButton", "admin41RestoreButton", "admin41DuplicateButton", "admin41LogsButton"].forEach((id) => {
+          const button = $(id);
+          if (button) button.disabled = Boolean(busy);
+        });
+      }
+      function memberLabel(patient) {
+        const p = normalizePatient(patient);
+        return `${p.patient_name || "---"} / ${p.member_no || "診察券番号なし"}`;
+      }
+      async function requestJson(path, options) {
+        const code = readAdminCode();
+        if (!code) throw new Error("管理コードが未入力です。左側メニューで管理コードを保存してください。");
+        const res = await fetch(API_BASE + path, {
+          ...(options || {}),
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "x-admin-token": code,
+            "x-admin-code": code,
+            "x-dpro-admin-code": code,
+            ...((options && options.headers) || {})
+          }
+        });
+        const text = await res.text();
+        let data = {};
+        try { data = text ? JSON.parse(text) : {}; } catch { data = { ok: false, message: text || "JSONとして読めませんでした" }; }
+        if (!res.ok || data.ok === false) {
+          throw new Error(data.message || data.error || "APIエラーが発生しました。");
+        }
+        return data;
+      }
+      function refreshSelectedPatient(updated) {
+        if (!updated) return;
+        const patient = normalizePatient(updated);
+        window.dproDentalSelectedPatient = patient;
+        const setText = (id, value) => { const el = $(id); if (el) el.textContent = value || "---"; };
+        setText("selectedPatientName", patient.patient_name);
+        setText("selectedMemberNo", patient.member_no);
+        setText("selectedPhone", patient.phone);
+        if (window.dproDentalRenderCardOps) window.dproDentalRenderCardOps(patient);
+        renderPatientOps(patient);
+      }
+      function renderPatientOps(patientInput) {
+        const patient = normalizePatient(patientInput || window.dproDentalSelectedPatient || null);
+        const status = $("admin41PatientStatus");
+        const list = $("admin41DuplicateList");
+        if (!patient?.id) {
+          if (status) {
+            status.classList.remove("is-archived");
+            status.textContent = "患者状態：未選択";
+          }
+          if (list) list.innerHTML = "";
+          setMessage("warning", "患者を選択すると、無効化・重複候補・統合操作ができます。");
+          return;
+        }
+        const archived = patient.status === "archived" || patient.card_enabled === false;
+        if (status) {
+          status.classList.toggle("is-archived", archived);
+          status.textContent = archived ? "患者状態：無効化/停止中" : "患者状態：有効";
+        }
+        const archiveButton = $("admin41ArchiveButton");
+        const restoreButton = $("admin41RestoreButton");
+        if (archiveButton) archiveButton.disabled = patient.status === "archived";
+        if (restoreButton) restoreButton.disabled = patient.status !== "archived" && patient.card_enabled !== false;
+        setMessage("", "患者情報は削除しません。無効化・統合はWorker API → Supabaseへ保存し、履歴にも残します。");
+      }
+      async function runArchiveRestore(kind) {
+        const patient = normalizePatient(window.dproDentalSelectedPatient);
+        if (!patient?.id) {
+          setMessage("warning", "先に患者を検索して選択してください。");
+          return;
+        }
+        const spec = kind === "archive"
+          ? { path: "/api/admin/patients/archive", confirmText: "患者無効化", title: "患者を無効化します。", note: "削除せず、状態を archived にしてQR診察券も停止します。" }
+          : { path: "/api/admin/patients/restore", confirmText: "患者再有効化", title: "患者を再有効化します。", note: "状態を active に戻し、QR診察券も再開します。" };
+        const ok = window.confirm(`${spec.title}\n\n患者：${memberLabel(patient)}\n\n${spec.note}\n\n続ける場合は次に確認文言を入力します。`);
+        if (!ok) return;
+        const typed = window.prompt(`確認文言を入力してください：${spec.confirmText}`, "");
+        if (typed !== spec.confirmText) {
+          setMessage("warning", `確認文言が違います。操作を中止しました。必要な文言：${spec.confirmText}`);
+          return;
+        }
+        const reason = window.prompt("理由を入力してください（例：重複登録、転院、誤登録、再開など）", "") || "";
+        setBusy(true);
+        setMessage("", "処理中です。画面を閉じないでください。");
+        try {
+          const data = await requestJson(spec.path, {
+            method: "POST",
+            body: JSON.stringify({
+              clinic_code: clinicCode(),
+              patient_id: patient.id,
+              member_no: patient.member_no,
+              confirm_text: spec.confirmText,
+              reason,
+              staff_name: staffName(),
+              source_screen: "admin.html"
+            })
+          });
+          refreshSelectedPatient(data.patient || patient);
+          setMessage("success", data.message || "操作が完了しました。");
+        } catch (error) {
+          setMessage("error", "操作に失敗しました。\n" + (error.message || error));
+        } finally {
+          setBusy(false);
+          renderPatientOps(window.dproDentalSelectedPatient);
+        }
+      }
+      function renderDuplicateList(candidates) {
+        const list = $("admin41DuplicateList");
+        if (!list) return;
+        if (!Array.isArray(candidates) || !candidates.length) {
+          list.innerHTML = '<div class="admin41-message warning">重複候補は見つかりませんでした。</div>';
+          return;
+        }
+        const selected = normalizePatient(window.dproDentalSelectedPatient);
+        list.innerHTML = candidates.map((item) => {
+          const p = normalizePatient(item);
+          const reasons = Array.isArray(item.duplicate_reasons) ? item.duplicate_reasons.join(" / ") : "";
+          const self = p.id === selected.id || item.is_selected_patient;
+          return `
+            <div class="admin41-dup-card ${self ? "is-self" : ""}">
+              <div class="admin41-dup-top">
+                <div>
+                  <div class="admin41-dup-name">${escapeHtml(p.patient_name)} ${self ? "（選択中）" : ""}</div>
+                  <div class="admin41-dup-meta">診察券番号：${escapeHtml(p.member_no || "---")} / 電話：${escapeHtml(p.phone || p.guardian_phone || "---")} / 状態：${escapeHtml(p.status || "active")}</div>
+                </div>
+                <div class="admin41-status-pill ${p.status === "archived" ? "is-archived" : ""}">score ${Number(item.duplicate_score || 0)}</div>
+              </div>
+              <div class="admin41-dup-reasons">候補理由：${escapeHtml(reasons || "検索条件に一致")}</div>
+              <div class="admin41-dup-actions">
+                ${self ? '<button class="admin41-small-btn light" type="button" disabled>現在選択中</button>' : `<button class="admin41-small-btn danger" type="button" data-admin41-merge="${escapeHtml(p.id)}">選択中を残して、この候補を統合</button>`}
+              </div>
+            </div>`;
+        }).join("");
+        list.querySelectorAll("[data-admin41-merge]").forEach((button) => {
+          button.addEventListener("click", () => runSafeMerge(button.getAttribute("data-admin41-merge")));
+        });
+      }
+      function escapeHtml(value) {
+        return String(value || "").replace(/[&<>'"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[ch]));
+      }
+      async function loadDuplicates() {
+        const patient = normalizePatient(window.dproDentalSelectedPatient);
+        if (!patient?.id) {
+          setMessage("warning", "先に患者を検索して選択してください。");
+          return;
+        }
+        setBusy(true);
+        setMessage("", "重複候補を確認中です。");
+        try {
+          const qs = new URLSearchParams({ clinic_code: clinicCode(), patient_id: patient.id, limit: "20" });
+          const data = await requestJson("/api/admin/patients/duplicates?" + qs.toString(), { method: "GET" });
+          renderDuplicateList(data.candidates || data.items || []);
+          setMessage("success", data.message || "重複候補を表示しました。");
+        } catch (error) {
+          setMessage("error", "重複候補の確認に失敗しました。\n" + (error.message || error));
+        } finally {
+          setBusy(false);
+          renderPatientOps(window.dproDentalSelectedPatient);
+        }
+      }
+      async function runSafeMerge(duplicateId) {
+        const primary = normalizePatient(window.dproDentalSelectedPatient);
+        if (!primary?.id || !duplicateId) return;
+        const ok = window.confirm(`患者統合を行います。\n\n残す患者：${memberLabel(primary)}\n無効化する候補：${duplicateId}\n\n重複側は削除せず archived にして、統合先を記録します。続けますか？`);
+        if (!ok) return;
+        const typed = window.prompt("確認文言を入力してください：患者統合", "");
+        if (typed !== "患者統合") {
+          setMessage("warning", "確認文言が違います。操作を中止しました。必要な文言：患者統合");
+          return;
+        }
+        const reason = window.prompt("統合理由を入力してください（例：同一患者の重複登録など）", "同一患者の重複登録") || "";
+        setBusy(true);
+        setMessage("", "患者統合中です。画面を閉じないでください。");
+        try {
+          const data = await requestJson("/api/admin/patients/merge", {
+            method: "POST",
+            body: JSON.stringify({
+              clinic_code: clinicCode(),
+              primary_patient_id: primary.id,
+              duplicate_patient_id: duplicateId,
+              confirm_text: "患者統合",
+              reason,
+              staff_name: staffName(),
+              source_screen: "admin.html",
+              transfer_records: true
+            })
+          });
+          setMessage("success", (data.message || "患者統合が完了しました。") + "\n必要に応じて重複候補を再確認してください。");
+          await loadDuplicates();
+        } catch (error) {
+          setMessage("error", "患者統合に失敗しました。\n" + (error.message || error));
+        } finally {
+          setBusy(false);
+          renderPatientOps(window.dproDentalSelectedPatient);
+        }
+      }
+      async function loadPatientLogs() {
+        const patient = normalizePatient(window.dproDentalSelectedPatient);
+        if (!patient?.id) {
+          setMessage("warning", "先に患者を検索して選択してください。");
+          return;
+        }
+        setBusy(true);
+        setMessage("", "患者操作履歴を取得中です。");
+        try {
+          const qs = new URLSearchParams({ clinic_code: clinicCode(), patient_id: patient.id, limit: "20" });
+          const data = await requestJson("/api/admin/patient-operation-logs?" + qs.toString(), { method: "GET" });
+          const logs = data.logs || data.items || [];
+          const list = $("admin41DuplicateList");
+          if (list) {
+            list.innerHTML = logs.length ? logs.map((log) => `
+              <div class="admin41-dup-card">
+                <div class="admin41-dup-name">${escapeHtml(log.action_type || "操作")}</div>
+                <div class="admin41-dup-meta">${escapeHtml(log.created_at || "")} / 操作：${escapeHtml(log.staff_name || "---")}</div>
+                <div class="admin41-dup-reasons">理由：${escapeHtml(log.reason || "---")}<br>状態：${escapeHtml(log.before_status || "---")} → ${escapeHtml(log.after_status || "---")}</div>
+              </div>`).join("") : '<div class="admin41-message warning">この患者の操作履歴はまだありません。</div>';
+          }
+          setMessage("success", "患者操作履歴を表示しました。");
+        } catch (error) {
+          setMessage("error", "患者操作履歴の取得に失敗しました。\n" + (error.message || error));
+        } finally {
+          setBusy(false);
+          renderPatientOps(window.dproDentalSelectedPatient);
+        }
+      }
+      function setup() {
+        window.dproDentalRenderPatientOps = renderPatientOps;
+        const archive = $("admin41ArchiveButton");
+        const restore = $("admin41RestoreButton");
+        const duplicate = $("admin41DuplicateButton");
+        const logs = $("admin41LogsButton");
+        if (archive) archive.addEventListener("click", () => runArchiveRestore("archive"));
+        if (restore) restore.addEventListener("click", () => runArchiveRestore("restore"));
+        if (duplicate) duplicate.addEventListener("click", loadDuplicates);
+        if (logs) logs.addEventListener("click", loadPatientLogs);
+        renderPatientOps(window.dproDentalSelectedPatient || null);
+      }
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", setup);
       } else {
