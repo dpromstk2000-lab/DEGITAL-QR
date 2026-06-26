@@ -2818,6 +2818,167 @@
       margin-bottom: 2px;
     }
 
+  
+
+    /* =========================================================
+       STEP 30-40: QR診察券 再発行・停止・解除 操作UI
+       ========================================================= */
+    .admin40-card-ops {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .admin40-card-ops-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .admin40-card-ops-title {
+      font-weight: 900;
+      color: #0f172a;
+      font-size: 15px;
+    }
+
+    .admin40-card-ops-sub {
+      margin-top: 4px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .admin40-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      background: #f0fdf4;
+    }
+
+    .admin40-status-pill.is-disabled {
+      border-color: #fecaca;
+      color: #991b1b;
+      background: #fef2f2;
+    }
+
+    .admin40-token-line {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 12px;
+      line-height: 1.55;
+      word-break: break-all;
+      margin-bottom: 12px;
+    }
+
+    .admin40-op-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .admin40-op-button {
+      appearance: none;
+      border: 1px solid #dbe4ef;
+      background: #fff;
+      border-radius: 14px;
+      padding: 11px 12px;
+      text-align: left;
+      cursor: pointer;
+      color: #0f172a;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      min-height: 72px;
+    }
+
+    .admin40-op-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+      border-color: #94a3b8;
+    }
+
+    .admin40-op-button strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .admin40-op-button span {
+      display: block;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .admin40-op-button.danger {
+      border-color: #fecaca;
+      background: #fff7f7;
+    }
+
+    .admin40-op-button.warning {
+      border-color: #fde68a;
+      background: #fffbeb;
+    }
+
+    .admin40-op-button.success {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }
+
+    .admin40-op-button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .admin40-message {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .admin40-message.success {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .admin40-message.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .admin40-message.warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    @media (max-width: 760px) {
+      .admin40-op-grid { grid-template-columns: 1fr; }
+      .admin40-card-ops-head { flex-direction: column; }
+    }
+
   </style>
 </head>
 
@@ -3921,6 +4082,54 @@
                 <button class="btn btn-light" id="loadSelectedIntoFormButton" type="button">フォームに読み込む</button>
               </div>
 
+
+              <div class="admin40-card-ops" id="admin40CardOps">
+                <div class="admin40-card-ops-head">
+                  <div>
+                    <div class="admin40-card-ops-title">QR診察券の再発行・停止</div>
+                    <div class="admin40-card-ops-sub">
+                      紛失・誤配布・LINE解除など、本番運用で必要な安全操作です。実行前に必ず確認文言を求めます。
+                    </div>
+                  </div>
+                  <div class="admin40-status-pill" id="admin40CardStatus">診察券：確認中</div>
+                </div>
+
+                <div class="admin40-token-line" id="admin40CurrentToken">
+                  現在のQR token：---
+                </div>
+
+                <div class="admin40-op-grid">
+                  <button class="admin40-op-button warning" id="admin40ReissueButton" type="button">
+                    <strong>QRを再発行</strong>
+                    <span>古いQR URLを無効化し、新しい診察券URLを発行します。</span>
+                  </button>
+
+                  <button class="admin40-op-button danger" id="admin40DisableButton" type="button">
+                    <strong>診察券を一時停止</strong>
+                    <span>患者画面を開けない状態にします。患者情報は削除しません。</span>
+                  </button>
+
+                  <button class="admin40-op-button success" id="admin40EnableButton" type="button">
+                    <strong>診察券を再開</strong>
+                    <span>一時停止したQR診察券を再び使えるようにします。</span>
+                  </button>
+
+                  <button class="admin40-op-button warning" id="admin40LineUnlinkButton" type="button">
+                    <strong>LINE連携を解除</strong>
+                    <span>家族LINE・患者LINEとの紐づけを解除します。</span>
+                  </button>
+
+                  <button class="admin40-op-button danger" id="admin40FamilyRemoveButton" type="button">
+                    <strong>家族から外す</strong>
+                    <span>家族診察券の一覧から外します。本人のQR診察券は残します。</span>
+                  </button>
+                </div>
+
+                <div class="admin40-message" id="admin40OperationMessage">
+                  患者を選択すると操作できます。
+                </div>
+              </div>
+
               <div id="selectedMessage" class="message"></div>
             </div>
           </div>
@@ -4634,6 +4843,8 @@
         if (!patient) return;
 
         admin35cSelectedPatient = patient;
+        window.dproDentalSelectedPatient = patient;
+        if (window.dproDentalRenderCardOps) window.dproDentalRenderCardOps(patient);
 
         const selectedArea = q35("selectedArea");
         const emptySelectedBox = q35("emptySelectedBox");
@@ -5293,6 +5504,9 @@
         const patient = admin35iPatients[index];
         if (!patient) return;
 
+        window.dproDentalSelectedPatient = patient;
+        if (window.dproDentalRenderCardOps) window.dproDentalRenderCardOps(patient);
+
         const selectedArea = i35("selectedArea");
         const emptySelectedBox = i35("emptySelectedBox");
         const resultArea = i35("resultArea");
@@ -5722,6 +5936,266 @@
         document.addEventListener("DOMContentLoaded", setupAuthUi);
       } else {
         setupAuthUi();
+      }
+    })();
+  </script>
+
+
+
+  <script>
+    (function () {
+      "use strict";
+
+      const API_BASE = "https://dpro-dental-qr-api.dpromstk2000.workers.dev";
+      const CLINIC_CODE = "dpro_dental_demo";
+
+      function $(id) { return document.getElementById(id); }
+
+      function readAdminCode() {
+        try {
+          return (
+            sessionStorage.getItem("dproDentalAdminCode") ||
+            sessionStorage.getItem("dproDentalAdminToken") ||
+            sessionStorage.getItem("dpro_dental_qr_admin_code") ||
+            sessionStorage.getItem("dpro_dental_admin_code") ||
+            ""
+          ).trim();
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function clinicCode() {
+        try {
+          const saved = localStorage.getItem("dproDentalClinicCode") || "";
+          if (saved && saved !== "demo-dental") return saved;
+        } catch (error) {
+          // ignore
+        }
+        return CLINIC_CODE;
+      }
+
+      function staffName() {
+        return String($("staffNameInput")?.value || "受付スタッフ").trim() || "受付スタッフ";
+      }
+
+      function memberUrl(patient) {
+        const token = String(patient?.qr_token || "").trim();
+        if (!token) return "";
+        const basePath = location.pathname.replace(/\/admin\.html$/, "/");
+        return location.origin + basePath + "member.html?t=" + encodeURIComponent(token);
+      }
+
+      function maskToken(token) {
+        const text = String(token || "");
+        if (!text) return "---";
+        if (text.length <= 10) return "****" + text.slice(-4);
+        return text.slice(0, 8) + "..." + text.slice(-4);
+      }
+
+      function setMessage(type, message) {
+        const box = $("admin40OperationMessage");
+        if (!box) return;
+        box.className = "admin40-message";
+        if (type) box.classList.add(type);
+        box.textContent = message || "";
+      }
+
+      function setBusy(busy) {
+        [
+          "admin40ReissueButton",
+          "admin40DisableButton",
+          "admin40EnableButton",
+          "admin40LineUnlinkButton",
+          "admin40FamilyRemoveButton"
+        ].forEach((id) => {
+          const button = $(id);
+          if (button) button.disabled = Boolean(busy);
+        });
+      }
+
+      function normalizePatient(patient) {
+        const raw = patient?.raw || {};
+        return {
+          ...raw,
+          ...patient,
+          id: patient?.id || patient?.patient_id || raw.id || raw.patient_id || "",
+          patient_id: patient?.id || patient?.patient_id || raw.id || raw.patient_id || "",
+          patient_name: patient?.patient_name || raw.patient_name || "患者さん",
+          member_no: patient?.member_no || raw.member_no || "",
+          qr_token: patient?.qr_token || raw.qr_token || "",
+          card_enabled: patient?.card_enabled !== undefined ? patient.card_enabled : raw.card_enabled
+        };
+      }
+
+      function renderCardOps(patientInput) {
+        const patient = normalizePatient(patientInput || window.dproDentalSelectedPatient || null);
+        const status = $("admin40CardStatus");
+        const tokenLine = $("admin40CurrentToken");
+        const ops = $("admin40CardOps");
+        if (!ops || !patient?.id) {
+          setMessage("warning", "患者を選択すると、QR診察券の再発行・停止操作ができます。");
+          return;
+        }
+
+        const enabled = patient.card_enabled !== false;
+        if (status) {
+          status.classList.toggle("is-disabled", !enabled);
+          status.textContent = enabled ? "診察券：利用中" : "診察券：停止中";
+        }
+        if (tokenLine) {
+          tokenLine.textContent = "現在のQR token：" + maskToken(patient.qr_token || "") + " / 診察券番号：" + (patient.member_no || "---");
+        }
+
+        const disable = $("admin40DisableButton");
+        const enable = $("admin40EnableButton");
+        if (disable) disable.disabled = !enabled;
+        if (enable) enable.disabled = enabled;
+        setMessage("", "必要な時だけ操作してください。再発行・停止・解除はすべてWorker API → Supabaseへ保存します。");
+      }
+
+      async function postJson(path, body) {
+        const code = readAdminCode();
+        if (!code) throw new Error("管理コードが未入力です。左側メニューで管理コードを保存してください。");
+
+        const res = await fetch(API_BASE + path, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "x-admin-token": code,
+            "x-admin-code": code,
+            "x-dpro-admin-code": code
+          },
+          body: JSON.stringify(body || {})
+        });
+
+        const text = await res.text();
+        let data = {};
+        try { data = text ? JSON.parse(text) : {}; } catch { data = { ok: false, message: text || "JSONとして読めませんでした" }; }
+
+        if (!res.ok || data.ok === false) {
+          throw new Error(data.message || data.error || "APIエラーが発生しました。");
+        }
+        return data;
+      }
+
+      async function runCardOperation(kind) {
+        const patient = normalizePatient(window.dproDentalSelectedPatient);
+        if (!patient?.id) {
+          setMessage("warning", "先に患者を検索して選択してください。");
+          return;
+        }
+
+        const map = {
+          reissue: {
+            path: "/api/admin/patients/card/reissue",
+            confirmText: "QR再発行",
+            title: "QR診察券を再発行します。",
+            note: "古いQR URLは無効になります。実行してよいですか？"
+          },
+          disable: {
+            path: "/api/admin/patients/card/disable",
+            confirmText: "診察券停止",
+            title: "QR診察券を一時停止します。",
+            note: "患者画面が開けなくなります。患者情報は削除しません。"
+          },
+          enable: {
+            path: "/api/admin/patients/card/enable",
+            confirmText: "診察券再開",
+            title: "QR診察券を再開します。",
+            note: "停止中の診察券を再び使える状態にします。"
+          },
+          lineUnlink: {
+            path: "/api/admin/patients/line-unlink",
+            confirmText: "LINE連携解除",
+            title: "LINE連携を解除します。",
+            note: "家族LINE・患者LINEとの紐づけを解除します。"
+          },
+          familyRemove: {
+            path: "/api/admin/patients/family/remove",
+            confirmText: "家族から外す",
+            title: "家族診察券から外します。",
+            note: "本人のQR診察券は残ります。家族一覧から外す操作です。"
+          }
+        };
+
+        const spec = map[kind];
+        if (!spec) return;
+
+        const ok = window.confirm(`${spec.title}\n\n患者：${patient.patient_name}\n診察券番号：${patient.member_no || "---"}\n\n${spec.note}\n\n続ける場合は次に確認文言を入力します。`);
+        if (!ok) return;
+
+        const typed = window.prompt(`確認文言を入力してください：${spec.confirmText}`, "");
+        if (typed !== spec.confirmText) {
+          setMessage("warning", `確認文言が違います。操作を中止しました。必要な文言：${spec.confirmText}`);
+          return;
+        }
+
+        const reason = window.prompt("理由を入力してください（例：紛失、誤配布、LINE変更、家族構成変更など）", "") || "";
+
+        setBusy(true);
+        setMessage("", "処理中です。画面を閉じないでください。");
+
+        try {
+          const data = await postJson(spec.path, {
+            clinic_code: clinicCode(),
+            patient_id: patient.id,
+            member_no: patient.member_no,
+            confirm_text: spec.confirmText,
+            reason,
+            staff_name: staffName(),
+            source_screen: "admin.html"
+          });
+
+          const updated = normalizePatient(data.patient || patient);
+          window.dproDentalSelectedPatient = updated;
+
+          const url = data.member_url || memberUrl(updated);
+          const setText = (id, value) => { const el = $(id); if (el) el.textContent = value || "---"; };
+          setText("selectedMemberUrl", url);
+          setText("memberUrlText", url);
+          setText("qrTokenText", updated.qr_token || "");
+
+          const qrImage = $("qrImage");
+          if (qrImage && url) {
+            qrImage.src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(url);
+            qrImage.classList.remove("hidden");
+          }
+
+          const openSelected = $("openSelectedMemberButton");
+          if (openSelected) openSelected.onclick = () => { if (url) window.open(url, "_blank", "noopener"); };
+          const openMember = $("openMemberPageButton");
+          if (openMember) openMember.onclick = () => { if (url) window.open(url, "_blank", "noopener"); };
+
+          renderCardOps(updated);
+          setMessage("success", (data.message || "操作が完了しました。") + "\n\n必要に応じて新しい診察券URLをコピーしてください。");
+        } catch (error) {
+          setMessage("error", "操作に失敗しました。\n" + (error.message || error));
+        } finally {
+          setBusy(false);
+          renderCardOps(window.dproDentalSelectedPatient);
+        }
+      }
+
+      function setup() {
+        window.dproDentalRenderCardOps = renderCardOps;
+        const bind = (id, kind) => {
+          const button = $(id);
+          if (button) button.addEventListener("click", () => runCardOperation(kind));
+        };
+        bind("admin40ReissueButton", "reissue");
+        bind("admin40DisableButton", "disable");
+        bind("admin40EnableButton", "enable");
+        bind("admin40LineUnlinkButton", "lineUnlink");
+        bind("admin40FamilyRemoveButton", "familyRemove");
+        renderCardOps(window.dproDentalSelectedPatient || null);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setup);
+      } else {
+        setup();
       }
     })();
   </script>
