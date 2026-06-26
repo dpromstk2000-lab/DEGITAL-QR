@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-38E admin.html 管理コード入力固定</title>
+  <title>DPRO SHOP | STEP 30-38G admin.html 管理コードを左メニューへ小さく配置</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1667,7 +1667,7 @@
 
     body.owner-optimized .card[data-owner-section="settings"],
     body.owner-optimized .card[data-owner-section="special"],
-    body.owner-optimized .card[data-owner-section="admin-code"] {
+    body.owner-optimized .card[data-owner-section="admin-code-unused"] {
       display: block;
     }
 
@@ -2425,13 +2425,13 @@
       color: #991b1b;
     }
 
-    body.owner-optimized .card[data-owner-section="admin-code"] {
+    body.owner-optimized .card[data-owner-section="admin-code-unused"] {
       border: 2px solid #fde68a;
       background: linear-gradient(135deg, #fffbeb, #ffffff);
       box-shadow: 0 20px 50px rgba(245, 158, 11, 0.12);
     }
 
-    body.owner-optimized .card[data-owner-section="admin-code"] .card-title .icon {
+    body.owner-optimized .card[data-owner-section="admin-code-unused"] .card-title .icon {
       background: #f59e0b;
       color: #ffffff;
     }
@@ -2571,6 +2571,25 @@
       margin-right: 6px;
     }
 
+
+
+    /* STEP 30-38G: 管理コードは左メニューへ小さく配置 */
+    body.owner-optimized .owner-setting-drawer .card[data-owner-section="admin-code-unused"] {
+      margin: 14px 0 18px !important;
+      border: 1px solid #dbeafe !important;
+      background: #ffffff !important;
+      box-shadow: none !important;
+    }
+
+    body.owner-optimized .owner-setting-drawer .card[data-owner-section="admin-code-unused"] .card-header {
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+    }
+
+    body.owner-optimized .owner-setting-drawer .card[data-owner-section="admin-code-unused"] .card-title .icon {
+      background: #2563eb !important;
+      color: #ffffff !important;
+    }
+
     body.admin-code-saved:not(.admin-code-editing) #adminCodeFormArea {
       display: none;
     }
@@ -2595,6 +2614,182 @@
       .admin38e-auth-form-grid {
         grid-template-columns: 1fr;
       }
+    }
+
+
+
+    /* =========================================================
+       STEP 30-38G ADMIN AUTH IN LEFT MENU
+       毎日使う患者検索を邪魔しないよう、左メニュー内に小さく配置
+    ========================================================= */
+
+    .admin38g-side-auth {
+      margin-top: 10px;
+      border-radius: 18px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+      padding: 10px;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.08);
+    }
+
+    .admin38g-side-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .admin38g-side-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 950;
+      flex: 0 0 auto;
+    }
+
+    .admin38g-side-title {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      min-width: 0;
+    }
+
+    .admin38g-side-title strong {
+      color: #0f172a;
+      font-size: 12px;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .admin38g-side-title span {
+      color: #64748b;
+      font-size: 9.5px;
+      font-weight: 850;
+      line-height: 1.25;
+    }
+
+    .admin38g-side-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .admin38g-side-actions .btn,
+    .admin38g-form-actions .btn {
+      min-height: 30px;
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 10px;
+      font-weight: 950;
+      width: 100%;
+    }
+
+    .admin38g-auth-form-area {
+      margin-top: 9px;
+      border-top: 1px dashed #bfdbfe;
+      padding-top: 9px;
+    }
+
+    .admin38g-form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .admin38g-form-grid label {
+      display: block;
+      color: #334155;
+      font-size: 10px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .admin38g-form-grid input {
+      width: 100%;
+      min-height: 34px;
+      border-radius: 12px;
+      border: 1px solid #bfdbfe;
+      background: #ffffff;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 850;
+      outline: none;
+    }
+
+    .admin38g-form-grid input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .admin38g-form-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .admin38g-auth-guide {
+      margin-top: 8px;
+      border-radius: 12px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1e40af;
+      padding: 7px 8px;
+      font-size: 9.8px;
+      line-height: 1.55;
+      font-weight: 820;
+    }
+
+    .admin38g-auth-guide strong {
+      display: block;
+      color: #0f172a;
+      font-size: 10.5px;
+      margin-bottom: 2px;
+    }
+
+    .admin38g-side-auth .message {
+      margin-top: 8px;
+      font-size: 10px;
+      line-height: 1.55;
+      border-radius: 12px;
+      padding: 7px 8px;
+    }
+
+    .admin38g-side-auth .admin38e-auth-status-pill {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      padding: 7px 8px;
+      font-size: 10px;
+      white-space: normal;
+      text-align: center;
+    }
+
+    body.admin-code-saved:not(.admin-code-editing) .admin38g-auth-form-area {
+      display: none;
+    }
+
+    body.admin-code-saved:not(.admin-code-editing) #editAdminCodeButton {
+      display: inline-flex;
+    }
+
+    body:not(.admin-code-saved) #editAdminCodeButton {
+      display: none;
+    }
+
+    body.admin-code-editing #editAdminCodeButton {
+      display: none;
+    }
+
+    body.admin-code-saved:not(.admin-code-editing) #adminCodeMessage {
+      display: none;
     }
 
     /* =========================================================
@@ -2632,7 +2827,7 @@
     <section class="owner-main-hero" id="ownerMainHero">
       <div class="owner-main-hero-top">
         <div>
-          <div class="owner-main-kicker">STEP 30-38E / 管理コードは小さく・邪魔しない表示</div>
+          <div class="owner-main-kicker">STEP 30-38G / 管理コードは左メニューへ小さく配置</div>
           <div class="owner-main-title">毎日使う<br>患者管理画面</div>
           <div class="owner-main-sub">
             毎日使う「患者検索・選択中の患者確認」を前面に出し、新規登録・家族診察券・LINE連携は必要な時だけ開く形に整理しました。
@@ -2678,52 +2873,6 @@
     </section>
 
 
-    <!-- STEP 30-38E: 管理コードは小さく表示。保存済みなら入力欄は隠して毎日の画面を邪魔しない -->
-    <section class="card admin38d-top-auth-card" data-owner-section="admin-code" id="adminCodeTopCard">
-      <div class="card-header">
-        <h2 class="card-title">
-          <span class="icon">鍵</span>
-          管理コード
-        </h2>
-        <div class="card-subtitle">
-          患者検索・新規登録・家族LINE連携に使う管理コードです。保存済みなら入力欄は閉じて、毎日の患者管理を優先します。
-        </div>
-      </div>
-
-      <div class="card-body">
-        <div class="admin38e-auth-topline">
-          <div class="admin38e-auth-status-pill" id="authCompactBadge">管理コード：確認中</div>
-          <div class="admin38e-auth-small-actions">
-            <button class="btn btn-ghost" id="editAdminCodeButton" type="button">管理コードを変更</button>
-            <button class="btn btn-ghost" id="forgetAdminCodeButton" type="button">管理コードを忘れる</button>
-          </div>
-        </div>
-
-        <div class="admin38e-auth-form-area" id="adminCodeFormArea">
-          <div class="admin38e-auth-form-grid">
-            <div class="field">
-              <label for="staffNameInput">スタッフ名</label>
-              <input id="staffNameInput" type="text" placeholder="受付スタッフ" />
-            </div>
-
-            <div class="field">
-              <label for="adminCodeInput">管理コード</label>
-              <input id="adminCodeInput" type="password" placeholder="管理コードを入力" autocomplete="off" />
-            </div>
-
-            <button class="btn btn-light" id="saveAdminCodeButton" type="button">このタブに保存</button>
-            <button class="btn btn-ghost" id="cancelAdminCodeEditButton" type="button">閉じる</button>
-          </div>
-
-          <div id="adminCodeMessage" class="message"></div>
-          <div class="admin38c-auth-guide">
-            <strong>STEP 30-38E</strong>
-            未保存の時だけここに入力します。保存後は小さな「保存済み」表示だけにして、患者検索画面を邪魔しません。
-          </div>
-        </div>
-      </div>
-    </section>
-
     <section class="owner-daily-summary" id="ownerOperationSummary">
       <div class="owner-daily-card">
         <div class="owner-daily-label">最初に使う</div>
@@ -2766,6 +2915,50 @@
           <div class="admin35j-code-status" id="admin35jCodeStatus">
             管理コード：未確認
           </div>
+
+          <!-- STEP 30-38G: 管理コードは左メニュー内に小さく配置 -->
+          <div class="admin38g-side-auth" id="adminCodeTopCard">
+            <div class="admin38g-side-head">
+              <span class="admin38g-side-icon">鍵</span>
+              <div class="admin38g-side-title">
+                <strong>管理コード</strong>
+                <span>このタブだけ保存</span>
+              </div>
+            </div>
+
+            <div class="admin38e-auth-status-pill" id="authCompactBadge">管理コード：確認中</div>
+
+            <div class="admin38g-side-actions">
+              <button class="btn btn-light" id="editAdminCodeButton" type="button">管理コードを変更</button>
+              <button class="btn btn-ghost" id="forgetAdminCodeButton" type="button">管理コードを忘れる</button>
+            </div>
+
+            <div class="admin38g-auth-form-area" id="adminCodeFormArea">
+              <div class="admin38g-form-grid">
+                <div>
+                  <label for="staffNameInput">スタッフ名</label>
+                  <input id="staffNameInput" type="text" placeholder="受付スタッフ" />
+                </div>
+
+                <div>
+                  <label for="adminCodeInput">管理コード</label>
+                  <input id="adminCodeInput" type="password" placeholder="管理コードを入力" autocomplete="off" />
+                </div>
+
+                <div class="admin38g-form-actions">
+                  <button class="btn btn-primary" id="saveAdminCodeButton" type="button">このタブに保存</button>
+                  <button class="btn btn-ghost" id="cancelAdminCodeEditButton" type="button">閉じる</button>
+                </div>
+              </div>
+
+              <div id="adminCodeMessage" class="message"></div>
+              <div class="admin38g-auth-guide">
+                <strong>ここで管理コードを入力</strong>
+                患者検索・全患者表示・新規登録は、このタブに保存した管理コードで動きます。
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <nav class="admin35-nav">
@@ -2900,7 +3093,7 @@
         <div>
           <div class="owner-setting-drawer-title">⚙ 初期設定・休日設定</div>
           <div class="owner-setting-drawer-sub">
-            医院名・診療時間・通常休診日・臨時休業・特別営業日・管理コード・CSV一括取込をここにまとめています。
+            医院名・診療時間・通常休診日・臨時休業・特別営業日・CSV一括取込をここにまとめています。管理コードは左メニュー下に小さく配置しています。
           </div>
         </div>
         <button class="owner-setting-close" id="ownerSettingsCloseButton" type="button">閉じる</button>
@@ -3206,7 +3399,6 @@
             <div id="settingsMessage" class="message"></div>
           </div>
         </section>
-
         <section class="card">
           <div class="card-header">
             <h2 class="card-title">
@@ -3597,7 +3789,7 @@
           </div>
         </section>
 
-        <!-- STEP 30-38E: 管理コード入力は画面最上部へ移動しました。 -->
+        <!-- STEP 30-38G: 管理コード入力は左メニュー内へ移動しました。 -->
 
       </div>
 
@@ -3808,7 +4000,7 @@
 
         moveSectionToDrawer('[data-owner-section="settings"]', drawerBody);
         moveSectionToDrawer('[data-owner-section="special"]', drawerBody);
-        // STEP 30-38E: 管理コードは毎日使う画面の上部に固定するため、設定ドロワーへ移動しない。
+        // STEP 30-38G: 管理コードは左メニュー内に小さく配置します。
         moveSectionToDrawer('[data-owner-section="settings-preview"]', drawerBody);
         moveSectionToDrawer('#csvImportPlan', drawerBody);
 
@@ -3826,8 +4018,8 @@
 
           summary.parentNode.insertBefore(workGrid, summary.nextSibling);
 
-          // STEP 30-38E:
-          // 管理コード入力は画面最上部に常時表示するため、日常業務グリッドへ移動しません。
+          // STEP 30-38G:
+          // 管理コード入力は左メニュー内に固定し、日常業務グリッドへは移動しません。
           const searchCard = $("patientSearchCard");
 
           const selectedCard = $("selectedPatientCard");
@@ -4351,7 +4543,7 @@
         });
 
         if (!authCode) {
-          throw new Error("管理コードが未入力です。管理設定で入力してから実行してください。");
+          throw new Error("管理コードが未入力です。左側の患者管理メニュー内にある管理コード欄で保存してから実行してください。");
         }
 
         const res = await fetch(url.toString(), {
@@ -4863,7 +5055,7 @@
         });
 
         if (!authCode) {
-          throw new Error("管理コードが未入力です。管理設定で入力してから実行してください。");
+          throw new Error("管理コードが未入力です。左側の患者管理メニュー内にある管理コード欄で保存してから実行してください。");
         }
 
         const startedAt = Date.now();
@@ -5188,8 +5380,8 @@
         if (!authCode) {
           admin35iPatients = [];
           i35RenderPatients([], "", "");
-          i35SetMessage("error", "管理コードが未入力です。管理コード欄に管理コードを入れて、「このタブに保存」を押してください。");
-          i35SetDebug("error", "管理コード未入力のため、Worker APIへは送信していません。\nSTEP 30-38Eでは、患者検索の前に管理コード入力を必須にしています。");
+          i35SetMessage("error", "管理コードが未入力です。左側の患者管理メニュー内にある管理コード欄で「このタブに保存」を押してください。");
+          i35SetDebug("error", "管理コード未入力のため、Worker APIへは送信していません。\nSTEP 30-38Gでは、患者検索の前に左側メニュー内で管理コード保存を必須にしています。");
           const codeInput = i35("adminCodeInput");
           const codeCard = document.querySelector('[data-owner-section="admin-code"]');
           if (codeCard && codeCard.scrollIntoView) codeCard.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -5445,7 +5637,7 @@
             status.textContent = "管理コード：このタブに保存済み";
           } else {
             status.classList.add("warn");
-            status.textContent = "管理コード：未入力（管理コード欄に入力してください）";
+            status.textContent = "管理コード：未入力（左メニューで入力）";
           }
         }
         if (badge) {
@@ -5482,7 +5674,7 @@
             const code = input ? input.value.trim() : "";
             if (!code) {
               document.body.classList.add("admin-code-editing");
-              showMessage("warning", "管理コードを入力してください。コードはこのタブだけに保存します。");
+              showMessage("warning", "管理コードを入力してください。左側の患者管理メニュー内でこのタブだけに保存します。");
               if (input) input.focus();
               return;
             }
@@ -5508,7 +5700,7 @@
               document.body.classList.remove("admin-code-editing");
               showMessage("success", "管理コード入力欄を閉じました。");
             } else {
-              showMessage("warning", "管理コードが未保存です。患者検索の前に入力してください。");
+              showMessage("warning", "管理コードが未保存です。左側の患者管理メニュー内で入力してください。");
               if (input) input.focus();
             }
           });
