@@ -3,2068 +3,815 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DPRO SHOP | STEP 30-45C system-check.html 本番医院URLセット自動生成</title>
+  <title>DPRO SHOP | STEP 30-45D system-check.html 整理版</title>
   <style>
     :root {
-      --line: #06c755;
-      --line-dark: #04a948;
+      --bg: #f4f8ff;
+      --panel: #ffffff;
       --ink: #0f172a;
       --muted: #64748b;
-      --border: #e2e8f0;
-      --soft: #f8fafc;
-      --card: #ffffff;
-      --ok: #16a34a;
-      --warn: #d97706;
-      --bad: #dc2626;
+      --line: #dbeafe;
       --blue: #2563eb;
-      --shadow: 0 18px 48px rgba(15,23,42,0.08);
-      --radius: 26px;
+      --green: #16a34a;
+      --red: #dc2626;
+      --yellow: #f59e0b;
+      --shadow: 0 24px 80px rgba(15, 23, 42, .10);
+      --radius: 22px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 8% 2%, rgba(6,199,85,0.13), transparent 30%),
-        radial-gradient(circle at 92% 12%, rgba(37,99,235,0.10), transparent 30%),
-        linear-gradient(180deg, #ffffff, #f8fafc 55%, #eef2ff);
+        radial-gradient(circle at 12% 0%, rgba(34,197,94,.16), transparent 30%),
+        radial-gradient(circle at 90% 10%, rgba(37,99,235,.14), transparent 32%),
+        linear-gradient(180deg, #eef6ff, #f8fafc 45%, #f4f8ff);
+      line-height: 1.65;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    a { color: inherit; }
 
-    button,
-    input {
-      font: inherit;
-    }
-
-    .page {
-      width: min(1180px, calc(100% - 28px));
-      margin: 0 auto;
-      padding: 28px 0 56px;
+    .wrap {
+      width: min(1180px, calc(100% - 34px));
+      margin: 24px auto 56px;
     }
 
     .hero {
-      border-radius: 34px;
-      border: 1px solid rgba(226,232,240,0.9);
-      background:
-        linear-gradient(135deg, rgba(255,255,255,0.96), rgba(240,253,244,0.92)),
-        radial-gradient(circle at right top, rgba(6,199,85,0.18), transparent 40%);
+      background: rgba(255,255,255,.86);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(219,234,254,.95);
       box-shadow: var(--shadow);
-      padding: 26px;
+      border-radius: 30px;
+      padding: 28px;
       display: grid;
-      gap: 16px;
-      position: relative;
-      overflow: hidden;
+      grid-template-columns: 1.35fr .65fr;
+      gap: 22px;
+      align-items: end;
     }
 
     .badge {
       display: inline-flex;
-      width: fit-content;
       align-items: center;
       gap: 8px;
       border-radius: 999px;
       background: #dcfce7;
       color: #166534;
-      padding: 8px 13px;
+      padding: 5px 12px;
       font-size: 12px;
-      line-height: 1;
-      font-weight: 950;
+      font-weight: 900;
+      letter-spacing: .02em;
     }
 
     h1 {
-      margin: 0;
-      font-size: clamp(30px, 4vw, 50px);
-      line-height: 1.08;
-      letter-spacing: -0.07em;
-      font-weight: 950;
+      margin: 12px 0 10px;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.04;
+      letter-spacing: -.04em;
     }
 
     .lead {
       margin: 0;
-      max-width: 900px;
       color: #334155;
-      font-size: clamp(14px, 1.8vw, 18px);
-      line-height: 1.9;
-      font-weight: 780;
+      font-weight: 700;
+      font-size: 14px;
     }
 
-    .settings {
+    .setup-grid {
       display: grid;
-      grid-template-columns: 1.4fr 0.9fr 0.8fr auto;
+      grid-template-columns: 1fr;
       gap: 10px;
-      align-items: end;
-      margin-top: 4px;
-    }
-
-    .field {
-      display: grid;
-      gap: 6px;
     }
 
     label {
-      color: #334155;
+      display: block;
       font-size: 12px;
-      line-height: 1.3;
       font-weight: 900;
+      color: #334155;
+      margin: 0 0 5px;
     }
 
-    input {
+    input, textarea, select {
       width: 100%;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      color: var(--ink);
-      padding: 12px 13px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      border-radius: 13px;
+      padding: 11px 13px;
+      font-size: 14px;
+      color: #0f172a;
       outline: none;
-      font-size: 13px;
-      line-height: 1.4;
-      font-weight: 800;
     }
 
-    input:focus {
-      border-color: var(--line);
-      box-shadow: 0 0 0 4px rgba(6,199,85,0.16);
+    input:focus, textarea:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 4px rgba(96,165,250,.16);
     }
 
-    .btn {
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button, .button-link {
+      appearance: none;
       border: 0;
-      border-radius: 18px;
-      background: var(--line);
-      color: #ffffff;
-      padding: 13px 16px;
-      min-height: 46px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: white;
+      font-weight: 900;
+      padding: 11px 16px;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(37,99,235,.20);
+      text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      font-size: 13px;
-      line-height: 1;
-      font-weight: 950;
-      box-shadow: 0 12px 24px rgba(6,199,85,0.22);
-      white-space: nowrap;
+      min-height: 42px;
     }
 
-    .btn:disabled {
-      opacity: 0.65;
-      cursor: wait;
+    button:hover, .button-link:hover { transform: translateY(-1px); }
+
+    button.green { background: #16a34a; box-shadow: 0 14px 28px rgba(22,163,74,.18); }
+    button.dark { background: #0f172a; box-shadow: 0 14px 28px rgba(15,23,42,.18); }
+    button.red { background: #dc2626; box-shadow: 0 14px 28px rgba(220,38,38,.16); }
+    button.ghost, .button-link.ghost {
+      background: #fff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      box-shadow: none;
+    }
+    button.soft {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      box-shadow: none;
+    }
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .btn.dark {
-      background: #0f172a;
-      box-shadow: 0 12px 24px rgba(15,23,42,0.18);
-    }
-
-    .section {
-      margin-top: 20px;
-      display: grid;
-      gap: 14px;
-    }
-
-    .section-title {
-      margin: 0;
-      font-size: 23px;
-      line-height: 1.35;
-      letter-spacing: -0.06em;
-      font-weight: 950;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .card {
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.96);
-      box-shadow: 0 10px 34px rgba(15,23,42,0.06);
-      padding: 17px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .card h2,
-    .card h3 {
-      margin: 0;
-      font-size: 18px;
-      line-height: 1.4;
-      letter-spacing: -0.05em;
-      font-weight: 950;
-    }
-
-    .status {
-      width: fit-content;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-size: 12px;
-      line-height: 1;
-      font-weight: 950;
-      background: #f1f5f9;
-      color: #475569;
-    }
-
-    .status::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: currentColor;
-    }
-
-    .status.ok {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .status.warn {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .status.bad {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .big {
-      font-size: 34px;
-      line-height: 1;
-      letter-spacing: -0.06em;
-      font-weight: 950;
-    }
-
-    .small {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.65;
-      font-weight: 760;
-    }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .result {
-      border-radius: 24px;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      padding: 16px;
-      display: grid;
-      gap: 11px;
-      box-shadow: 0 8px 28px rgba(15,23,42,0.05);
-    }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .metric {
-      border-radius: 16px;
-      background: var(--soft);
-      border: 1px solid var(--border);
-      padding: 10px;
-    }
-
-    .metric b {
-      display: block;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.35;
-      font-weight: 900;
-      margin-bottom: 4px;
-    }
-
-    .metric span {
-      display: block;
-      font-size: 22px;
-      line-height: 1;
-      font-weight: 950;
-      letter-spacing: -0.05em;
-    }
-
-    .links {
+    .quick-nav {
+      margin: 18px 0;
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 10px;
     }
 
-    .link-card {
-      border-radius: 20px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      padding: 13px;
-      min-height: 94px;
-      display: grid;
-      align-content: space-between;
-      box-shadow: 0 8px 28px rgba(15,23,42,0.05);
-    }
-
-    .link-card b {
-      display: block;
-      font-size: 15px;
-      line-height: 1.35;
-      font-weight: 950;
-      letter-spacing: -0.04em;
-    }
-
-    .link-card span {
-      display: block;
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.45;
-      font-weight: 800;
-    }
-
-    .log {
-      border-radius: 24px;
-      border: 1px solid #cbd5e1;
-      background: #0f172a;
-      color: #e2e8f0;
-      padding: 16px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 12px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-      overflow: auto;
-      max-height: 460px;
-    }
-
-    .notice {
-      border-radius: 24px;
-      border: 1px solid #fed7aa;
-      background: #fff7ed;
-      color: #9a3412;
-      padding: 16px;
-      font-size: 13px;
-      line-height: 1.8;
-      font-weight: 800;
-    }
-
-    .notice strong {
-      display: block;
-      color: var(--ink);
-      font-size: 15px;
-      line-height: 1.45;
-      font-weight: 950;
-      margin-bottom: 4px;
-    }
-
-    @media (max-width: 980px) {
-      .settings {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .grid,
-      .result-grid,
-      .links {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 620px) {
-      .hero {
-        padding: 20px;
-      }
-
-      .settings,
-      .grid,
-      .result-grid,
-      .links,
-      .metrics {
-        grid-template-columns: 1fr;
-      }
-    }
-  
-    .cors-note {
-      border-radius: 24px;
-      border: 1px solid #bfdbfe;
-      background: #eff6ff;
-      color: #1d4ed8;
-      padding: 16px;
-      font-size: 13px;
-      line-height: 1.8;
-      font-weight: 800;
-    }
-
-    .cors-note strong {
-      display: block;
-      color: var(--ink);
-      font-size: 15px;
-      line-height: 1.45;
-      font-weight: 950;
-      margin-bottom: 4px;
-    }
-
-  
-    .admin-code-note {
-      border-radius: 24px;
-      border: 1px solid #bbf7d0;
-      background: #f0fdf4;
-      color: #166534;
-      padding: 16px;
-      font-size: 13px;
-      line-height: 1.8;
-      font-weight: 800;
-    }
-
-    .admin-code-note strong {
-      display: block;
-      color: var(--ink);
-      font-size: 15px;
-      line-height: 1.45;
-      font-weight: 950;
-      margin-bottom: 4px;
-    }
-
-  
-    .clinic-code-note {
-      border-radius: 24px;
-      border: 1px solid #bbf7d0;
-      background: #f0fdf4;
-      color: #166534;
-      padding: 16px;
-      font-size: 13px;
-      line-height: 1.8;
-      font-weight: 800;
-    }
-
-    .clinic-code-note strong {
-      display: block;
-      color: var(--ink);
-      font-size: 15px;
-      line-height: 1.45;
-      font-weight: 950;
-      margin-bottom: 4px;
-    }
-
-  
-    .demo-setup-panel {
-      border-radius: 30px;
-      border: 1px solid #bbf7d0;
-      background:
-        radial-gradient(circle at 92% 12%, rgba(6,199,85,0.13), transparent 34%),
-        linear-gradient(135deg, #f0fdf4, #ffffff);
-      box-shadow: 0 16px 44px rgba(15,23,42,0.07);
-      padding: 18px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .demo-setup-panel h2 {
-      margin: 0;
-      font-size: 24px;
-      line-height: 1.35;
-      letter-spacing: -0.06em;
-      font-weight: 950;
-    }
-
-    .demo-setup-panel p {
-      margin: 0;
-      color: #166534;
-      font-size: 13px;
-      line-height: 1.85;
-      font-weight: 820;
-    }
-
-    .demo-setup-stats {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .demo-setup-stat {
-      border-radius: 16px;
-      background: #ffffff;
-      border: 1px solid #dcfce7;
-      padding: 10px;
-      font-size: 11px;
-      line-height: 1.35;
-      font-weight: 900;
-      color: #166534;
-    }
-
-    .demo-setup-stat b {
-      display: block;
-      color: #0f172a;
-      font-size: 22px;
-      line-height: 1;
-      letter-spacing: -0.05em;
-      font-weight: 950;
-      margin-top: 4px;
-    }
-
-    .demo-setup-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .demo-setup-status {
-      color: #166534;
-      font-size: 12px;
-      line-height: 1.65;
-      font-weight: 850;
-      white-space: pre-wrap;
-    }
-
-    @media (max-width: 780px) {
-      .demo-setup-stats {
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .demo-setup-stats {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-  
-    /* =========================================================
-       STEP 30-36B PC RECEPTION READER LINK
-       PC受付リーダーへの導線を追加
-    ========================================================= */
-
-    .pc36-link-card {
-      border-radius: 22px;
-      border: 1px solid #bfdbfe;
-      background:
-        radial-gradient(circle at 96% 8%, rgba(37,99,235,0.13), transparent 34%),
-        linear-gradient(135deg, #eff6ff, #ffffff);
-      color: #0f172a;
+    .nav-card {
+      background: rgba(255,255,255,.88);
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
       padding: 14px;
-      display: grid;
-      grid-template-columns: 46px minmax(0, 1fr);
-      gap: 11px;
-      align-items: center;
-      text-decoration: none;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+      cursor: pointer;
+      transition: .15s ease;
+      min-height: 84px;
     }
 
-    .pc36-link-card:hover {
-      transform: translateY(-1px);
+    .nav-card:hover {
       border-color: #93c5fd;
+      transform: translateY(-1px);
     }
 
-    .pc36-link-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 17px;
-      display: grid;
-      place-items: center;
-      background: #2563eb;
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 950;
-      letter-spacing: -0.03em;
-    }
-
-    .pc36-link-title {
+    .nav-card strong {
       display: block;
-      color: #0f172a;
       font-size: 15px;
-      line-height: 1.35;
-      font-weight: 950;
-      letter-spacing: -0.04em;
+      margin-bottom: 4px;
     }
 
-    .pc36-link-desc {
-      display: block;
-      margin-top: 3px;
-      color: #475569;
-      font-size: 11px;
-      line-height: 1.55;
-      font-weight: 780;
+    .nav-card span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.45;
     }
 
-    .pc36-link-row {
-      margin: 12px 0;
-      display: grid;
-      gap: 10px;
-    }
-
-    @media (min-width: 760px) {
-      .pc36-link-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-  
-
-    /* STEP 30-45A 本番医院追加・初期設定チェック */
-    .readiness-panel {
-      border: 1px solid #bfdbfe;
-      background: linear-gradient(135deg, #eff6ff, #ffffff);
-      border-radius: 24px;
-      padding: 18px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .readiness-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .readiness-summary {
+    .summary-grid {
+      margin: 18px 0;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
+      gap: 12px;
     }
 
-    .readiness-metric {
-      border: 1px solid #dbeafe;
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 12px;
-      font-size: 12px;
-      font-weight: 900;
-      color: #475569;
-    }
-
-    .readiness-metric b {
-      display: block;
-      margin-top: 5px;
-      color: #0f172a;
-      font-size: 22px;
-      line-height: 1;
-      font-weight: 950;
-    }
-
-    .readiness-list {
-      display: grid;
-      gap: 8px;
-    }
-
-    .readiness-row {
-      display: grid;
-      grid-template-columns: 116px 180px 1fr;
-      gap: 10px;
-      align-items: start;
+    .summary-card {
+      background: #fff;
       border: 1px solid #e2e8f0;
-      background: rgba(255,255,255,0.95);
-      border-radius: 16px;
-      padding: 12px;
-      font-size: 13px;
-      line-height: 1.55;
-      font-weight: 800;
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 12px 36px rgba(15,23,42,.05);
     }
 
-    .readiness-pill {
-      width: fit-content;
-      border-radius: 999px;
-      padding: 7px 10px;
+    .summary-card .label {
       font-size: 12px;
-      line-height: 1;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .summary-card .value {
+      font-size: 26px;
       font-weight: 950;
-      background: #f1f5f9;
-      color: #475569;
+      letter-spacing: -.04em;
+      margin-top: 3px;
     }
 
-    .readiness-pill.pass { background: #dcfce7; color: #166534; }
-    .readiness-pill.warn { background: #fef3c7; color: #92400e; }
-    .readiness-pill.fail { background: #fee2e2; color: #991b1b; }
-    .readiness-pill.info { background: #dbeafe; color: #1d4ed8; }
+    .summary-card.pass { border-color: #bbf7d0; background: #f0fdf4; }
+    .summary-card.warn { border-color: #fde68a; background: #fffbeb; }
+    .summary-card.fail { border-color: #fecaca; background: #fef2f2; }
+    .summary-card.info { border-color: #bfdbfe; background: #eff6ff; }
 
-    /* STEP 30-45C 医院別URLセット */
-    .url-kit-panel {
-      border: 1px solid #bfdbfe;
-      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 55%, #ecfeff 100%);
-      border-radius: 24px;
+    section.panel {
+      background: rgba(255,255,255,.92);
+      border: 1px solid #dbeafe;
+      box-shadow: 0 18px 52px rgba(15,23,42,.07);
+      border-radius: var(--radius);
       padding: 22px;
-      box-shadow: 0 18px 60px rgba(30, 64, 175, 0.10);
+      margin: 16px 0;
     }
 
-    .url-kit-head {
+    .panel-head {
       display: flex;
-      justify-content: space-between;
       gap: 16px;
+      justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 14px;
     }
 
-    .url-kit-summary {
+    h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -.03em;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 12px 14px;
+      font-size: 13px;
+      font-weight: 850;
+      white-space: pre-wrap;
+    }
+
+    .status-box.ok {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .status-box.warn {
+      border-color: #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .status-box.ng {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .status-box.info {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1e3a8a;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .metric-row {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
-      margin: 14px 0;
+      margin: 12px 0;
     }
 
-    .url-kit-metric {
-      background: #ffffff;
-      border: 1px solid #dbeafe;
-      border-radius: 14px;
+    .metric {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
       padding: 12px;
-      color: #334155;
-      font-size: 12px;
-      line-height: 1.6;
     }
 
-    .url-kit-metric b {
+    .metric span {
       display: block;
-      color: #0f172a;
-      font-size: 15px;
-      margin-top: 4px;
-      word-break: break-all;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
     }
+
+    .metric b {
+      display: block;
+      font-size: 18px;
+      margin-top: 4px;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .check-item {
+      display: grid;
+      grid-template-columns: 72px 180px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      background: #fff;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 950;
+      white-space: nowrap;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .pill.pass { background: #dcfce7; color: #166534; }
+    .pill.warn { background: #fef3c7; color: #92400e; }
+    .pill.fail { background: #fee2e2; color: #991b1b; }
+    .pill.info { background: #dbeafe; color: #1d4ed8; }
 
     .url-list {
       display: grid;
-      gap: 10px;
-      margin-top: 14px;
+      gap: 9px;
+      margin-top: 12px;
     }
 
     .url-row {
       display: grid;
-      grid-template-columns: 180px minmax(0, 1fr) auto auto;
-      gap: 10px;
+      grid-template-columns: 160px minmax(0, 1fr) auto auto;
+      gap: 8px;
       align-items: center;
-      background: #ffffff;
+      background: #fff;
       border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 12px;
+      border-radius: 14px;
+      padding: 10px;
     }
 
-    .url-label {
-      font-weight: 900;
-      color: #0f172a;
+    .url-title {
+      font-weight: 950;
       font-size: 13px;
     }
 
     .url-desc {
-      color: #64748b;
+      color: var(--muted);
       font-size: 11px;
-      line-height: 1.5;
-      margin-top: 2px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .url-value {
-      color: #1d4ed8;
-      font-size: 12px;
-      font-weight: 800;
-      word-break: break-all;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 12px;
+      padding: 9px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #1d4ed8;
+      word-break: break-all;
+    }
+
+    .copy-box {
+      width: 100%;
+      min-height: 170px;
+      margin-top: 12px;
+      background: #0f172a;
+      color: #dbeafe;
+      border: 0;
+      border-radius: 16px;
+      padding: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.65;
+      resize: vertical;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .demo-count {
+      background: #fff;
+      border: 1px solid #bbf7d0;
+      border-radius: 14px;
       padding: 10px;
     }
 
-    .url-warning {
-      border: 1px solid #fde68a;
-      background: #fffbeb;
-      color: #92400e;
+    .demo-count span {
+      display: block;
+      font-size: 11px;
+      color: #166534;
+      font-weight: 900;
+    }
+
+    .demo-count b {
+      display: block;
+      font-size: 20px;
+      margin-top: 3px;
+    }
+
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .api-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
       border-radius: 16px;
-      padding: 12px 14px;
-      font-size: 12px;
-      line-height: 1.7;
-      font-weight: 800;
-      margin-top: 12px;
-      white-space: pre-wrap;
+      padding: 14px;
     }
 
-    .url-copy-all {
-      width: 100%;
-      min-height: 160px;
-      border: 1px solid #cbd5e1;
-      border-radius: 16px;
-      padding: 12px;
-      background: #0f172a;
-      color: #dbeafe;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 12px;
-      line-height: 1.6;
-      resize: vertical;
-      white-space: pre;
-      overflow: auto;
+    .api-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
     }
 
-    @media (max-width: 900px) {
-      .url-kit-summary {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .url-row {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 720px) {
-      .readiness-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .readiness-row { grid-template-columns: 1fr; }
-    }
-
-    /* STEP 30-39D 操作履歴チェック */
-    .audit-check-panel {
-      border: 1px solid #dbe3ef;
-      border-radius: 22px;
-      background: #ffffff;
-      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
+    details {
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      background: #fff;
+      margin: 14px 0;
       overflow: hidden;
     }
 
-    .audit-check-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 18px;
-      border-bottom: 1px solid #edf2f7;
-      background: linear-gradient(135deg, #f8fafc 0%, #eef6ff 100%);
-    }
-
-    .audit-check-title {
-      font-size: 18px;
-      font-weight: 900;
+    summary {
+      cursor: pointer;
+      padding: 14px 16px;
+      font-weight: 950;
       color: #0f172a;
-    }
-
-    .audit-check-sub {
-      margin-top: 6px;
-      color: #64748b;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .audit-check-body {
-      padding: 18px;
-    }
-
-    .audit-check-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .audit-check-row {
-      display: grid;
-      grid-template-columns: 118px 1fr auto;
-      gap: 12px;
-      align-items: center;
-      padding: 12px;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      background: #ffffff;
-    }
-
-    .audit-check-time {
-      font-size: 12px;
-      font-weight: 900;
-      color: #475569;
-    }
-
-    .audit-check-name {
-      font-size: 14px;
-      font-weight: 900;
-      color: #0f172a;
-    }
-
-    .audit-check-detail {
-      margin-top: 4px;
-      color: #64748b;
-      font-size: 12px;
-      line-height: 1.65;
-    }
-
-    .audit-check-pill {
-      display: inline-flex;
-      border-radius: 999px;
-      padding: 5px 9px;
-      border: 1px solid #fed7aa;
-      background: #fff7ed;
-      color: #9a3412;
-      font-size: 11px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .audit-check-empty {
-      border: 1px dashed #cbd5e1;
-      border-radius: 16px;
-      padding: 16px;
-      color: #64748b;
       background: #f8fafc;
-      font-size: 13px;
-      line-height: 1.75;
     }
 
-    @media (max-width: 720px) {
-      .audit-check-head,
-      .audit-check-row {
-        display: grid;
-        grid-template-columns: 1fr;
-      }
+    details .detail-body {
+      padding: 14px 16px;
+      border-top: 1px solid #e2e8f0;
     }
 
+    pre.log {
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: 18px;
+      padding: 16px;
+      overflow: auto;
+      max-height: 420px;
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 28px;
+      font-weight: 800;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 980px) {
+      .hero, .two-col { grid-template-columns: 1fr; }
+      .quick-nav { grid-template-columns: 1fr 1fr; }
+      .summary-grid, .metric-row, .api-grid { grid-template-columns: 1fr 1fr; }
+      .url-row { grid-template-columns: 1fr; }
+      .demo-grid { grid-template-columns: 1fr 1fr 1fr; }
+      .check-item { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 18px, 1180px); margin-top: 10px; }
+      .hero { padding: 20px; border-radius: 22px; }
+      section.panel { padding: 16px; }
+      .quick-nav, .summary-grid, .metric-row, .api-grid, .demo-grid { grid-template-columns: 1fr; }
+      button, .button-link { width: 100%; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .button-row, button, .quick-nav, #diagnosisPanel, .hero .setup-grid { display: none !important; }
+      .wrap { width: 100%; margin: 0; }
+      section.panel, .hero { box-shadow: none; border: 1px solid #ddd; }
+    }
   </style>
 </head>
+
 <body>
-  <main class="page">
-    <section class="hero">
-      <div class="badge">STEP 30-45C / 本番医院URLセット自動生成</div>
-      <h1>API・数字・操作履歴・本番導入設定・医院URLを<br>一括チェック</h1>
-      <p class="lead">
-        受付iPad・先生用・管理トップが同じ Worker API / Supabase を見ているか確認するための診断ページです。
-        営業デモ前・本番導入前にこのページを開いて、APIの生存確認・件数一致・操作履歴・本番安全ガード・管理コード保護状態・本番医院の初期設定漏れ・医院別URLセットを確認します。
-      </p>
+  <div class="wrap">
+    <header class="hero">
+      <div>
+        <div class="badge">STEP 30-45D / system-check 整理版</div>
+        <h1>本番前チェックを<br>見やすく整理</h1>
+        <p class="lead">
+          よく使う順番に並べ直しました。上から「基本設定 → 総合判定 → URLセット → 本番導入チェック → DEMO設定 → API確認 → 履歴確認」の順に確認できます。
+        </p>
+        <div class="button-row">
+          <button class="green" id="runAllButton" type="button">一括チェック</button>
+          <button class="soft" id="saveAdminButton" type="button">管理コードをこのタブに保存</button>
+          <button class="ghost" id="forgetAdminButton" type="button">管理コードを忘れる</button>
+        </div>
+      </div>
 
-      <div class="settings">
-        <div class="field">
+      <div class="setup-grid">
+        <div>
           <label for="apiBaseInput">Worker API URL</label>
-          <input id="apiBaseInput" type="text" value="https://dpro-dental-qr-api.dpromstk2000.workers.dev" />
+          <input id="apiBaseInput" value="https://dpro-dental-qr-api.dpromstk2000.workers.dev" autocomplete="off" />
         </div>
-
-<div class="pc36-link-row">
-  <a class="pc36-link-card" href="./scan-pc.html?v=3036">
-    <span class="pc36-link-icon">PC</span>
-    <span>
-      <span class="pc36-link-title">PC受付リーダー確認</span>
-      <span class="pc36-link-desc">営業前DEMO設定後、PC受付でQRリーダー入力を確認します。</span>
-    </span>
-  </a>
-</div>
-
-        <div class="field">
+        <div>
+          <label for="clinicCodeInput">医院コード</label>
+          <input id="clinicCodeInput" value="dpro_dental_demo" autocomplete="off" />
+        </div>
+        <div>
           <label for="adminCodeInput">管理コード</label>
-          <input id="adminCodeInput" type="password" value="" placeholder="管理コードを入力" autocomplete="off" />
+          <input id="adminCodeInput" type="password" placeholder="管理コードを入力" autocomplete="off" />
         </div>
-        <div class="field">
-          <label for="clinicCodeInput">医院コード（通常 dpro_dental_demo）</label>
-          <input id="clinicCodeInput" type="text" value="dpro_dental_demo" />
+        <div>
+          <label for="staffNameInput">スタッフ名</label>
+          <input id="staffNameInput" value="管理スタッフ" autocomplete="off" />
         </div>
-        <div class="demo-setup-actions" style="margin-top:10px;">
-          <button class="btn" id="runButton" type="button">一括チェック</button>
-          <button class="btn ghost" id="forgetAdminCodeButton" type="button">管理コードをこのタブから削除</button>
-        </div>
+      </div>
+    </header>
+
+    <nav class="quick-nav">
+      <div class="nav-card" data-scroll="#urlSetPanel">
+        <strong>1. URLセット</strong>
+        <span>医院別URLを作る</span>
+      </div>
+      <div class="nav-card" data-scroll="#readinessPanel">
+        <strong>2. 本番導入</strong>
+        <span>初期設定漏れを確認</span>
+      </div>
+      <div class="nav-card" data-scroll="#demoPanel">
+        <strong>3. DEMO設定</strong>
+        <span>営業前データ準備</span>
+      </div>
+      <div class="nav-card" data-scroll="#apiPanel">
+        <strong>4. API・件数</strong>
+        <span>受付/先生/管理トップ</span>
+      </div>
+      <div class="nav-card" data-scroll="#historyPanel">
+        <strong>5. 操作履歴</strong>
+        <span>受付取消など確認</span>
+      </div>
+    </nav>
+
+    <section class="summary-grid" id="summaryGrid">
+      <div class="summary-card info">
+        <div class="label">Worker API</div>
+        <div class="value" id="sumWorker">未確認</div>
+      </div>
+      <div class="summary-card info">
+        <div class="label">認証</div>
+        <div class="value" id="sumAuth">未確認</div>
+      </div>
+      <div class="summary-card info">
+        <div class="label">本番導入</div>
+        <div class="value" id="sumReady">未確認</div>
+      </div>
+      <div class="summary-card info">
+        <div class="label">総合判定</div>
+        <div class="value" id="sumTotal">未確認</div>
       </div>
     </section>
 
-    
-    <section class="section">
-      <div class="cors-note">
-        <strong>STEP 30-45C 修正内容</strong>
-        通常チェックは、管理コードをURLに残しにくいヘッダー送信で実行します。
-        営業前DEMO設定だけは危険操作として、POST + 確認文言 + Worker側 clinic_code ガードで実行します。
-        本番医院コードの場合、この画面ではDEMO設定ボタンを非表示にし、Worker側でも /api/admin/demo/sales-setup を拒否します。さらに本番医院追加時の初期設定漏れを /api/admin/production-readiness-check で確認し、医院コード別の admin / owner / doctor / 受付 / 患者用URLを自動生成します。
-      </div>
-    </section>
-    <section class="section">
-      <div class="demo-setup-panel" id="prodSafetyPanel" style="border-color:#bfdbfe;background:#eff6ff;">
-        <h2>本番安全チェック</h2>
-        <p>
-          医院コードを見て、営業前DEMO設定を出してよいか確認します。
-          <b>dpro_dental_demo</b> の時だけDEMO操作を表示し、本番医院コードでは非表示にします。
-        </p>
-        <div class="demo-setup-status" id="prodSafetyStatus" style="border-color:#bfdbfe;background:#ffffff;color:#1e3a8a;">
-          未確認です。医院コードを確認しています。
+    <section class="panel" id="urlSetPanel">
+      <div class="panel-head">
+        <div>
+          <h2>本番医院URLセット</h2>
+          <div class="small">契約後は、STEP 30-45B SQLで作った本番医院コードを入れてから生成します。</div>
+        </div>
+        <div class="button-row" style="margin:0;">
+          <button class="green" id="generateUrlsButton" type="button">URLセットを生成</button>
+          <button class="ghost" id="copyUrlsButton" type="button">URL一覧をコピー</button>
         </div>
       </div>
-    </section>
 
-
-    <section class="section">
-      <div class="demo-setup-panel" id="authSafetyPanel" style="border-color:#fde68a;background:#fffbeb;">
-        <h2>本番認証チェック</h2>
-        <p>
-          管理コードがWorkerで通るか、URLに管理コードが残りにくい送信方式になっているか、Cloudflare Accessが検出されているかを確認します。
-          本番では最終的に Cloudflare Access + Worker管理コード の二重保護を推奨します。
-        </p>
-        <div class="demo-setup-status" id="authSafetyStatus" style="border-color:#fde68a;background:#ffffff;color:#92400e;">
-          未確認です。管理コードを入力して一括チェックしてください。
-        </div>
+      <div class="metric-row">
+        <div class="metric"><span>医院コード</span><b id="urlClinicCode">-</b></div>
+        <div class="metric"><span>GitHub Pages</span><b>DEGITAL-QR</b></div>
+        <div class="metric"><span>LIFF ID</span><b>2010491267-waXBAIje</b></div>
+        <div class="metric"><span>状態</span><b id="urlState">未生成</b></div>
       </div>
-    </section>
 
-
-    <section class="section" id="productionReadinessSection">
-      <div class="readiness-panel">
-        <div class="readiness-head">
-          <div>
-            <h2 class="section-title" style="margin:0;">本番医院追加・初期設定チェック</h2>
-            <p class="small" style="margin:6px 0 0;">
-              本番医院を追加する時に、医院コード・医院情報・診療時間・管理コード・LIFF URL・DEMO操作ガードの取り違えを確認します。
-              本番医院コードを入力して確認してください。
-            </p>
-          </div>
-          <button class="btn" id="productionReadinessButton" type="button">本番導入チェック</button>
-        </div>
-
-        <div class="demo-setup-status" id="productionReadinessStatus" style="border-color:#bfdbfe;background:#ffffff;color:#1e3a8a;">
-          未確認です。一括チェック、または「本番導入チェック」を押してください。
-        </div>
-
-        <div class="readiness-summary">
-          <div class="readiness-metric">PASS<b id="readinessPass">-</b></div>
-          <div class="readiness-metric">WARN<b id="readinessWarn">-</b></div>
-          <div class="readiness-metric">FAIL<b id="readinessFail">-</b></div>
-          <div class="readiness-metric">判定<b id="readinessResult" style="font-size:16px;line-height:1.25;">未確認</b></div>
-        </div>
-
-        <div class="readiness-list" id="productionReadinessList">
-          <div class="empty">本番導入チェックを実行すると、医院情報・診療時間・認証・LIFF設定の確認結果が表示されます。</div>
-        </div>
+      <div id="urlWarning" class="status-box warn">
+        本番医院のURLを作る時は、医院コードが dpro_dental_demo のままになっていないか確認してください。
       </div>
-    </section>
 
-    <section class="section" id="productionUrlSetSection">
-      <div class="url-kit-panel">
-        <div class="url-kit-head">
-          <div>
-            <h2 class="section-title" style="margin:0;">本番医院URLセット自動生成</h2>
-            <p class="small" style="margin:6px 0 0;">
-              契約後に医院コードを作成したら、ここで admin / owner / doctor / 受付 / 患者用URLをまとめて生成します。
-              本番医院では <b>dpro_dental_demo</b> を使わず、STEP 30-45B のSQLで作成した医院コードを使います。
-            </p>
-          </div>
-          <button class="btn" id="generateUrlSetButton" type="button">URLセットを生成</button>
-        </div>
-
-        <div class="url-kit-summary">
-          <div class="url-kit-metric">医院コード<b id="urlKitClinicCode">-</b></div>
-          <div class="url-kit-metric">GitHub Pages<b>DEGITAL-QR</b></div>
-          <div class="url-kit-metric">Worker API<b id="urlKitWorkerBase">-</b></div>
-          <div class="url-kit-metric">LIFF ID<b>2010491267-waXBAIje</b></div>
-        </div>
-
-        <div class="demo-setup-status" id="urlKitStatus" style="border-color:#bfdbfe;background:#ffffff;color:#1e3a8a;">
-          未生成です。医院コードを入力して「URLセットを生成」を押してください。
-        </div>
-
-        <div class="url-warning" id="urlKitWarning">
-          本番医院用URLを作る時は、医院コードが dpro_dental_demo のままになっていないか必ず確認してください。
-        </div>
-
-        <div class="url-list" id="productionUrlList">
-          <div class="audit-check-empty">URLセットを生成すると、ここに各画面のフルURLが表示されます。</div>
-        </div>
-
-        <div style="margin-top:14px;">
-          <label class="small" for="productionUrlCopyBox" style="display:block;margin-bottom:6px;font-weight:900;color:#0f172a;">コピペ用URL一覧</label>
-          <textarea id="productionUrlCopyBox" class="url-copy-all" readonly>まだ生成していません。</textarea>
-        </div>
-
-        <div class="demo-setup-actions" style="margin-top:12px;">
-          <button class="btn" id="copyUrlSetButton" type="button">URL一覧をコピー</button>
-          <button class="btn ghost" id="openAdminUrlButton" type="button">管理画面を開く</button>
-          <button class="btn ghost" id="openOwnerUrlButton" type="button">管理トップを開く</button>
-        </div>
+      <div class="url-list" id="urlList">
+        <div class="status-box info">URLセットを生成すると、ここに各画面のフルURLが表示されます。</div>
       </div>
+
+      <details>
+        <summary>コピペ用URL一覧を開く</summary>
+        <div class="detail-body">
+          <textarea id="urlCopyBox" class="copy-box" readonly>まだ生成していません。</textarea>
+        </div>
+      </details>
     </section>
 
-
-    <section class="section" id="demoSetupSection">
-      <div class="demo-setup-panel">
-        <h2>営業前DEMO設定</h2>
-        <p>
-          営業前にここを押すと、山田家・背景患者だけでなく佐藤家・田中家・単独患者も混ざった、実際感ある本日の受付・診療ステータスに整えます。
-          受付iPad・先生用・管理トップに、本日の患者6人が自然に混ざって表示される状態にします。
-        </p>
-
-        <div class="demo-setup-stats">
-          <div class="demo-setup-stat">本日の患者<b>6</b></div>
-          <div class="demo-setup-stat">未受付<b>2</b></div>
-          <div class="demo-setup-stat">受付済み<b>4</b></div>
-          <div class="demo-setup-stat">診療待ち<b>2</b></div>
-          <div class="demo-setup-stat">診療済み<b>2</b></div>
-          <div class="demo-setup-stat">LINEフォロー<b>1</b></div>
+    <section class="panel" id="readinessPanel">
+      <div class="panel-head">
+        <div>
+          <h2>本番医院追加・初期設定チェック</h2>
+          <div class="small">本番医院コードを入れて、医院情報・診療時間・管理コード・DEMO混入を確認します。</div>
         </div>
-
-
-        <div class="demo-setup-status" style="border-color:#bfdbfe;background:#eff6ff;color:#1d4ed8;">
-          本日デモ例：鈴木 一郎 / 山田 花子 / 佐藤 結衣 / 田中 蒼 / 山田 太郎 / 高橋 由美<br>
-          山田家・背景患者だけが順番に並ばないよう、実際の医院らしく患者さんを混在させます。
-        </div>
-
-        <div class="demo-setup-actions">
-          <button class="btn dark" id="demoSetupButton" type="button">営業前DEMO設定を実行</button>
-          <button class="btn" id="demoSetupAndCheckButton" type="button">DEMO設定して一括チェック</button>
-        </div>
-
-        <div class="demo-setup-status" id="demoSetupStatus">まだ実行していません。</div>
+        <button class="green" id="readinessButton" type="button">本番導入チェック</button>
       </div>
-    </section>
 
-
-
-<section class="section">
-      <h2 class="section-title">総合判定</h2>
-      <div class="grid">
-        <div class="card">
-          <h3>Worker API</h3>
-          <div class="status" id="healthStatus">未確認</div>
-          <div class="small" id="healthText">/api/health を確認します。</div>
-        </div>
-        <div class="card">
-          <h3>受付iPad API</h3>
-          <div class="status" id="scanStatus">未確認</div>
-          <div class="small" id="scanText">/api/scan/today を確認します。</div>
-        </div>
-        <div class="card">
-          <h3>先生用 API</h3>
-          <div class="status" id="doctorStatus">未確認</div>
-          <div class="small" id="doctorText">/api/doctor/today を確認します。</div>
-        </div>
-        <div class="card">
-          <h3>管理トップ API</h3>
-          <div class="status" id="ownerStatus">未確認</div>
-          <div class="small" id="ownerText">/api/owner/daily-statuses を確認します。</div>
-        </div>
+      <div class="metric-row">
+        <div class="metric"><span>PASS</span><b id="readyPass">-</b></div>
+        <div class="metric"><span>WARN</span><b id="readyWarn">-</b></div>
+        <div class="metric"><span>FAIL</span><b id="readyFail">-</b></div>
+        <div class="metric"><span>判定</span><b id="readyStatus">未確認</b></div>
       </div>
-    </section>
 
-    <section class="section">
-      <h2 class="section-title">件数比較</h2>
-      <div class="result-grid">
-        <div class="result">
-          <h3>受付iPad</h3>
-          <div class="metrics">
-            <div class="metric"><b>予定</b><span id="scanTotal">-</span></div>
-            <div class="metric"><b>受付済み</b><span id="scanChecked">-</span></div>
-            <div class="metric"><b>診療済み</b><span id="scanDone">-</span></div>
-            <div class="metric"><b>LINE</b><span id="scanFollow">-</span></div>
-          </div>
-          <div class="small" id="scanCountText">未確認</div>
-        </div>
-
-        <div class="result">
-          <h3>先生用</h3>
-          <div class="metrics">
-            <div class="metric"><b>患者</b><span id="doctorTotal">-</span></div>
-            <div class="metric"><b>診療待ち</b><span id="doctorWaiting">-</span></div>
-            <div class="metric"><b>診療済み</b><span id="doctorDone">-</span></div>
-            <div class="metric"><b>LINE</b><span id="doctorFollow">-</span></div>
-          </div>
-          <div class="small" id="doctorCountText">未確認</div>
-        </div>
-
-        <div class="result">
-          <h3>管理トップ</h3>
-          <div class="metrics">
-            <div class="metric"><b>予定</b><span id="ownerTotal">-</span></div>
-            <div class="metric"><b>受付済み</b><span id="ownerChecked">-</span></div>
-            <div class="metric"><b>診療済み</b><span id="ownerDone">-</span></div>
-            <div class="metric"><b>LINE</b><span id="ownerFollow">-</span></div>
-          </div>
-          <div class="small" id="ownerCountText">未確認</div>
-        </div>
+      <div id="readinessSummary" class="status-box info">
+        未確認です。本番医院コードを入力して「本番導入チェック」を押してください。
       </div>
-    </section>
 
-    <section class="section">
-      <h2 class="section-title">最新版画面リンク</h2>
-      <div class="links">
-        <a class="link-card" href="index.html?v=3030">
-          <b>トップ</b>
-          <span>index.html?v=3030</span>
-        </a>
-        <a class="link-card" href="scan-ipad.html?v=3029b">
-          <b>受付iPad</b>
-          <span>scan-ipad.html?v=3029b</span>
-        </a>
-
-<a class="pc36-link-card" href="./scan-pc.html?v=3036">
-  <span class="pc36-link-icon">PC</span>
-  <span>
-    <span class="pc36-link-title">PC受付リーダー</span>
-    <span class="pc36-link-desc">USB/Bluetooth QRリーダー用。PC受付で診察券QRを読み取ります。</span>
-  </span>
-</a>
-
-
-        <a class="link-card" href="doctor.html?v=3027g">
-          <b>先生用</b>
-          <span>doctor.html?v=3027g</span>
-        </a>
-        <a class="link-card" href="owner.html?v=3027e">
-          <b>管理トップ</b>
-          <span>owner.html?v=3027e</span>
-        </a>
-        <a class="link-card" href="system-check.html?v=3045a"><b>本番前チェック</b><span>system-check.html?v=3045a</span></a>
-        <a class="link-card" href="admin.html?v=3024b">
-          <b>管理画面</b>
-          <span>admin.html?v=3024b</span>
-        </a>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="notice">
-        <strong>見方</strong>
-        受付iPad・先生用・管理トップで件数が違う場合、まずこの診断ページでAPIレスポンス件数と取得失敗の有無を確認します。
-        ここで取得失敗やAPI件数違いがある場合は Worker / Supabase 側、ここでは一致しているのに画面で違う場合は各HTML側の表示ロジックを確認します。
-      </div>
-    </section>
-
-
-
-    <section class="section">
-      <div class="audit-check-panel">
-        <div class="audit-check-head">
-          <div>
-            <div class="audit-check-title">受付取消・操作履歴チェック</div>
-            <div class="audit-check-sub">
-              受付取消が Worker API → Supabase の操作ログに残っているか確認します。本番運用では、誰が・いつ・どの画面で・どの理由で取消したかを確認できることが重要です。
-            </div>
-          </div>
-          <div>
-            <button class="btn" id="auditLogCheckButton" type="button">操作履歴を確認</button>
+      <details open>
+        <summary>チェック結果一覧</summary>
+        <div class="detail-body">
+          <div class="check-list" id="readinessChecks">
+            <div class="status-box info">まだチェック結果はありません。</div>
           </div>
         </div>
-        <div class="audit-check-body">
-          <div id="auditLogCheckStatus" class="demo-setup-status" style="border-color:#dbeafe;background:#eff6ff;color:#1d4ed8;">
-            未確認です。一括チェック、または「操作履歴を確認」を押してください。
-          </div>
-          <div class="audit-check-list" id="auditLogCheckList">
-            <div class="audit-check-empty">本日の受付取消履歴をまだ読み込んでいません。</div>
-          </div>
+      </details>
+    </section>
+
+    <section class="panel" id="safetyPanel">
+      <div class="panel-head">
+        <div>
+          <h2>本番安全・認証チェック</h2>
+          <div class="small">DEMO医院だけ営業前DEMO設定を許可し、本番医院では拒否されるか確認します。</div>
         </div>
+        <button class="ghost" id="safetyButton" type="button">安全チェック</button>
+      </div>
+      <div id="safetyStatus" class="status-box info">未確認です。</div>
+      <details>
+        <summary>認証・安全チェック詳細</summary>
+        <div class="detail-body" id="safetyDetails">
+          <div class="status-box info">詳細はまだありません。</div>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel" id="demoPanel">
+      <div class="panel-head">
+        <div>
+          <h2>営業前DEMO設定</h2>
+          <div class="small">デモ医院 dpro_dental_demo の時だけ使います。本番医院では表示・実行しない方針です。</div>
+        </div>
+        <div class="button-row" style="margin:0;">
+          <button class="dark" id="demoSetupButton" type="button">営業前DEMO設定を実行</button>
+          <button class="ghost" id="demoCheckButton" type="button">DEMO件数チェック</button>
+        </div>
+      </div>
+
+      <div id="demoGuardStatus" class="status-box info">医院コードを確認中です。</div>
+
+      <div class="demo-grid">
+        <div class="demo-count"><span>本日の患者</span><b id="demoTotal">6</b></div>
+        <div class="demo-count"><span>未受付</span><b id="demoScheduled">2</b></div>
+        <div class="demo-count"><span>受付済み</span><b id="demoChecked">4</b></div>
+        <div class="demo-count"><span>診療待ち</span><b id="demoWaiting">2</b></div>
+        <div class="demo-count"><span>診療済み</span><b id="demoDone">2</b></div>
+        <div class="demo-count"><span>LINEフォロー</span><b id="demoFollow">1</b></div>
+      </div>
+
+      <div id="demoStatus" class="status-box info">まだ実行していません。</div>
+    </section>
+
+    <section class="panel" id="apiPanel">
+      <div class="panel-head">
+        <div>
+          <h2>API・件数比較</h2>
+          <div class="small">受付iPad・先生用・管理トップが同じSupabaseの状態を見ているか確認します。</div>
+        </div>
+        <button class="ghost" id="apiCheckButton" type="button">API件数チェック</button>
+      </div>
+
+      <div class="api-grid">
+        <div class="api-card">
+          <strong>Worker API</strong>
+          <span class="pill info" id="apiWorkerPill">未確認</span>
+          <div class="small" id="apiWorkerText">/api/health</div>
+        </div>
+        <div class="api-card">
+          <strong>受付iPad</strong>
+          <span class="pill info" id="apiScanPill">未確認</span>
+          <div class="small" id="apiScanText">/api/scan/today</div>
+        </div>
+        <div class="api-card">
+          <strong>先生用</strong>
+          <span class="pill info" id="apiDoctorPill">未確認</span>
+          <div class="small" id="apiDoctorText">/api/doctor/today</div>
+        </div>
+        <div class="api-card">
+          <strong>管理トップ</strong>
+          <span class="pill info" id="apiOwnerPill">未確認</span>
+          <div class="small" id="apiOwnerText">/api/owner/daily-statuses</div>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:14px;">
+        <div class="status-box" id="apiCountsBox">件数はまだ取得していません。</div>
+        <div class="status-box" id="apiCompareBox">比較はまだ実行していません。</div>
       </div>
     </section>
 
-    <section class="section">
-      <h2 class="section-title">診断ログ</h2>
-      <pre class="log" id="logBox">まだチェックしていません。</pre>
+    <section class="panel" id="historyPanel">
+      <div class="panel-head">
+        <div>
+          <h2>受付取消・操作履歴チェック</h2>
+          <div class="small">受付取消などの操作履歴APIが取得できるか確認します。</div>
+        </div>
+        <button class="ghost" id="historyButton" type="button">操作履歴を確認</button>
+      </div>
+      <div id="historyStatus" class="status-box info">未確認です。</div>
+      <details>
+        <summary>取得した操作履歴を見る</summary>
+        <div class="detail-body">
+          <div class="check-list" id="historyList">
+            <div class="status-box info">まだ履歴を取得していません。</div>
+          </div>
+        </div>
+      </details>
     </section>
-  </main>
+
+    <section class="panel" id="latestLinksPanel">
+      <div class="panel-head">
+        <div>
+          <h2>最新版画面リンク</h2>
+          <div class="small">DEMO医院用の固定確認リンクです。本番医院ではURLセットの医院コード付きURLを使ってください。</div>
+        </div>
+      </div>
+      <div class="url-list" id="latestLinks"></div>
+    </section>
+
+    <section class="panel" id="diagnosisPanel">
+      <div class="panel-head">
+        <div>
+          <h2>診断ログ</h2>
+          <div class="small">通常は閉じておき、エラー時だけ開いて確認します。</div>
+        </div>
+        <button class="ghost" id="clearLogButton" type="button">ログを消す</button>
+      </div>
+      <details>
+        <summary>診断ログを開く</summary>
+        <div class="detail-body">
+          <pre class="log" id="logBox">まだログはありません。</pre>
+        </div>
+      </details>
+    </section>
+
+    <div class="footer">
+      DPRO歯科クリニック / DPRO SHOP 歯科デジタルQR診察券 / system-check.html<br />
+      この画面には Supabase Service Role Key や ADMIN_TOKEN は書き出していません。
+    </div>
+  </div>
 
   <script>
-    "use strict";
-
     const DEFAULTS = {
       apiBase: "https://dpro-dental-qr-api.dpromstk2000.workers.dev",
-      adminCode: "",
-      clinicCode: "dpro_dental_demo"
+      clinicCode: "dpro_dental_demo",
+      adminStorageKey: "dpro_dental_qr_admin_code_session",
+      staffStorageKey: "dpro_dental_qr_staff_name_session"
     };
 
-    function $(id) {
-      return document.getElementById(id);
-    }
-
-    function todayJST() {
-      const dt = new Date();
-      const parts = new Intl.DateTimeFormat("ja-JP", {
-        timeZone: "Asia/Tokyo",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }).formatToParts(dt);
-
-      const map = {};
-      parts.forEach((part) => {
-        if (part.type !== "literal") map[part.type] = part.value;
-      });
-
-      return `${map.year}-${map.month}-${map.day}`;
-    }
-
-    function cleanBase(value) {
-      return String(value || DEFAULTS.apiBase).trim().replace(/\/+$/, "");
-    }
-
-    function adminCode() {
-      return String($("adminCodeInput").value || "").trim();
-    }
-
-    function clinicCode() {
-      return String($("clinicCodeInput").value || DEFAULTS.clinicCode).trim();
-    }
-
-    function apiBase() {
-      return cleanBase($("apiBaseInput").value);
-    }
-
-    function adminHeaders() {
-      const code = adminCode();
-      const headers = { "Accept": "application/json" };
-      if (code) headers["X-DPRO-Admin-Code"] = code;
-      return headers;
-    }
-
-    function setAuthSafetyStatus(text, tone) {
-      const el = $("authSafetyStatus");
-      if (!el) return;
-      el.textContent = String(text || "");
-      if (tone === "ok") {
-        el.style.color = "#166534";
-        el.style.borderColor = "#bbf7d0";
-        el.style.background = "#f0fdf4";
-      } else if (tone === "danger") {
-        el.style.color = "#991b1b";
-        el.style.borderColor = "#fecaca";
-        el.style.background = "#fef2f2";
-      } else {
-        el.style.color = "#92400e";
-        el.style.borderColor = "#fde68a";
-        el.style.background = "#fffbeb";
-      }
-    }
-
-    function setStatus(id, type, text) {
-      const el = $(id);
-      if (!el) return;
-
-      el.className = "status";
-      if (type) el.classList.add(type);
-      el.textContent = text;
-    }
-
-    function setText(id, text) {
-      const el = $(id);
-      if (el) el.textContent = String(text);
-    }
-
-    function log(message, data) {
-      const box = $("logBox");
-      const time = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-      const line = `[${time}] ${message}`;
-      const body = data === undefined ? "" : "\n" + JSON.stringify(data, null, 2);
-      box.textContent = box.textContent === "まだチェックしていません。" ? line + body : box.textContent + "\n\n" + line + body;
-    }
-
-    function resetLog() {
-      $("logBox").textContent = "チェック開始...";
-    }
-
-    function extractRows(data) {
-      if (Array.isArray(data?.rows)) return data.rows;
-      if (Array.isArray(data?.items)) return data.items;
-      if (Array.isArray(data?.statuses)) return data.statuses;
-      if (Array.isArray(data?.daily_statuses)) return data.daily_statuses;
-      if (Array.isArray(data?.visits)) return data.visits;
-      if (Array.isArray(data)) return data;
-      return [];
-    }
-
-    function tokenOf(row) {
-      return row.qr_token || row.token || row.patient_token || row.member_token || "";
-    }
-
-    function isChecked(row) {
-      return Boolean(
-        row.reception_status === "checked_in" ||
-        row.checkin_status === "checked_in" ||
-        row.status === "checked_in" ||
-        row.checked_in_at ||
-        row.reception_at
-      );
-    }
-
-    function isDone(row) {
-      return Boolean(
-        row.exam_status === "completed" ||
-        row.exam_status === "exam_completed" ||
-        row.treatment_status === "completed" ||
-        row.exam_completed_at ||
-        row.completed_at
-      );
-    }
-
-    function isFollowNeeded(row) {
-      const done = isDone(row);
-      const copied = Boolean(
-        row.line_follow_status === "copied" ||
-        row.line_follow_copied_at ||
-        row.line_copied_at
-      );
-      const explicitNeeded = row.line_follow_status === "needed";
-      return Boolean((done && !copied) || explicitNeeded);
-    }
-
-    function countRows(rows) {
-      const unique = [];
-      const seen = new Set();
-
-      rows.forEach((row) => {
-        const token = tokenOf(row) || JSON.stringify(row);
-        if (seen.has(token)) return;
-        seen.add(token);
-        unique.push(row);
-      });
-
-      const total = unique.length;
-      const checked = unique.filter(isChecked).length;
-      const done = unique.filter(isDone).length;
-      const waiting = unique.filter((row) => isChecked(row) && !isDone(row)).length;
-      const follow = unique.filter(isFollowNeeded).length;
-
-      return { total, checked, done, waiting, follow, rows: unique };
-    }
-
-    async function fetchJson(path, params = {}) {
-      const url = new URL(apiBase() + path);
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
-          url.searchParams.set(key, value);
-        }
-      });
-
-      // STEP 30-39D:
-      // 管理コードはURLパラメータに残さず、ヘッダー送信を優先する。
-      // Worker側のCORSは X-DPRO-Admin-Code を許可済み。
-      let res;
-      try {
-        res = await fetch(url.toString(), {
-          method: "GET",
-          headers: adminHeaders(),
-          cache: "no-store"
-        });
-      } catch (networkError) {
-        const err = new Error(networkError.message || "Failed to fetch");
-        err.reason = "network_or_cors";
-        err.url = url.toString();
-        throw err;
-      }
-
-      let data = null;
-      try {
-        data = await res.json();
-      } catch (error) {
-        data = { ok: false, error: "JSONとして読めませんでした" };
-      }
-
-      if (!res.ok || data.ok === false) {
-        const message = data.message || data.error || `HTTP ${res.status}`;
-        const err = new Error(message);
-        err.data = data;
-        err.status = res.status;
-        err.url = url.toString();
-        throw err;
-      }
-
-      return { data, url: url.toString() };
-    }
-
-    async function fetchJsonPost(path, body = {}) {
-      const url = new URL(apiBase() + path);
-
-      let res;
-      try {
-        res = await fetch(url.toString(), {
-          method: "POST",
-          headers: {
-            ...adminHeaders(),
-            "Content-Type": "application/json"
-          },
-          cache: "no-store",
-          body: JSON.stringify({
-            ...body
-          })
-        });
-      } catch (networkError) {
-        const err = new Error(networkError.message || "Failed to fetch");
-        err.reason = "network_or_cors";
-        err.url = url.toString();
-        throw err;
-      }
-
-      let data = null;
-      try {
-        data = await res.json();
-      } catch (error) {
-        data = { ok: false, error: "JSONとして読めませんでした" };
-      }
-
-      if (!res.ok || data.ok === false) {
-        const message = data.message || data.error || `HTTP ${res.status}`;
-        const err = new Error(message);
-        err.data = data;
-        err.status = res.status;
-        err.url = url.toString();
-        throw err;
-      }
-
-      return { data, url: url.toString() };
-    }
-
-    async function checkSafetyGuard() {
-      const el = $("prodSafetyStatus");
-      const isDemo = clinicCode() === "dpro_dental_demo";
-
-      if (!adminCode()) {
-        setAuthSafetyStatus(
-          "管理コードが未入力です。/api/admin/safety-check と各管理APIの確認には管理コードが必要です。\n" +
-          "STEP 30-39Dでは、管理コードはlocalStorageに長期保存せず、このタブのsessionStorageのみ使用します。",
-          "danger"
-        );
-      }
-
-      if (el) {
-        el.textContent = isDemo
-          ? "DEMO医院コードです。営業前DEMO設定ボタンを表示します。"
-          : "本番医院コードです。営業前DEMO設定ボタンは非表示にします。";
-        el.style.color = isDemo ? "#166534" : "#991b1b";
-        el.style.borderColor = isDemo ? "#bbf7d0" : "#fecaca";
-        el.style.background = isDemo ? "#f0fdf4" : "#fef2f2";
-      }
-
-      const demoSection = $("demoSetupSection");
-      if (demoSection) demoSection.style.display = isDemo ? "" : "none";
-
-      try {
-        const { data, url } = await fetchJson("/api/admin/safety-check", {
-          clinic_code: clinicCode()
-        });
-
-        const safety = data.safety || {};
-        const auth = data.auth || safety.auth || {};
-        const access = data.cloudflare_access || safety.cloudflare_access || {};
-        const checks = Array.isArray(data.checks) ? data.checks : [];
-        const checkLines = checks.map((item) => {
-          const icon = item.status === "pass" ? "✅" : item.status === "warn" ? "⚠️" : item.status === "fail" ? "❌" : "・";
-          return `${icon} ${item.label}: ${item.message}`;
-        });
-
-        if (el) {
-          el.textContent =
-            (data.message || "本番安全チェックを確認しました。") + "\n" +
-            `clinic_code: ${safety.requested_clinic_code || clinicCode()}\n` +
-            `demo_clinic: ${safety.demo_clinic_code || "dpro_dental_demo"}\n` +
-            `demo実行可: ${safety.can_run_demo_operations ? "はい" : "いいえ"}\n` +
-            `DEMO停止スイッチ: ${safety.demo_operations_disabled ? "ON" : "OFF"}`;
-        }
-
-        setAuthSafetyStatus(
-          `保護モード: ${data.protection_mode_label || safety.protection_mode || "確認済み"}\n` +
-          `管理コード: ${auth.admin_token_configured ? "Worker設定あり" : "未設定"} / ${auth.admin_code_provided ? "入力あり" : "未入力"}\n` +
-          `送信方式: ${auth.transport || "不明"}${auth.query_param_used ? "（URL送信のため改善推奨）" : "（URLに残りにくい）"}\n` +
-          `Cloudflare Access: ${access.detected ? "検出" : "未検出・簡易保護中"}\n\n` +
-          checkLines.join("\n"),
-          auth.admin_token_configured && !auth.query_param_used ? "ok" : "warn"
-        );
-
-        log("本番安全・認証チェック OK: " + url, data);
-        return { ok: true, data };
-      } catch (error) {
-        // STEP 30-39D導入前のWorkerでは /api/admin/safety-check がまだ無い可能性がある。
-        // 画面側の表示制御は継続し、ログでWorker更新が必要なことを知らせる。
-        if (el) {
-          el.textContent += "\n\n注意：Worker側の /api/admin/safety-check が未反映、管理コード不一致、または確認に失敗しました。STEP 30-39D Workerを先に反映してください。";
-        }
-        setAuthSafetyStatus(
-          "本番認証チェックに失敗しました。\n" +
-          `理由: ${error.message || error}\n` +
-          "401の場合は、管理コード・Cloudflare WorkerのADMIN_TOKEN・ヘッダー認証のCORS許可を確認してください。",
-          "danger"
-        );
-        log("本番安全・認証チェック 注意", {
-          message: error.message,
-          status: error.status,
-          data: error.data
-        });
-        return { ok: false, error };
-      }
-    }
-
-    async function checkHealth() {
-      setStatus("healthStatus", "", "確認中");
-      setText("healthText", "Worker API を確認中です...");
-
-      try {
-        const { data, url } = await fetchJson("/api/health");
-        setStatus("healthStatus", "ok", "OK");
-        setText("healthText", `version: ${data.version || data.name || "確認済み"}`);
-        log("Worker health OK: " + url, data);
-        return { ok: true, data };
-      } catch (error) {
-        setStatus("healthStatus", "bad", "NG");
-        setText("healthText", error.message || "API確認に失敗しました");
-        log("Worker health NG", { message: error.message, status: error.status, data: error.data });
-        return { ok: false, data: null };
-      }
-    }
-
-    async function checkEndpoint(kind, path, prefix) {
-      setStatus(prefix + "Status", "", "確認中");
-      setText(prefix + "Text", kind + " APIを確認中です...");
-
-      try {
-        const date = todayJST();
-        const { data, url } = await fetchJson(path, {
-          clinic_code: clinicCode(),
-          clinic: clinicCode(),
-          shop_code: clinicCode(),
-          visit_date: date,
-          date,
-          limit: 100
-        });
-
-        const rows = extractRows(data);
-        const counts = countRows(rows);
-
-        setStatus(prefix + "Status", "ok", "OK");
-        setText(prefix + "Text", `${rows.length}件取得 / ${date}`);
-        log(kind + " OK: " + url, { counts, sample: counts.rows.slice(0, 3) });
-
-        return { ...counts, ok: true };
-      } catch (error) {
-        setStatus(prefix + "Status", "bad", "NG");
-        setText(prefix + "Text", error.message || "API確認に失敗しました");
-        log(kind + " NG", {
-          message: error.message,
-          status: error.status,
-          data: error.data,
-          sent_admin_params: {
-            admin_code: "送信済み",
-            token: "送信済み",
-            admin_token: "送信済み"
-          },
-          hint: error.status === 401
-            ? "401の場合は、Worker側が読む管理コード名、またはADMIN_TOKEN環境変数を確認してください。"
-            : "API側のレスポンスを確認してください。"
-        });
-        return { total: 0, checked: 0, done: 0, waiting: 0, follow: 0, rows: [], ok: false, error: error.message || String(error) };
-      }
-    }
-
-    function renderCounts(prefix, counts, isDoctor = false) {
-      if (prefix === "scan") {
-        setText("scanTotal", counts.total);
-        setText("scanChecked", counts.checked);
-        setText("scanDone", counts.done);
-        setText("scanFollow", counts.follow);
-        setText("scanCountText", `受付iPad API rows: ${counts.rows.length}件`);
-        return;
-      }
-
-      if (prefix === "doctor") {
-        setText("doctorTotal", counts.total);
-        setText("doctorWaiting", counts.waiting);
-        setText("doctorDone", counts.done);
-        setText("doctorFollow", counts.follow);
-        setText("doctorCountText", `先生用 API rows: ${counts.rows.length}件`);
-        return;
-      }
-
-      if (prefix === "owner") {
-        setText("ownerTotal", counts.total);
-        setText("ownerChecked", counts.checked);
-        setText("ownerDone", counts.done);
-        setText("ownerFollow", counts.follow);
-        setText("ownerCountText", `管理トップ API rows: ${counts.rows.length}件`);
-      }
-    }
-
-    function compareCounts(scan, doctor, owner) {
-      const endpoints = { scan, doctor, owner };
-      const failed = Object.entries(endpoints)
-        .filter(([, value]) => !value.ok)
-        .map(([key, value]) => ({ key, error: value.error || "取得失敗" }));
-
-      if (failed.length) {
-        log("総合判定 NG", {
-          message: "受付iPad・先生用・管理トップのうち、取得に失敗しているAPIがあります。0件同士でもOK判定にはしません。",
-          failed,
-          next: "Worker APIのCORS、対象エンドポイント、管理コード、clinic_code=dpro_dental_demo、Supabaseビューを確認してください。"
-        });
-        return;
-      }
-
-      const totals = [scan.total, doctor.total, owner.total];
-      const done = [scan.done, doctor.done, owner.done];
-      const follow = [scan.follow, doctor.follow, owner.follow];
-
-      const totalOk = totals.every((v) => v === totals[0]);
-      const doneOk = done.every((v) => v === done[0]);
-      const followOk = follow.every((v) => v === follow[0]);
-
-      if (totalOk && doneOk && followOk) {
-        log("総合判定 OK", {
-          message: "受付iPad・先生用・管理トップの主要件数は一致しています。",
-          total: totals[0],
-          done: done[0],
-          follow: follow[0]
-        });
-      } else {
-        log("総合判定 注意", {
-          message: "APIごとに件数差があります。Worker側のレスポンス整形、または参照しているビュー/日付を確認してください。",
-          totals,
-          done,
-          follow
-        });
-      }
-    }
-
-
-    function setDemoSetupStatus(message) {
-      const el = $("demoSetupStatus");
-      if (el) el.textContent = message || "";
-    }
-
-    async function runDemoSetup({ checkAfter = false } = {}) {
-      const buttons = [$("demoSetupButton"), $("demoSetupAndCheckButton")].filter(Boolean);
-      buttons.forEach((button) => {
-        button.disabled = true;
-      });
-
-      try {
-        if (clinicCode() !== "dpro_dental_demo") {
-          setDemoSetupStatus(
-            "本番安全ガードにより停止しました。\n" +
-            "営業前DEMO設定は dpro_dental_demo の時だけ実行できます。\n" +
-            `現在の医院コード：${clinicCode()}`
-          );
-          log("営業前DEMO設定 ブロック", {
-            reason: "non_demo_clinic",
-            clinic_code: clinicCode()
-          });
-          await checkSafetyGuard();
-          return;
-        }
-
-        const confirmText = window.prompt(
-          "営業前DEMO設定を実行します。\n\n" +
-          "この操作はデモ医院の患者・受付・診療ステータスを作り直します。\n" +
-          "本番医院では絶対に実行しないでください。\n\n" +
-          "実行する場合は次の文言をそのまま入力してください：\n\n" +
-          "DEMO医院だけ実行"
-        );
-
-        if (confirmText !== "DEMO医院だけ実行") {
-          setDemoSetupStatus("営業前DEMO設定をキャンセルしました。確認文言が一致しません。");
-          log("営業前DEMO設定 キャンセル", {
-            reason: "confirm_text_mismatch"
-          });
-          return;
-        }
-
-        setDemoSetupStatus("営業前DEMO設定を実行中です。山田家・背景患者デモと本日の受付・診療状態を作り直しています...");
-        log("営業前DEMO設定 開始");
-
-        const { data, url } = await fetchJsonPost("/api/admin/demo/sales-setup", {
-          clinic_code: clinicCode(),
-          clinic: clinicCode(),
-          shop_code: clinicCode(),
-          mode: "sales_demo",
-          confirm_text: confirmText
-        });
-
-        setDemoSetupStatus(
-          "営業前DEMO設定が完了しました。\n" +
-          "本日の患者6件 / 未受付2件 / 受付済み4件 / 診療待ち2件 / 診療済み2件 / LINEフォロー1件 の想定です。"
-        );
-
-        log("営業前DEMO設定 OK: " + url, {
-          message: data.message,
-          safety_guard: data.safety_guard,
-          daily_status_summary: data.daily_status_summary,
-          sales_demo_message: data.sales_demo_message
-        });
-
-        if (checkAfter) {
-          await runAllChecks();
-        }
-      } catch (error) {
-        setDemoSetupStatus("営業前DEMO設定に失敗しました。\n" + (error.message || error));
-        log("営業前DEMO設定 NG", {
-          message: error.message,
-          status: error.status,
-          data: error.data
-        });
-      } finally {
-        buttons.forEach((button) => {
-          button.disabled = false;
-        });
-      }
-    }
-
-
-
-    function escapeAuditHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    function auditStatusFromLog(log, key) {
-      const value = log && typeof log[key] === "object" ? log[key] : {};
-      return value || {};
-    }
-
-    function auditPatientName(log) {
-      const after = auditStatusFromLog(log, "after_status");
-      const before = auditStatusFromLog(log, "before_status");
-      return after.patient_name || before.patient_name || log.patient_name || "患者さん";
-    }
-
-    function auditMemberNo(log) {
-      const after = auditStatusFromLog(log, "after_status");
-      const before = auditStatusFromLog(log, "before_status");
-      return after.member_no || before.member_no || log.member_no || "";
-    }
-
-    function auditScheduledTime(log) {
-      const after = auditStatusFromLog(log, "after_status");
-      const before = auditStatusFromLog(log, "before_status");
-      return String(after.scheduled_time || before.scheduled_time || "").slice(0, 5);
-    }
-
-    function formatAuditTime(value) {
-      if (!value) return "時刻不明";
-      try {
-        return new Date(value).toLocaleString("ja-JP", {
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit"
-        });
-      } catch (error) {
-        return String(value).slice(0, 16);
-      }
-    }
-
-    function setAuditCheckStatus(message, tone) {
-      const el = $("auditLogCheckStatus");
-      if (!el) return;
-      el.textContent = String(message || "");
-      if (tone === "ok") {
-        el.style.color = "#166534";
-        el.style.borderColor = "#bbf7d0";
-        el.style.background = "#f0fdf4";
-      } else if (tone === "danger") {
-        el.style.color = "#991b1b";
-        el.style.borderColor = "#fecaca";
-        el.style.background = "#fef2f2";
-      } else {
-        el.style.color = "#1d4ed8";
-        el.style.borderColor = "#dbeafe";
-        el.style.background = "#eff6ff";
-      }
-    }
-
-    function renderAuditCheckLogs(logs) {
-      const list = $("auditLogCheckList");
-      if (!list) return;
-      const rows = Array.isArray(logs) ? logs : [];
-
-      if (!rows.length) {
-        list.innerHTML = '<div class="audit-check-empty">本日の受付取消履歴はありません。受付取消APIは反映済みでも、まだ取消操作がなければ0件で正常です。</div>';
-        return;
-      }
-
-      list.innerHTML = rows.map((log) => {
-        const name = auditPatientName(log);
-        const memberNo = auditMemberNo(log);
-        const scheduled = auditScheduledTime(log);
-        const staff = log.staff_name || "受付スタッフ";
-        const source = log.source_screen || "受付画面";
-        const memo = log.memo || "理由未入力";
-        return `
-          <div class="audit-check-row">
-            <div class="audit-check-time">${escapeAuditHtml(formatAuditTime(log.created_at))}</div>
-            <div>
-              <div class="audit-check-name">${escapeAuditHtml(name)}</div>
-              <div class="audit-check-detail">
-                ${memberNo ? escapeAuditHtml(memberNo) : "診察券番号なし"}
-                ${scheduled ? " / 予定 " + escapeAuditHtml(scheduled) : ""}
-                / 担当：${escapeAuditHtml(staff)}
-              </div>
-              <div class="audit-check-detail">理由：${escapeAuditHtml(memo)} / 操作元：${escapeAuditHtml(source)}</div>
-            </div>
-            <div><span class="audit-check-pill">受付取消</span></div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    async function checkAuditLogs() {
-      const button = $("auditLogCheckButton");
-      if (button) {
-        button.disabled = true;
-        button.textContent = "確認中...";
-      }
-
-      try {
-        if (!adminCode()) {
-          setAuditCheckStatus("管理コードが未入力です。操作履歴の確認には管理コードが必要です。", "danger");
-          renderAuditCheckLogs([]);
-          return { ok: false, logs: [] };
-        }
-
-        setAuditCheckStatus("受付取消の操作履歴を確認しています...", "info");
-        const { data, url } = await fetchJson("/api/admin/daily-status-logs", {
-          clinic_code: clinicCode(),
-          date: todayJST(),
-          action_type: "check_in_cancel",
-          limit: 20
-        });
-
-        const logs = Array.isArray(data.logs)
-          ? data.logs
-          : Array.isArray(data.audit_logs)
-            ? data.audit_logs
-            : [];
-
-        renderAuditCheckLogs(logs);
-        setAuditCheckStatus(`受付取消履歴を確認しました。本日 ${logs.length}件。`, "ok");
-        log("受付取消・操作履歴チェック OK: " + url, {
-          summary: data.summary,
-          count: logs.length,
-          sample: logs.slice(0, 3)
-        });
-        return { ok: true, logs };
-      } catch (error) {
-        setAuditCheckStatus("受付取消・操作履歴チェックに失敗しました。\n" + (error.message || error), "danger");
-        renderAuditCheckLogs([]);
-        log("受付取消・操作履歴チェック NG", {
-          message: error.message,
-          status: error.status,
-          data: error.data
-        });
-        return { ok: false, logs: [] };
-      } finally {
-        if (button) {
-          button.disabled = false;
-          button.textContent = "操作履歴を確認";
-        }
-      }
-    }
-
-
-    function escapeReadinessHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    function setProductionReadinessStatus(message, tone = "info") {
-      const el = $("productionReadinessStatus");
-      if (!el) return;
-      el.textContent = message || "";
-      if (tone === "ok") {
-        el.style.borderColor = "#bbf7d0";
-        el.style.background = "#f0fdf4";
-        el.style.color = "#166534";
-      } else if (tone === "danger") {
-        el.style.borderColor = "#fecaca";
-        el.style.background = "#fef2f2";
-        el.style.color = "#991b1b";
-      } else if (tone === "warn") {
-        el.style.borderColor = "#fde68a";
-        el.style.background = "#fffbeb";
-        el.style.color = "#92400e";
-      } else {
-        el.style.borderColor = "#bfdbfe";
-        el.style.background = "#eff6ff";
-        el.style.color = "#1d4ed8";
-      }
-    }
-
-    function renderProductionReadiness(data) {
-      const list = $("productionReadinessList");
-      const checks = Array.isArray(data?.checks) ? data.checks : [];
-      const summary = data?.summary || {};
-      setText("readinessPass", summary.pass ?? checks.filter((item) => item.status === "pass").length);
-      setText("readinessWarn", summary.warn ?? checks.filter((item) => item.status === "warn").length);
-      setText("readinessFail", summary.fail ?? checks.filter((item) => item.status === "fail").length);
-      setText("readinessResult", data?.production_ready ? "本番OK" : "要確認");
-
-      if (!list) return;
-      if (!checks.length) {
-        list.innerHTML = '<div class="empty">チェック結果がありません。</div>';
-        return;
-      }
-
-      list.innerHTML = checks.map((item) => {
-        const status = item.status || "info";
-        const pillClass = ["pass", "warn", "fail"].includes(status) ? status : "info";
-        const label = item.label || item.id || "チェック";
-        const message = item.message || "";
-        return `
-          <div class="readiness-row">
-            <div><span class="readiness-pill ${pillClass}">${escapeReadinessHtml(status.toUpperCase())}</span></div>
-            <div><strong>${escapeReadinessHtml(label)}</strong></div>
-            <div>${escapeReadinessHtml(message)}</div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    async function checkProductionReadiness() {
-      const button = $("productionReadinessButton");
-      if (button) {
-        button.disabled = true;
-        button.textContent = "確認中...";
-      }
-
-      try {
-        if (!adminCode()) {
-          setProductionReadinessStatus("管理コードが未入力です。本番導入チェックには管理コードが必要です。", "danger");
-          renderProductionReadiness({ checks: [] });
-          return { ok: false };
-        }
-
-        setProductionReadinessStatus("本番医院追加・初期設定を確認しています...", "info");
-        const { data, url } = await fetchJson("/api/admin/production-readiness-check", {
-          clinic_code: clinicCode()
-        });
-
-        renderProductionReadiness(data);
-        const summary = data.summary || {};
-        const tone = data.production_ready ? "ok" : (summary.fail > 0 ? "danger" : "warn");
-        setProductionReadinessStatus(
-          `${data.message || "本番導入チェックを確認しました。"}\nPASS: ${summary.pass ?? "-"} / WARN: ${summary.warn ?? "-"} / FAIL: ${summary.fail ?? "-"}`,
-          tone
-        );
-        log("本番医院追加・初期設定チェック OK: " + url, {
-          production_ready: data.production_ready,
-          summary: data.summary,
-          recommendations: data.recommendations,
-          checks: data.checks
-        });
-        return { ok: true, data };
-      } catch (error) {
-        setProductionReadinessStatus(
-          "本番医院追加・初期設定チェックに失敗しました。\n" +
-          (error.message || error) +
-          "\nWorker が STEP 30-45A に更新済みか確認してください。",
-          "danger"
-        );
-        renderProductionReadiness({ checks: [] });
-        log("本番医院追加・初期設定チェック NG", {
-          message: error.message,
-          status: error.status,
-          data: error.data
-        });
-        return { ok: false, error };
-      } finally {
-        if (button) {
-          button.disabled = false;
-          button.textContent = "本番導入チェック";
-        }
-      }
-    }
-
-    const PAGE_VERSION_SET = {
+    const VERSION = {
       index: "3036c",
-      systemCheck: "3045c",
+      systemCheck: "3045d",
       admin: "3044c",
       owner: "3043",
       doctor: "3039c",
@@ -2073,11 +820,353 @@
       member: "3044c"
     };
 
-    const GITHUB_PAGES_BASE = "https://dpromstk2000-lab.github.io/DEGITAL-QR";
+    const GITHUB_BASE = "https://dpromstk2000-lab.github.io/DEGITAL-QR";
     const LIFF_ID = "2010491267-waXBAIje";
+    const DEMO_CLINIC_CODE = "dpro_dental_demo";
 
-    function buildPageUrl(page, params = {}) {
-      const url = new URL(`${GITHUB_PAGES_BASE}/${page}`);
+    let lastUrls = [];
+    let lastResults = {
+      health: null,
+      safety: null,
+      readiness: null,
+      scan: null,
+      doctor: null,
+      owner: null,
+      history: null
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    function apiBase() {
+      const value = $("apiBaseInput").value.trim() || DEFAULTS.apiBase;
+      return value.replace(/\/+$/, "");
+    }
+
+    function clinicCode() {
+      return $("clinicCodeInput").value.trim() || DEFAULTS.clinicCode;
+    }
+
+    function adminCode() {
+      return $("adminCodeInput").value.trim();
+    }
+
+    function staffName() {
+      return $("staffNameInput").value.trim() || "管理スタッフ";
+    }
+
+    function todayJST() {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Tokyo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(new Date());
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function setText(id, value) {
+      const el = $(id);
+      if (el) el.textContent = value;
+    }
+
+    function setStatus(id, message, tone = "info") {
+      const el = $(id);
+      if (!el) return;
+      el.className = `status-box ${tone}`;
+      el.textContent = message;
+    }
+
+    function setSummary(id, value, tone = "info") {
+      const valueEl = $(id);
+      if (!valueEl) return;
+      valueEl.textContent = value;
+      const card = valueEl.closest(".summary-card");
+      if (card) {
+        card.className = `summary-card ${tone}`;
+      }
+    }
+
+    function setPill(id, value, tone = "info") {
+      const el = $(id);
+      if (!el) return;
+      el.textContent = value;
+      el.className = `pill ${tone}`;
+    }
+
+    function log(title, data = null) {
+      const box = $("logBox");
+      if (!box) return;
+      const now = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
+      const body = data ? "\n" + JSON.stringify(data, null, 2) : "";
+      const line = `[${now}] ${title}${body}\n\n`;
+      box.textContent = box.textContent === "まだログはありません。" ? line : line + box.textContent;
+    }
+
+    function buildUrl(path, params = {}) {
+      const url = new URL(apiBase() + path);
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && String(value).trim() !== "") {
+          url.searchParams.set(key, String(value));
+        }
+      });
+      return url;
+    }
+
+    function authHeaders() {
+      const headers = {
+        "Accept": "application/json"
+      };
+      const code = adminCode();
+      if (code) {
+        headers["X-DPRO-Admin-Code"] = code;
+        headers["X-Admin-Token"] = code;
+        headers["Authorization"] = `Bearer ${code}`;
+      }
+      return headers;
+    }
+
+    async function apiGet(path, params = {}, needsAuth = true) {
+      const url = buildUrl(path, {
+        clinic_code: clinicCode(),
+        clinic: clinicCode(),
+        shop_code: clinicCode(),
+        ...params
+      });
+
+      const res = await fetch(url.toString(), {
+        method: "GET",
+        headers: needsAuth ? authHeaders() : { "Accept": "application/json" },
+        cache: "no-store"
+      });
+
+      const text = await res.text();
+      let data = null;
+      try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+
+      if (!res.ok) {
+        const message = data?.message || data?.error || text || `HTTP ${res.status}`;
+        const error = new Error(message);
+        error.status = res.status;
+        error.data = data;
+        throw error;
+      }
+
+      return data;
+    }
+
+    async function apiPost(path, body = {}, needsAuth = true) {
+      const url = buildUrl(path, {});
+      const res = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          ...(needsAuth ? authHeaders() : {}),
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          clinic_code: clinicCode(),
+          clinic: clinicCode(),
+          shop_code: clinicCode(),
+          ...body
+        })
+      });
+
+      const text = await res.text();
+      let data = null;
+      try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+
+      if (!res.ok) {
+        const message = data?.message || data?.error || text || `HTTP ${res.status}`;
+        const error = new Error(message);
+        error.status = res.status;
+        error.data = data;
+        throw error;
+      }
+
+      return data;
+    }
+
+    function ensureAdminCode() {
+      if (!adminCode()) {
+        setSummary("sumAuth", "未入力", "fail");
+        setStatus("safetyStatus", "管理コードが未入力です。上部の管理コード欄に入力してください。", "ng");
+        $("adminCodeInput").focus();
+        throw new Error("管理コードが未入力です。");
+      }
+    }
+
+    async function saveAdminCode() {
+      const code = adminCode();
+      if (!code) {
+        alert("管理コードを入力してください。");
+        $("adminCodeInput").focus();
+        return;
+      }
+      sessionStorage.setItem(DEFAULTS.adminStorageKey, code);
+      sessionStorage.setItem(DEFAULTS.staffStorageKey, staffName());
+      setStatus("safetyStatus", "管理コードをこのタブに保存しました。URLには残しません。", "ok");
+      setSummary("sumAuth", "保存済み", "pass");
+      log("管理コードをsessionStorageへ保存しました。");
+    }
+
+    function forgetAdminCode() {
+      sessionStorage.removeItem(DEFAULTS.adminStorageKey);
+      sessionStorage.removeItem(DEFAULTS.staffStorageKey);
+      $("adminCodeInput").value = "";
+      setSummary("sumAuth", "未入力", "fail");
+      setStatus("safetyStatus", "管理コードをこのタブから削除しました。", "warn");
+      log("管理コードをsessionStorageから削除しました。");
+    }
+
+    async function checkHealth() {
+      try {
+        const data = await apiGet("/api/health", {}, false);
+        lastResults.health = data;
+        setSummary("sumWorker", "OK", "pass");
+        setPill("apiWorkerPill", "OK", "pass");
+        setText("apiWorkerText", data.version || "health OK");
+        log("Worker health OK", data);
+        return data;
+      } catch (e) {
+        setSummary("sumWorker", "NG", "fail");
+        setPill("apiWorkerPill", "NG", "fail");
+        setText("apiWorkerText", e.message);
+        log("Worker health NG", { message: e.message, status: e.status, data: e.data });
+        throw e;
+      }
+    }
+
+    function renderSafetyDetails(data) {
+      const safety = data?.safety || {};
+      const checks = data?.checks || [];
+      const html = `
+        <div class="metric-row">
+          <div class="metric"><span>医院コード</span><b>${escapeHtml(safety.requested_clinic_code || clinicCode())}</b></div>
+          <div class="metric"><span>DEMO医院</span><b>${safety.is_demo_clinic ? "YES" : "NO"}</b></div>
+          <div class="metric"><span>DEMO操作</span><b>${safety.can_run_demo_operations ? "可能" : "不可"}</b></div>
+          <div class="metric"><span>保護方式</span><b>${escapeHtml(data?.protection_mode_label || safety.protection_mode || "-")}</b></div>
+        </div>
+        <div class="check-list">
+          ${checks.map((item) => `
+            <div class="check-item">
+              <span class="pill ${item.status === "pass" ? "pass" : item.status === "warn" ? "warn" : item.status === "fail" ? "fail" : "info"}">${escapeHtml((item.status || "info").toUpperCase())}</span>
+              <b>${escapeHtml(item.label || item.id || "-")}</b>
+              <span>${escapeHtml(item.message || "")}</span>
+            </div>
+          `).join("") || '<div class="status-box info">チェック項目はありません。</div>'}
+        </div>
+      `;
+      $("safetyDetails").innerHTML = html;
+    }
+
+    async function checkSafety() {
+      try {
+        ensureAdminCode();
+        const data = await apiGet("/api/admin/safety-check", {}, true);
+        lastResults.safety = data;
+        const safety = data.safety || {};
+        const isDemo = safety.is_demo_clinic === true;
+
+        setSummary("sumAuth", "OK", "pass");
+        setStatus(
+          "safetyStatus",
+          data.message || (isDemo ? "DEMO医院として安全ガード確認済みです。" : "本番医院としてDEMO操作ガード確認済みです。"),
+          isDemo ? "warn" : "ok"
+        );
+        renderSafetyDetails(data);
+        updateDemoGuard();
+        log("本番安全・認証チェック OK", data);
+        return data;
+      } catch (e) {
+        setSummary("sumAuth", "NG", "fail");
+        setStatus("safetyStatus", e.message || "安全チェックに失敗しました。", "ng");
+        log("本番安全・認証チェック NG", { message: e.message, status: e.status, data: e.data });
+        throw e;
+      }
+    }
+
+    function normalizeReadinessChecks(data) {
+      if (Array.isArray(data?.checks)) return data.checks;
+      if (Array.isArray(data?.readiness?.checks)) return data.readiness.checks;
+      if (Array.isArray(data?.items)) return data.items;
+      return [];
+    }
+
+    function statusTone(status) {
+      const s = String(status || "").toLowerCase();
+      if (["pass", "ok", "success"].includes(s)) return "pass";
+      if (["warn", "warning"].includes(s)) return "warn";
+      if (["fail", "ng", "error"].includes(s)) return "fail";
+      return "info";
+    }
+
+    function renderReadiness(data) {
+      const checks = normalizeReadinessChecks(data);
+      const pass = checks.filter((x) => statusTone(x.status) === "pass").length;
+      const warn = checks.filter((x) => statusTone(x.status) === "warn").length;
+      const fail = checks.filter((x) => statusTone(x.status) === "fail").length;
+
+      setText("readyPass", String(data?.summary?.pass_count ?? data?.pass_count ?? pass));
+      setText("readyWarn", String(data?.summary?.warn_count ?? data?.warn_count ?? warn));
+      setText("readyFail", String(data?.summary?.fail_count ?? data?.fail_count ?? fail));
+
+      const ready = Boolean(data?.production_ready || data?.production_ready_basic || data?.ready) && fail === 0;
+      const isDemo = clinicCode() === DEMO_CLINIC_CODE;
+
+      if (fail > 0) {
+        setText("readyStatus", "NG");
+        setSummary("sumReady", "NG", "fail");
+        setStatus("readinessSummary", data?.message || "本番導入前に修正が必要な項目があります。", "ng");
+      } else if (warn > 0 || isDemo) {
+        setText("readyStatus", "要確認");
+        setSummary("sumReady", "注意", "warn");
+        setStatus("readinessSummary", data?.message || "致命的なエラーはありませんが、確認が必要な項目があります。", "warn");
+      } else {
+        setText("readyStatus", "OK");
+        setSummary("sumReady", "OK", "pass");
+        setStatus("readinessSummary", data?.message || "本番導入チェックはOKです。", "ok");
+      }
+
+      $("readinessChecks").innerHTML = checks.map((item) => {
+        const tone = statusTone(item.status);
+        return `
+          <div class="check-item">
+            <span class="pill ${tone}">${escapeHtml(String(item.status || tone).toUpperCase())}</span>
+            <b>${escapeHtml(item.label || item.id || "-")}</b>
+            <span>${escapeHtml(item.message || item.detail || "")}</span>
+          </div>
+        `;
+      }).join("") || '<div class="status-box info">チェック項目はありません。</div>';
+    }
+
+    async function checkReadiness() {
+      try {
+        ensureAdminCode();
+        const data = await apiGet("/api/admin/production-readiness-check", {}, true);
+        lastResults.readiness = data;
+        renderReadiness(data);
+        log("本番医院追加・初期設定チェック OK", data);
+        return data;
+      } catch (e) {
+        setSummary("sumReady", "NG", "fail");
+        setText("readyStatus", "NG");
+        setStatus("readinessSummary", e.message || "本番導入チェックに失敗しました。", "ng");
+        $("readinessChecks").innerHTML = `<div class="status-box ng">${escapeHtml(e.message || "取得失敗")}</div>`;
+        log("本番医院追加・初期設定チェック NG", { message: e.message, status: e.status, data: e.data });
+        throw e;
+      }
+    }
+
+    function pageUrl(page, params = {}) {
+      const url = new URL(`${GITHUB_BASE}/${page}`);
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null && String(value).trim() !== "") {
           url.searchParams.set(key, String(value).trim());
@@ -2086,7 +1175,7 @@
       return url.toString();
     }
 
-    function buildLiffUrl(params = {}) {
+    function liffUrl(params = {}) {
       const url = new URL(`https://liff.line.me/${LIFF_ID}`);
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null && String(value).trim() !== "") {
@@ -2097,166 +1186,76 @@
     }
 
     function buildProductionUrls() {
-      const code = clinicCode() || DEFAULTS.clinicCode;
+      const code = clinicCode();
       const common = { clinic_code: code };
-
       return [
-        {
-          key: "index",
-          label: "入口トップ",
-          desc: "営業・院内確認用の入口です。",
-          url: buildPageUrl("index.html", { ...common, v: PAGE_VERSION_SET.index })
-        },
-        {
-          key: "system-check",
-          label: "本番前チェック",
-          desc: "API・認証・初期設定を確認します。日常利用ではなく管理者用です。",
-          url: buildPageUrl("system-check.html", { ...common, v: PAGE_VERSION_SET.systemCheck })
-        },
-        {
-          key: "admin",
-          label: "患者管理",
-          desc: "毎日使う患者管理画面です。",
-          url: buildPageUrl("admin.html", { ...common, v: PAGE_VERSION_SET.admin })
-        },
-        {
-          key: "owner",
-          label: "医院管理トップ",
-          desc: "今日の状況・LINE未連携・操作履歴を確認します。",
-          url: buildPageUrl("owner.html", { ...common, v: PAGE_VERSION_SET.owner })
-        },
-        {
-          key: "doctor",
-          label: "先生用画面",
-          desc: "本日の患者・診療メモ・診療済み処理を行います。",
-          url: buildPageUrl("doctor.html", { ...common, v: PAGE_VERSION_SET.doctor })
-        },
-        {
-          key: "scan-ipad",
-          label: "受付iPad",
-          desc: "iPad受付・カメラ読み取り用です。",
-          url: buildPageUrl("scan-ipad.html", { ...common, v: PAGE_VERSION_SET.scanIpad })
-        },
-        {
-          key: "scan-pc",
-          label: "PC受付リーダー",
-          desc: "USB/Bluetooth QRリーダー用です。",
-          url: buildPageUrl("scan-pc.html", { ...common, v: PAGE_VERSION_SET.scanPc })
-        },
-        {
-          key: "member-template",
-          label: "患者用診察券URLテンプレ",
-          desc: "患者ごとのQR tokenを t= に入れて使います。",
-          url: buildPageUrl("member.html", { ...common, t: "PATIENT_QR_TOKEN", v: PAGE_VERSION_SET.member })
-        },
-        {
-          key: "liff-template",
-          label: "LIFF診察券URLテンプレ",
-          desc: "LINE内で開く患者用テンプレです。患者ごとのQR tokenを t= に入れます。",
-          url: buildLiffUrl({ clinic_code: code, t: "PATIENT_QR_TOKEN" })
-        }
+        { key: "index", label: "入口トップ", desc: "院内確認・入口画面", url: pageUrl("index.html", { ...common, v: VERSION.index }) },
+        { key: "system-check", label: "本番前チェック", desc: "管理者だけが使う確認画面", url: pageUrl("system-check.html", { ...common, v: VERSION.systemCheck }) },
+        { key: "admin", label: "患者管理", desc: "毎日使う患者管理画面", url: pageUrl("admin.html", { ...common, v: VERSION.admin }) },
+        { key: "owner", label: "医院管理トップ", desc: "今日の状況・操作履歴", url: pageUrl("owner.html", { ...common, v: VERSION.owner }) },
+        { key: "doctor", label: "先生用画面", desc: "診療待ち・診療済み", url: pageUrl("doctor.html", { ...common, v: VERSION.doctor }) },
+        { key: "scan-ipad", label: "受付iPad", desc: "iPad受付・カメラ読み取り", url: pageUrl("scan-ipad.html", { ...common, v: VERSION.scanIpad }) },
+        { key: "scan-pc", label: "PC受付リーダー", desc: "USB/Bluetooth QRリーダー", url: pageUrl("scan-pc.html", { ...common, v: VERSION.scanPc }) },
+        { key: "member", label: "患者用URLテンプレ", desc: "PATIENT_QR_TOKENを患者ごとに置換", url: pageUrl("member.html", { ...common, t: "PATIENT_QR_TOKEN", v: VERSION.member }) },
+        { key: "liff", label: "LIFF URLテンプレ", desc: "LINE内で開く患者用URL", url: liffUrl({ clinic_code: code, t: "PATIENT_QR_TOKEN" }) }
       ];
     }
 
-    function setUrlKitStatus(message, tone = "info") {
-      const el = $("urlKitStatus");
-      if (!el) return;
-      el.textContent = message || "";
-      if (tone === "ok") {
-        el.style.borderColor = "#bbf7d0";
-        el.style.background = "#f0fdf4";
-        el.style.color = "#166534";
-      } else if (tone === "danger") {
-        el.style.borderColor = "#fecaca";
-        el.style.background = "#fef2f2";
-        el.style.color = "#991b1b";
-      } else if (tone === "warn") {
-        el.style.borderColor = "#fde68a";
-        el.style.background = "#fffbeb";
-        el.style.color = "#92400e";
-      } else {
-        el.style.borderColor = "#bfdbfe";
-        el.style.background = "#eff6ff";
-        el.style.color = "#1d4ed8";
-      }
-    }
-
-    function urlSetText(urls) {
-      const code = clinicCode() || DEFAULTS.clinicCode;
+    function urlsToText(urls) {
       const lines = [
-        `DPRO歯科QR診察券 本番医院URLセット`,
-        `医院コード: ${code}`,
+        "DPRO歯科QR診察券 医院別URLセット",
+        `医院コード: ${clinicCode()}`,
         `作成日: ${todayJST()}`,
-        ``,
-        `重要: 本番医院では dpro_dental_demo を使わないこと。`,
-        `重要: 患者用URLの PATIENT_QR_TOKEN は、患者ごとのQR tokenに置き換えること。`,
-        ``
+        "",
+        "注意：本番医院では dpro_dental_demo を使わないこと。",
+        "注意：患者用URLの PATIENT_QR_TOKEN は患者ごとのQR tokenに置き換えること。",
+        ""
       ];
-
       urls.forEach((item) => {
-        lines.push(`${item.label}`);
+        lines.push(item.label);
         lines.push(item.url);
         lines.push("");
       });
-
       return lines.join("\n");
     }
 
-    function renderProductionUrlSet() {
+    function renderUrls() {
       const urls = buildProductionUrls();
-      const list = $("productionUrlList");
-      const copyBox = $("productionUrlCopyBox");
-      const code = clinicCode() || DEFAULTS.clinicCode;
+      lastUrls = urls;
+      const isDemo = clinicCode() === DEMO_CLINIC_CODE;
 
-      setText("urlKitClinicCode", code);
-      setText("urlKitWorkerBase", apiBase());
+      setText("urlClinicCode", clinicCode());
+      setText("urlState", isDemo ? "DEMO注意" : "生成済み");
 
-      const isDemo = code === "dpro_dental_demo";
-      const warning = $("urlKitWarning");
-      if (warning) {
-        warning.textContent = isDemo
-          ? "現在の医院コードは dpro_dental_demo です。これは営業デモ専用です。本番医院URLを作る時は、STEP 30-45B SQLで作成した本番医院コードに変更してください。"
-          : "本番医院コードでURLを生成しています。system-check.html の本番導入チェックで、DEMO操作が非表示・拒否されることも確認してください。";
-      }
-
-      if (list) {
-        list.innerHTML = urls.map((item) => `
-          <div class="url-row">
-            <div>
-              <div class="url-label">${escapeReadinessHtml(item.label)}</div>
-              <div class="url-desc">${escapeReadinessHtml(item.desc)}</div>
-            </div>
-            <div class="url-value">${escapeReadinessHtml(item.url)}</div>
-            <button class="btn ghost" type="button" data-copy-url="${escapeReadinessHtml(item.url)}">コピー</button>
-            <a class="btn" href="${escapeReadinessHtml(item.url)}" target="_blank" rel="noopener">開く</a>
-          </div>
-        `).join("");
-
-        list.querySelectorAll("[data-copy-url]").forEach((button) => {
-          button.addEventListener("click", async () => {
-            const url = button.getAttribute("data-copy-url") || "";
-            await copyText(url);
-            setUrlKitStatus(`コピーしました: ${url}`, "ok");
-          });
-        });
-      }
-
-      if (copyBox) {
-        copyBox.value = urlSetText(urls);
-      }
-
-      setUrlKitStatus(
+      setStatus(
+        "urlWarning",
         isDemo
-          ? "DEMO医院コードでURLセットを生成しました。本番医院では医院コードを変更してください。"
-          : "本番医院用URLセットを生成しました。各画面のURLを契約医院の設定資料に貼り付けて使えます。",
+          ? "現在の医院コードは dpro_dental_demo です。これは営業デモ専用です。本番医院URLを作る時は、STEP 30-45B SQLで作成した本番医院コードに変更してください。"
+          : "本番医院コードでURLを生成しています。system-check の本番導入チェックも合わせて実行してください。",
         isDemo ? "warn" : "ok"
       );
 
-      log("本番医院URLセットを生成しました。", {
-        clinic_code: code,
-        urls
+      $("urlList").innerHTML = urls.map((item) => `
+        <div class="url-row">
+          <div>
+            <div class="url-title">${escapeHtml(item.label)}</div>
+            <div class="url-desc">${escapeHtml(item.desc)}</div>
+          </div>
+          <div class="url-value">${escapeHtml(item.url)}</div>
+          <button class="ghost" type="button" data-copy="${escapeHtml(item.url)}">コピー</button>
+          <a class="button-link ghost" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">開く</a>
+        </div>
+      `).join("");
+
+      document.querySelectorAll("[data-copy]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          await copyText(button.getAttribute("data-copy") || "");
+          log("URLをコピーしました。", button.getAttribute("data-copy"));
+        });
       });
 
+      $("urlCopyBox").value = urlsToText(urls);
+      log("医院別URLセットを生成しました。", { clinic_code: clinicCode(), urls });
       return urls;
     }
 
@@ -2265,7 +1264,6 @@
         await navigator.clipboard.writeText(String(text || ""));
         return true;
       }
-
       const temp = document.createElement("textarea");
       temp.value = String(text || "");
       temp.style.position = "fixed";
@@ -2278,148 +1276,308 @@
       return true;
     }
 
-    async function copyProductionUrlSet() {
-      const box = $("productionUrlCopyBox");
-      const text = box ? box.value : urlSetText(buildProductionUrls());
-      await copyText(text);
-      setUrlKitStatus("URL一覧をコピーしました。契約医院の構築手順や設定メモに貼り付けてください。", "ok");
+    async function copyUrlSet() {
+      const urls = lastUrls.length ? lastUrls : renderUrls();
+      await copyText(urlsToText(urls));
+      log("URL一覧をまとめてコピーしました。");
     }
 
-    function openGeneratedUrl(key) {
-      const urls = buildProductionUrls();
-      const item = urls.find((row) => row.key === key);
-      if (item) window.open(item.url, "_blank", "noopener");
+    function updateDemoGuard() {
+      const isDemo = clinicCode() === DEMO_CLINIC_CODE;
+      const demoButton = $("demoSetupButton");
+      if (demoButton) demoButton.disabled = !isDemo;
+      setStatus(
+        "demoGuardStatus",
+        isDemo
+          ? "DEMO医院です。営業前DEMO設定を実行できます。"
+          : "本番医院コードです。営業前DEMO設定は表示上も実行上も使わないでください。Worker側でも拒否されます。",
+        isDemo ? "ok" : "warn"
+      );
     }
 
-
-    async function runAllChecks() {
-      const button = $("runButton");
-      button.disabled = true;
-      button.textContent = "チェック中...";
-
-      localStorage.setItem("dproDentalApiBase", apiBase());
-      localStorage.setItem("dproDentalClinicCode", clinicCode());
-      localStorage.removeItem("dproDentalAdminCode");
-      sessionStorage.setItem("dproDentalAdminCodeSession", adminCode());
-
-      resetLog();
-
+    async function runDemoSetup() {
       try {
-        await checkHealth();
-        await checkSafetyGuard();
-        await checkProductionReadiness();
+        ensureAdminCode();
+        if (clinicCode() !== DEMO_CLINIC_CODE) {
+          alert("本番医院では営業前DEMO設定を実行できません。");
+          return;
+        }
 
-        const [scan, doctor, owner] = await Promise.all([
-          checkEndpoint("受付iPad", "/api/scan/today", "scan"),
-          checkEndpoint("先生用", "/api/doctor/today", "doctor"),
-          checkEndpoint("管理トップ", "/api/owner/daily-statuses", "owner")
+        const ok = confirm("営業前DEMO設定を実行します。dpro_dental_demo の本日デモ状態を作り直します。よろしいですか？");
+        if (!ok) return;
+
+        const data = await apiPost("/api/admin/demo/sales-setup", {
+          confirm_text: "DEMO医院だけ実行",
+          staff_name: staffName(),
+          source_screen: "system-check-step30-45d"
+        }, true);
+
+        setStatus("demoStatus", "営業前DEMO設定を実行しました。API件数チェックで反映を確認してください。", "ok");
+        log("営業前DEMO設定 OK", data);
+        await checkApiCounts();
+      } catch (e) {
+        setStatus("demoStatus", e.message || "営業前DEMO設定に失敗しました。", "ng");
+        log("営業前DEMO設定 NG", { message: e.message, status: e.status, data: e.data });
+      }
+    }
+
+    async function getDaily(path) {
+      const date = todayJST();
+      return apiGet(path, {
+        visit_date: date,
+        date,
+        limit: 100
+      }, true);
+    }
+
+    function extractRows(data) {
+      if (Array.isArray(data?.rows)) return data.rows;
+      if (Array.isArray(data?.counts?.rows)) return data.counts.rows;
+      if (Array.isArray(data?.sample)) return data.sample;
+      if (Array.isArray(data)) return data;
+      return [];
+    }
+
+    function countRows(rows) {
+      const total = rows.length;
+      const checked = rows.filter((r) => r.reception_status === "checked_in").length;
+      const scheduled = rows.filter((r) => r.reception_status === "scheduled").length;
+      const done = rows.filter((r) => r.exam_status === "completed").length;
+      const waiting = rows.filter((r) => r.reception_status === "checked_in" && r.exam_status !== "completed").length;
+      const follow = rows.filter((r) => r.line_follow_status === "needed" || r.line_follow_status === "todo").length;
+      return { total, checked, scheduled, done, waiting, follow };
+    }
+
+    function renderApiCounts() {
+      const scanRows = extractRows(lastResults.scan);
+      const doctorRows = extractRows(lastResults.doctor);
+      const ownerRows = extractRows(lastResults.owner);
+      const scan = countRows(scanRows);
+      const doctor = countRows(doctorRows);
+      const owner = countRows(ownerRows);
+
+      $("apiCountsBox").innerHTML = `
+受付iPad：予定 ${scan.total} / 受付済み ${scan.checked} / 診療済み ${scan.done} / LINE ${scan.follow}
+先生用：予定 ${doctor.total} / 受付済み ${doctor.checked} / 診療済み ${doctor.done} / LINE ${doctor.follow}
+管理トップ：予定 ${owner.total} / 受付済み ${owner.checked} / 診療済み ${owner.done} / LINE ${owner.follow}
+      `.trim();
+
+      const same =
+        scan.total === doctor.total &&
+        doctor.total === owner.total &&
+        scan.checked === doctor.checked &&
+        doctor.checked === owner.checked &&
+        scan.done === doctor.done &&
+        doctor.done === owner.done;
+
+      setStatus(
+        "apiCompareBox",
+        same
+          ? "受付iPad・先生用・管理トップの件数は一致しています。"
+          : "画面ごとの件数に差があります。更新タイミングかAPIを確認してください。",
+        same ? "ok" : "warn"
+      );
+
+      if (same) {
+        setSummary("sumTotal", "OK", "pass");
+      } else {
+        setSummary("sumTotal", "注意", "warn");
+      }
+    }
+
+    async function checkApiCounts() {
+      try {
+        ensureAdminCode();
+
+        const [health, scan, doctor, owner] = await Promise.all([
+          checkHealth(),
+          getDaily("/api/scan/today"),
+          getDaily("/api/doctor/today"),
+          getDaily("/api/owner/daily-statuses")
         ]);
 
-        renderCounts("scan", scan);
-        renderCounts("doctor", doctor, true);
-        renderCounts("owner", owner);
-        compareCounts(scan, doctor, owner);
-        await checkAuditLogs();
-      } finally {
-        button.disabled = false;
-        button.textContent = "一括チェック";
+        lastResults.scan = scan;
+        lastResults.doctor = doctor;
+        lastResults.owner = owner;
+
+        setPill("apiScanPill", "OK", "pass");
+        setPill("apiDoctorPill", "OK", "pass");
+        setPill("apiOwnerPill", "OK", "pass");
+
+        const scanRows = extractRows(scan);
+        const doctorRows = extractRows(doctor);
+        const ownerRows = extractRows(owner);
+
+        setText("apiScanText", `本日 ${scanRows.length} 件`);
+        setText("apiDoctorText", `本日 ${doctorRows.length} 件`);
+        setText("apiOwnerText", `本日 ${ownerRows.length} 件`);
+
+        renderApiCounts();
+        log("API件数チェック OK", { scan: countRows(scanRows), doctor: countRows(doctorRows), owner: countRows(ownerRows) });
+        return { health, scan, doctor, owner };
+      } catch (e) {
+        setPill("apiScanPill", "NG", "fail");
+        setPill("apiDoctorPill", "NG", "fail");
+        setPill("apiOwnerPill", "NG", "fail");
+        setSummary("sumTotal", "NG", "fail");
+        setStatus("apiCompareBox", e.message || "API件数チェックに失敗しました。", "ng");
+        log("API件数チェック NG", { message: e.message, status: e.status, data: e.data });
+        throw e;
       }
+    }
+
+    async function checkHistory() {
+      try {
+        ensureAdminCode();
+        const data = await apiGet("/api/admin/audit/daily-status-logs", {
+          action_type: "check_in_cancel",
+          limit: 20
+        }, true);
+
+        lastResults.history = data;
+        const rows = Array.isArray(data?.logs) ? data.logs : Array.isArray(data?.rows) ? data.rows : Array.isArray(data) ? data : [];
+
+        setStatus(
+          "historyStatus",
+          rows.length
+            ? `受付取消履歴を ${rows.length} 件取得しました。`
+            : "受付取消履歴はまだありません。API取得は成功しています。",
+          "ok"
+        );
+
+        $("historyList").innerHTML = rows.length ? rows.map((row) => `
+          <div class="check-item">
+            <span class="pill info">${escapeHtml(row.action_type || "log")}</span>
+            <b>${escapeHtml(row.patient_name || row.member_no || row.patient_id || "-")}</b>
+            <span>${escapeHtml(row.reason || row.memo || row.message || row.created_at || "")}</span>
+          </div>
+        `).join("") : '<div class="status-box ok">履歴は0件です。APIは正常に取得できています。</div>';
+
+        log("操作履歴チェック OK", data);
+        return data;
+      } catch (e) {
+        setStatus("historyStatus", e.message || "操作履歴チェックに失敗しました。", "ng");
+        $("historyList").innerHTML = `<div class="status-box ng">${escapeHtml(e.message || "取得失敗")}</div>`;
+        log("操作履歴チェック NG", { message: e.message, status: e.status, data: e.data });
+        throw e;
+      }
+    }
+
+    async function runAllChecks() {
+      setSummary("sumTotal", "確認中", "info");
+      try {
+        ensureAdminCode();
+        renderUrls();
+        await checkHealth();
+        await checkSafety();
+        await checkReadiness();
+        await checkApiCounts();
+        await checkHistory();
+        setSummary("sumTotal", "OK", "pass");
+        log("一括チェック完了");
+      } catch (e) {
+        setSummary("sumTotal", "NG", "fail");
+        log("一括チェック失敗", { message: e.message, status: e.status, data: e.data });
+      }
+    }
+
+    function renderLatestLinks() {
+      const links = [
+        { label: "トップ", desc: "index.html", url: pageUrl("index.html", { v: VERSION.index }) },
+        { label: "本番前チェック", desc: "system-check.html", url: pageUrl("system-check.html", { v: VERSION.systemCheck }) },
+        { label: "患者管理", desc: "admin.html", url: pageUrl("admin.html", { v: VERSION.admin }) },
+        { label: "管理トップ", desc: "owner.html", url: pageUrl("owner.html", { v: VERSION.owner }) },
+        { label: "先生用", desc: "doctor.html", url: pageUrl("doctor.html", { v: VERSION.doctor }) },
+        { label: "受付iPad", desc: "scan-ipad.html", url: pageUrl("scan-ipad.html", { v: VERSION.scanIpad }) },
+        { label: "PC受付リーダー", desc: "scan-pc.html", url: pageUrl("scan-pc.html", { v: VERSION.scanPc }) }
+      ];
+
+      $("latestLinks").innerHTML = links.map((item) => `
+        <div class="url-row">
+          <div>
+            <div class="url-title">${escapeHtml(item.label)}</div>
+            <div class="url-desc">${escapeHtml(item.desc)}</div>
+          </div>
+          <div class="url-value">${escapeHtml(item.url)}</div>
+          <button class="ghost" type="button" data-copy-latest="${escapeHtml(item.url)}">コピー</button>
+          <a class="button-link ghost" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">開く</a>
+        </div>
+      `).join("");
+
+      document.querySelectorAll("[data-copy-latest]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          await copyText(button.getAttribute("data-copy-latest") || "");
+          log("最新版画面リンクをコピーしました。", button.getAttribute("data-copy-latest"));
+        });
+      });
+    }
+
+    function applyQueryParams() {
+      const url = new URL(location.href);
+      const clinic = url.searchParams.get("clinic_code") || url.searchParams.get("clinic");
+      const api = url.searchParams.get("api");
+      if (clinic) $("clinicCodeInput").value = clinic;
+      if (api) $("apiBaseInput").value = api;
+    }
+
+    function restoreSession() {
+      const code = sessionStorage.getItem(DEFAULTS.adminStorageKey);
+      const staff = sessionStorage.getItem(DEFAULTS.staffStorageKey);
+      if (code) {
+        $("adminCodeInput").value = code;
+        setSummary("sumAuth", "保存済み", "pass");
+      }
+      if (staff) $("staffNameInput").value = staff;
+
+      // 古いlocalStorage保存が残っていても使わない。
+      try {
+        localStorage.removeItem("dpro_dental_qr_admin_code");
+        localStorage.removeItem("dpro_admin_code");
+        localStorage.removeItem("ADMIN_TOKEN");
+      } catch {}
+    }
+
+    function bindEvents() {
+      $("runAllButton").addEventListener("click", runAllChecks);
+      $("saveAdminButton").addEventListener("click", saveAdminCode);
+      $("forgetAdminButton").addEventListener("click", forgetAdminCode);
+      $("generateUrlsButton").addEventListener("click", renderUrls);
+      $("copyUrlsButton").addEventListener("click", copyUrlSet);
+      $("readinessButton").addEventListener("click", checkReadiness);
+      $("safetyButton").addEventListener("click", checkSafety);
+      $("demoSetupButton").addEventListener("click", runDemoSetup);
+      $("demoCheckButton").addEventListener("click", checkApiCounts);
+      $("apiCheckButton").addEventListener("click", checkApiCounts);
+      $("historyButton").addEventListener("click", checkHistory);
+      $("clearLogButton").addEventListener("click", () => { $("logBox").textContent = "まだログはありません。"; });
+
+      $("clinicCodeInput").addEventListener("input", () => {
+        updateDemoGuard();
+        renderUrls();
+      });
+
+      $("apiBaseInput").addEventListener("input", renderUrls);
+
+      document.querySelectorAll("[data-scroll]").forEach((card) => {
+        card.addEventListener("click", () => {
+          const target = document.querySelector(card.getAttribute("data-scroll"));
+          if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
     }
 
     function init() {
-      $("apiBaseInput").value = localStorage.getItem("dproDentalApiBase") || DEFAULTS.apiBase;
-      localStorage.removeItem("dproDentalAdminCode");
-      $("adminCodeInput").value = sessionStorage.getItem("dproDentalAdminCodeSession") || DEFAULTS.adminCode;
-      const savedClinicCode = localStorage.getItem("dproDentalClinicCode") || DEFAULTS.clinicCode;
-      $("clinicCodeInput").value = savedClinicCode === "demo-dental" ? "dpro_dental_demo" : savedClinicCode;
-
-      $("runButton").addEventListener("click", runAllChecks);
-
-      const apiInput = $("apiBaseInput");
-      if (apiInput) {
-        apiInput.addEventListener("input", renderProductionUrlSet);
-        apiInput.addEventListener("change", renderProductionUrlSet);
-      }
-
-      const auditLogCheckButton = $("auditLogCheckButton");
-      if (auditLogCheckButton) {
-        auditLogCheckButton.addEventListener("click", checkAuditLogs);
-      }
-
-      const productionReadinessButton = $("productionReadinessButton");
-      if (productionReadinessButton) {
-        productionReadinessButton.addEventListener("click", checkProductionReadiness);
-      }
-
-      const generateUrlSetButton = $("generateUrlSetButton");
-      if (generateUrlSetButton) {
-        generateUrlSetButton.addEventListener("click", renderProductionUrlSet);
-      }
-
-      const copyUrlSetButton = $("copyUrlSetButton");
-      if (copyUrlSetButton) {
-        copyUrlSetButton.addEventListener("click", copyProductionUrlSet);
-      }
-
-      const openAdminUrlButton = $("openAdminUrlButton");
-      if (openAdminUrlButton) {
-        openAdminUrlButton.addEventListener("click", () => openGeneratedUrl("admin"));
-      }
-
-      const openOwnerUrlButton = $("openOwnerUrlButton");
-      if (openOwnerUrlButton) {
-        openOwnerUrlButton.addEventListener("click", () => openGeneratedUrl("owner"));
-      }
-
-      renderProductionUrlSet();
-
-      const adminInput = $("adminCodeInput");
-      if (adminInput) {
-        adminInput.addEventListener("input", () => {
-          sessionStorage.setItem("dproDentalAdminCodeSession", adminCode());
-        });
-      }
-
-      const forgetButton = $("forgetAdminCodeButton");
-      if (forgetButton) {
-        forgetButton.addEventListener("click", () => {
-          sessionStorage.removeItem("dproDentalAdminCodeSession");
-          localStorage.removeItem("dproDentalAdminCode");
-          $("adminCodeInput").value = "";
-          setAuthSafetyStatus("管理コードをこのタブから削除しました。必要な時だけ再入力してください。", "warn");
-        });
-      }
-
-      const clinicInput = $("clinicCodeInput");
-      if (clinicInput) {
-        clinicInput.addEventListener("input", () => {
-          checkSafetyGuard();
-          renderProductionUrlSet();
-        });
-        clinicInput.addEventListener("change", () => {
-          checkSafetyGuard();
-          renderProductionUrlSet();
-        });
-      }
-
-      checkSafetyGuard();
-
-      const demoSetupButton = $("demoSetupButton");
-      if (demoSetupButton) {
-        demoSetupButton.addEventListener("click", () => runDemoSetup({ checkAfter: false }));
-      }
-
-      const demoSetupAndCheckButton = $("demoSetupAndCheckButton");
-      if (demoSetupAndCheckButton) {
-        demoSetupAndCheckButton.addEventListener("click", () => runDemoSetup({ checkAfter: true }));
-      }
+      applyQueryParams();
+      restoreSession();
+      bindEvents();
+      updateDemoGuard();
+      renderUrls();
+      renderLatestLinks();
+      setStatus("safetyStatus", adminCode() ? "管理コードはこのタブに保存済みです。" : "管理コードを入力してからチェックしてください。", adminCode() ? "ok" : "info");
+      log("system-check STEP 30-45D を起動しました。");
     }
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", init);
-    } else {
-      init();
-    }
+    init();
   </script>
 </body>
 </html>
