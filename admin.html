@@ -3248,6 +3248,153 @@
       }
     }
 
+  
+
+    /* STEP 30-43 LINE未連携患者 導線強化 */
+    .admin43-line-guide,
+    .admin43-unlinked-card {
+      margin-top: 18px;
+      border: 1px solid #cdebdc;
+      background: linear-gradient(180deg, #f6fffb, #ffffff);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(8, 108, 63, 0.06);
+    }
+    .admin43-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .admin43-title {
+      font-weight: 900;
+      color: #14532d;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+    .admin43-sub {
+      margin-top: 4px;
+      color: #527064;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .admin43-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #047857;
+      background: #d1fae5;
+      white-space: nowrap;
+    }
+    .admin43-guide-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .admin43-guide-textarea {
+      width: 100%;
+      min-height: 180px;
+      border: 1px solid #d7e7df;
+      border-radius: 14px;
+      padding: 12px;
+      resize: vertical;
+      font: inherit;
+      line-height: 1.7;
+      background: #fff;
+    }
+    .admin43-qr-box {
+      border: 1px dashed #a7d8bf;
+      border-radius: 16px;
+      background: #ffffff;
+      padding: 14px;
+      text-align: center;
+      min-height: 210px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+    .admin43-qr-box img {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto;
+      border-radius: 12px;
+      border: 1px solid #edf3ef;
+    }
+    .admin43-url {
+      word-break: break-all;
+      font-size: 12px;
+      color: #305044;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 8px;
+      text-align: left;
+    }
+    .admin43-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .admin43-button {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      cursor: pointer;
+      background: #10b981;
+      color: #fff;
+      box-shadow: 0 8px 16px rgba(16, 185, 129, .2);
+      font: inherit;
+    }
+    .admin43-button.secondary { background: #ffffff; color: #14532d; border: 1px solid #b7dfca; box-shadow: none; }
+    .admin43-button.warning { background: #f59e0b; color: #fff; }
+    .admin43-button:disabled { opacity: .55; cursor: not-allowed; }
+    .admin43-message {
+      display: none;
+      margin-top: 10px;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+    .admin43-message.show { display: block; }
+    .admin43-message.success { background: #dcfce7; color: #166534; }
+    .admin43-message.error { background: #fee2e2; color: #991b1b; }
+    .admin43-message.warning { background: #fef3c7; color: #92400e; }
+    .admin43-message.info { background: #e0f2fe; color: #075985; }
+    .admin43-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .admin43-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid #e2f0e8;
+      border-radius: 14px;
+      background: #fff;
+    }
+    .admin43-row-name { font-weight: 900; color: #17382b; }
+    .admin43-row-meta { margin-top: 4px; color: #64796f; font-size: 12px; line-height: 1.5; }
+    .admin43-mini-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+    .admin43-empty { padding: 16px; color: #697e75; background: #f8fafc; border-radius: 14px; line-height: 1.7; }
+    @media (max-width: 860px) {
+      .admin43-guide-grid { grid-template-columns: 1fr; }
+      .admin43-row { grid-template-columns: 1fr; }
+      .admin43-mini-actions { justify-content: flex-start; }
+    }
+
   </style>
 </head>
 
@@ -4458,7 +4605,58 @@
               </div>
 
 
+
+              <div class="admin43-line-guide" id="admin43LineGuidePanel">
+                <div class="admin43-head">
+                  <div>
+                    <div class="admin43-title">LINE未連携患者への案内</div>
+                    <div class="admin43-sub">
+                      選択中の患者さんに、LINE診察券登録URLを発行します。受付で見せるQR・コピー用文面・登録URLをまとめて作れます。
+                    </div>
+                  </div>
+                  <div class="admin43-pill" id="admin43LineStatusPill">患者選択後に確認</div>
+                </div>
+                <div class="admin43-guide-grid">
+                  <div>
+                    <textarea class="admin43-guide-textarea" id="admin43GuideText" placeholder="登録URLを発行すると、ここに受付でコピーできる案内文が入ります。"></textarea>
+                    <div class="admin43-actions">
+                      <button class="admin43-button" id="admin43IssueLinkButton" type="button">登録URL・QRを発行</button>
+                      <button class="admin43-button secondary" id="admin43CopyGuideButton" type="button">案内文をコピー</button>
+                      <button class="admin43-button secondary" id="admin43CopyUrlButton" type="button">登録URLをコピー</button>
+                      <button class="admin43-button warning" id="admin43OpenLinkButton" type="button">登録ページを開く</button>
+                    </div>
+                    <div class="admin43-message" id="admin43GuideMessage"></div>
+                  </div>
+                  <div class="admin43-qr-box" id="admin43QrBox">
+                    <div class="admin43-empty">患者さんを選択して「登録URL・QRを発行」を押すと、受付で見せるQRがここに表示されます。</div>
+                  </div>
+                </div>
+              </div>
+
               <div id="selectedMessage" class="message"></div>
+            </div>
+          </div>
+        </section>
+
+
+        <section class="card admin43-unlinked-card" id="admin43UnlinkedPatientsCard" data-owner-section="line-unlinked">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">連</span>
+              LINE未連携患者一覧
+            </h2>
+            <div class="card-subtitle">
+              既存患者登録後、LINE公式とまだ紐づいていない患者を確認します。受付で案内しやすいように登録URL・案内文をその場で作れます。
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="admin43-actions" style="margin-top:0;">
+              <button class="admin43-button" id="admin43LoadTodayUnlinkedButton" type="button">今日来院の未連携を表示</button>
+              <button class="admin43-button secondary" id="admin43LoadAllUnlinkedButton" type="button">全体の未連携を表示</button>
+            </div>
+            <div class="admin43-message" id="admin43UnlinkedMessage"></div>
+            <div class="admin43-list" id="admin43UnlinkedList">
+              <div class="admin43-empty">「今日来院の未連携を表示」を押してください。</div>
             </div>
           </div>
         </section>
@@ -7028,6 +7226,372 @@
         document.addEventListener("DOMContentLoaded", setupStep3042AAdminLogs);
       } else {
         setupStep3042AAdminLogs();
+      }
+    })();
+  </script>
+
+
+  <script>
+    /* STEP 30-43 LINE未連携患者への導線強化 */
+    (function () {
+      "use strict";
+
+      const DEFAULT_API_BASE = "https://dpro-dental-qr-api.dpromstk2000.workers.dev";
+      const MEMBER_BASE_URL = "https://dpromstk2000-lab.github.io/DEGITAL-QR/member.html";
+      let lastIssuedLinkUrl = "";
+      let lastIssuedPatient = null;
+      let lastUnlinkedItems = [];
+
+      const $ = (id) => document.getElementById(id);
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function getConfig() {
+        return window.DPRO_DENTAL_QR_CONFIG || window.DPRO_CONFIG || {};
+      }
+
+      function getApiBaseUrl() {
+        const config = getConfig();
+        const value = config?.API?.BASE_URL || config?.API_BASE_URL || DEFAULT_API_BASE;
+        return String(value || DEFAULT_API_BASE).replace(/\/+$/, "");
+      }
+
+      function getClinicCode() {
+        const config = getConfig();
+        try {
+          const saved = localStorage.getItem("dproDentalClinicCode") || "";
+          if (saved && saved !== "demo-dental") return saved;
+        } catch (error) {}
+        return String(config?.CLINIC?.CLINIC_CODE || config?.CLINIC_CODE || "dpro_dental_demo").trim() || "dpro_dental_demo";
+      }
+
+      function getAdminCode() {
+        try {
+          const input = $("adminCodeInput");
+          return String(
+            (input && input.value) ||
+            sessionStorage.getItem("dproDentalAdminCode") ||
+            sessionStorage.getItem("dproDentalAdminToken") ||
+            sessionStorage.getItem("dproDentalAdminCodeSession") ||
+            sessionStorage.getItem("dpro_dental_qr_admin_code") ||
+            sessionStorage.getItem("dpro_dental_admin_code") ||
+            ""
+          ).trim();
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function todayText() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      }
+
+      function getSelectedPatient() {
+        const raw = window.dproDentalSelectedPatient || null;
+        const base = raw?.raw && typeof raw.raw === "object" ? raw.raw : {};
+        const patient = { ...base, ...(raw || {}) };
+        const id = patient.id || patient.patient_id || base.id || base.patient_id || "";
+        const memberNoFromDom = ($("selectedMemberNo")?.textContent || "").trim();
+        const nameFromDom = ($("selectedPatientName")?.textContent || "").trim();
+        const memberNo = patient.member_no || base.member_no || memberNoFromDom;
+        const name = patient.patient_name || base.patient_name || (nameFromDom && nameFromDom !== "---" ? nameFromDom : "患者さん");
+        if (!id && !memberNo) return null;
+        return {
+          ...patient,
+          id,
+          patient_id: id,
+          patient_name: name,
+          member_no: memberNo,
+          qr_token: patient.qr_token || base.qr_token || "",
+          family_code: patient.family_code || base.family_code || "",
+          family_id: patient.family_id || base.family_id || ""
+        };
+      }
+
+      function setMessage(id, type, text) {
+        const el = $(id);
+        if (!el) return;
+        el.className = "admin43-message show " + (type || "info");
+        el.textContent = String(text || "");
+      }
+
+      function clearMessage(id) {
+        const el = $(id);
+        if (!el) return;
+        el.className = "admin43-message";
+        el.textContent = "";
+      }
+
+      function setButtonBusy(button, busy, text) {
+        if (!button) return;
+        if (!button.dataset.originalText) button.dataset.originalText = button.textContent;
+        button.disabled = Boolean(busy);
+        button.textContent = busy ? text : button.dataset.originalText;
+      }
+
+      async function apiJson(path, options = {}) {
+        const adminCode = getAdminCode();
+        if (!adminCode) throw new Error("管理コードが未入力です。左側メニューで管理コードを保存してください。");
+        const url = new URL(getApiBaseUrl() + path);
+        const params = options.params || {};
+        Object.keys(params).forEach((key) => {
+          if (params[key] !== undefined && params[key] !== null && params[key] !== "") url.searchParams.set(key, String(params[key]));
+        });
+        const res = await fetch(url.toString(), {
+          method: options.method || "GET",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "x-admin-code": adminCode,
+            "x-dpro-admin-code": adminCode,
+            "Authorization": "Bearer " + adminCode
+          },
+          body: options.body ? JSON.stringify(options.body) : undefined,
+          cache: "no-store"
+        });
+        const data = await res.json().catch(() => ({ ok: false, message: "JSONとして読めませんでした。" }));
+        if (!res.ok || data.ok === false) throw new Error(data.message || data.error || "API通信に失敗しました。");
+        return data;
+      }
+
+      function buildGuideText(patient, linkUrl) {
+        const name = patient.patient_name || "患者さま";
+        const memberNo = patient.member_no || "未設定";
+        const familyNote = patient.family_name || patient.family_code || patient.family_id
+          ? "\nご家族分の診察券も、LINEの中でまとめて確認できます。"
+          : "";
+        return `${name}様\n\nDPRO歯科クリニックです。\n次回から受付で使えるLINE診察券の登録URLです。\n\n${linkUrl}\n\n診察券番号：${memberNo}${familyNote}\n\nこのURLを開いて、画面の案内に沿って登録してください。\n受付で分からない場合はスタッフまでお声がけください。`;
+      }
+
+      function renderQr(linkUrl) {
+        const box = $("admin43QrBox");
+        if (!box) return;
+        box.innerHTML = `
+          <img alt="LINE診察券登録QR" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(linkUrl)}">
+          <div class="admin43-url">${escapeHtml(linkUrl)}</div>
+        `;
+      }
+
+      async function issueLinkForPatient(patient, sourceScreen) {
+        const body = {
+          clinic_code: getClinicCode(),
+          patient_id: patient.patient_id || patient.id || "",
+          member_no: patient.member_no || "",
+          family_code: patient.family_code || "",
+          expires_in_days: 14,
+          public_base_url: MEMBER_BASE_URL,
+          created_by: "受付スタッフ",
+          memo: "STEP 30-43 LINE未連携患者への登録案内",
+          source_screen: sourceScreen || "admin.html"
+        };
+        const data = await apiJson("/api/admin/line-link-token/create", { method: "POST", body });
+        const linkUrl = data.link_url || data.line_link_url || "";
+        if (!linkUrl) throw new Error("登録URLが返ってきませんでした。");
+        lastIssuedLinkUrl = linkUrl;
+        lastIssuedPatient = patient;
+        const guide = buildGuideText({ ...patient, ...(data.patient || {}) }, linkUrl);
+        const textarea = $("admin43GuideText");
+        if (textarea) textarea.value = guide;
+        renderQr(linkUrl);
+        return { data, linkUrl, guide };
+      }
+
+      async function markGuideCopied(patient, linkUrl, guideText, sourceScreen) {
+        try {
+          await apiJson("/api/admin/line-link-guide/copied", {
+            method: "POST",
+            body: {
+              clinic_code: getClinicCode(),
+              patient_id: patient?.patient_id || patient?.id || "",
+              member_no: patient?.member_no || "",
+              link_url: linkUrl || "",
+              guide_text: guideText || "",
+              staff_name: "受付スタッフ",
+              source_screen: sourceScreen || "admin.html"
+            }
+          });
+        } catch (error) {
+          console.warn("line guide copy log skipped", error);
+        }
+      }
+
+      async function copyText(text) {
+        if (!text) throw new Error("コピーする内容がありません。");
+        await navigator.clipboard.writeText(text);
+      }
+
+      async function onIssueSelected() {
+        const button = $("admin43IssueLinkButton");
+        const patient = getSelectedPatient();
+        if (!patient) {
+          setMessage("admin43GuideMessage", "warning", "先に患者を検索して選択してください。");
+          return;
+        }
+        setButtonBusy(button, true, "発行中...");
+        clearMessage("admin43GuideMessage");
+        try {
+          const result = await issueLinkForPatient(patient, "admin.html:selected_patient");
+          setMessage("admin43GuideMessage", "success", `${patient.patient_name}さんのLINE診察券登録URLを発行しました。受付でQRを見せるか、案内文をコピーしてください。`);
+          updateSelectedLineStatus();
+          return result;
+        } catch (error) {
+          setMessage("admin43GuideMessage", "error", error.message || String(error));
+        } finally {
+          setButtonBusy(button, false);
+        }
+      }
+
+      async function onCopyGuide() {
+        const textarea = $("admin43GuideText");
+        const text = textarea ? textarea.value : "";
+        try {
+          await copyText(text);
+          await markGuideCopied(lastIssuedPatient || getSelectedPatient(), lastIssuedLinkUrl, text, "admin.html:selected_patient");
+          setMessage("admin43GuideMessage", "success", "LINE診察券の案内文をコピーしました。患者さん・保護者さんへそのまま案内できます。");
+        } catch (error) {
+          setMessage("admin43GuideMessage", "error", error.message || String(error));
+        }
+      }
+
+      async function onCopyUrl() {
+        try {
+          await copyText(lastIssuedLinkUrl);
+          setMessage("admin43GuideMessage", "success", "登録URLをコピーしました。SMSやLINEで送る場合に使えます。");
+        } catch (error) {
+          setMessage("admin43GuideMessage", "warning", "先に登録URL・QRを発行してください。");
+        }
+      }
+
+      function onOpenLink() {
+        if (!lastIssuedLinkUrl) {
+          setMessage("admin43GuideMessage", "warning", "先に登録URL・QRを発行してください。");
+          return;
+        }
+        window.open(lastIssuedLinkUrl, "_blank", "noopener");
+      }
+
+      function updateSelectedLineStatus() {
+        const pill = $("admin43LineStatusPill");
+        if (!pill) return;
+        const patient = getSelectedPatient();
+        if (!patient) {
+          pill.textContent = "患者選択後に確認";
+          return;
+        }
+        const linked = Boolean(patient.line_user_id || patient.family_line_user_id || patient.line_link_status === "linked" || patient.family_line_link_status === "linked");
+        pill.textContent = linked ? "LINE連携済み" : "LINE未連携・案内できます";
+      }
+
+      async function loadUnlinked(todayOnly) {
+        const button = todayOnly ? $("admin43LoadTodayUnlinkedButton") : $("admin43LoadAllUnlinkedButton");
+        setButtonBusy(button, true, "読込中...");
+        setMessage("admin43UnlinkedMessage", "info", "LINE未連携患者を確認しています...");
+        try {
+          const data = await apiJson("/api/admin/line-unlinked-patients", {
+            params: {
+              clinic_code: getClinicCode(),
+              date: todayText(),
+              today_only: todayOnly ? "true" : "false",
+              mode: todayOnly ? "today" : "all",
+              limit: todayOnly ? 80 : 50,
+              _t: Date.now()
+            }
+          });
+          lastUnlinkedItems = data.items || data.unlinked_patients || [];
+          renderUnlinkedList(lastUnlinkedItems, todayOnly);
+          setMessage("admin43UnlinkedMessage", "success", `${todayOnly ? "今日来院" : "全体"}のLINE未連携患者を ${lastUnlinkedItems.length}件 表示しました。`);
+        } catch (error) {
+          setMessage("admin43UnlinkedMessage", "error", error.message || String(error));
+        } finally {
+          setButtonBusy(button, false);
+        }
+      }
+
+      function renderUnlinkedList(items, todayOnly) {
+        const list = $("admin43UnlinkedList");
+        if (!list) return;
+        if (!items.length) {
+          list.innerHTML = `<div class="admin43-empty">${todayOnly ? "今日来院予定" : "登録済み患者"}のLINE未連携患者は見つかりませんでした。</div>`;
+          return;
+        }
+        list.innerHTML = items.map((item, index) => {
+          const time = item.scheduled_time ? ` / ${escapeHtml(item.scheduled_time)}` : "";
+          const family = item.family_name ? ` / ${escapeHtml(item.family_name)}` : "";
+          const status = item.line_status_label || "LINE未連携";
+          return `
+            <div class="admin43-row">
+              <div>
+                <div class="admin43-row-name">${escapeHtml(item.patient_name || "患者さん")} <span class="admin43-pill">${escapeHtml(status)}</span></div>
+                <div class="admin43-row-meta">診察券番号：${escapeHtml(item.member_no || "---")}${time}${family}</div>
+                <div class="admin43-row-meta">${escapeHtml(item.task_summary || item.scheduled_label || "受付でLINE診察券登録を案内できます。")}</div>
+              </div>
+              <div class="admin43-mini-actions">
+                <button class="admin43-button" type="button" data-admin43-issue="${index}">URL発行</button>
+                <button class="admin43-button secondary" type="button" data-admin43-copy-sample="${index}">案内例コピー</button>
+              </div>
+            </div>`;
+        }).join("");
+
+        list.querySelectorAll("[data-admin43-issue]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const index = Number(button.dataset.admin43Issue);
+            const item = lastUnlinkedItems[index];
+            setButtonBusy(button, true, "発行中...");
+            try {
+              const result = await issueLinkForPatient(item, "admin.html:unlinked_list");
+              await copyText(result.guide);
+              await markGuideCopied(item, result.linkUrl, result.guide, "admin.html:unlinked_list");
+              setMessage("admin43UnlinkedMessage", "success", `${item.patient_name || "患者さん"}の登録URLを発行し、案内文をコピーしました。`);
+              document.getElementById("admin43LineGuidePanel")?.scrollIntoView({ behavior: "smooth", block: "center" });
+            } catch (error) {
+              setMessage("admin43UnlinkedMessage", "error", error.message || String(error));
+            } finally {
+              setButtonBusy(button, false);
+            }
+          });
+        });
+
+        list.querySelectorAll("[data-admin43-copy-sample]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const index = Number(button.dataset.admin43CopySample);
+            const item = lastUnlinkedItems[index];
+            try {
+              const sample = item.guide_text_sample || buildGuideText(item, "【登録URLを発行するとここにURLが入ります】");
+              await copyText(sample);
+              setMessage("admin43UnlinkedMessage", "success", "案内例をコピーしました。実際に送る場合は、URL発行ボタンで患者専用URLを作ってください。");
+            } catch (error) {
+              setMessage("admin43UnlinkedMessage", "error", error.message || String(error));
+            }
+          });
+        });
+      }
+
+      function init() {
+        $("admin43IssueLinkButton")?.addEventListener("click", onIssueSelected);
+        $("admin43CopyGuideButton")?.addEventListener("click", onCopyGuide);
+        $("admin43CopyUrlButton")?.addEventListener("click", onCopyUrl);
+        $("admin43OpenLinkButton")?.addEventListener("click", onOpenLink);
+        $("admin43LoadTodayUnlinkedButton")?.addEventListener("click", () => loadUnlinked(true));
+        $("admin43LoadAllUnlinkedButton")?.addEventListener("click", () => loadUnlinked(false));
+        setInterval(updateSelectedLineStatus, 1200);
+        updateSelectedLineStatus();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
       }
     })();
   </script>
