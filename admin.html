@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-44 admin.html 印刷用QR診察券・案内カード</title>
+  <title>DPRO SHOP | STEP 30-44B admin.html 印刷用QR診察券・案内カード 選択患者反映修正</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -3396,7 +3396,7 @@
     }
 
 
-    /* STEP 30-44 印刷用QR診察券・案内カード */
+    /* STEP 30-44B 印刷用QR診察券・案内カード */
     .admin44-print-panel {
       margin-top: 18px;
       border: 1px solid #dbe4ff;
@@ -4882,7 +4882,7 @@
     <footer class="footer">
       <strong id="footerClinicName">DPRO歯科クリニック</strong><br />
       DPRO SHOP 歯科デジタルQR診察券 / admin.html<br />
-        STEP 30-44 印刷用QR診察券・案内カード<br />
+        STEP 30-44B 印刷用QR診察券・案内カード<br />
       この画面には Supabase Service Role Key や ADMIN_TOKEN は直書きしていません。
     </footer>
   </main>
@@ -6229,6 +6229,7 @@
         window.dproDentalSelectedPatient = patient;
         if (window.dproDentalRenderCardOps) window.dproDentalRenderCardOps(patient);
         if (window.dproDentalRenderPatientOps) window.dproDentalRenderPatientOps(patient);
+        if (window.dproDentalRenderPrintCards) window.dproDentalRenderPrintCards(patient);
 
         const selectedArea = i35("selectedArea");
         const emptySelectedBox = i35("emptySelectedBox");
@@ -6892,12 +6893,14 @@
           if (openMember) openMember.onclick = () => { if (url) window.open(url, "_blank", "noopener"); };
 
           renderCardOps(updated);
+          if (window.dproDentalRenderPrintCards) window.dproDentalRenderPrintCards(updated);
           setMessage("success", (data.message || "操作が完了しました。") + "\n\n必要に応じて新しい診察券URLをコピーしてください。");
         } catch (error) {
           setMessage("error", "操作に失敗しました。\n" + (error.message || error));
         } finally {
           setBusy(false);
           renderCardOps(window.dproDentalSelectedPatient);
+          if (window.dproDentalRenderPrintCards) window.dproDentalRenderPrintCards(window.dproDentalSelectedPatient);
         }
       }
 
@@ -7015,6 +7018,7 @@
         setText("selectedMemberNo", patient.member_no);
         setText("selectedPhone", patient.phone);
         if (window.dproDentalRenderCardOps) window.dproDentalRenderCardOps(patient);
+        if (window.dproDentalRenderPrintCards) window.dproDentalRenderPrintCards(patient);
         renderPatientOps(patient);
       }
       function renderPatientOps(patientInput) {
@@ -7793,8 +7797,8 @@
 
   <script>
     // =========================================================
-    // STEP 30-44
-    // 印刷用QR診察券・家族登録案内カード UI
+    // STEP 30-44B
+    // 印刷用QR診察券・家族登録案内カード UI / 選択患者反映修正
     // =========================================================
     (function () {
       const DEMO_CLINIC_CODE = "dpro_dental_demo";
@@ -8038,6 +8042,13 @@
       }
       function setup() {
         window.dproDentalRenderPrintCards = renderPrintPanel;
+        // STEP 30-44B: 患者選択後にこの印刷UIが後から初期化されても、
+        // 現在選択中の患者を必ず再反映します。
+        const syncSelectedForPrint = () => renderPrintPanel(window.dproDentalSelectedPatient || null);
+        document.addEventListener("click", (event) => {
+          const target = event.target && event.target.closest ? event.target.closest("[data-admin35-open], [data-admin35-tab], [data-admin35i-index], [data-admin35c-patient-index]") : null;
+          if (target) setTimeout(syncSelectedForPrint, 0);
+        });
         const bind = (id, mode) => {
           const button = $(id);
           if (button) button.addEventListener("click", () => openPrint(mode));
@@ -8045,7 +8056,7 @@
         bind("admin44PrintA4Button", "a4");
         bind("admin44PrintPostcardButton", "postcard");
         bind("admin44PrintFamilyGuideButton", "family");
-        renderPrintPanel(window.dproDentalSelectedPatient || null);
+        syncSelectedForPrint();
       }
       if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setup);
       else setup();
