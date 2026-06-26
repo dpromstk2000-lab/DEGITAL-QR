@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DPRO SHOP | STEP 30-39A scan-ipad.html 受付前確認・二重受付警告</title>
+  <title>DPRO SHOP | STEP 30-39B scan-ipad.html 受付取消ボタン追加</title>
 
   <script src="./config.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -631,7 +631,7 @@
 
     .reception-actions {
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
+      grid-template-columns: 1.1fr 0.95fr 1fr;
       gap: 10px;
       margin-top: 16px;
     }
@@ -999,7 +999,7 @@
 
   
 
-    /* STEP 30-39A：受付ミス対策（受付前確認・二重受付警告） */
+    /* STEP 30-39B：受付ミス対策（受付前確認・二重受付警告・受付取消） */
     .reception-safety-panel {
       margin-top: 14px;
       border-radius: 22px;
@@ -1108,7 +1108,7 @@
           QRを読む → 患者確認 → LINE連携確認 → 受付済みにする。受付スタッフ向けに、操作を大きくシンプルにしています。
         </div>
         <div class="version-check-badge">
-          STEP 30-29BB：受付状況更新ボタン直接反応修正
+          STEP 30-39B：受付前確認・二重受付警告・受付取消
         </div>
       </div>
 
@@ -1321,6 +1321,9 @@
                 <button class="btn btn-green" id="markReceivedButton" type="button">
                   受付済みにする
                 </button>
+                <button class="btn btn-danger hidden" id="cancelCheckInButton" type="button">
+                  受付取消
+                </button>
                 <button class="btn btn-orange" id="copyLineGuideButton" type="button">
                   LINE登録案内をコピー
                 </button>
@@ -1437,6 +1440,7 @@
         patientMemo: $("patientMemo"),
         familyList: $("familyList"),
         markReceivedButton: $("markReceivedButton"),
+        cancelCheckInButton: $("cancelCheckInButton"),
         copyLineGuideButton: $("copyLineGuideButton"),
         patientMessage: $("patientMessage"),
         handoffMemo: $("handoffMemo"),
@@ -2132,7 +2136,7 @@
 
 
 
-      // STEP 30-39A：受付ミス対策
+      // STEP 30-39B：受付ミス対策
       function getDailyRowsForPatient(patient) {
         if (!patient || !Array.isArray(state.dbStatuses)) return [];
 
@@ -2231,9 +2235,18 @@
         if (els.markReceivedButton) {
           if (status.already) {
             els.markReceivedButton.textContent = "本日受付済み";
+            els.markReceivedButton.disabled = true;
           } else {
             els.markReceivedButton.textContent = "受付済みにする";
+            els.markReceivedButton.disabled = false;
           }
+        }
+
+        if (els.cancelCheckInButton) {
+          const canCancel = Boolean(status.already);
+          els.cancelCheckInButton.classList.toggle("hidden", !canCancel);
+          els.cancelCheckInButton.disabled = !canCancel;
+          els.cancelCheckInButton.textContent = "受付取消";
         }
       }
 
@@ -2273,6 +2286,38 @@
           delete els.markReceivedButton.dataset.originalText;
           if (state.currentPatient) updateReceptionSafetyPanel(state.currentPatient);
         }
+      }
+
+      function setCancelCheckInButtonLoading(isLoading) {
+        if (!els.cancelCheckInButton) return;
+        els.cancelCheckInButton.disabled = Boolean(isLoading);
+        if (isLoading) {
+          els.cancelCheckInButton.dataset.originalText = els.cancelCheckInButton.textContent || "受付取消";
+          els.cancelCheckInButton.textContent = "取消中...";
+        } else {
+          els.cancelCheckInButton.textContent = els.cancelCheckInButton.dataset.originalText || "受付取消";
+          delete els.cancelCheckInButton.dataset.originalText;
+          if (state.currentPatient) updateReceptionSafetyPanel(state.currentPatient);
+        }
+      }
+
+      function buildCancelCheckInConfirmText(patient) {
+        const status = buildReceptionSafetyStatus(patient);
+        const row = status.row || getPrimaryDailyRowForPatient(patient) || {};
+        const examStatus = String(row.exam_status || "");
+        const examLabel = examStatus === "completed" ? "診療済み" : examStatus === "in_treatment" ? "診療中" : "診療前";
+
+        return [
+          "この患者さんの受付済みを取消しますか？",
+          "",
+          `患者名：${patient.patient_name || "---"}`,
+          `診察券番号：${patient.member_no || "---"}`,
+          `本日の予定：${status.scheduleText || "---"}`,
+          `現在の診療状態：${examLabel}`,
+          `操作スタッフ：${getStaffName() || "受付スタッフ"}`,
+          "",
+          "OKを押すと、Worker API → Supabase に保存し、先生用画面・管理トップにも取消後の状態を反映します。"
+        ].join("\n");
       }
 
       function buildDefaultHandoffMemo(patient, family) {
@@ -2577,7 +2622,7 @@
           showMessage(
             els.patientMessage,
             "warning",
-            "この患者さんは本日すでに受付済みです。\n二重受付を防ぐため、もう一度受付済みにはしません。\n間違えて受付済みにした場合の取消は、次のSTEP 30-39Bで追加します。"
+            "この患者さんは本日すでに受付済みです。\n二重受付を防ぐため、もう一度受付済みにはしません。\n間違えて受付済みにした場合は、下の「受付取消」を押してください。"
           );
           updateReceptionSafetyPanel(patient);
           return;
@@ -2657,6 +2702,116 @@
           );
         } finally {
           setMarkReceivedButtonLoading(false);
+        }
+      }
+
+
+      async function cancelCheckIn() {
+        const patient = state.currentPatient;
+
+        if (!patient || !patient.qr_token) {
+          showMessage(els.patientMessage, "warning", "先に患者さんを表示してください。");
+          return;
+        }
+
+        const status = buildReceptionSafetyStatus(patient);
+        const row = status.row || getPrimaryDailyRowForPatient(patient) || {};
+        const examStatus = String(row.exam_status || "");
+
+        if (!status.already) {
+          showMessage(els.patientMessage, "info", "この患者さんは現在、受付済みではありません。受付取消は不要です。");
+          updateReceptionSafetyPanel(patient);
+          return;
+        }
+
+        if (examStatus === "in_treatment" || examStatus === "completed") {
+          showMessage(
+            els.patientMessage,
+            "warning",
+            "この患者さんは診療中または診療済みです。受付画面からは取消せません。先生用画面・管理画面で確認してください。"
+          );
+          return;
+        }
+
+        if (!getAdminCode()) {
+          showMessage(els.patientMessage, "warning", "受付取消には管理コードが必要です。左下で管理コードを保存してください。");
+          return;
+        }
+
+        const ok = window.confirm(buildCancelCheckInConfirmText(patient));
+        if (!ok) {
+          showMessage(els.patientMessage, "info", "受付取消を中止しました。");
+          return;
+        }
+
+        const cancelMemo = window.prompt("受付取消理由を入力してください。", "受付ミスのため取消");
+        if (cancelMemo === null) {
+          showMessage(els.patientMessage, "info", "受付取消を中止しました。");
+          return;
+        }
+
+        setCancelCheckInButtonLoading(true);
+        showMessage(els.patientMessage, "info", "受付取消を保存しています...\nWorker API → Supabase に保存後、受付状況を再読込します。");
+
+        try {
+          const result = await apiFetch("/api/scan/check-in/cancel", {
+            method: "POST",
+            body: {
+              clinic_code: getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"),
+              visit_date: getTodayJST(),
+              qr_token: patient.qr_token,
+              member_no: patient.member_no,
+              staff_name: getStaffName(),
+              cancelled_by_staff: getStaffName(),
+              cancel_memo: cancelMemo || "受付ミスのため取消",
+              confirm_text: "受付取消",
+              source_screen: "scan-ipad.html"
+            }
+          });
+
+          if (result && result.ok === false) {
+            throw new Error(result.message || result.error || "受付取消に失敗しました。");
+          }
+
+          await loadDailyStatuses(false);
+          setTimeout(() => focusReaderInput(false), 400);
+
+          const dbRow = getDailyStatusByToken(patient.qr_token) || getDailyStatusByToken(patient.member_no);
+          const reflected = Boolean(dbRow && dbRow.reception_status !== "checked_in");
+
+          showMessage(
+            els.patientMessage,
+            reflected ? "success" : "warning",
+            reflected
+              ? `${patient.patient_name} 様の受付済みを取消しました。\nSupabaseに保存しました。先生用画面・管理トップにも未受付として反映済みです。`
+              : `${patient.patient_name} 様の受付取消は完了しましたが、再読込結果で未受付状態を確認できませんでした。受付状況を更新して確認してください。`
+          );
+
+          if (dbRow) {
+            renderPatient(statusRowToPatientData(dbRow));
+          } else {
+            renderPatient({
+              patient,
+              family_context: {
+                family: state.currentFamily,
+                cards: state.currentFamilyCards
+              }
+            });
+          }
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            els.patientMessage,
+            "error",
+            "受付取消の保存に失敗しました。\n\n" +
+            "確認すること：\n" +
+            "・Worker API がSTEP 30-39Bか\n" +
+            "・管理コードが正しいか\n" +
+            "・診療中/診療済みではないか\n\n" +
+            "詳細：" + (error.message || error)
+          );
+        } finally {
+          setCancelCheckInButtonLoading(false);
         }
       }
 
@@ -2843,6 +2998,7 @@
         });
 
         els.markReceivedButton.addEventListener("click", markReceived);
+        if (els.cancelCheckInButton) els.cancelCheckInButton.addEventListener("click", cancelCheckIn);
         els.copyLineGuideButton.addEventListener("click", copyLineGuide);
         els.saveMemoButton.addEventListener("click", saveHandoffMemo);
         els.copyMemoButton.addEventListener("click", copyMemo);
