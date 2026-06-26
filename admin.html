@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-44B admin.html 印刷用QR診察券・案内カード 選択患者反映修正</title>
+  <title>DPRO SHOP | STEP 30-44C admin.html 印刷ウィンドウ about:blank 修正</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -3396,7 +3396,7 @@
     }
 
 
-    /* STEP 30-44B 印刷用QR診察券・案内カード */
+    /* STEP 30-44C 印刷用QR診察券・案内カード */
     .admin44-print-panel {
       margin-top: 18px;
       border: 1px solid #dbe4ff;
@@ -4882,7 +4882,7 @@
     <footer class="footer">
       <strong id="footerClinicName">DPRO歯科クリニック</strong><br />
       DPRO SHOP 歯科デジタルQR診察券 / admin.html<br />
-        STEP 30-44B 印刷用QR診察券・案内カード<br />
+        STEP 30-44C 印刷ウィンドウ about:blank 修正<br />
       この画面には Supabase Service Role Key や ADMIN_TOKEN は直書きしていません。
     </footer>
   </main>
@@ -7797,8 +7797,8 @@
 
   <script>
     // =========================================================
-    // STEP 30-44B
-    // 印刷用QR診察券・家族登録案内カード UI / 選択患者反映修正
+    // STEP 30-44C
+    // 印刷用QR診察券・家族登録案内カード UI / about:blank 修正
     // =========================================================
     (function () {
       const DEMO_CLINIC_CODE = "dpro_dental_demo";
@@ -8006,6 +8006,23 @@
         buttons.forEach((button) => button.disabled = disabled);
         clearMessage();
       }
+      function writePrintWindow(win, html) {
+        if (!win) return false;
+        try {
+          win.document.open();
+          win.document.write(html);
+          win.document.close();
+          try { win.focus(); } catch (_) {}
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function loadingPrintHtml() {
+        return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>印刷画面を作成中</title><style>body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f8fafc;color:#0f172a;display:grid;place-items:center;min-height:100vh}.box{background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:28px;box-shadow:0 18px 50px rgba(15,23,42,.12);max-width:520px}h1{font-size:24px;margin:0 0 10px}p{line-height:1.7;color:#475569}</style></head><body><div class="box"><h1>印刷画面を作成しています</h1><p>QR診察券の印刷データを作成中です。数秒お待ちください。白い画面のまま止まる場合は、この画面を閉じてもう一度ボタンを押してください。</p></div></body></html>`;
+      }
+
       async function openPrint(mode) {
         const patient = normalizePatient(window.dproDentalSelectedPatient || null);
         const url = memberUrl(patient);
@@ -8022,27 +8039,42 @@
           return;
         }
 
+        // STEP 30-44C:
+        // 先にユーザー操作の直後で印刷用ウィンドウを開き、読み込み中HTMLを書いてから完成HTMLに差し替えます。
+        // noopener/noreferrer を付けると新規ウィンドウの document に書き込めず、about:blank のまま残る環境があるため使いません。
+        const printWindow = window.open("about:blank", "_blank", "width=980,height=760,menubar=no,toolbar=no,location=no,status=no,scrollbars=yes,resizable=yes");
+        if (!printWindow) {
+          setMessage("error", "印刷画面を開けませんでした。ブラウザのポップアップ許可を確認してください。");
+          return;
+        }
+        writePrintWindow(printWindow, loadingPrintHtml());
+
         setBusy(true);
         setMessage("info", "印刷画面を作成しています...");
         try {
           const qr = await qrDataUrl(url, mode === "postcard" ? 240 : 320);
           const html = buildPrintHtml(mode, patient, url, qr);
-          const w = window.open("", "_blank", "noopener,noreferrer,width=980,height=760");
-          if (!w) throw new Error("ポップアップがブロックされました。ブラウザのポップアップ許可を確認してください。");
-          w.document.open();
-          w.document.write(html);
-          w.document.close();
+          const wrote = writePrintWindow(printWindow, html);
+          if (!wrote) {
+            const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+            const blobUrl = URL.createObjectURL(blob);
+            printWindow.location.href = blobUrl;
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+          }
           setMessage("success", "印刷画面を開きました。表示された画面で「印刷する」を押してください。");
         } catch (error) {
-          setMessage("error", "印刷画面を作成できませんでした。\n" + (error.message || error));
+          const message = "印刷画面を作成できませんでした。\n" + (error.message || error);
+          setMessage("error", message);
+          writePrintWindow(printWindow, `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>印刷画面エラー</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:32px;color:#991b1b;white-space:pre-wrap}</style></head><body>${escapeHtml(message)}</body></html>`);
         } finally {
           setBusy(false);
           renderPrintPanel(window.dproDentalSelectedPatient || null);
         }
       }
+
       function setup() {
         window.dproDentalRenderPrintCards = renderPrintPanel;
-        // STEP 30-44B: 患者選択後にこの印刷UIが後から初期化されても、
+        // STEP 30-44C: 患者選択後にこの印刷UIが後から初期化されても、
         // 現在選択中の患者を必ず再反映します。
         const syncSelectedForPrint = () => renderPrintPanel(window.dproDentalSelectedPatient || null);
         document.addEventListener("click", (event) => {
