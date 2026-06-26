@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-36B owner.html PC受付リーダーリンク追加</title>
+  <title>DPRO SHOP | STEP 30-39C owner.html 受付取消反映表示</title>
 
   <script src="./config.js"></script>
 
@@ -2563,7 +2563,7 @@
             <span class="owner-menu-count">開</span>
           </a>
 
-          <a class="owner-menu-link" href="./scan-ipad.html?v=3029b">
+          <a class="owner-menu-link" href="./scan-ipad.html?v=3039b">
             <span class="owner-menu-icon">受</span>
             <span>
               <span class="owner-menu-main">受付iPadへ</span>
@@ -2582,7 +2582,7 @@
 
 
 
-          <a class="owner-menu-link" href="./doctor.html?v=3027g">
+          <a class="owner-menu-link" href="./doctor.html?v=3039c">
             <span class="owner-menu-icon">医</span>
             <span>
               <span class="owner-menu-main">先生用画面へ</span>
@@ -2683,8 +2683,8 @@
               <div class="owner-panel-sub">受付iPadと先生用画面の状態をここで確認します。</div>
             </div>
             <div class="owner-panel-actions">
-              <a class="owner-panel-link" href="./scan-ipad.html?v=3029b">受付iPad</a>
-              <a class="owner-panel-link" href="./doctor.html?v=3027g">先生用</a>
+              <a class="owner-panel-link" href="./scan-ipad.html?v=3039b">受付iPad</a>
+              <a class="owner-panel-link" href="./doctor.html?v=3039c">先生用</a>
             </div>
           </div>
           <div class="owner-panel-body">
@@ -2698,8 +2698,8 @@
 
             <div class="owner-sync-actions">
               <button class="owner-sync-button primary" id="ownerSyncRefreshButton" type="button" onclick="DPRO_ownerTopRefreshDirect(event)">最新状態を更新</button>
-              <a class="owner-sync-link" href="./doctor.html?v=3027g">先生用画面を開く</a>
-              <a class="owner-sync-link" href="./scan-ipad.html?v=3029b">受付iPadを開く</a>
+              <a class="owner-sync-link" href="./doctor.html?v=3039c">先生用画面を開く</a>
+              <a class="owner-sync-link" href="./scan-ipad.html?v=3039b">受付iPadを開く</a>
             </div>
 
             <div class="owner-sync-grid">
@@ -2742,7 +2742,7 @@
               <div class="owner-panel-sub">診療後に送るLINE文面コピー対象を一覧で確認します。</div>
             </div>
             <div class="owner-panel-actions">
-              <a class="owner-panel-link" href="./doctor.html?v=3027g">先生用で確認</a>
+              <a class="owner-panel-link" href="./doctor.html?v=3039c">先生用で確認</a>
             </div>
           </div>
           <div class="owner-panel-body">
@@ -2816,7 +2816,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./scan-ipad.html?v=3029b">
+      <a class="role-shortcut" href="./scan-ipad.html?v=3039b">
         <span class="role-shortcut-icon reception">受</span>
         <span>
           <span class="role-shortcut-title">受付iPad用</span>
@@ -2824,7 +2824,7 @@
         </span>
       </a>
 
-      <a class="role-shortcut" href="./doctor.html?v=3027g">
+      <a class="role-shortcut" href="./doctor.html?v=3039c">
         <span class="role-shortcut-icon doctor">医</span>
         <span>
           <span class="role-shortcut-title">先生・院長用</span>
@@ -2957,8 +2957,8 @@
 
         <div class="daily-status-actions">
           <button class="btn btn-primary" id="dailyStatusReloadButton" type="button">受付・診療状況を更新</button>
-          <a class="btn btn-light" href="./scan-ipad.html?v=3029b">受付iPad</a>
-          <a class="btn btn-light" href="./doctor.html?v=3027g">先生用</a>
+          <a class="btn btn-light" href="./scan-ipad.html?v=3039b">受付iPad</a>
+          <a class="btn btn-light" href="./doctor.html?v=3039c">先生用</a>
         </div>
       </div>
 
@@ -5832,6 +5832,7 @@
           reception_status: raw.reception_status || "scheduled",
           received_at: raw.received_at || "",
           received_by_staff: raw.received_by_staff || "",
+          reception_memo: raw.reception_memo || raw.memo || "",
           exam_status: raw.exam_status || "waiting",
           line_follow_status: raw.line_follow_status || "none",
           line_follow_message: raw.line_follow_message || raw.line_message_text || raw.line_follow_text || "",
@@ -5848,6 +5849,23 @@
         if (status === "cancelled") return "キャンセル";
         if (status === "no_show") return "未来院";
         return "未受付";
+      }
+
+      function isReceptionCancelVisible(row) {
+        if (!row) return false;
+        const memo = String(row.reception_memo || row.memo || "");
+        return row.reception_status !== "checked_in" && memo.includes("受付取消");
+      }
+
+      function getReceptionDisplayLabel(row) {
+        if (isReceptionCancelVisible(row)) return "受付取消済み";
+        return getReceptionLabel(row?.reception_status || "");
+      }
+
+      function getReceptionMemoText(row) {
+        const memo = String(row?.reception_memo || "").trim();
+        if (!memo) return "";
+        return memo.replace(/^受付取消[:：]?\s*/, "").trim();
       }
 
       function getExamLabel(status) {
@@ -5890,7 +5908,7 @@
         list.innerHTML = targets.map((row) => {
           const statusLabel = getLineFollowStatusLabel(row.line_follow_status);
           const followClass = row.line_follow_status === "copied" ? "green" : "yellow";
-          const doctorUrl = "./doctor.html?v=3027g";
+          const doctorUrl = "./doctor.html?v=3039c";
           const lineLinkedLabel = row.line_linked ? "LINE連携済み" : "LINE案内必要";
 
           return `
@@ -5928,6 +5946,7 @@
         const waitingReception = statuses.filter((row) => row.reception_status !== "checked_in").length;
         const completed = statuses.filter((row) => row.exam_status === "completed").length;
         const follow = statuses.filter((row) => row.line_follow_status === "needed" || row.line_follow_status === "copied").length;
+        const cancelledReception = statuses.filter(isReceptionCancelVisible).length;
 
         if (dailyEls.total) dailyEls.total.textContent = String(total);
         if (dailyEls.checkedIn) dailyEls.checkedIn.textContent = String(checkedIn);
@@ -5952,12 +5971,14 @@
         }
 
         dailyEls.list.innerHTML = statuses.map((row) => {
-          const receptionClass = row.reception_status === "checked_in" ? "green" : "red";
+          const receptionCancelled = isReceptionCancelVisible(row);
+          const receptionClass = row.reception_status === "checked_in" ? "green" : receptionCancelled ? "orange" : "red";
           const examClass = row.exam_status === "completed" ? "green" : row.exam_status === "in_treatment" ? "orange" : "";
           const followClass = row.line_follow_status === "needed" ? "purple" : row.line_follow_status === "copied" ? "green" : "";
           const receptionTime = row.received_at
             ? new Date(row.received_at).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })
             : "";
+          const cancelMemo = getReceptionMemoText(row);
 
           return `
             <div class="daily-status-row">
@@ -5976,9 +5997,10 @@
                   ${row.received_by_staff ? "受付担当：" + escapeHtml(row.received_by_staff) : ""}
                   ${receptionTime ? " / 受付時刻：" + escapeHtml(receptionTime) : ""}
                   ${mode === "fallback" ? "営業デモ用の予備表示です。" : ""}
+                  ${receptionCancelled ? "受付取消あり" + (cancelMemo ? " / 理由：" + escapeHtml(cancelMemo) : "") : ""}
                 </div>
                 <div class="daily-status-pills">
-                  <span class="daily-status-pill ${receptionClass}">${escapeHtml(getReceptionLabel(row.reception_status))}</span>
+                  <span class="daily-status-pill ${receptionClass}">${escapeHtml(getReceptionDisplayLabel(row))}</span>
                   <span class="daily-status-pill ${examClass}">${escapeHtml(getExamLabel(row.exam_status))}</span>
                   <span class="daily-status-pill ${row.line_linked ? "green" : "orange"}">${row.line_linked ? "LINE連携済み" : "LINE案内必要"}</span>
                   ${row.line_follow_status !== "none" ? `<span class="daily-status-pill ${followClass}">LINEフォロー</span>` : ""}
@@ -5986,8 +6008,8 @@
               </div>
 
               <div class="daily-status-side">
-                <a class="btn btn-light" href="./doctor.html?v=3027g">先生用</a>
-                <a class="btn btn-light" href="./scan-ipad.html?v=3029b">受付iPad</a>
+                <a class="btn btn-light" href="./doctor.html?v=3039c">先生用</a>
+                <a class="btn btn-light" href="./scan-ipad.html?v=3039b">受付iPad</a>
               </div>
             </div>
           `;
