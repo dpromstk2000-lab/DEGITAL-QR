@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-38C admin.html 管理コード入力固定</title>
+  <title>DPRO SHOP | STEP 30-38D admin.html 管理コード入力固定</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -2436,6 +2436,57 @@
       color: #ffffff;
     }
 
+
+    .admin38d-top-auth-card {
+      max-width: 1320px;
+      margin: 16px auto 18px;
+      border: 3px solid #f59e0b !important;
+      background: linear-gradient(135deg, #fffbeb, #ffffff 60%, #fef3c7) !important;
+      box-shadow: 0 24px 70px rgba(245, 158, 11, 0.22) !important;
+      position: relative;
+      z-index: 20;
+    }
+
+    .admin38d-top-auth-card::before {
+      content: "管理コードはここに入力";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: -14px;
+      left: 22px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: #f59e0b;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      box-shadow: 0 10px 26px rgba(245, 158, 11, 0.22);
+    }
+
+    .admin38d-top-auth-card .card-header {
+      padding-top: 24px;
+    }
+
+    .admin38d-top-auth-card .card-title .icon {
+      background: #f59e0b !important;
+      color: #ffffff !important;
+    }
+
+    .admin38d-top-auth-card input#adminCodeInput {
+      border: 2px solid #f59e0b;
+      background: #ffffff;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .admin38d-top-auth-card #saveAdminCodeButton {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
     .admin38c-auth-guide {
       margin-top: 10px;
       border-radius: 16px;
@@ -2491,7 +2542,7 @@
     <section class="owner-main-hero" id="ownerMainHero">
       <div class="owner-main-hero-top">
         <div>
-          <div class="owner-main-kicker">STEP 30-38C / 管理コード入力を毎日画面に固定</div>
+          <div class="owner-main-kicker">STEP 30-38D / 管理コード入力を画面最上部に常時表示</div>
           <div class="owner-main-title">毎日使う<br>患者管理画面</div>
           <div class="owner-main-sub">
             毎日使う「患者検索・選択中の患者確認」を前面に出し、新規登録・家族診察券・LINE連携は必要な時だけ開く形に整理しました。
@@ -2535,6 +2586,43 @@
         </a>
       </div>
     </section>
+
+
+    <!-- STEP 30-38D: 毎日迷わないよう、管理コード入力を画面最上部に常時表示 -->
+        <section class="card admin38d-top-auth-card" data-owner-section="admin-code" id="adminCodeTopCard">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="icon">鍵</span>
+              管理設定
+            </h2>
+            <div class="card-subtitle">
+              患者検索・新規登録・家族LINE連携の前に、ここで管理コードをこのタブだけに保存します。初期設定・休日設定の中ではなく、この黄色い「管理設定」を使ってください。
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field">
+                <label for="staffNameInput">スタッフ名</label>
+                <input id="staffNameInput" type="text" placeholder="受付スタッフ" />
+              </div>
+
+              <div class="field">
+                <label for="adminCodeInput">管理コード</label>
+                <input id="adminCodeInput" type="password" placeholder="管理コードを入力（このタブだけ保存）" />
+              </div>
+
+              <button class="btn btn-light" id="saveAdminCodeButton" type="button">管理設定をこのタブに保存</button>
+              <button class="btn btn-ghost" id="forgetAdminCodeButton" type="button">管理コードを忘れる</button>
+            </div>
+
+            <div id="adminCodeMessage" class="message"></div>
+            <div class="admin38c-auth-guide">
+              <strong>STEP 30-38D：ここが管理コード入力場所です</strong>
+              毎日使う患者管理では、まずこの画面最上部の黄色い「管理設定」に管理コードを入れて「管理設定をこのタブに保存」を押してください。保存後、患者検索・全患者表示・新規登録が同じ管理コードで動きます。
+            </div>
+          </div>
+        </section>
 
     <section class="owner-daily-summary" id="ownerOperationSummary">
       <div class="owner-daily-card">
@@ -3409,40 +3497,8 @@
           </div>
         </section>
 
-        <section class="card" data-owner-section="admin-code">
-          <div class="card-header">
-            <h2 class="card-title">
-              <span class="icon">鍵</span>
-              管理設定
-            </h2>
-            <div class="card-subtitle">
-              患者検索・新規登録・家族LINE連携の前に、ここで管理コードをこのタブだけに保存します。初期設定・休日設定の中ではなく、この黄色い「管理設定」を使ってください。
-            </div>
-          </div>
+        <!-- STEP 30-38D: 管理コード入力は画面最上部へ移動しました。 -->
 
-          <div class="card-body">
-            <div class="form-grid">
-              <div class="field">
-                <label for="staffNameInput">スタッフ名</label>
-                <input id="staffNameInput" type="text" placeholder="受付スタッフ" />
-              </div>
-
-              <div class="field">
-                <label for="adminCodeInput">管理コード</label>
-                <input id="adminCodeInput" type="password" placeholder="管理コードを入力（このタブだけ保存）" />
-              </div>
-
-              <button class="btn btn-light" id="saveAdminCodeButton" type="button">管理設定をこのタブに保存</button>
-              <button class="btn btn-ghost" id="forgetAdminCodeButton" type="button">管理コードを忘れる</button>
-            </div>
-
-            <div id="adminCodeMessage" class="message"></div>
-            <div class="admin38c-auth-guide">
-              <strong>STEP 30-38C：入力場所を固定しました</strong>
-              毎日使う患者管理では、まずこの黄色い「管理設定」に管理コードを入れて「管理設定をこのタブに保存」を押してください。保存後、患者検索・全患者表示・新規登録が同じ管理コードで動きます。
-            </div>
-          </div>
-        </section>
       </div>
 
       <div class="stack">
@@ -3652,7 +3708,7 @@
 
         moveSectionToDrawer('[data-owner-section="settings"]', drawerBody);
         moveSectionToDrawer('[data-owner-section="special"]', drawerBody);
-        // STEP 30-38C: 管理コードは毎日使う画面の上部に固定するため、設定ドロワーへ移動しない。
+        // STEP 30-38D: 管理コードは毎日使う画面の上部に固定するため、設定ドロワーへ移動しない。
         moveSectionToDrawer('[data-owner-section="settings-preview"]', drawerBody);
         moveSectionToDrawer('#csvImportPlan', drawerBody);
 
@@ -3670,11 +3726,9 @@
 
           summary.parentNode.insertBefore(workGrid, summary.nextSibling);
 
-          const adminCodeCard = document.querySelector('[data-owner-section="admin-code"]');
+          // STEP 30-38D:
+          // 管理コード入力は画面最上部に常時表示するため、日常業務グリッドへ移動しません。
           const searchCard = $("patientSearchCard");
-          if (adminCodeCard && searchCard && searchCard.parentNode) {
-            searchCard.parentNode.insertBefore(adminCodeCard, searchCard);
-          }
 
           const selectedCard = $("selectedPatientCard");
           const createCard = $("patientCreateCard");
@@ -5034,8 +5088,8 @@
         if (!authCode) {
           admin35iPatients = [];
           i35RenderPatients([], "", "");
-          i35SetMessage("error", "管理コードが未入力です。上の黄色い『管理設定』に管理コードを入れて、『管理設定をこのタブに保存』を押してください。");
-          i35SetDebug("error", "管理コード未入力のため、Worker APIへは送信していません。\nSTEP 30-38Cでは、患者検索の前に管理コード入力を必須にしています。");
+          i35SetMessage("error", "管理コードが未入力です。画面最上部の黄色い『管理設定』に管理コードを入れて、『管理設定をこのタブに保存』を押してください。");
+          i35SetDebug("error", "管理コード未入力のため、Worker APIへは送信していません。\nSTEP 30-38Dでは、患者検索の前に管理コード入力を必須にしています。");
           const codeInput = i35("adminCodeInput");
           const codeCard = document.querySelector('[data-owner-section="admin-code"]');
           if (codeCard && codeCard.scrollIntoView) codeCard.scrollIntoView({ behavior: "smooth", block: "center" });
