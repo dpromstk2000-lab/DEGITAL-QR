@@ -3072,7 +3072,7 @@
               管理設定
             </h2>
             <div class="card-subtitle">
-              管理コードはWorker側の認証に使います。Supabaseキーはここには入れません。
+              管理コードはWorker側の認証に使います。Supabaseキーはここには入れません。管理コードはこのタブだけに保存します。
             </div>
           </div>
 
@@ -3085,10 +3085,11 @@
 
               <div class="field">
                 <label for="adminCodeInput">管理コード</label>
-                <input id="adminCodeInput" type="password" placeholder="Cloudflare Worker側のADMIN_TOKEN" />
+                <input id="adminCodeInput" type="password" placeholder="管理コードを入力（このタブだけ保存）" />
               </div>
 
-              <button class="btn btn-light" id="saveAdminCodeButton" type="button">管理設定を保存</button>
+              <button class="btn btn-light" id="saveAdminCodeButton" type="button">管理設定をこのタブに保存</button>
+              <button class="btn btn-ghost" id="forgetAdminCodeButton" type="button">管理コードを忘れる</button>
             </div>
 
             <div id="adminCodeMessage" class="message"></div>
@@ -3476,6 +3477,7 @@
         adminCodeInput: $("adminCodeInput"),
         saveAdminCodeButton: $("saveAdminCodeButton"),
         adminCodeMessage: $("adminCodeMessage"),
+        forgetAdminCodeButton: $("forgetAdminCodeButton"),
 
         emptyPatientCard: $("emptyPatientCard"),
         patientCard: $("patientCard"),
@@ -3609,11 +3611,7 @@
           return CONFIG.utils.getAdminCode();
         }
 
-        try {
-          return localStorage.getItem(getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code")) || "";
-        } catch (error) {
-          return "";
-        }
+        return readSessionAdminCode38b() || readLegacyAdminCodeOnce38b();
       }
 
       function setAdminCode(code) {
@@ -3622,11 +3620,7 @@
           return;
         }
 
-        try {
-          localStorage.setItem(getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code"), code || "");
-        } catch (error) {
-          console.warn(error);
-        }
+        setSessionAdminCode38b(code || "");
       }
 
       function getStaffName() {
@@ -4307,7 +4301,8 @@
           const url = new URL(apiBase + "/api/owner/families/detail");
 
           url.searchParams.set("clinic_code", getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"));
-          url.searchParams.set("admin_code", getAdminCode());
+          const adminCode = getAdminCode();
+          if (!adminCode) throw new Error("管理コードが未入力です。管理設定で入力してください。");
 
           if (patient.id) {
             url.searchParams.set("patient_id", patient.id);
@@ -4321,6 +4316,12 @@
 
           const response = await fetch(url.toString(), {
             method: "GET",
+            headers: {
+              "Accept": "application/json",
+              "x-admin-token": adminCode,
+              "x-admin-code": adminCode,
+              "x-dpro-admin-code": adminCode
+            },
             cache: "no-store",
             mode: "cors"
           });
@@ -5381,106 +5382,11 @@
       }
 
       async function resetDemoData() {
-        const adminCode = getAdminCode();
-
-        if (!adminCode) {
-          showMessage(
-            els.demoResetMessage,
-            "warning",
-            "先に管理設定で管理コードを保存してください。"
-          );
-          return;
-        }
-
-        const buttons = [els.demoResetButton, els.demoResetMainButton].filter(Boolean);
-        buttons.forEach((button) => setButtonLoading(button, true, "リセット中..."));
-
-        clearMessage(els.demoResetMessage);
-
-        try {
-          const apiBase = String(getConfigValue("API.BASE_URL", "https://dpro-dental-qr-api.dpromstk2000.workers.dev")).replace(/\/+$/, "");
-          const url = new URL(apiBase + "/api/admin/demo/reset");
-
-          url.searchParams.set("clinic_code", getConfigValue("CLINIC.CLINIC_CODE", "dpro_dental_demo"));
-          url.searchParams.set("admin_code", adminCode);
-          url.searchParams.set("staff_name", getStaffName());
-          url.searchParams.set("reset_from", "owner.html");
-          url.searchParams.set("_t", String(Date.now()));
-
-          /*
-            営業前デモリセットだけは、POST + custom header を使わない。
-            GitHub Pages → Cloudflare Worker の事前確認通信（CORS preflight）で
-            ブラウザに止められる環境があるため、GET + query で確実に通す。
-          */
-          const response = await fetch(url.toString(), {
-            method: "GET",
-            cache: "no-store",
-            mode: "cors"
-          });
-
-          const raw = await response.text();
-          let result = null;
-
-          try {
-            result = raw ? JSON.parse(raw) : {};
-          } catch (parseError) {
-            throw new Error("API応答をJSONとして読めませんでした。応答：" + raw.slice(0, 300));
-          }
-
-          if (!response.ok || (result && result.ok === false)) {
-            throw new Error((result && (result.message || result.error)) || ("HTTP " + response.status));
-          }
-
-          showMessage(
-            els.demoResetMessage,
-            "success",
-            "営業前デモリセットが完了しました。今日の受付・診療状況も最新に更新します。"
-          );
-
-          await loadToday();
-          await loadFollowups();
-
-          const patients = Array.isArray(result.patients) ? result.patients : [];
-          const visits = Array.isArray(result.visits) ? result.visits : [];
-          const followups = Array.isArray(result.followups) ? result.followups : [];
-
-          if (patients.length) {
-            const firstPatient = normalizePatient(patients[0]);
-            const patientVisits = visits.filter((visit) => visit.patient_id === firstPatient.id);
-            const patientFollowups = followups.filter((followup) => followup.patient_id === firstPatient.id);
-
-            firstPatient.family_context = {
-              family: result.family || null,
-              cards: Array.isArray(result.family_cards) ? result.family_cards : []
-            };
-
-            renderPatientDetail(firstPatient, patientVisits, patientFollowups);
-          }
-
-          updateSummary();
-
-          if (typeof window.DPRO_loadDailyStatusPanel === "function") {
-            try {
-              await window.DPRO_loadDailyStatusPanel(false);
-            } catch (dailyStatusError) {
-              console.warn("受付・診療状況の自動更新に失敗しました。", dailyStatusError);
-            }
-          }
-        } catch (error) {
-          console.error(error);
-          showMessage(
-            els.demoResetMessage,
-            "error",
-            "営業前デモリセットに失敗しました。\n\n" +
-            "確認すること：\n" +
-            "・Cloudflare Worker が STEP 30-15 版になっているか\n" +
-            "・管理コード dpro-dental-2026 を保存しているか\n" +
-            "・GitHub Pages の owner.html を最新に上書きしているか\n\n" +
-            "詳細：" + (error.message || error)
-          );
-        } finally {
-          buttons.forEach((button) => setButtonLoading(button, false));
-        }
+        showMessage(
+          els.demoResetMessage,
+          "warning",
+          "営業前DEMO設定は安全対策のため system-check.html に集約しました。管理トップからは実行できません。"
+        );
       }
 
 
@@ -5834,13 +5740,7 @@
       }
 
       function getAdminCode() {
-        try {
-          return localStorage.getItem(
-            getConfigValue("STORAGE_KEYS.ADMIN_CODE", "dpro_dental_qr_admin_code")
-          ) || "";
-        } catch (error) {
-          return "";
-        }
+        return readSessionAdminCode38b() || readLegacyAdminCodeOnce38b();
       }
 
       function getTodayJST() {
@@ -5883,7 +5783,7 @@
 
         const adminCode = getAdminCode();
         if (!adminCode) {
-          throw new Error("管理コードが保存されていません。下の管理設定で dpro-dental-2026 を保存してください。");
+          throw new Error("管理コードが未入力です。下の管理設定で入力してください。");
         }
 
         const url = new URL(baseUrl + path);
@@ -6473,7 +6373,17 @@
       }
 
       function getAdminCode() {
-        return localStorage.getItem("dpro_dental_admin_code") || "dpro-dental-2026";
+        try {
+          return (
+            sessionStorage.getItem("dproDentalAdminCode") ||
+            sessionStorage.getItem("dproDentalAdminToken") ||
+            sessionStorage.getItem("dpro_dental_qr_admin_code") ||
+            sessionStorage.getItem("dpro_dental_admin_code") ||
+            ""
+          ).trim();
+        } catch (error) {
+          return "";
+        }
       }
 
       function escapeHtml(value) {
@@ -6610,15 +6520,22 @@
       }
 
       async function fetchRows() {
+        const adminCode = getAdminCode();
+        if (!adminCode) {
+          throw new Error("管理コードが未入力です。管理設定で入力してください。");
+        }
+
         const url = new URL(getApiBase() + "/api/owner/daily-statuses");
         url.searchParams.set("clinic_code", getClinicCode());
         url.searchParams.set("date", getTodayJST());
         url.searchParams.set("visit_date", getTodayJST());
-        url.searchParams.set("admin_token", getAdminCode());
 
         const res = await fetch(url.toString(), {
           headers: {
-            "x-admin-token": getAdminCode()
+            "Accept": "application/json",
+            "x-admin-token": adminCode,
+            "x-admin-code": adminCode,
+            "x-dpro-admin-code": adminCode
           }
         });
 
