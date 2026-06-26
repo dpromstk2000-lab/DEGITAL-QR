@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>DPRO SHOP | STEP 30-35K admin.html 検索なし本番向け調整</title>
+  <title>DPRO SHOP | STEP 30-38C admin.html 管理コード入力固定</title>
 
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -2425,6 +2425,36 @@
       color: #991b1b;
     }
 
+    body.owner-optimized .card[data-owner-section="admin-code"] {
+      border: 2px solid #fde68a;
+      background: linear-gradient(135deg, #fffbeb, #ffffff);
+      box-shadow: 0 20px 50px rgba(245, 158, 11, 0.12);
+    }
+
+    body.owner-optimized .card[data-owner-section="admin-code"] .card-title .icon {
+      background: #f59e0b;
+      color: #ffffff;
+    }
+
+    .admin38c-auth-guide {
+      margin-top: 10px;
+      border-radius: 16px;
+      border: 1px solid #fcd34d;
+      background: #fffbeb;
+      color: #92400e;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.65;
+      font-weight: 850;
+    }
+
+    .admin38c-auth-guide strong {
+      display: block;
+      color: #0f172a;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+
   
     /* =========================================================
        STEP 30-35K SEARCH EMPTY QUERY PRODUCTION RULE
@@ -2461,7 +2491,7 @@
     <section class="owner-main-hero" id="ownerMainHero">
       <div class="owner-main-hero-top">
         <div>
-          <div class="owner-main-kicker">STEP 30-35KB / 最新情報を再読込</div>
+          <div class="owner-main-kicker">STEP 30-38C / 管理コード入力を毎日画面に固定</div>
           <div class="owner-main-title">毎日使う<br>患者管理画面</div>
           <div class="owner-main-sub">
             毎日使う「患者検索・選択中の患者確認」を前面に出し、新規登録・家族診察券・LINE連携は必要な時だけ開く形に整理しました。
@@ -3386,7 +3416,7 @@
               管理設定
             </h2>
             <div class="card-subtitle">
-              管理コードやスタッフ名など、初期設定・管理者向けの項目です。管理コードはこのタブだけに保存します。
+              患者検索・新規登録・家族LINE連携の前に、ここで管理コードをこのタブだけに保存します。初期設定・休日設定の中ではなく、この黄色い「管理設定」を使ってください。
             </div>
           </div>
 
@@ -3407,6 +3437,10 @@
             </div>
 
             <div id="adminCodeMessage" class="message"></div>
+            <div class="admin38c-auth-guide">
+              <strong>STEP 30-38C：入力場所を固定しました</strong>
+              毎日使う患者管理では、まずこの黄色い「管理設定」に管理コードを入れて「管理設定をこのタブに保存」を押してください。保存後、患者検索・全患者表示・新規登録が同じ管理コードで動きます。
+            </div>
           </div>
         </section>
       </div>
@@ -3618,7 +3652,7 @@
 
         moveSectionToDrawer('[data-owner-section="settings"]', drawerBody);
         moveSectionToDrawer('[data-owner-section="special"]', drawerBody);
-        moveSectionToDrawer('[data-owner-section="admin-code"]', drawerBody);
+        // STEP 30-38C: 管理コードは毎日使う画面の上部に固定するため、設定ドロワーへ移動しない。
         moveSectionToDrawer('[data-owner-section="settings-preview"]', drawerBody);
         moveSectionToDrawer('#csvImportPlan', drawerBody);
 
@@ -3636,7 +3670,12 @@
 
           summary.parentNode.insertBefore(workGrid, summary.nextSibling);
 
+          const adminCodeCard = document.querySelector('[data-owner-section="admin-code"]');
           const searchCard = $("patientSearchCard");
+          if (adminCodeCard && searchCard && searchCard.parentNode) {
+            searchCard.parentNode.insertBefore(adminCodeCard, searchCard);
+          }
+
           const selectedCard = $("selectedPatientCard");
           const createCard = $("patientCreateCard");
           const resultCard = document.querySelector('[data-owner-section="result"]');
@@ -4991,6 +5030,19 @@
           return;
         }
 
+        const authCode = i35AdminCode();
+        if (!authCode) {
+          admin35iPatients = [];
+          i35RenderPatients([], "", "");
+          i35SetMessage("error", "管理コードが未入力です。上の黄色い『管理設定』に管理コードを入れて、『管理設定をこのタブに保存』を押してください。");
+          i35SetDebug("error", "管理コード未入力のため、Worker APIへは送信していません。\nSTEP 30-38Cでは、患者検索の前に管理コード入力を必須にしています。");
+          const codeInput = i35("adminCodeInput");
+          const codeCard = document.querySelector('[data-owner-section="admin-code"]');
+          if (codeCard && codeCard.scrollIntoView) codeCard.scrollIntoView({ behavior: "smooth", block: "center" });
+          if (codeInput) setTimeout(() => codeInput.focus(), 250);
+          return;
+        }
+
         const buttons = [i35("searchButton"), i35("showLocalButton")].filter(Boolean);
         buttons.forEach((button) => { button.disabled = true; });
 
@@ -5004,9 +5056,9 @@
             shop_code: i35ClinicCode(),
             q: query,
             limit: all ? 50 : 100,
-            admin_code: i35AdminCode(),
-            token: i35AdminCode(),
-            admin_token: i35AdminCode()
+            admin_code: authCode,
+            token: authCode,
+            admin_token: authCode
           });
 
           let patients = i35Dedup(i35ExtractPatients(data));
@@ -5226,15 +5278,31 @@
         }
       }
 
-      function showMessage(type, message) {
-        const box = $("adminCodeMessage") || $("admin35jCodeStatus");
-        if (!box) return;
-        box.className = box.className || "message";
-        box.textContent = message || "";
-        if (type && box.classList) {
-          box.classList.remove("success", "warning", "warn", "error");
-          box.classList.add(type === "warning" ? "warn" : type);
+      function updateHeaderCodeStatus() {
+        const status = $("admin35jCodeStatus");
+        if (!status) return;
+        const code = readCode();
+        status.classList.remove("warn", "error", "success", "warning");
+        if (code) {
+          status.classList.add("success");
+          status.textContent = "管理コード：このタブに保存済み（患者検索できます）";
+        } else {
+          status.classList.add("warn");
+          status.textContent = "管理コード：未入力（上の管理設定に入力してください）";
         }
+      }
+
+      function showMessage(type, message) {
+        const box = $("adminCodeMessage");
+        if (box) {
+          box.className = box.className || "message";
+          box.textContent = message || "";
+          if (type && box.classList) {
+            box.classList.remove("success", "warning", "warn", "error");
+            box.classList.add(type === "warning" ? "warn" : type);
+          }
+        }
+        updateHeaderCodeStatus();
       }
 
       function setupAuthUi() {
@@ -5264,6 +5332,8 @@
             showMessage("warning", "管理コードをこのタブから削除しました。");
           });
         }
+
+        updateHeaderCodeStatus();
       }
 
       if (document.readyState === "loading") {
