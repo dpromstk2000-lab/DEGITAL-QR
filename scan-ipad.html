@@ -1096,6 +1096,183 @@
     }
 
   </style>
+
+  <!-- =========================================================
+       STEP DENTAL-PHONE-2
+       電話番号正規化共通ヘルパー
+       目的：
+       ・090-1111-2222 / 09011112222 / 090 1111 2222
+       ・０９０－１１１１－２２２２ / +81 90 1111 2222
+       の表記ゆれを画面側でも吸収する。
+  ========================================================= -->
+  <script>
+    (function () {
+      "use strict";
+
+      if (window.__DPRO_DENTAL_PHONE_2_HELPER__) return;
+      window.__DPRO_DENTAL_PHONE_2_HELPER__ = true;
+
+      function toHalfWidth(value) {
+        return String(value || "")
+          .replace(/[０-９]/g, function (ch) {
+            return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0);
+          })
+          .replace(/[＋]/g, "+")
+          .replace(/[－ー―‐]/g, "-");
+      }
+
+      function normalizePhone(value) {
+        let text = toHalfWidth(value)
+          .replace(/[（]/g, "(")
+          .replace(/[）]/g, ")")
+          .trim();
+
+        if (!text) return "";
+
+        text = text.replace(/[^\d+]/g, "");
+
+        if (text.startsWith("+81")) {
+          text = "0" + text.slice(3);
+        } else if (/^81(70|80|90|50|3|6|42|44|45|46|47|48|49)/.test(text)) {
+          text = "0" + text.slice(2);
+        }
+
+        return text.replace(/\D/g, "");
+      }
+
+      function isPhoneLike(value) {
+        const raw = String(value || "");
+        const digits = normalizePhone(raw);
+        return digits.length >= 7 && /[0-9０-９+＋]/.test(raw);
+      }
+
+      function normalizeSearchText(value) {
+        return toHalfWidth(value)
+          .toLowerCase()
+          .replace(/[　\s]+/g, "")
+          .trim();
+      }
+
+      function phoneSearchMatches(value, query) {
+        const v = String(value || "");
+        const q = String(query || "");
+        const textValue = normalizeSearchText(v);
+        const textQuery = normalizeSearchText(q);
+
+        if (!textQuery) return true;
+        if (textValue.includes(textQuery)) return true;
+
+        const phoneValue = normalizePhone(v);
+        const phoneQuery = normalizePhone(q);
+        if (phoneValue && phoneQuery && phoneQuery.length >= 7) {
+          return phoneValue.includes(phoneQuery) || phoneQuery.includes(phoneValue);
+        }
+
+        return false;
+      }
+
+      function normalizePayloadPhones(value) {
+        if (Array.isArray(value)) {
+          return value.map(normalizePayloadPhones);
+        }
+
+        if (value && typeof value === "object" && !(value instanceof File) && !(value instanceof Blob)) {
+          const out = {};
+          Object.keys(value).forEach(function (key) {
+            const v = value[key];
+            if (/phone|tel|電話/i.test(key)) {
+              out[key] = normalizePhone(v) || String(v || "").trim();
+            } else {
+              out[key] = normalizePayloadPhones(v);
+            }
+          });
+          return out;
+        }
+
+        return value;
+      }
+
+      function normalizeUrlPhoneParams(input) {
+        try {
+          const url = new URL(String(input), location.href);
+          let changed = false;
+          ["q", "keyword", "phone", "tel", "guardian_phone", "patient_phone", "customer_phone"].forEach(function (key) {
+            if (!url.searchParams.has(key)) return;
+            const current = url.searchParams.get(key) || "";
+            if (!isPhoneLike(current)) return;
+            const normalized = normalizePhone(current);
+            if (normalized && normalized !== current) {
+              url.searchParams.set(key, normalized);
+              changed = true;
+            }
+          });
+          if (!changed) return input;
+          return url.toString();
+        } catch (error) {
+          return input;
+        }
+      }
+
+      if (typeof window.fetch === "function" && !window.__DPRO_DENTAL_PHONE_2_FETCH_PATCHED__) {
+        window.__DPRO_DENTAL_PHONE_2_FETCH_PATCHED__ = true;
+        const originalFetch = window.fetch.bind(window);
+
+        window.fetch = function (input, init) {
+          let nextInput = input;
+          let nextInit = init;
+
+          if (typeof input === "string" || input instanceof URL) {
+            nextInput = normalizeUrlPhoneParams(input);
+          }
+
+          if (init && typeof init.body === "string" && init.body.trim().startsWith("{")) {
+            try {
+              const parsed = JSON.parse(init.body);
+              const normalized = normalizePayloadPhones(parsed);
+              nextInit = {
+                ...init,
+                body: JSON.stringify(normalized)
+              };
+            } catch (error) {
+              nextInit = init;
+            }
+          }
+
+          return originalFetch(nextInput, nextInit);
+        };
+      }
+
+      function normalizePhoneInputs(root) {
+        const scope = root || document;
+        if (!scope.querySelectorAll) return;
+
+        scope.querySelectorAll('input[type="tel"], input[name*="phone" i], input[id*="phone" i], input[autocomplete="tel"]').forEach(function (input) {
+          if (input.__dproDentalPhone2Bound) return;
+          input.__dproDentalPhone2Bound = true;
+
+          input.addEventListener("blur", function () {
+            const normalized = normalizePhone(input.value);
+            if (normalized) input.value = normalized;
+          });
+
+          input.addEventListener("change", function () {
+            const normalized = normalizePhone(input.value);
+            if (normalized) input.value = normalized;
+          });
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        normalizePhoneInputs(document);
+      });
+
+      window.dproDentalNormalizePhone = normalizePhone;
+      window.dproDentalNormalizePayloadPhones = normalizePayloadPhones;
+      window.dproDentalPhoneSearchMatches = phoneSearchMatches;
+      window.dproDentalNormalizePhoneInputs = normalizePhoneInputs;
+    })();
+  </script>
+
 </head>
 
 <body>
@@ -1658,8 +1835,8 @@
             patient_kind: patient.patient_kind || "adult",
             school_grade: patient.school_grade || "",
             guardian_name: patient.guardian_name || "",
-            guardian_phone: patient.guardian_phone || "",
-            phone: patient.phone || "",
+            guardian_phone: window.dproDentalNormalizePhone(patient.guardian_phone || "") || (patient.guardian_phone || ""),
+            phone: window.dproDentalNormalizePhone(patient.phone || "") || (patient.phone || ""),
             line_display_name: patient.line_display_name || "",
             line_user_id: patient.line_user_id || "",
             next_appointment_date: patient.next_appointment_date || "",
@@ -1704,8 +1881,8 @@
             patient_kind: p.patient_kind,
             school_grade: p.school_grade || "",
             guardian_name: p.guardian_name || "",
-            guardian_phone: p.guardian_phone || "",
-            phone: p.phone || p.guardian_phone || "",
+            guardian_phone: window.dproDentalNormalizePhone(p.guardian_phone || "") || (p.guardian_phone || ""),
+            phone: window.dproDentalNormalizePhone(p.phone || p.guardian_phone || "") || (p.phone || p.guardian_phone || ""),
             line_display_name: FAMILY_CONTEXT.family.line_display_name,
             line_user_id: FAMILY_CONTEXT.family.line_user_id,
             next_appointment_date: today,
@@ -1733,7 +1910,7 @@
           patient_kind: raw.patient_kind || "adult",
           school_grade: raw.school_grade || "",
           guardian_name: raw.guardian_name || raw.primary_guardian_name || "",
-          guardian_phone: raw.guardian_phone || raw.primary_guardian_phone || "",
+          guardian_phone: window.dproDentalNormalizePhone(raw.guardian_phone || raw.primary_guardian_phone || "") || (raw.guardian_phone || raw.primary_guardian_phone || ""),
           scheduled_time: raw.scheduled_time || "",
           scheduled_label: raw.scheduled_label || "",
           task_summary: raw.task_summary || "",
@@ -1775,7 +1952,7 @@
           family_code: row.family_code || "FAM-DEMO-YAMADA",
           family_name: row.family_name || "山田家",
           primary_guardian_name: row.guardian_name || "山田 花子",
-          primary_guardian_phone: row.guardian_phone || "",
+          primary_guardian_phone: window.dproDentalNormalizePhone(row.guardian_phone || "") || (row.guardian_phone || ""),
           line_user_id: row.family_line_user_id || "demo-line-mother-yamada",
           line_display_name: row.family_line_display_name || "山田花子（お母さん）",
           line_link_status: row.family_line_link_status || "linked",
@@ -1793,8 +1970,8 @@
             patient_kind: row.patient_kind,
             school_grade: row.school_grade,
             guardian_name: row.guardian_name,
-            guardian_phone: row.guardian_phone,
-            phone: row.guardian_phone || "",
+            guardian_phone: window.dproDentalNormalizePhone(row.guardian_phone || "") || row.guardian_phone,
+            phone: window.dproDentalNormalizePhone(row.guardian_phone || "") || (row.guardian_phone || ""),
             line_display_name: row.family_line_display_name,
             line_user_id: row.family_line_user_id,
             next_appointment_date: getTodayJST(),
@@ -2412,7 +2589,8 @@
       async function searchFromReaderInput() {
         if (!els.readerInput) return;
 
-        const value = String(els.readerInput.value || "").trim();
+        const rawValue = String(els.readerInput.value || "").trim();
+        const value = window.dproDentalNormalizePhone(rawValue) || rawValue;
 
         if (!value) {
           setReaderStatus("読み取り内容が空です。QRリーダーで読み取るか、手入力してください。");
