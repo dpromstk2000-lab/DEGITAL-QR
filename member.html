@@ -813,6 +813,183 @@
 
 
   </style>
+
+  <!-- =========================================================
+       STEP DENTAL-PHONE-2
+       電話番号正規化共通ヘルパー
+       目的：
+       ・090-1111-2222 / 09011112222 / 090 1111 2222
+       ・０９０－１１１１－２２２２ / +81 90 1111 2222
+       の表記ゆれを画面側でも吸収する。
+  ========================================================= -->
+  <script>
+    (function () {
+      "use strict";
+
+      if (window.__DPRO_DENTAL_PHONE_2_HELPER__) return;
+      window.__DPRO_DENTAL_PHONE_2_HELPER__ = true;
+
+      function toHalfWidth(value) {
+        return String(value || "")
+          .replace(/[０-９]/g, function (ch) {
+            return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0);
+          })
+          .replace(/[＋]/g, "+")
+          .replace(/[－ー―‐]/g, "-");
+      }
+
+      function normalizePhone(value) {
+        let text = toHalfWidth(value)
+          .replace(/[（]/g, "(")
+          .replace(/[）]/g, ")")
+          .trim();
+
+        if (!text) return "";
+
+        text = text.replace(/[^\d+]/g, "");
+
+        if (text.startsWith("+81")) {
+          text = "0" + text.slice(3);
+        } else if (/^81(70|80|90|50|3|6|42|44|45|46|47|48|49)/.test(text)) {
+          text = "0" + text.slice(2);
+        }
+
+        return text.replace(/\D/g, "");
+      }
+
+      function isPhoneLike(value) {
+        const raw = String(value || "");
+        const digits = normalizePhone(raw);
+        return digits.length >= 7 && /[0-9０-９+＋]/.test(raw);
+      }
+
+      function normalizeSearchText(value) {
+        return toHalfWidth(value)
+          .toLowerCase()
+          .replace(/[　\s]+/g, "")
+          .trim();
+      }
+
+      function phoneSearchMatches(value, query) {
+        const v = String(value || "");
+        const q = String(query || "");
+        const textValue = normalizeSearchText(v);
+        const textQuery = normalizeSearchText(q);
+
+        if (!textQuery) return true;
+        if (textValue.includes(textQuery)) return true;
+
+        const phoneValue = normalizePhone(v);
+        const phoneQuery = normalizePhone(q);
+        if (phoneValue && phoneQuery && phoneQuery.length >= 7) {
+          return phoneValue.includes(phoneQuery) || phoneQuery.includes(phoneValue);
+        }
+
+        return false;
+      }
+
+      function normalizePayloadPhones(value) {
+        if (Array.isArray(value)) {
+          return value.map(normalizePayloadPhones);
+        }
+
+        if (value && typeof value === "object" && !(value instanceof File) && !(value instanceof Blob)) {
+          const out = {};
+          Object.keys(value).forEach(function (key) {
+            const v = value[key];
+            if (/phone|tel|電話/i.test(key)) {
+              out[key] = normalizePhone(v) || String(v || "").trim();
+            } else {
+              out[key] = normalizePayloadPhones(v);
+            }
+          });
+          return out;
+        }
+
+        return value;
+      }
+
+      function normalizeUrlPhoneParams(input) {
+        try {
+          const url = new URL(String(input), location.href);
+          let changed = false;
+          ["q", "keyword", "phone", "tel", "guardian_phone", "patient_phone", "customer_phone"].forEach(function (key) {
+            if (!url.searchParams.has(key)) return;
+            const current = url.searchParams.get(key) || "";
+            if (!isPhoneLike(current)) return;
+            const normalized = normalizePhone(current);
+            if (normalized && normalized !== current) {
+              url.searchParams.set(key, normalized);
+              changed = true;
+            }
+          });
+          if (!changed) return input;
+          return url.toString();
+        } catch (error) {
+          return input;
+        }
+      }
+
+      if (typeof window.fetch === "function" && !window.__DPRO_DENTAL_PHONE_2_FETCH_PATCHED__) {
+        window.__DPRO_DENTAL_PHONE_2_FETCH_PATCHED__ = true;
+        const originalFetch = window.fetch.bind(window);
+
+        window.fetch = function (input, init) {
+          let nextInput = input;
+          let nextInit = init;
+
+          if (typeof input === "string" || input instanceof URL) {
+            nextInput = normalizeUrlPhoneParams(input);
+          }
+
+          if (init && typeof init.body === "string" && init.body.trim().startsWith("{")) {
+            try {
+              const parsed = JSON.parse(init.body);
+              const normalized = normalizePayloadPhones(parsed);
+              nextInit = {
+                ...init,
+                body: JSON.stringify(normalized)
+              };
+            } catch (error) {
+              nextInit = init;
+            }
+          }
+
+          return originalFetch(nextInput, nextInit);
+        };
+      }
+
+      function normalizePhoneInputs(root) {
+        const scope = root || document;
+        if (!scope.querySelectorAll) return;
+
+        scope.querySelectorAll('input[type="tel"], input[name*="phone" i], input[id*="phone" i], input[autocomplete="tel"]').forEach(function (input) {
+          if (input.__dproDentalPhone2Bound) return;
+          input.__dproDentalPhone2Bound = true;
+
+          input.addEventListener("blur", function () {
+            const normalized = normalizePhone(input.value);
+            if (normalized) input.value = normalized;
+          });
+
+          input.addEventListener("change", function () {
+            const normalized = normalizePhone(input.value);
+            if (normalized) input.value = normalized;
+          });
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        normalizePhoneInputs(document);
+      });
+
+      window.dproDentalNormalizePhone = normalizePhone;
+      window.dproDentalNormalizePayloadPhones = normalizePayloadPhones;
+      window.dproDentalPhoneSearchMatches = phoneSearchMatches;
+      window.dproDentalNormalizePhoneInputs = normalizePhoneInputs;
+    })();
+  </script>
+
 </head>
 <body>
   <div id="loading" class="loading">
@@ -1481,7 +1658,7 @@
         patient_kind: source.patient_kind || patient?.patient_kind || "adult",
         birth_date: source.birth_date || patient?.birth_date || "",
         school_grade: source.school_grade || patient?.school_grade || "",
-        phone: source.phone || patient?.phone || "",
+        phone: window.dproDentalNormalizePhone(source.phone || patient?.phone || "") || (source.phone || patient?.phone || ""),
         patient_status: source.patient_status || patient?.status || "",
         first_visit_date: source.first_visit_date || patient?.first_visit_date || "",
         last_visit_at: source.last_visit_at || patient?.last_visit_at || "",
@@ -1491,7 +1668,7 @@
         next_appointment_memo: source.next_appointment_memo || patient?.next_appointment_memo || "",
         patient_memo: source.patient_memo || patient?.patient_memo || "",
         guardian_name: source.guardian_name || patient?.guardian_name || "",
-        guardian_phone: source.guardian_phone || patient?.guardian_phone || "",
+        guardian_phone: window.dproDentalNormalizePhone(source.guardian_phone || patient?.guardian_phone || "") || (source.guardian_phone || patient?.guardian_phone || ""),
         family_note: source.family_note || patient?.family_note || ""
       };
     }
@@ -1503,7 +1680,7 @@
       const clinicName = getConfigValue("CLINIC.NAME", "DPRO歯科クリニック");
       els.clinicPill.textContent = clinicName;
       els.clinicName.textContent = clinicName;
-      els.clinicPhone.textContent = "電話：" + getConfigValue("CLINIC.PHONE", "000-0000-0000");
+      els.clinicPhone.textContent = "電話：" + (window.dproDentalNormalizePhone(getConfigValue("CLINIC.PHONE", "000-0000-0000")) || getConfigValue("CLINIC.PHONE", "000-0000-0000"));
       els.clinicAddress.textContent = "住所：" + getConfigValue("CLINIC.ADDRESS", "大分県内");
       els.clinicHours.textContent = "診療時間：" + getConfigValue("CLINIC.BUSINESS_HOURS_NOTE", "月・火・水・金 9:00〜18:00 / 土 9:00〜13:00");
       els.clinicClosed.textContent = "休診日：" + getConfigValue("CLINIC.CLOSED_DAYS_NOTE", "木曜・日曜・祝日");
@@ -1518,7 +1695,7 @@
       const c = state.clinic;
       els.clinicPill.textContent = c.clinic_name || els.clinicPill.textContent;
       els.clinicName.textContent = c.clinic_name || els.clinicName.textContent;
-      els.clinicPhone.textContent = "電話：" + (c.phone || "未設定");
+      els.clinicPhone.textContent = "電話：" + (window.dproDentalNormalizePhone(c.phone || "") || c.phone || "未設定");
       els.clinicAddress.textContent = "住所：" + (c.address || "未設定");
       els.clinicHours.textContent = "診療時間：" + (c.business_hours_note || "未設定");
       els.clinicClosed.textContent = "休診日：" + (c.closed_days_note || "未設定");
