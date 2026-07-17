@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DPRO歯科｜来院チェックイン</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="./config.js"></script>
+  <script src="./hybrid-config.js"></script>
+  <link rel="stylesheet" href="./hybrid.css">
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <div class="brand"><div class="logo">D</div><div><strong>来院チェックイン</strong><small>医院に到着したら受付</small></div></div>
+      <a class="pill" id="backLink" href="./hybrid.html">メニューへ戻る</a>
+    </div>
+
+    <section class="hero">
+      <div class="kicker">CHECK IN</div>
+      <h1>医院に到着しました</h1>
+      <p>予約、当日急患受付、またはデジタル診察券から来院受付できます。</p>
+    </section>
+
+    <section class="card">
+      <div class="step-title"><div class="step-no">1</div><h2>受付方法を選択</h2></div>
+      <div class="choice-grid" id="sourceChoices">
+        <button class="choice" type="button" data-source="reservation">診療予約から<small>本日の予約をチェックイン</small></button>
+        <button class="choice" type="button" data-source="urgent">急患受付から<small>医院から来院案内を受けた方</small></button>
+        <button class="choice" type="button" data-source="walk_in">診察券から<small>予約なし・窓口受付</small></button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="step-title"><div class="step-no">2</div><h2>受付情報</h2></div>
+
+      <div id="reservationFields" class="hidden">
+        <div class="field"><label for="reservationToken">予約確認用トークン</label><input class="input token-box" id="reservationToken"></div>
+        <button class="btn btn-light" id="useLatestReservation" type="button">最新の予約を使用</button>
+      </div>
+
+      <div id="urgentFields" class="hidden">
+        <div class="field"><label for="urgentToken">急患受付確認用トークン</label><input class="input token-box" id="urgentToken"></div>
+        <button class="btn btn-light" id="useLatestUrgent" type="button">最新の急患受付を使用</button>
+      </div>
+
+      <div id="walkInFields" class="hidden">
+        <div class="patient-tabs" id="patientTabs"></div>
+        <div id="selectedPatient" class="notice" style="margin-top:14px">診察券を選択してください。</div>
+      </div>
+
+      <div id="message" class="message"></div>
+      <div class="actions">
+        <button class="btn btn-primary" id="checkinButton" type="button">来院受付する</button>
+      </div>
+    </section>
+
+    <section class="card hidden" id="queueCard">
+      <h2>来院受付が完了しました</h2>
+      <div class="hero" style="text-align:center;margin-top:12px">
+        <div class="kicker">受付番号</div>
+        <div style="font-size:64px;font-weight:950;line-height:1.1" id="queueNumber">---</div>
+      </div>
+      <div class="summary" id="queueSummary"></div>
+      <div class="notice" style="margin-top:14px">院内でお待ちください。受付番号や順番は診療内容・緊急度により前後する場合があります。</div>
+      <div class="actions">
+        <button class="btn btn-light" id="refreshQueueButton" type="button">現在の状況を更新</button>
+        <a class="btn btn-primary" id="homeLink" href="./hybrid.html">メニューへ戻る</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="./hybrid-common.js"></script>
+  <script>
+    const H = window.DPRO_DENTAL_HYBRID;
+    const $ = id => document.getElementById(id);
+    const state = {source:"",context:null,selectedToken:"",queueToken:""};
+
+    function syncBackLink() {
+      const t = H.getParam("t");
+      const url = H.pageUrl(H.CONFIG.PAGES.HUB,t?{t}:{});
+      $("backLink").href = url; $("homeLink").href = url;
+    }
+
+    function selectSource(source) {
+      state.source = source;
+      document.querySelectorAll("[data-source]").forEach(b => b.classList.toggle("active",b.dataset.source===source));
+      $("reservationFields").classList.toggle("hidden",source!=="reservation");
+      $("urgentFields").classList.toggle("hidden",source!=="urgent");
+      $("walkInFields").classList.toggle("hidden",source!=="walk_in");
+    }
+
+    function renderPatients() {
+      H.renderPatientSelector($("patientTabs"),state.context?.cards || [],state.selectedToken,token=>{
+        state.selectedToken = token;
+        const card = state.context.cards.find(x=>x.qr_token===token);
+        $("selectedPatient").textContent = card ?
+          `${H.cardLabel(card)}：${card.patient_name}様 / ${card.member_no || "診察券番号未設定"}` :
+          "診察券を選択してください。";
+      },{allowManual:false});
+      const card = state.context?.cards.find(x=>x.qr_token===state.selectedToken);
+      if (card) $("selectedPatient").textContent = `${H.cardLabel(card)}：${card.patient_name}様 / ${card.member_no || "診察券番号未設定"}`;
+    }
+
+    async function submitCheckin() {
+      H.clearMessage($("message"));
+      let body = {};
+      if (state.source==="reservation") {
+        const token = H.clean($("reservationToken").value);
+        if (!token) return H.showMessage($("message"),"warning","予約確認用トークンを入力してください。");
+        body.reservation_token = token;
+      } else if (state.source==="urgent") {
+        const token = H.clean($("urgentToken").value);
+        if (!token) return H.showMessage($("message"),"warning","急患受付確認用トークンを入力してください。");
+        body.urgent_token = token;
+      } else if (state.source==="walk_in") {
+        if (!state.selectedToken) return H.showMessage($("message"),"warning","診察券を選択してください。");
+        body.qr_token = state.selectedToken;
+      } else {
+        return H.showMessage($("message"),"warning","受付方法を選択してください。");
+      }
+
+      const button = $("checkinButton");
+      button.disabled = true; button.textContent = "受付しています";
+      try {
+        const data = await H.hybridPost("/api/hybrid/checkin",body);
+        const entry = data.queue_entry;
+        state.queueToken = entry.public_token;
+        H.saveToken("queue",state.queueToken,{
+          queue_number:entry.queue_number,queue_date:entry.queue_date,patient_name:entry.patient_name
+        });
+        renderQueue(entry,data.public_status);
+        H.showMessage($("message"),"success",data.message);
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "来院受付できませんでした。");
+      } finally {
+        button.disabled = false; button.textContent = "来院受付する";
+      }
+    }
+
+    function renderQueue(entry,publicStatus={}) {
+      $("queueCard").classList.remove("hidden");
+      $("queueNumber").textContent = entry.queue_number ?? "---";
+      $("queueSummary").innerHTML = `
+        <div><dt>受診者</dt><dd>${H.escapeHtml(entry.patient_name || "")}</dd></div>
+        <div><dt>状態</dt><dd>${H.escapeHtml(H.queueLabels[entry.status] || entry.status)}</dd></div>
+        <div><dt>前にお待ちの人数</dt><dd>${publicStatus.people_ahead==null?"非表示":H.escapeHtml(String(publicStatus.people_ahead))+"人"}</dd></div>
+        <div><dt>待ち時間の目安</dt><dd>${publicStatus.estimated_wait_minutes==null?"非表示":H.escapeHtml(String(publicStatus.estimated_wait_minutes))+"分"}</dd></div>`;
+      window.scrollTo({top:$("queueCard").offsetTop-10,behavior:"smooth"});
+    }
+
+    async function refreshQueue() {
+      if (!state.queueToken) return;
+      try {
+        const data = await H.hybridGet("/api/hybrid/queue/lookup",{token:state.queueToken});
+        renderQueue(data.queue_entry,data.public_status);
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "受付状況を更新できませんでした。");
+      }
+    }
+
+    async function init() {
+      syncBackLink();
+      const reservationToken = H.getParam("reservation_token");
+      const urgentToken = H.getParam("urgent_token");
+      const queueToken = H.getParam("queue_token") || H.latestToken("queue");
+      if (reservationToken) {
+        $("reservationToken").value = reservationToken; selectSource("reservation");
+      } else if (urgentToken) {
+        $("urgentToken").value = urgentToken; selectSource("urgent");
+      } else {
+        selectSource("walk_in");
+      }
+
+      try {
+        state.context = await H.loadFamilyContext().catch(()=>({cards:[],selectedToken:""}));
+        state.selectedToken = state.context.selectedToken || "";
+        renderPatients();
+      } catch {}
+
+      if (queueToken && H.getParam("queue_token")) {
+        state.queueToken = queueToken;
+        refreshQueue();
+      }
+    }
+
+    document.querySelectorAll("[data-source]").forEach(button=>button.addEventListener("click",()=>selectSource(button.dataset.source)));
+    $("useLatestReservation").addEventListener("click",()=>{$("reservationToken").value=H.latestToken("reservation");});
+    $("useLatestUrgent").addEventListener("click",()=>{$("urgentToken").value=H.latestToken("urgent");});
+    $("checkinButton").addEventListener("click",submitCheckin);
+    $("refreshQueueButton").addEventListener("click",refreshQueue);
+    document.addEventListener("DOMContentLoaded",init);
+  </script>
+</body>
+</html>

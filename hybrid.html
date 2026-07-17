@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DPRO歯科｜予約・急患受付</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="./config.js"></script>
+  <script src="./hybrid-config.js"></script>
+  <link rel="stylesheet" href="./hybrid.css">
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">D</div>
+        <div><strong>DPRO歯科クリニック</strong><small>予約・急患受付・来院チェックイン</small></div>
+      </div>
+      <div class="pill" id="clinicPill">医院情報を確認中</div>
+    </div>
+
+    <section class="hero">
+      <div class="kicker">DENTAL HYBRID RECEPTION</div>
+      <h1>予約も、急な痛みの受付も<br>LINEから</h1>
+      <p>ご家族の診察券を切り替えて、診療予約・当日急患受付・来院チェックインを行えます。</p>
+      <div class="status-row" id="serviceStatus"></div>
+    </section>
+
+    <section class="card">
+      <div class="step-title"><div class="step-no">1</div><h2>受診する方を選択</h2></div>
+      <p>ご家族の診察券が登録されている場合、ここで切り替えられます。</p>
+      <div class="patient-tabs" id="patientTabs" style="margin-top:14px"></div>
+      <div id="patientSummary" class="notice" style="margin-top:14px">診察券情報を読み込んでいます。</div>
+      <div id="message" class="message"></div>
+    </section>
+
+    <section class="grid">
+      <a class="card action-card" id="reservationLink" href="./reservation.html">
+        <div><div class="icon">📅</div><h2>診療予約</h2><p>空いている30分枠から、診療内容と日時を選択します。</p></div>
+        <span class="btn btn-primary">予約へ進む</span>
+      </a>
+
+      <a class="card action-card" id="urgentLink" href="./urgent.html">
+        <div><div class="icon">🦷</div><h2>当日急患受付</h2><p>強い痛み、腫れ、詰め物の脱落などを事前に医院へ送信します。</p></div>
+        <span class="btn btn-secondary">急患受付へ進む</span>
+      </a>
+
+      <a class="card action-card" id="statusLink" href="./reservation-status.html">
+        <div><div class="icon">🔎</div><h2>予約・受付状況</h2><p>予約の確認、変更希望、取消希望、急患受付状況を確認します。</p></div>
+        <span class="btn btn-light">状況を確認</span>
+      </a>
+
+      <a class="card action-card" id="checkinLink" href="./checkin.html">
+        <div><div class="icon">✅</div><h2>来院チェックイン</h2><p>医院に到着したら、予約・急患受付・診察券から来院受付します。</p></div>
+        <span class="btn btn-light">到着を知らせる</span>
+      </a>
+    </section>
+
+    <section class="card">
+      <h2>ご利用上の注意</h2>
+      <div class="notice danger-notice">
+        当日急患受付は診断や救急判定ではありません。呼吸困難、意識障害、止まらない大量出血などがある場合は、救急要請を検討してください。
+      </div>
+      <div class="actions">
+        <a class="btn btn-light" id="memberLink" href="./member.html">デジタル診察券を開く</a>
+      </div>
+    </section>
+
+    <div class="footer">DPRO Dental Hybrid LINE / STEP DENTAL-HYBRID-2</div>
+  </main>
+
+  <script src="./hybrid-common.js"></script>
+  <script>
+    const H = window.DPRO_DENTAL_HYBRID;
+    const state = {context:null, selectedToken:""};
+
+    function updateLinks() {
+      const token = state.selectedToken && state.selectedToken !== "__manual__" ? state.selectedToken : "";
+      const params = token ? {t:token} : {};
+      document.getElementById("reservationLink").href = H.pageUrl(H.CONFIG.PAGES.RESERVATION, params);
+      document.getElementById("urgentLink").href = H.pageUrl(H.CONFIG.PAGES.URGENT, params);
+      document.getElementById("statusLink").href = H.pageUrl(H.CONFIG.PAGES.STATUS, params);
+      document.getElementById("checkinLink").href = H.pageUrl(H.CONFIG.PAGES.CHECKIN, params);
+      document.getElementById("memberLink").href = H.pageUrl(H.CONFIG.PAGES.MEMBER, params);
+    }
+
+    function renderPatient() {
+      const card = state.context?.cards.find(x => x.qr_token === state.selectedToken);
+      const tabs = document.getElementById("patientTabs");
+      H.renderPatientSelector(tabs, state.context?.cards || [], state.selectedToken, token => {
+        state.selectedToken = token;
+        const url = new URL(location.href);
+        if (token) url.searchParams.set("t",token); else url.searchParams.delete("t");
+        history.replaceState({}, "", url);
+        renderPatient();
+      }, {allowManual:false});
+
+      const summary = document.getElementById("patientSummary");
+      if (card) {
+        summary.textContent = `${H.cardLabel(card)}：${card.patient_name}様 / 診察券番号 ${card.member_no || "未設定"}`;
+      } else {
+        summary.textContent = "診察券を選択できませんでした。初診の方は予約または急患受付画面で、お名前と電話番号を入力できます。";
+      }
+      updateLinks();
+    }
+
+    async function init() {
+      const message = document.getElementById("message");
+      try {
+        const [settingsData, context] = await Promise.all([
+          H.hybridGet("/api/hybrid/public/settings"),
+          H.loadFamilyContext().catch(error => ({cards:[], profile:null, error}))
+        ]);
+        state.context = context;
+        state.selectedToken = context.selectedToken || "";
+        const clinic = settingsData.clinic || {};
+        document.getElementById("clinicPill").textContent = clinic.clinic_name || "DPRO歯科クリニック";
+        document.querySelector(".brand strong").textContent = clinic.clinic_name || "DPRO歯科クリニック";
+        const s = settingsData.settings || {};
+        document.getElementById("serviceStatus").innerHTML = `
+          <span class="status ${s.reservation_enabled?"success":"danger"}">予約 ${s.reservation_enabled?"受付中":"停止中"}</span>
+          <span class="status ${["accepting","busy"].includes(s.urgent_acceptance_status)?"success":"danger"}">急患 ${s.urgent_acceptance_status==="busy"?"混雑中":s.urgent_acceptance_status==="accepting"?"受付中":"停止中"}</span>
+          <span class="status ${s.checkin_enabled?"success":"danger"}">来院受付 ${s.checkin_enabled?"利用可":"停止中"}</span>`;
+        renderPatient();
+        if (context.error) H.showMessage(message,"warning","診察券は読み込めませんでしたが、初診として予約・急患受付を利用できます。");
+      } catch (error) {
+        H.showMessage(message,"error",error.message || "医院情報を読み込めませんでした。");
+        updateLinks();
+      }
+    }
+    document.addEventListener("DOMContentLoaded",init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DPRO歯科｜当日急患受付</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="./config.js"></script>
+  <script src="./hybrid-config.js"></script>
+  <link rel="stylesheet" href="./hybrid.css">
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <div class="brand"><div class="logo">D</div><div><strong>当日急患受付</strong><small>症状を事前に医院へ送信</small></div></div>
+      <a class="pill" id="backLink" href="./hybrid.html">メニューへ戻る</a>
+    </div>
+
+    <section class="hero">
+      <div class="kicker">URGENT RECEPTION</div>
+      <h1>当日急患受付</h1>
+      <p>急な痛みや腫れなどを医院へ送信します。送信後、医院から来院時間の案内をお待ちください。</p>
+    </section>
+
+    <section class="card">
+      <div class="notice danger-notice">
+        この受付は診断・救急判定ではありません。呼吸困難、意識障害、止まらない大量出血などがある場合は救急要請を検討してください。
+      </div>
+    </section>
+
+    <form id="urgentForm">
+      <section class="card">
+        <div class="step-title"><div class="step-no">1</div><h2>受診する方</h2></div>
+        <div class="patient-tabs" id="patientTabs"></div>
+        <div id="manualFields" class="hidden" style="margin-top:16px">
+          <div class="grid">
+            <div class="field"><label class="required" for="patientName">お名前</label><input class="input" id="patientName" autocomplete="name"></div>
+            <div class="field"><label for="patientKana">フリガナ</label><input class="input" id="patientKana"></div>
+          </div>
+          <div class="field"><label class="required" for="phone">電話番号</label><input class="input" id="phone" type="tel" inputmode="tel" autocomplete="tel"></div>
+        </div>
+        <div id="selectedPatient" class="notice" style="margin-top:14px">読み込み中です。</div>
+      </section>
+
+      <section class="card">
+        <div class="step-title"><div class="step-no">2</div><h2>主な症状</h2></div>
+        <div class="choice-grid" id="symptomChoices"></div>
+        <input type="hidden" id="symptomCategory">
+      </section>
+
+      <section class="card">
+        <div class="step-title"><div class="step-no">3</div><h2>症状の詳しい内容</h2></div>
+        <div class="field">
+          <label for="symptomDetail">どの歯・どの場所に、どのような症状がありますか</label>
+          <textarea class="textarea" id="symptomDetail" placeholder="例：右下の奥歯が昨夜からズキズキ痛み、冷たい物で強く痛みます"></textarea>
+        </div>
+        <div class="field">
+          <label for="onsetText">いつからですか</label>
+          <input class="input" id="onsetText" placeholder="例：昨夜から、3日前から">
+        </div>
+        <div class="field">
+          <label for="painScale">痛みの程度（0＝痛みなし、10＝非常に強い）</label>
+          <div class="range-row"><input id="painScale" type="range" min="0" max="10" value="5"><div class="range-value" id="painValue">5</div></div>
+        </div>
+        <div class="switch-grid">
+          <label class="check"><input type="checkbox" id="hasSwelling"> 腫れがある</label>
+          <label class="check"><input type="checkbox" id="hasBleeding"> 出血がある</label>
+          <label class="check"><input type="checkbox" id="hasTrauma"> 転倒・外傷がある</label>
+          <label class="check"><input type="checkbox" id="hasFever"> 発熱がある</label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="step-title"><div class="step-no">4</div><h2>来院できる時間</h2></div>
+        <div class="grid">
+          <div class="field"><label for="availableFrom">開始</label><select class="select" id="availableFrom"></select></div>
+          <div class="field"><label for="availableTo">終了</label><select class="select" id="availableTo"></select></div>
+        </div>
+        <div class="help">医院が内容を確認して、実際の来院時間を案内します。</div>
+      </section>
+
+      <section class="card">
+        <div id="message" class="message"></div>
+        <div class="actions">
+          <button class="btn btn-secondary" id="submitButton" type="submit">この内容で急患受付を申し込む</button>
+          <a class="btn btn-light" id="cancelLink" href="./hybrid.html">戻る</a>
+        </div>
+      </section>
+    </form>
+
+    <section class="card hidden" id="completeCard">
+      <h2>当日急患受付を受け付けました</h2>
+      <div class="summary" id="completeSummary"></div>
+      <div class="notice" style="margin-top:14px">医院から来院時間の案内が届くまでお待ちください。医院からの案内前に直接来院すると、長くお待ちいただく場合があります。</div>
+      <div class="actions">
+        <a class="btn btn-secondary" id="statusLink" href="#">受付状況を確認</a>
+        <a class="btn btn-light" id="homeLink" href="./hybrid.html">メニューへ戻る</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="./hybrid-common.js"></script>
+  <script>
+    const H = window.DPRO_DENTAL_HYBRID;
+    const $ = id => document.getElementById(id);
+    const state = {context:null, selectedToken:"", selectedCard:null, symptom:""};
+
+    function timeOptions() {
+      const list = [`<option value="">指定なし</option>`];
+      for (let h=8; h<=20; h++) {
+        for (const m of [0,30]) {
+          if (h===20 && m===30) continue;
+          const t = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+          list.push(`<option value="${t}">${t}</option>`);
+        }
+      }
+      return list.join("");
+    }
+
+    function syncLinks() {
+      const token = state.selectedToken !== "__manual__" ? state.selectedToken : "";
+      const url = H.pageUrl(H.CONFIG.PAGES.HUB, token?{t:token}:{});
+      $("backLink").href = url; $("cancelLink").href = url; $("homeLink").href = url;
+    }
+
+    function renderPatients() {
+      H.renderPatientSelector($("patientTabs"), state.context?.cards || [], state.selectedToken, selectPatient, {allowManual:true});
+      state.selectedCard = state.context?.cards.find(x => x.qr_token === state.selectedToken) || null;
+      $("manualFields").classList.toggle("hidden", state.selectedToken !== "__manual__");
+      if (state.selectedCard) {
+        $("selectedPatient").textContent = `${H.cardLabel(state.selectedCard)}：${state.selectedCard.patient_name}様 / ${state.selectedCard.member_no || "診察券番号未設定"}`;
+        $("patientName").value = state.selectedCard.patient_name || "";
+        $("patientKana").value = state.selectedCard.patient_name_kana || "";
+        $("phone").value = H.displayPhone(state.selectedCard.phone || state.selectedCard.guardian_phone || "");
+      } else {
+        $("selectedPatient").textContent = "初診・診察券なしとして、お名前と電話番号を入力してください。";
+      }
+      syncLinks();
+    }
+
+    function selectPatient(token) {
+      state.selectedToken = token;
+      const url = new URL(location.href);
+      if (token && token !== "__manual__") url.searchParams.set("t",token); else url.searchParams.delete("t");
+      history.replaceState({}, "", url);
+      renderPatients();
+    }
+
+    function renderSymptoms() {
+      const order = ["severe_pain","swelling","filling_lost","tooth_broken","bleeding","trauma","denture_problem","post_treatment_problem","other"];
+      $("symptomChoices").innerHTML = order.map(code => `
+        <button class="choice ${state.symptom===code?"active":""}" type="button" data-symptom="${code}">
+          ${H.escapeHtml(H.symptomLabels[code])}
+        </button>`).join("");
+      $("symptomChoices").querySelectorAll("[data-symptom]").forEach(button => {
+        button.addEventListener("click", () => {
+          state.symptom = button.dataset.symptom;
+          $("symptomCategory").value = state.symptom;
+          renderSymptoms();
+        });
+      });
+    }
+
+    async function submitUrgent(event) {
+      event.preventDefault();
+      H.clearMessage($("message"));
+      const manual = state.selectedToken === "__manual__";
+      const patientName = manual ? H.clean($("patientName").value) : state.selectedCard?.patient_name;
+      const phone = manual ? H.clean($("phone").value) : (state.selectedCard?.phone || state.selectedCard?.guardian_phone || $("phone").value);
+      if (!patientName) return H.showMessage($("message"),"error","受診する方のお名前を入力してください。");
+      if (!H.normalizePhone(phone)) return H.showMessage($("message"),"error","医院から連絡できる電話番号を入力してください。");
+      if (!state.symptom) return H.showMessage($("message"),"error","主な症状を選択してください。");
+
+      const button = $("submitButton");
+      button.disabled = true; button.textContent = "送信しています";
+      try {
+        const result = await H.hybridPost("/api/hybrid/urgent/create", {
+          qr_token:manual ? "" : state.selectedCard?.qr_token,
+          patient_name:patientName,
+          patient_name_kana:manual ? H.clean($("patientKana").value) : state.selectedCard?.patient_name_kana,
+          phone,
+          line_user_id:state.context?.profile?.userId || "",
+          symptom_category:state.symptom,
+          symptom_detail:H.clean($("symptomDetail").value),
+          onset_text:H.clean($("onsetText").value),
+          pain_scale:Number($("painScale").value),
+          has_swelling:$("hasSwelling").checked,
+          has_bleeding:$("hasBleeding").checked,
+          has_trauma:$("hasTrauma").checked,
+          has_fever:$("hasFever").checked,
+          available_from:$("availableFrom").value,
+          available_to:$("availableTo").value,
+          idempotency_key:H.randomKey("urgent"),
+          source:state.context?.profile?.userId ? "line" : "web"
+        });
+        const u = result.urgent_request;
+        H.saveToken("urgent", result.lookup_token, {
+          request_no:u.request_no, patient_name:u.patient_name, symptom_category:u.symptom_category
+        });
+        $("urgentForm").classList.add("hidden");
+        $("completeCard").classList.remove("hidden");
+        $("completeSummary").innerHTML = `
+          <div><dt>受付番号</dt><dd>${H.escapeHtml(u.request_no)}</dd></div>
+          <div><dt>状態</dt><dd>${H.escapeHtml(H.urgentLabels[u.status] || u.status)}</dd></div>
+          <div><dt>受診者</dt><dd>${H.escapeHtml(u.patient_name)}</dd></div>
+          <div><dt>症状</dt><dd>${H.escapeHtml(H.symptomLabels[u.symptom_category] || u.symptom_category)}</dd></div>`;
+        $("statusLink").href = H.pageUrl(H.CONFIG.PAGES.STATUS, {
+          urgent_token:result.lookup_token, t:manual ? "" : state.selectedCard?.qr_token
+        });
+        window.scrollTo({top:0,behavior:"smooth"});
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "急患受付を送信できませんでした。");
+      } finally {
+        button.disabled = false; button.textContent = "この内容で急患受付を申し込む";
+      }
+    }
+
+    async function init() {
+      $("availableFrom").innerHTML = timeOptions();
+      $("availableTo").innerHTML = timeOptions();
+      $("availableFrom").value = "09:00"; $("availableTo").value = "18:00";
+      try {
+        const [settingsData, context] = await Promise.all([
+          H.hybridGet("/api/hybrid/public/settings"),
+          H.loadFamilyContext().catch(() => ({cards:[],profile:null,selectedToken:""}))
+        ]);
+        const s = settingsData.settings || {};
+        if (!s.urgent_enabled || ["paused","closed"].includes(s.urgent_acceptance_status)) {
+          H.showMessage($("message"),"error",s.urgent_closed_message || "現在、LINE急患受付を停止しています。");
+          $("submitButton").disabled = true;
+        } else if (s.urgent_acceptance_status === "busy") {
+          H.showMessage($("message"),"warning",s.urgent_public_message || "現在混雑しています。医院からの案内をお待ちください。");
+        }
+        state.context = context;
+        state.selectedToken = context.selectedToken || "__manual__";
+        if (!context.cards.length) state.selectedToken = "__manual__";
+        renderPatients(); renderSymptoms();
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "急患受付画面を準備できませんでした。");
+      }
+    }
+
+    $("painScale").addEventListener("input", () => $("painValue").textContent = $("painScale").value);
+    $("urgentForm").addEventListener("submit",submitUrgent);
+    document.addEventListener("DOMContentLoaded",init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DPRO歯科｜予約・受付状況</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="./config.js"></script>
+  <script src="./hybrid-config.js"></script>
+  <link rel="stylesheet" href="./hybrid.css">
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <div class="brand"><div class="logo">D</div><div><strong>予約・受付状況</strong><small>予約変更・取消希望にも対応</small></div></div>
+      <a class="pill" id="backLink" href="./hybrid.html">メニューへ戻る</a>
+    </div>
+
+    <section class="hero">
+      <div class="kicker">STATUS</div>
+      <h1>予約・受付状況</h1>
+      <p>予約や当日急患受付の現在の状態を確認できます。</p>
+    </section>
+
+    <section class="card">
+      <h2>確認する受付を選択</h2>
+      <div class="actions">
+        <button class="btn btn-primary" id="latestReservationButton" type="button">最新の予約を確認</button>
+        <button class="btn btn-secondary" id="latestUrgentButton" type="button">最新の急患受付を確認</button>
+      </div>
+      <div class="divider"></div>
+      <div class="field">
+        <label for="tokenInput">確認用トークン</label>
+        <input class="input token-box" id="tokenInput" autocomplete="off" placeholder="予約・急患受付の確認用トークン">
+        <div class="help">通常は予約完了画面やLINEの確認リンクから開くため、入力不要です。</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-light" id="lookupReservationButton" type="button">予約として確認</button>
+        <button class="btn btn-light" id="lookupUrgentButton" type="button">急患受付として確認</button>
+      </div>
+      <div id="message" class="message"></div>
+    </section>
+
+    <section class="card hidden" id="reservationCard">
+      <h2>診療予約</h2>
+      <div class="status-row"><span class="status" id="reservationStatus"></span><span class="status warning hidden" id="requestPending"></span></div>
+      <dl class="summary" id="reservationSummary"></dl>
+      <div id="reservationNotice" class="notice" style="margin-top:14px"></div>
+
+      <div class="divider"></div>
+      <h3>予約日時の変更を希望する</h3>
+      <p>ここで入力した日時は確定ではありません。医院からの連絡をお待ちください。</p>
+      <div class="grid" style="margin-top:12px">
+        <div class="field"><label for="requestedDate">希望日</label><input class="input" id="requestedDate" type="date"></div>
+        <div class="field"><label for="requestedTime">希望時間</label><select class="select" id="requestedTime"></select></div>
+      </div>
+      <div class="field"><label for="changeNote">変更理由・希望</label><textarea class="textarea" id="changeNote"></textarea></div>
+      <div class="actions"><button class="btn btn-light" id="changeRequestButton" type="button">変更希望を送信</button></div>
+
+      <div class="divider"></div>
+      <h3>予約の取消を希望する</h3>
+      <div class="field"><label for="cancelReason">取消理由</label><textarea class="textarea" id="cancelReason"></textarea></div>
+      <div class="actions"><button class="btn btn-danger" id="cancelRequestButton" type="button">取消希望を送信</button></div>
+
+      <div class="divider"></div>
+      <div class="actions">
+        <a class="btn btn-primary" id="reservationCheckinLink" href="./checkin.html">医院に到着しました</a>
+      </div>
+    </section>
+
+    <section class="card hidden" id="urgentCard">
+      <h2>当日急患受付</h2>
+      <div class="status-row"><span class="status" id="urgentStatus"></span></div>
+      <dl class="summary" id="urgentSummary"></dl>
+      <div id="urgentNotice" class="notice" style="margin-top:14px"></div>
+      <div class="actions">
+        <button class="btn btn-danger" id="urgentCancelButton" type="button">急患受付を取り消す</button>
+        <a class="btn btn-secondary hidden" id="urgentCheckinLink" href="./checkin.html">医院に到着しました</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="./hybrid-common.js"></script>
+  <script>
+    const H = window.DPRO_DENTAL_HYBRID;
+    const $ = id => document.getElementById(id);
+    const state = {reservationToken:"",urgentToken:"",reservation:null,urgent:null};
+
+    function timeOptions() {
+      const rows = [`<option value="">指定なし</option>`];
+      for (let h=8; h<=20; h++) {
+        for (const m of [0,30]) {
+          if (h===20 && m===30) continue;
+          const t = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+          rows.push(`<option value="${t}">${t}</option>`);
+        }
+      }
+      return rows.join("");
+    }
+
+    function statusClass(status) {
+      if (["confirmed","come_now","come_at","arrived","waiting","in_treatment","payment_waiting","completed"].includes(status)) return "success";
+      if (["cancelled","no_show","unavailable"].includes(status)) return "danger";
+      return "warning";
+    }
+
+    function syncBackLink() {
+      const t = H.getParam("t");
+      $("backLink").href = H.pageUrl(H.CONFIG.PAGES.HUB,t?{t}:{});
+    }
+
+    async function lookupReservation(token) {
+      token = H.clean(token);
+      if (!token) return H.showMessage($("message"),"warning","予約確認用トークンがありません。");
+      H.clearMessage($("message"));
+      try {
+        const data = await H.hybridGet("/api/hybrid/reservations/lookup",{token});
+        state.reservationToken = token;
+        state.reservation = data.reservation;
+        H.saveToken("reservation",token,{
+          reservation_no:data.reservation.reservation_no,
+          patient_name:data.reservation.patient_name,
+          appointment_date:data.reservation.appointment_date,
+          start_time:data.reservation.start_time
+        });
+        renderReservation();
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "予約を確認できませんでした。");
+      }
+    }
+
+    function renderReservation() {
+      const r = state.reservation;
+      $("reservationCard").classList.remove("hidden");
+      $("urgentCard").classList.add("hidden");
+      $("reservationStatus").className = `status ${statusClass(r.status)}`;
+      $("reservationStatus").textContent = H.reservationLabels[r.status] || r.status;
+      const pending = [];
+      if (r.change_requested_at) pending.push("変更希望を医院確認中");
+      if (r.cancel_requested_at) pending.push("取消希望を医院確認中");
+      $("requestPending").classList.toggle("hidden",!pending.length);
+      $("requestPending").textContent = pending.join("・");
+      $("reservationSummary").innerHTML = `
+        <div><dt>予約番号</dt><dd>${H.escapeHtml(r.reservation_no || "")}</dd></div>
+        <div><dt>受診者</dt><dd>${H.escapeHtml(r.patient_name || "")}</dd></div>
+        <div><dt>診療内容</dt><dd>${H.escapeHtml(r.menu_name || "")}</dd></div>
+        <div><dt>担当</dt><dd>${H.escapeHtml(r.staff_name || "おまかせ")}</dd></div>
+        <div><dt>予約日</dt><dd>${H.escapeHtml(H.formatDate(r.appointment_date))}</dd></div>
+        <div><dt>時間</dt><dd>${H.escapeHtml(H.formatTime(r.start_time))}</dd></div>`;
+      let notice = "医院の確認後に予約が確定します。";
+      if (r.status === "confirmed") notice = "予約は確定しています。予約時間までにご来院ください。";
+      if (r.change_requested_at) notice = `変更希望を受け付けています。希望：${r.requested_date?H.formatDate(r.requested_date):"日付指定なし"} ${r.requested_time?H.formatTime(r.requested_time):""}`;
+      if (r.cancel_requested_at) notice = "取消希望を受け付けています。医院が確認するまでは、現在の予約枠を保持しています。";
+      $("reservationNotice").textContent = notice;
+      $("requestedDate").min = H.todayJST();
+      $("requestedDate").value = r.requested_date || r.appointment_date || "";
+      $("requestedTime").value = r.requested_time ? H.formatTime(r.requested_time) : "";
+      $("changeNote").value = r.change_request_note || "";
+      $("cancelReason").value = r.cancellation_reason || "";
+      const tokenParam = {reservation_token:state.reservationToken};
+      if (H.getParam("t")) tokenParam.t = H.getParam("t");
+      $("reservationCheckinLink").href = H.pageUrl(H.CONFIG.PAGES.CHECKIN,tokenParam);
+      const canEdit = !["completed","cancelled","no_show"].includes(r.status);
+      $("changeRequestButton").disabled = !canEdit;
+      $("cancelRequestButton").disabled = !canEdit;
+      const canCheckin = r.appointment_date === H.todayJST() && !["completed","cancelled","no_show"].includes(r.status);
+      $("reservationCheckinLink").classList.toggle("hidden",!canCheckin);
+      window.scrollTo({top:$("reservationCard").offsetTop-10,behavior:"smooth"});
+    }
+
+    async function changeRequest() {
+      if (!state.reservationToken) return;
+      const button = $("changeRequestButton");
+      button.disabled = true;
+      try {
+        const data = await H.hybridPost("/api/hybrid/reservations/change-request",{
+          token:state.reservationToken,
+          requested_date:$("requestedDate").value,
+          requested_time:$("requestedTime").value,
+          note:H.clean($("changeNote").value)
+        });
+        H.showMessage($("message"),"success",data.message);
+        state.reservation = data.reservation;
+        renderReservation();
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "変更希望を送信できませんでした。");
+      } finally { button.disabled = false; }
+    }
+
+    async function cancelRequest() {
+      if (!state.reservationToken) return;
+      if (!confirm("予約の取消希望を医院へ送信しますか？")) return;
+      const button = $("cancelRequestButton");
+      button.disabled = true;
+      try {
+        const data = await H.hybridPost("/api/hybrid/reservations/cancel-request",{
+          token:state.reservationToken,reason:H.clean($("cancelReason").value)
+        });
+        H.showMessage($("message"),"success",data.message);
+        state.reservation = data.reservation;
+        renderReservation();
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "取消希望を送信できませんでした。");
+      } finally { button.disabled = false; }
+    }
+
+    async function lookupUrgent(token) {
+      token = H.clean(token);
+      if (!token) return H.showMessage($("message"),"warning","急患受付確認用トークンがありません。");
+      H.clearMessage($("message"));
+      try {
+        const data = await H.hybridGet("/api/hybrid/urgent/lookup",{token});
+        state.urgentToken = token;
+        state.urgent = data.urgent_request;
+        H.saveToken("urgent",token,{
+          request_no:data.urgent_request.request_no,
+          patient_name:data.urgent_request.patient_name,
+          symptom_category:data.urgent_request.symptom_category
+        });
+        renderUrgent();
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "急患受付を確認できませんでした。");
+      }
+    }
+
+    function renderUrgent() {
+      const u = state.urgent;
+      $("urgentCard").classList.remove("hidden");
+      $("reservationCard").classList.add("hidden");
+      $("urgentStatus").className = `status ${statusClass(u.status)}`;
+      $("urgentStatus").textContent = H.urgentLabels[u.status] || u.status;
+      $("urgentSummary").innerHTML = `
+        <div><dt>受付番号</dt><dd>${H.escapeHtml(u.request_no || "")}</dd></div>
+        <div><dt>受診者</dt><dd>${H.escapeHtml(u.patient_name || "")}</dd></div>
+        <div><dt>症状</dt><dd>${H.escapeHtml(H.symptomLabels[u.symptom_category] || u.symptom_category)}</dd></div>
+        <div><dt>痛み</dt><dd>${u.pain_scale==null?"未入力":H.escapeHtml(String(u.pain_scale))+" / 10"}</dd></div>
+        <div><dt>来院可能時間</dt><dd>${H.escapeHtml(H.formatTime(u.available_from))} ～ ${H.escapeHtml(H.formatTime(u.available_to))}</dd></div>
+        <div><dt>医院指定時刻</dt><dd>${u.assigned_arrival_at?H.escapeHtml(new Date(u.assigned_arrival_at).toLocaleString("ja-JP")):"未指定"}</dd></div>`;
+      $("urgentNotice").textContent = u.customer_message || "医院が内容を確認後、来院時間の目安をご案内します。";
+      const canCancel = !["arrived","waiting","in_treatment","payment_waiting","completed","cancelled"].includes(u.status);
+      $("urgentCancelButton").disabled = !canCancel;
+      const canCheckin = ["come_now","come_at"].includes(u.status);
+      $("urgentCheckinLink").classList.toggle("hidden",!canCheckin);
+      const params = {urgent_token:state.urgentToken};
+      if (H.getParam("t")) params.t = H.getParam("t");
+      $("urgentCheckinLink").href = H.pageUrl(H.CONFIG.PAGES.CHECKIN,params);
+      window.scrollTo({top:$("urgentCard").offsetTop-10,behavior:"smooth"});
+    }
+
+    async function urgentCancel() {
+      if (!state.urgentToken || !confirm("当日急患受付を取り消しますか？")) return;
+      const button = $("urgentCancelButton");
+      button.disabled = true;
+      try {
+        const data = await H.hybridPost("/api/hybrid/urgent/cancel",{token:state.urgentToken});
+        H.showMessage($("message"),"success",data.message);
+        state.urgent = data.urgent_request; renderUrgent();
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "急患受付を取り消せませんでした。");
+      } finally { button.disabled = false; }
+    }
+
+    function initialLookup() {
+      const reservationToken = H.clean(H.getParam("reservation_token"));
+      const urgentToken = H.clean(H.getParam("urgent_token"));
+      const generic = H.clean(H.getParam("token"));
+      if (reservationToken) lookupReservation(reservationToken);
+      else if (urgentToken) lookupUrgent(urgentToken);
+      else if (generic) {
+        lookupReservation(generic).catch?.(()=>{});
+      }
+    }
+
+    $("requestedTime").innerHTML = timeOptions();
+    $("latestReservationButton").addEventListener("click",()=>lookupReservation(H.latestToken("reservation")));
+    $("latestUrgentButton").addEventListener("click",()=>lookupUrgent(H.latestToken("urgent")));
+    $("lookupReservationButton").addEventListener("click",()=>lookupReservation($("tokenInput").value));
+    $("lookupUrgentButton").addEventListener("click",()=>lookupUrgent($("tokenInput").value));
+    $("changeRequestButton").addEventListener("click",changeRequest);
+    $("cancelRequestButton").addEventListener("click",cancelRequest);
+    $("urgentCancelButton").addEventListener("click",urgentCancel);
+    document.addEventListener("DOMContentLoaded",()=>{syncBackLink();initialLookup();});
+  </script>
+</body>
+</html>

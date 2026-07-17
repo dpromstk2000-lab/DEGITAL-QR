@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DPRO歯科｜診療予約</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="./config.js"></script>
+  <script src="./hybrid-config.js"></script>
+  <link rel="stylesheet" href="./hybrid.css">
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <div class="brand"><div class="logo">D</div><div><strong>診療予約</strong><small>30分単位の予約受付</small></div></div>
+      <a class="pill" id="backLink" href="./hybrid.html">メニューへ戻る</a>
+    </div>
+
+    <section class="hero">
+      <div class="kicker">RESERVATION</div>
+      <h1>診療予約</h1>
+      <p>受診する方、診療内容、日時を順番に選択してください。予約は医院確認後に確定します。</p>
+    </section>
+
+    <form id="reservationForm">
+      <section class="card">
+        <div class="step-title"><div class="step-no">1</div><h2>受診する方</h2></div>
+        <div class="patient-tabs" id="patientTabs"></div>
+        <div id="manualFields" class="hidden" style="margin-top:16px">
+          <div class="grid">
+            <div class="field"><label class="required" for="patientName">お名前</label><input class="input" id="patientName" autocomplete="name"></div>
+            <div class="field"><label for="patientKana">フリガナ</label><input class="input" id="patientKana"></div>
+          </div>
+          <div class="field"><label class="required" for="phone">電話番号</label><input class="input" id="phone" type="tel" inputmode="tel" autocomplete="tel"></div>
+        </div>
+        <div id="selectedPatient" class="notice" style="margin-top:14px">読み込み中です。</div>
+      </section>
+
+      <section class="card">
+        <div class="step-title"><div class="step-no">2</div><h2>診療内容</h2></div>
+        <div class="choice-grid" id="menuChoices"></div>
+      </section>
+
+      <section class="card">
+        <div class="step-title"><div class="step-no">3</div><h2>担当者</h2></div>
+        <div class="field">
+          <label for="staffSelect">担当者の希望</label>
+          <select class="select" id="staffSelect"><option value="">おまかせ</option></select>
+          <div class="help">担当者を指定しない方が、選べる時間が多くなります。</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="step-title"><div class="step-no">4</div><h2>予約日時</h2></div>
+        <div class="field">
+          <label class="required" for="appointmentDate">予約日</label>
+          <input class="input" id="appointmentDate" type="date">
+        </div>
+        <div class="label">空いている時間</div>
+        <div class="slot-grid" id="slotChoices"><span class="help">診療内容と日付を選択してください。</span></div>
+        <input type="hidden" id="startTime">
+      </section>
+
+      <section class="card">
+        <div class="step-title"><div class="step-no">5</div><h2>ご希望・連絡事項</h2></div>
+        <div class="field">
+          <label for="customerNote">医院へ伝えたいこと</label>
+          <textarea class="textarea" id="customerNote" placeholder="症状、配慮してほしいこと、希望など"></textarea>
+        </div>
+        <div class="notice">送信後は「医院確認待ち」です。医院からの確認後に予約確定となります。</div>
+        <div id="message" class="message"></div>
+        <div class="actions">
+          <button class="btn btn-primary" id="submitButton" type="submit">この内容で予約を申し込む</button>
+          <a class="btn btn-light" id="cancelLink" href="./hybrid.html">戻る</a>
+        </div>
+      </section>
+    </form>
+
+    <section class="card hidden" id="completeCard">
+      <h2>予約を受け付けました</h2>
+      <div class="summary" id="completeSummary"></div>
+      <div class="actions">
+        <a class="btn btn-primary" id="statusLink" href="#">予約状況を確認</a>
+        <a class="btn btn-light" id="homeLink" href="./hybrid.html">メニューへ戻る</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="./hybrid-common.js"></script>
+  <script>
+    const H = window.DPRO_DENTAL_HYBRID;
+    const state = {
+      context:null, selectedToken:"", selectedCard:null,
+      settings:null, menus:[], staff:[], selectedMenuId:"", selectedTime:""
+    };
+    const $ = id => document.getElementById(id);
+
+    function syncLinks() {
+      const token = state.selectedToken !== "__manual__" ? state.selectedToken : "";
+      $("backLink").href = H.pageUrl(H.CONFIG.PAGES.HUB, token?{t:token}:{});
+      $("cancelLink").href = $("backLink").href;
+      $("homeLink").href = $("backLink").href;
+    }
+
+    function renderPatients() {
+      H.renderPatientSelector($("patientTabs"), state.context?.cards || [], state.selectedToken, selectPatient, {allowManual:true});
+      state.selectedCard = state.context?.cards.find(x => x.qr_token === state.selectedToken) || null;
+      $("manualFields").classList.toggle("hidden", state.selectedToken !== "__manual__");
+      if (state.selectedCard) {
+        $("selectedPatient").textContent = `${H.cardLabel(state.selectedCard)}：${state.selectedCard.patient_name}様 / ${state.selectedCard.member_no || "診察券番号未設定"}`;
+        $("patientName").value = state.selectedCard.patient_name || "";
+        $("patientKana").value = state.selectedCard.patient_name_kana || "";
+        $("phone").value = H.displayPhone(state.selectedCard.phone || state.selectedCard.guardian_phone || "");
+      } else {
+        $("selectedPatient").textContent = "初診・診察券なしとして、お名前と電話番号を入力してください。";
+      }
+      syncLinks();
+    }
+
+    function selectPatient(token) {
+      state.selectedToken = token;
+      const url = new URL(location.href);
+      if (token && token !== "__manual__") url.searchParams.set("t",token); else url.searchParams.delete("t");
+      history.replaceState({}, "", url);
+      renderPatients();
+    }
+
+    function renderMenus() {
+      $("menuChoices").innerHTML = state.menus.map(menu => `
+        <button type="button" class="choice ${menu.id===state.selectedMenuId?"active":""}" data-menu-id="${H.escapeHtml(menu.id)}">
+          ${H.escapeHtml(menu.menu_name)}
+          <small>${menu.duration_minutes}分 / ${H.escapeHtml(menu.public_description || "")}</small>
+        </button>`).join("");
+      $("menuChoices").querySelectorAll("[data-menu-id]").forEach(button => {
+        button.addEventListener("click", () => {
+          state.selectedMenuId = button.dataset.menuId;
+          state.selectedTime = "";
+          $("startTime").value = "";
+          renderMenus();
+          loadSlots();
+        });
+      });
+    }
+
+    function renderStaff() {
+      $("staffSelect").innerHTML = `<option value="">おまかせ</option>` +
+        state.staff.map(person => `<option value="${H.escapeHtml(person.id)}">${H.escapeHtml(person.staff_name)}（${H.escapeHtml(person.role)}）</option>`).join("");
+    }
+
+    async function loadSlots() {
+      const date = $("appointmentDate").value;
+      if (!state.selectedMenuId || !date) {
+        $("slotChoices").innerHTML = `<span class="help">診療内容と日付を選択してください。</span>`;
+        return;
+      }
+      $("slotChoices").innerHTML = `<span class="help">空き時間を確認しています。</span>`;
+      try {
+        const data = await H.hybridGet("/api/hybrid/public/slots", {
+          menu_id:state.selectedMenuId,
+          staff_id:$("staffSelect").value,
+          date
+        });
+        if (!data.slots?.length) {
+          $("slotChoices").innerHTML = `<span class="message show warning">${H.escapeHtml(data.reason || "空き枠がありません。")}</span>`;
+          return;
+        }
+        $("slotChoices").innerHTML = data.slots.map(slot => `
+          <button type="button" class="slot ${slot.time===state.selectedTime?"active":""}" data-time="${slot.time}">
+            ${slot.time}<br><small>残り${slot.remaining_capacity}</small>
+          </button>`).join("");
+        $("slotChoices").querySelectorAll("[data-time]").forEach(button => {
+          button.addEventListener("click", () => {
+            state.selectedTime = button.dataset.time;
+            $("startTime").value = state.selectedTime;
+            loadSlots();
+          });
+        });
+      } catch (error) {
+        $("slotChoices").innerHTML = `<span class="message show error">${H.escapeHtml(error.message)}</span>`;
+      }
+    }
+
+    async function submitReservation(event) {
+      event.preventDefault();
+      H.clearMessage($("message"));
+      const manual = state.selectedToken === "__manual__";
+      const patientName = manual ? H.clean($("patientName").value) : state.selectedCard?.patient_name;
+      const phone = manual ? H.clean($("phone").value) : (state.selectedCard?.phone || state.selectedCard?.guardian_phone || $("phone").value);
+      if (!patientName) return H.showMessage($("message"),"error","受診する方のお名前を入力してください。");
+      if (!H.normalizePhone(phone)) return H.showMessage($("message"),"error","電話番号を入力してください。");
+      if (!state.selectedMenuId) return H.showMessage($("message"),"error","診療内容を選択してください。");
+      if (!$("appointmentDate").value || !state.selectedTime) return H.showMessage($("message"),"error","予約日と時間を選択してください。");
+
+      const button = $("submitButton");
+      button.disabled = true;
+      button.textContent = "送信しています";
+      try {
+        const key = H.randomKey("reservation");
+        const result = await H.hybridPost("/api/hybrid/reservations/create", {
+          qr_token: manual ? "" : state.selectedCard?.qr_token,
+          patient_name:patientName,
+          patient_name_kana: manual ? H.clean($("patientKana").value) : state.selectedCard?.patient_name_kana,
+          phone,
+          line_user_id:state.context?.profile?.userId || "",
+          treatment_menu_id:state.selectedMenuId,
+          staff_id:$("staffSelect").value,
+          appointment_date:$("appointmentDate").value,
+          start_time:state.selectedTime,
+          customer_note:H.clean($("customerNote").value),
+          idempotency_key:key,
+          source:state.context?.profile?.userId ? "line" : "web"
+        });
+        const r = result.reservation;
+        H.saveToken("reservation", result.lookup_token, {
+          reservation_no:r.reservation_no, patient_name:r.patient_name,
+          appointment_date:r.appointment_date, start_time:r.start_time
+        });
+        $("reservationForm").classList.add("hidden");
+        $("completeCard").classList.remove("hidden");
+        $("completeSummary").innerHTML = `
+          <div><dt>受付番号</dt><dd>${H.escapeHtml(r.reservation_no)}</dd></div>
+          <div><dt>状態</dt><dd>${H.escapeHtml(H.reservationLabels[r.status] || r.status)}</dd></div>
+          <div><dt>受診者</dt><dd>${H.escapeHtml(r.patient_name)}</dd></div>
+          <div><dt>診療内容</dt><dd>${H.escapeHtml(r.menu_name || "")}</dd></div>
+          <div><dt>予約日</dt><dd>${H.escapeHtml(H.formatDate(r.appointment_date))}</dd></div>
+          <div><dt>時間</dt><dd>${H.escapeHtml(H.formatTime(r.start_time))}</dd></div>`;
+        $("statusLink").href = H.pageUrl(H.CONFIG.PAGES.STATUS, {
+          reservation_token:result.lookup_token,
+          t:manual ? "" : state.selectedCard?.qr_token
+        });
+        window.scrollTo({top:0,behavior:"smooth"});
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "予約を送信できませんでした。");
+      } finally {
+        button.disabled = false;
+        button.textContent = "この内容で予約を申し込む";
+      }
+    }
+
+    async function init() {
+      try {
+        const [settingsData, menusData, staffData, context] = await Promise.all([
+          H.hybridGet("/api/hybrid/public/settings"),
+          H.hybridGet("/api/hybrid/public/menus"),
+          H.hybridGet("/api/hybrid/public/staff"),
+          H.loadFamilyContext().catch(() => ({cards:[],profile:null,selectedToken:""}))
+        ]);
+        state.settings = settingsData.settings || {};
+        state.menus = menusData.menus || [];
+        state.staff = staffData.staff || [];
+        state.context = context;
+        state.selectedToken = context.selectedToken || "__manual__";
+        if (!state.context.cards.length) state.selectedToken = "__manual__";
+        $("appointmentDate").min = H.todayJST();
+        $("appointmentDate").max = H.addDays(H.todayJST(), Number(state.settings.booking_open_days || 90));
+        $("appointmentDate").value = state.settings.allow_same_day_reservation === false ? H.addDays(H.todayJST(),1) : H.todayJST();
+        renderPatients(); renderMenus(); renderStaff(); loadSlots();
+      } catch (error) {
+        H.showMessage($("message"),"error",error.message || "予約画面を準備できませんでした。");
+      }
+    }
+
+    $("appointmentDate").addEventListener("change", () => {state.selectedTime="";loadSlots();});
+    $("staffSelect").addEventListener("change", () => {state.selectedTime="";loadSlots();});
+    $("reservationForm").addEventListener("submit", submitReservation);
+    document.addEventListener("DOMContentLoaded",init);
+  </script>
+</body>
+</html>
