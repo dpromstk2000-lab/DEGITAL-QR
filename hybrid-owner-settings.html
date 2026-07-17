@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>DPRO歯科｜医院設定</title>
+  <link rel="stylesheet" href="hybrid-owner.css">
+  <script src="config.js"></script>
+  <script src="hybrid-config.js"></script>
+  <script src="hybrid-owner-common.js"></script>
+</head>
+<body>
+<section id="loginView" class="owner-login">
+  <div class="owner-logo">歯</div>
+  <h1>医院設定</h1>
+  <p>医院情報、予約設定、スタッフ、診療台、診療メニュー、診療時間を管理します。</p>
+  <div id="loginMessage" class="owner-message"></div>
+  <div class="owner-field"><label for="adminCode">管理コード</label><div class="owner-row"><input id="adminCode" class="owner-input" type="password" inputmode="numeric"><button id="clearCode" class="owner-btn light small" type="button">削除</button></div></div>
+  <button id="loginButton" class="owner-btn primary" type="button">設定画面を開く</button>
+</section>
+
+<main id="appView" class="owner-page hidden">
+  <header class="owner-top">
+    <div class="owner-brand"><div class="owner-logo">歯</div><div><strong id="clinicName">DPRO歯科</strong><small>医院設定・マスタ管理</small></div></div>
+    <div class="owner-actions">
+      <button id="reloadButton" class="owner-btn light keep" type="button">再読込</button>
+      <a href="hybrid-system-check.html" id="checkLink" class="owner-btn secondary">system-check</a>
+      <a href="hybrid-owner.html" id="ownerLink" class="owner-btn primary">管理画面</a>
+      <button id="logoutButton" class="owner-btn light keep" type="button">管理コード削除</button>
+    </div>
+  </header>
+  <div id="mainMessage" class="owner-message"></div>
+
+  <div class="owner-settings-layout">
+    <aside class="owner-settings-nav" aria-label="設定メニュー">
+      <button class="owner-settings-nav-btn active" data-panel="basic">医院・予約設定</button>
+      <button class="owner-settings-nav-btn" data-panel="staff">スタッフ</button>
+      <button class="owner-settings-nav-btn" data-panel="resources">診療台・設備</button>
+      <button class="owner-settings-nav-btn" data-panel="menus">診療メニュー</button>
+      <button class="owner-settings-nav-btn" data-panel="hours">診療時間</button>
+    </aside>
+
+    <section class="owner-settings-content">
+      <section id="panel-basic" class="owner-settings-panel">
+        <form id="basicForm" class="owner-panel">
+          <h2>医院・予約設定</h2>
+          <div class="owner-form-grid">
+            <div class="owner-field"><label>医院名</label><input id="clinic_name" class="owner-input" required></div>
+            <div class="owner-field"><label>電話番号</label><input id="phone" class="owner-input" inputmode="tel"></div>
+            <div class="owner-field owner-full"><label>住所</label><input id="address" class="owner-input"></div>
+            <div class="owner-field owner-full"><label>診療時間の案内</label><input id="business_hours_note" class="owner-input"></div>
+            <div class="owner-field owner-full"><label>休診日の案内</label><input id="closed_days_note" class="owner-input"></div>
+          </div>
+          <h3>予約</h3>
+          <div class="owner-form-grid three">
+            <label class="owner-check"><input id="reservation_enabled" type="checkbox"> LINE予約を有効</label>
+            <label class="owner-check"><input id="urgent_enabled" type="checkbox"> 当日急患受付を有効</label>
+            <label class="owner-check"><input id="checkin_enabled" type="checkbox"> 来院チェックインを有効</label>
+            <label class="owner-check"><input id="allow_same_day_reservation" type="checkbox"> 当日予約を許可</label>
+            <label class="owner-check"><input id="queue_public_enabled" type="checkbox"> 待ち状況を患者へ表示</label>
+            <label class="owner-check"><input id="queue_show_people_ahead" type="checkbox"> 前の人数を表示</label>
+            <label class="owner-check"><input id="queue_show_estimated_wait" type="checkbox"> 待ち時間目安を表示</label>
+          </div>
+          <div class="owner-form-grid three">
+            <div class="owner-field"><label>予約受付日数</label><input id="booking_open_days" class="owner-input" type="number" min="1" max="365"></div>
+            <div class="owner-field"><label>予約締切（時間前）</label><input id="booking_min_hours" class="owner-input" type="number" min="0" max="168"></div>
+            <div class="owner-field"><label>取消希望締切（時間前）</label><input id="cancellation_limit_hours" class="owner-input" type="number" min="0" max="168"></div>
+            <div class="owner-field"><label>同時間帯の上限件数</label><input id="max_parallel_reservations" class="owner-input" type="number" min="1" max="30"></div>
+            <div class="owner-field"><label>急患受付状態</label><select id="urgent_acceptance_status" class="owner-select"><option value="accepting">受付中</option><option value="busy">混雑中</option><option value="paused">一時停止</option><option value="closed">終了</option></select></div>
+            <div class="owner-field"><label>急患の1日上限</label><input id="urgent_daily_limit" class="owner-input" type="number" min="0" max="200"></div>
+            <div class="owner-field"><label>1人あたり待ち時間目安（分）</label><input id="average_minutes_per_patient" class="owner-input" type="number" min="5" max="120"></div>
+          </div>
+          <div class="owner-field"><label>患者向け共通案内</label><textarea id="public_notice" class="owner-textarea"></textarea></div>
+          <div class="owner-field"><label>急患受付中の案内</label><textarea id="urgent_public_message" class="owner-textarea"></textarea></div>
+          <div class="owner-field"><label>急患受付終了時の案内</label><textarea id="urgent_closed_message" class="owner-textarea"></textarea></div>
+          <div class="owner-field"><label>医院内部メモ</label><textarea id="internal_note" class="owner-textarea"></textarea></div>
+          <button class="owner-btn primary" type="submit">医院設定を保存</button>
+        </form>
+      </section>
+
+      <section id="panel-staff" class="owner-settings-panel hidden">
+        <div class="owner-grid">
+          <div class="owner-panel"><h2>スタッフ一覧</h2><div id="staffList"></div></div>
+          <form id="staffForm" class="owner-panel"><h2>スタッフ編集</h2>
+            <div class="owner-field"><label>スタッフコード</label><input id="staff_code" class="owner-input" required placeholder="dentist_01"></div>
+            <div class="owner-field"><label>氏名</label><input id="staff_name" class="owner-input" required></div>
+            <div class="owner-field"><label>役割</label><select id="staff_role" class="owner-select"><option value="dentist">歯科医師</option><option value="hygienist">歯科衛生士</option><option value="assistant">歯科助手</option><option value="reception">受付</option><option value="other">その他</option></select></div>
+            <div class="owner-field"><label>表示順</label><input id="staff_sort_order" class="owner-input" type="number" value="100"></div>
+            <label class="owner-check"><input id="staff_is_bookable" type="checkbox"> 予約担当として選択可能</label>
+            <label class="owner-check"><input id="staff_public_display" type="checkbox"> LINE予約に氏名を表示</label>
+            <label class="owner-check"><input id="staff_is_active" type="checkbox" checked> 使用中</label>
+            <div class="owner-field"><label>内部メモ</label><textarea id="staff_internal_note" class="owner-textarea"></textarea></div>
+            <div class="owner-row"><button class="owner-btn primary" type="submit">スタッフを保存</button><button id="staffReset" class="owner-btn light" type="button">新規入力</button></div>
+          </form>
+        </div>
+      </section>
+
+      <section id="panel-resources" class="owner-settings-panel hidden">
+        <div class="owner-grid">
+          <div class="owner-panel"><h2>診療台・設備一覧</h2><div id="resourceList"></div></div>
+          <form id="resourceForm" class="owner-panel"><h2>診療台・設備編集</h2>
+            <div class="owner-field"><label>設備コード</label><input id="resource_code" class="owner-input" required placeholder="chair_01"></div>
+            <div class="owner-field"><label>名称</label><input id="resource_name" class="owner-input" required></div>
+            <div class="owner-field"><label>種類</label><select id="resource_type" class="owner-select"><option value="chair">診療台</option><option value="xray">レントゲン</option><option value="consultation_room">相談室</option><option value="surgery_room">手術室</option><option value="other">その他</option></select></div>
+            <div class="owner-field"><label>表示順</label><input id="resource_sort_order" class="owner-input" type="number" value="100"></div>
+            <label class="owner-check"><input id="resource_is_active" type="checkbox" checked> 使用中</label>
+            <div class="owner-field"><label>内部メモ</label><textarea id="resource_internal_note" class="owner-textarea"></textarea></div>
+            <div class="owner-row"><button class="owner-btn primary" type="submit">設備を保存</button><button id="resourceReset" class="owner-btn light" type="button">新規入力</button></div>
+          </form>
+        </div>
+      </section>
+
+      <section id="panel-menus" class="owner-settings-panel hidden">
+        <div class="owner-grid">
+          <div class="owner-panel"><h2>診療メニュー一覧</h2><div id="menuList"></div></div>
+          <form id="menuForm" class="owner-panel"><h2>診療メニュー編集</h2>
+            <div class="owner-field"><label>メニューコード</label><input id="menu_code" class="owner-input" required placeholder="checkup"></div>
+            <div class="owner-field"><label>メニュー名</label><input id="menu_name" class="owner-input" required></div>
+            <div class="owner-field"><label>分類</label><select id="menu_category" class="owner-select"><option value="first_visit">初診</option><option value="checkup">定期検診</option><option value="cleaning">クリーニング</option><option value="treatment">治療</option><option value="pediatric">小児</option><option value="orthodontic">矯正</option><option value="prosthetic">補綴</option><option value="surgery">外科</option><option value="consultation">相談</option><option value="other">その他</option></select></div>
+            <div class="owner-field"><label>所要時間</label><select id="duration_minutes" class="owner-select"><option value="30">30分</option><option value="60">60分</option><option value="90">90分</option><option value="120">120分</option><option value="150">150分</option><option value="180">180分</option></select></div>
+            <div class="owner-field"><label>表示順</label><input id="menu_sort_order" class="owner-input" type="number" value="100"></div>
+            <label class="owner-check"><input id="public_booking_enabled" type="checkbox" checked> LINE予約に表示</label>
+            <label class="owner-check"><input id="phone_booking_enabled" type="checkbox" checked> 電話・窓口予約で使用</label>
+            <label class="owner-check"><input id="first_visit_enabled" type="checkbox" checked> 初診で利用可能</label>
+            <label class="owner-check"><input id="returning_visit_enabled" type="checkbox" checked> 再診で利用可能</label>
+            <label class="owner-check"><input id="requires_dentist" type="checkbox" checked> 歯科医師が必要</label>
+            <label class="owner-check"><input id="requires_hygienist" type="checkbox"> 歯科衛生士が必要</label>
+            <label class="owner-check"><input id="requires_chair" type="checkbox" checked> 診療台が必要</label>
+            <label class="owner-check"><input id="menu_is_active" type="checkbox" checked> 使用中</label>
+            <div class="owner-field"><label>患者向け説明</label><textarea id="public_description" class="owner-textarea"></textarea></div>
+            <div class="owner-field"><label>スタッフ向けメモ</label><textarea id="menu_staff_note" class="owner-textarea"></textarea></div>
+            <div class="owner-row"><button class="owner-btn primary" type="submit">メニューを保存</button><button id="menuReset" class="owner-btn light" type="button">新規入力</button></div>
+          </form>
+        </div>
+      </section>
+
+      <section id="panel-hours" class="owner-settings-panel hidden">
+        <form id="hoursForm" class="owner-panel"><h2>曜日別診療時間</h2><p class="owner-meta">予約枠は必ず30分単位で作成されます。昼休みがある場合は第1・第2診療時間に分けてください。</p><div id="hoursList" class="owner-hours-list"></div><button class="owner-btn primary" type="submit">診療時間を一括保存</button></form>
+      </section>
+    </section>
+  </div>
+  <footer class="owner-auto">DPRO DENTAL-HYBRID-4 / 設定変更は操作履歴へ記録されます。</footer>
+</main>
+<script src="hybrid-owner-settings.js"></script>
+</body>
+</html>

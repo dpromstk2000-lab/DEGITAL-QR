@@ -96,5 +96,5 @@
   $("walkInForm").addEventListener("submit",e=>{e.preventDefault();act("/api/hybrid/owner/queue/walk-in",{patient_id:state.selectedPatient?.id||"",patient_name:$("walkInName").value,priority_score:Number($("walkInPriority").value),staff_note:$("walkInNote").value},"窓口受付を登録しました。")});
 
   boardDate.value=state.date;$("bookingDate").value=state.date;$("bookingDate").min=O.today();
-  const demo=O.getParam("demo")==="1";$("ipadLink").href=demo?"hybrid-owner-ipad.html?demo=1":"hybrid-owner-ipad.html";if(demo&&!O.getAdminCode())O.setAdminCode("1234");if(O.getAdminCode()){adminCode.value=O.getAdminCode();login()}else if(demo){adminCode.value="1234"}
+  const demo=O.getParam("demo")==="1";$("ipadLink").href=demo?"hybrid-owner-ipad.html?demo=1":"hybrid-owner-ipad.html";$("settingsLink").href=demo?"hybrid-owner-settings.html?demo=1":"hybrid-owner-settings.html";$("systemCheckLink").href=demo?"hybrid-system-check.html?demo=1":"hybrid-system-check.html";if(demo&&!O.getAdminCode())O.setAdminCode("1234");if(O.getAdminCode()){adminCode.value=O.getAdminCode();login()}else if(demo){adminCode.value="1234"}
 })();
