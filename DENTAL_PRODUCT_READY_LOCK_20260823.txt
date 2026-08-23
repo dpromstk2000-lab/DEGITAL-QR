@@ -1,0 +1,34 @@
+DPRO PRODUCT READY #13 DENTAL — RELEASE HEAD LOCK MARKER
+Version: V1.0
+Date: 2026-08-23
+
+PURPOSE
+Create the NEW GitHub HEAD required by CENTRAL_REMEDIATION_PLAN Priority D without changing DENTAL runtime behavior.
+
+SCOPE
+- Product: #13 DENTAL only
+- Repository: dpromstk2000-lab/DEGITAL-QR
+- STANDARD: DPRO PRODUCT READY STANDARD V1.0 (UNCHANGED)
+- Cross-product rollout: PROHIBITED
+
+PREVIOUS SOURCE HEAD
+5bfaef1445112e469acb146ec584c88340aba87c
+
+REMEDIATION RELEASE
+DENTAL-PR-20260823-R1
+Worker: DENTAL-HYBRID-4-R2-TEST-RESIDUE-CLEANUP-20260717
+Database: DENTAL-DB-PR-20260823-R1
+Frontend runtime version: DENTAL-HYBRID-2-PATIENT-UI-20260717
+Adapter: DPRO-CONTROL-ADAPTER-1.0-DENTAL-20260823-R1
+
+VERIFIED BEFORE THIS HEAD LOCK
+- Fresh LIVE Worker health: PASS
+- Worker database.ok: PASS
+- versionsAligned: true
+- Staff signed session / role permissions / revoke / unauthenticated denial: PASS
+- ownerMutationAuthority: false
+- actor_type=staff audit write/readback: PASS
+- DB security regression: PASS
+- 42-item re-audit before new HEAD: 39 PASS / 2 N/A / 1 REVIEW (READY-004 only)
+
+This marker intentionally contains no secret, Service Role Key, raw admin token, patient data, or customer data.
