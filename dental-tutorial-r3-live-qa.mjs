@@ -28,8 +28,18 @@ async function metrics(page){return await page.evaluate(()=>{
   return {parent:{innerWidth:innerWidth,documentElementScrollWidth:document.documentElement.scrollWidth,bodyScrollWidth:document.body.scrollWidth},product};
 });}
 async function cardCheck(page){return await page.evaluate(()=>{const c=document.getElementById('dpro-card').getBoundingClientRect();const h=document.getElementById('dpro-highlight').getBoundingClientRect();const hd=getComputedStyle(document.getElementById('dpro-highlight'));return {card:{left:c.left,top:c.top,right:c.right,bottom:c.bottom,width:c.width,height:c.height,inViewport:c.left>=0&&c.top>=0&&c.right<=innerWidth+0.5&&c.bottom<=innerHeight+0.5},highlight:{display:hd.display,left:h.left,top:h.top,right:h.right,bottom:h.bottom,width:h.width,height:h.height,inViewport:hd.display==='none'||(h.left>=0&&h.top>=0&&h.right<=innerWidth+0.5&&h.bottom<=innerHeight+0.5)},activeElement:document.activeElement?.id||'',focusOutline:getComputedStyle(document.activeElement).outlineStyle,resolved:window.DPRO_TUTORIAL_QA.resolvedSelector()};});}
-async function startGuide(page){await page.click('#dpro-launcher');await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA.getState().active===true);await page.waitForTimeout(350);}
-async function waitIndex(page,index){await page.waitForFunction(i=>window.DPRO_TUTORIAL_QA.getState().index===i,index,{timeout:30000});await page.waitForTimeout(350);}
+async function waitIndex(page,index){
+  await page.waitForFunction(i=>{
+    const qa=window.DPRO_TUTORIAL_QA,f=document.getElementById('dpro-product-frame');
+    if(!qa||qa.getState().index!==i||!qa.getState().active||!f?.contentWindow||!f?.contentDocument)return false;
+    const expected=new URL(qa.steps[i].route,location.href);const current=new URL(f.contentWindow.location.href);
+    return (current.pathname.split('/').pop()+current.search)===(expected.pathname.split('/').pop()+expected.search)&&f.contentDocument.readyState==='complete'&&!document.getElementById('dpro-card').hidden&&!!document.getElementById('dpro-next');
+  },index,{timeout:30000});
+  await page.waitForFunction(()=>{const qa=window.DPRO_TUTORIAL_QA;return !!qa?.refreshTarget()?.selector;},{timeout:12000,polling:200});
+  await page.waitForFunction(()=>document.activeElement?.id==='dpro-next',{timeout:5000});
+  await page.waitForTimeout(200);
+}
+async function startGuide(page){await page.focus('#dpro-launcher');await page.keyboard.press('Enter');await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA.getState().active===true);await waitIndex(page,0);}
 
 for(const vp of viewports){
   const context=await browser.newContext({viewport:{width:vp.width,height:vp.height}});const page=await context.newPage();const bucket={name:vp.name,width:vp.width,height:vp.height,pageerrors:[],consoleErrors:[],businessWrites:[],steps:[]};attachTelemetry(page,bucket);
@@ -52,7 +62,7 @@ for(const vp of viewports){
     await boot(page);await startGuide(page);
     for(let i=0;i<10;i++){
       await waitIndex(page,i);const r=await cardCheck(page);const route=await page.evaluate(()=>{const f=document.getElementById('dpro-product-frame');return f.contentWindow.location.pathname.split('/').pop()+f.contentWindow.location.search;});rows.push({step:i+1,resolved:r.resolved,focus:r.activeElement,route,highlight:r.highlight});
-      if(i===1){await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA?.getState().index===1&&window.DPRO_TUTORIAL_QA.getState().active===true,{timeout:30000});await page.waitForTimeout(350);}
+      if(i===1){await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA?.getState().index===1&&window.DPRO_TUTORIAL_QA.getState().active===true,{timeout:30000});await waitIndex(page,1);}
       await page.keyboard.press('Enter');
     }
     await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA.getState().status==='completed',{timeout:10000});
