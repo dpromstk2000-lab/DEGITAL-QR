@@ -12,7 +12,7 @@ const STEPS=[
  {step:7,title:'当日急患受付の安全注意',route:'urgent.html?t=demo-dental-patient-001',primary:'.danger-notice',fallback:['#selectedPatient','#symptomChoices'],copy:'当日急患受付は、来院前に症状を医院へ共有する入口です。',safe:'診断・救急判定ではありません。症状入力や急患申込を自動実行しません。'},
  {step:8,title:'家族のデジタル診察券',route:'member.html?t=demo-dental-patient-001',primary:'#familyPanel',fallback:['#patientName','#memberNo','.member-card'],copy:'家族の診察券を1つのLINE導線で切り替える画面を確認します。',safe:'LINE連携・ログイン・家族紐付けは自動実行しません。'},
  {step:9,title:'受付で見せるQR',route:'member.html?t=demo-dental-patient-001',primary:'#qrImage',fallback:['.qr-card','#memberNo'],copy:'来院時に受付で提示するデジタル診察券QRの位置を確認します。',safe:'QR読取・来院チェックイン・待ち列登録は行いません。'},
- {step:10,title:'医院側の受付運用を知る',route:'owner.html',primary:'.sales-guide',fallback:['.owner-left-brand','#ownerLeftApp','#adminCodeInput','.summary-grid','.top-bar'],copy:'最後に、医院側の受付運用を説明する領域を確認します。',safe:'管理コードは推測・自動入力しません。認証が必要な情報は説明だけで完了します。'}
+ {step:10,title:'医院側の受付運用を知る',route:'owner.html',primary:'.sales-guide',fallback:['.owner-left-brand','#ownerLeftApp','#adminCodeInput','.summary-grid','.top-bar','main.page'],copy:'最後に、医院側の受付運用を説明する領域を確認します。',safe:'管理コードは推測・自動入力しません。認証が必要な情報は説明だけで完了します。'}
 ];
 const el={frame:document.getElementById('dpro-product-frame'),highlight:document.getElementById('dpro-highlight'),launcher:document.getElementById('dpro-launcher'),card:document.getElementById('dpro-card'),body:document.getElementById('dpro-card-body'),handle:document.getElementById('dpro-drag-handle'),badge:document.getElementById('dpro-step-badge'),live:document.getElementById('dpro-live')};
 const defaultState=()=>({version:'1.1',index:0,status:'new',active:false,card:null,updatedAt:Date.now()});
