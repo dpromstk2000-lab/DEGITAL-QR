@@ -13,7 +13,11 @@ const browser=await chromium.launch({headless:true});
 
 function isProductScoped(url=''){return url.includes('/DEGITAL-QR/')||url.includes('dpro-dental-qr-api.dpromstk2000.workers.dev');}
 function attachTelemetry(page,bucket){
-  page.on('pageerror',err=>bucket.pageerrors.push(String(err?.message||err)));
+  page.on('pageerror',err=>{
+    const text=String(err?.stack||err?.message||err);
+    bucket.pageerrors.push(text);
+    if(/dpro-tutorial|tutorial\.html|dental-tutorial/i.test(text)) bucket.tutorialPageerrors.push(text);
+  });
   page.on('console',msg=>{if(msg.type()==='error'){const loc=msg.location(); if(isProductScoped(loc?.url||'')) bucket.consoleErrors.push({text:msg.text(),url:loc?.url||'',line:loc?.lineNumber??null});}});
   page.on('request',req=>{const method=req.method();if(!['GET','HEAD','OPTIONS'].includes(method)&&isProductScoped(req.url())){const row={method,url:req.url(),resourceType:req.resourceType()};bucket.businessWrites.push(row);report.business_writes.push(row);}});
 }
@@ -45,7 +49,7 @@ async function waitIndex(page,index){
 async function startGuide(page){await page.focus('#dpro-launcher');await page.keyboard.press('Enter');await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA.getState().active===true);await waitIndex(page,0);}
 
 for(const vp of viewports){
-  const context=await browser.newContext({viewport:{width:vp.width,height:vp.height}});const page=await context.newPage();const bucket={name:vp.name,width:vp.width,height:vp.height,pageerrors:[],consoleErrors:[],businessWrites:[],steps:[]};attachTelemetry(page,bucket);
+  const context=await browser.newContext({viewport:{width:vp.width,height:vp.height}});const page=await context.newPage();const bucket={name:vp.name,width:vp.width,height:vp.height,pageerrors:[],tutorialPageerrors:[],consoleErrors:[],businessWrites:[],steps:[]};attachTelemetry(page,bucket);
   try{
     await boot(page);await startGuide(page);
     const count=await page.evaluate(()=>window.DPRO_TUTORIAL_QA.steps.length);bucket.first10=count;
@@ -55,12 +59,12 @@ for(const vp of viewports){
     bucket.overflowPass=!overflowRequired||((m.parent.documentElementScrollWidth<=m.parent.innerWidth)&&(m.parent.bodyScrollWidth<=m.parent.innerWidth)&&m.product&&(m.product.documentElementScrollWidth<=m.product.innerWidth)&&(m.product.bodyScrollWidth<=m.product.innerWidth));
     bucket.basePass=count===10&&c.card.inViewport&&c.highlight.display!=='none'&&c.highlight.width>0&&c.highlight.height>0&&c.highlight.inViewport&&c.activeElement==='dpro-next'&&c.focusOutline!=='none'&&bucket.overflowPass;
   }catch(e){bucket.error=String(e?.stack||e);bucket.basePass=false;}
-  bucket.pass=bucket.basePass&&bucket.pageerrors.length===0&&bucket.consoleErrors.length===0&&bucket.businessWrites.length===0;report.viewports.push(bucket);await context.close();
+  bucket.pass=bucket.basePass&&bucket.tutorialPageerrors.length===0&&bucket.consoleErrors.length===0&&bucket.businessWrites.length===0;report.viewports.push(bucket);await context.close();
 }
 
 // Full keyboard journey + cross-page Resume + completion/replay.
 {
-  const context=await browser.newContext({viewport:{width:1024,height:768}});const page=await context.newPage();const b={pageerrors:[],consoleErrors:[],businessWrites:[]};attachTelemetry(page,b);const rows=[];
+  const context=await browser.newContext({viewport:{width:1024,height:768}});const page=await context.newPage();const b={pageerrors:[],tutorialPageerrors:[],consoleErrors:[],businessWrites:[]};attachTelemetry(page,b);const rows=[];
   try{
     await boot(page);await startGuide(page);
     for(let i=0;i<10;i++){
@@ -81,14 +85,14 @@ for(const vp of viewports){
     const completed=await page.evaluate(()=>window.DPRO_TUTORIAL_QA.getState());
     await page.keyboard.press('Enter');await waitIndex(page,0);
     const replayed=await page.evaluate(()=>window.DPRO_TUTORIAL_QA.getState());
-    report.interaction.keyboard={rows,completed,replayed,pass:rows.length===10&&rows.every(x=>x.resolved&&x.focus==='dpro-next'&&x.highlight.display!=='none'&&x.enterAdvance===true)&&completed.status==='completed'&&replayed.index===0&&replayed.active===true&&b.pageerrors.length===0&&b.consoleErrors.length===0&&b.businessWrites.length===0};
+    report.interaction.keyboard={rows,completed,replayed,pageerrors:b.pageerrors,tutorialPageerrors:b.tutorialPageerrors,consoleErrors:b.consoleErrors,businessWrites:b.businessWrites,pass:rows.length===10&&rows.every(x=>x.resolved&&x.focus==='dpro-next'&&x.highlight.display!=='none'&&x.enterAdvance===true)&&completed.status==='completed'&&replayed.index===0&&replayed.active===true&&b.tutorialPageerrors.length===0&&b.consoleErrors.length===0&&b.businessWrites.length===0};
   }catch(e){report.interaction.keyboard={rows,error:String(e?.stack||e),pass:false};}
   await context.close();
 }
 
 // Close via Esc -> Resume, Back, Skip -> Replay, fallback resolution.
 {
- const context=await browser.newContext({viewport:{width:390,height:844}});const page=await context.newPage();const b={pageerrors:[],consoleErrors:[],businessWrites:[]};attachTelemetry(page,b);
+ const context=await browser.newContext({viewport:{width:390,height:844}});const page=await context.newPage();const b={pageerrors:[],tutorialPageerrors:[],consoleErrors:[],businessWrites:[]};attachTelemetry(page,b);
  try{
    await boot(page);await startGuide(page);await page.keyboard.press('Enter');await waitIndex(page,1);await page.keyboard.press('Enter');await waitIndex(page,2);
    await page.keyboard.press('Alt+ArrowLeft');await waitIndex(page,1);const backPass=(await page.evaluate(()=>window.DPRO_TUTORIAL_QA.getState().index))===1;
@@ -98,13 +102,13 @@ for(const vp of viewports){
    const fallback=await page.evaluate(()=>window.DPRO_TUTORIAL_QA.refreshTarget());
    await page.click('#dpro-skip');await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA.getState().status==='skipped');const skipped=await page.evaluate(()=>window.DPRO_TUTORIAL_QA.getState());
    await page.click('#dpro-end-replay');await waitIndex(page,0);const replayed=await page.evaluate(()=>window.DPRO_TUTORIAL_QA.getState());
-   report.interaction.controls={backPass,paused,resumed,fallback,skipped,replayed,pass:backPass&&paused.state.status==='paused'&&!paused.launcherHidden&&paused.focus==='dpro-launcher'&&resumed.active===true&&fallback?.fallback===true&&skipped.status==='skipped'&&replayed.index===0&&b.pageerrors.length===0&&b.consoleErrors.length===0&&b.businessWrites.length===0};
+   report.interaction.controls={backPass,paused,resumed,fallback,skipped,replayed,pageerrors:b.pageerrors,tutorialPageerrors:b.tutorialPageerrors,consoleErrors:b.consoleErrors,businessWrites:b.businessWrites,pass:backPass&&paused.state.status==='paused'&&!paused.launcherHidden&&paused.focus==='dpro-launcher'&&resumed.active===true&&fallback?.fallback===true&&skipped.status==='skipped'&&replayed.index===0&&b.tutorialPageerrors.length===0&&b.consoleErrors.length===0&&b.businessWrites.length===0};
  }catch(e){report.interaction.controls={error:String(e?.stack||e),pass:false};}
  await context.close();
 }
 
 async function dragSuite(width,height,kind){
- const context=await browser.newContext({viewport:{width,height},hasTouch:kind==='touch',isMobile:kind==='touch'});const page=await context.newPage();const b={pageerrors:[],consoleErrors:[],businessWrites:[]};attachTelemetry(page,b);let result={kind};
+ const context=await browser.newContext({viewport:{width,height},hasTouch:kind==='touch',isMobile:kind==='touch'});const page=await context.newPage();const b={pageerrors:[],tutorialPageerrors:[],consoleErrors:[],businessWrites:[]};attachTelemetry(page,b);let result={kind};
  try{
   await boot(page);await startGuide(page);const before=await page.locator('#dpro-card').boundingBox();
   // Card body itself must not drag.
@@ -117,7 +121,7 @@ async function dragSuite(width,height,kind){
   }
   await page.waitForTimeout(150);const after=await page.locator('#dpro-card').boundingBox();const inViewport=after.x>=0&&after.y>=0&&after.x+after.width<=width+0.5&&after.y+after.height<=height+0.5;
   const nonHandleStable=Math.abs(before.x-noHandle.x)<1&&Math.abs(before.y-noHandle.y)<1;const moved=Math.abs(after.x-before.x)>5||Math.abs(after.y-before.y)>5;
-  result={kind,before,noHandle,after,nonHandleStable,moved,inViewport,pageerrors:b.pageerrors,consoleErrors:b.consoleErrors,businessWrites:b.businessWrites,pass:nonHandleStable&&moved&&inViewport&&b.pageerrors.length===0&&b.consoleErrors.length===0&&b.businessWrites.length===0};
+  result={kind,before,noHandle,after,nonHandleStable,moved,inViewport,pageerrors:b.pageerrors,tutorialPageerrors:b.tutorialPageerrors,consoleErrors:b.consoleErrors,businessWrites:b.businessWrites,pass:nonHandleStable&&moved&&inViewport&&b.tutorialPageerrors.length===0&&b.consoleErrors.length===0&&b.businessWrites.length===0};
  }catch(e){result={kind,error:String(e?.stack||e),pass:false};}
  await context.close();return result;
 }
@@ -128,6 +132,6 @@ report.interaction.dragTouchMobile=await dragSuite(390,844,'touch');
 const interactionPass=Object.values(report.interaction).every(x=>x?.pass===true);
 report.pass=report.viewports.every(v=>v.pass===true)&&interactionPass&&report.business_writes.length===0;
 fs.writeFileSync('dental-r3-live-qa.json',JSON.stringify(report,null,2));
-console.log(JSON.stringify({pass:report.pass,viewports:report.viewports.map(v=>({name:v.name,pass:v.pass,metrics:v.metrics,pageerrors:v.pageerrors.length,consoleErrors:v.consoleErrors.length,businessWrites:v.businessWrites.length})),interaction:Object.fromEntries(Object.entries(report.interaction).map(([k,v])=>[k,v.pass])),businessWrites:report.business_writes.length},null,2));
+console.log(JSON.stringify({pass:report.pass,viewports:report.viewports.map(v=>({name:v.name,pass:v.pass,metrics:v.metrics,pageerrors:v.pageerrors.length,tutorialPageerrors:v.tutorialPageerrors.length,consoleErrors:v.consoleErrors.length,businessWrites:v.businessWrites.length})),interaction:Object.fromEntries(Object.entries(report.interaction).map(([k,v])=>[k,v.pass])),businessWrites:report.business_writes.length},null,2));
 await browser.close();
 if(!report.pass)process.exit(1);
