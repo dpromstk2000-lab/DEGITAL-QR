@@ -1,0 +1,110 @@
+name: DENTAL R3 Owner Read Guard
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/dental-r3-owner-read-guard.yml
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  patch-owner-and-rerun-r3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply safe owner read guard
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("owner.html")
+          text = path.read_text(encoding="utf-8")
+
+          marker = "DPRO_TUTORIAL_R3_OWNER_READ_GUARD_V1_0"
+          needle = """        await loadSettings();
+                  await loadToday();
+                  await loadFollowups();"""
+          replacement = """        await loadSettings();
+                  await loadToday();
+
+                  // DPRO_TUTORIAL_R3_OWNER_READ_GUARD_V1_0
+                  if (CONFIG.utils && typeof CONFIG.utils.apiFetch === "function") {
+                    await loadFollowups();
+                  } else {
+                    state.followups = [];
+                    renderFollowupsList();
+                    updateSummary();
+                    showMessage(
+                      els.followupsMessage,
+                      "info",
+                      "フォロー対象は受付・診療状況パネルで確認してください。"
+                    );
+                  }"""
+
+          if marker in text:
+              print("Owner read guard already applied.")
+          else:
+              count = text.count(needle)
+              if count != 1:
+                  raise SystemExit(f"Expected exactly one owner init sequence, found {count}. No change made.")
+              text = text.replace(needle, replacement, 1)
+              path.write_text(text, encoding="utf-8", newline="\n")
+              print("Applied owner read guard.")
+          PY
+
+      - name: Commit owner guard
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- owner.html; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add owner.html
+          git commit -m "Fix DENTAL owner legacy followup read guard"
+          git push origin HEAD:main
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for guarded owner.html on GitHub Pages
+        shell: bash
+        env:
+          OWNER_URL: https://dpromstk2000-lab.github.io/DEGITAL-QR/owner.html
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 48); do
+            if curl -fsS -H 'Cache-Control: no-cache' "${OWNER_URL}?guard=${{ steps.commit.outputs.sha }}&n=${i}" \
+              | grep -q 'DPRO_TUTORIAL_R3_OWNER_READ_GUARD_V1_0'; then
+              echo "Guarded owner.html is live."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Guarded owner.html was not observable on GitHub Pages."
+          exit 1
+
+      - name: Dispatch DENTAL R3 Live QA
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api \
+            --method POST \
+            "repos/${GITHUB_REPOSITORY}/actions/workflows/dental-tutorial-r3-live-qa.yml/dispatches" \
+            -f ref=main
+          echo "R3 Live QA dispatched."
