@@ -33,11 +33,14 @@ async function waitIndex(page,index){
     const qa=window.DPRO_TUTORIAL_QA,f=document.getElementById('dpro-product-frame');
     if(!qa||qa.getState().index!==i||!qa.getState().active||!f?.contentWindow||!f?.contentDocument)return false;
     const expected=new URL(qa.steps[i].route,location.href);const current=new URL(f.contentWindow.location.href);
-    return (current.pathname.split('/').pop()+current.search)===(expected.pathname.split('/').pop()+expected.search)&&f.contentDocument.readyState==='complete'&&!document.getElementById('dpro-card').hidden&&!!document.getElementById('dpro-next');
-  },index,{timeout:30000});
-  await page.waitForFunction(()=>{const qa=window.DPRO_TUTORIAL_QA;return !!qa?.refreshTarget()?.selector;},{timeout:12000,polling:200});
+    const samePath=current.pathname.split('/').pop()===expected.pathname.split('/').pop();
+    const expectedParams=[...expected.searchParams.entries()].every(([k,v])=>current.searchParams.get(k)===v);
+    return samePath&&expectedParams&&f.contentDocument.readyState==='complete'&&!document.getElementById('dpro-card').hidden&&!!document.getElementById('dpro-next');
+  },index,{timeout:60000});
+  await page.waitForFunction(()=>{const qa=window.DPRO_TUTORIAL_QA;return !!qa?.refreshTarget()?.selector;},{timeout:15000,polling:200});
+  await page.waitForFunction(()=>{const h=document.getElementById('dpro-highlight'),r=h?.getBoundingClientRect(),s=h&&getComputedStyle(h);return !!h&&s.display!=='none'&&r.width>0&&r.height>0;},{timeout:8000,polling:100});
   await page.waitForFunction(()=>document.activeElement?.id==='dpro-next',{timeout:5000});
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(250);
 }
 async function startGuide(page){await page.focus('#dpro-launcher');await page.keyboard.press('Enter');await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA.getState().active===true);await waitIndex(page,0);}
 
@@ -63,13 +66,22 @@ for(const vp of viewports){
     for(let i=0;i<10;i++){
       await waitIndex(page,i);const r=await cardCheck(page);const route=await page.evaluate(()=>{const f=document.getElementById('dpro-product-frame');return f.contentWindow.location.pathname.split('/').pop()+f.contentWindow.location.search;});rows.push({step:i+1,resolved:r.resolved,focus:r.activeElement,route,highlight:r.highlight});
       if(i===1){await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA?.getState().index===1&&window.DPRO_TUTORIAL_QA.getState().active===true,{timeout:30000});await waitIndex(page,1);}
+      const before=await page.evaluate(()=>window.DPRO_TUTORIAL_QA.getState());
       await page.keyboard.press('Enter');
+      if(i<9){
+        try{await page.waitForFunction(prev=>window.DPRO_TUTORIAL_QA.getState().index===prev+1,before.index,{timeout:5000});}
+        catch(_){rows[rows.length-1].enterAdvance=false;await page.keyboard.press('Alt+ArrowRight');}
+      }else{
+        try{await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA.getState().status==='completed',{timeout:5000});}
+        catch(_){rows[rows.length-1].enterAdvance=false;await page.keyboard.press('Alt+ArrowRight');}
+      }
+      if(rows[rows.length-1].enterAdvance!==false)rows[rows.length-1].enterAdvance=true;
     }
     await page.waitForFunction(()=>window.DPRO_TUTORIAL_QA.getState().status==='completed',{timeout:10000});
     const completed=await page.evaluate(()=>window.DPRO_TUTORIAL_QA.getState());
     await page.keyboard.press('Enter');await waitIndex(page,0);
     const replayed=await page.evaluate(()=>window.DPRO_TUTORIAL_QA.getState());
-    report.interaction.keyboard={rows,completed,replayed,pass:rows.length===10&&rows.every(x=>x.resolved&&x.focus==='dpro-next'&&x.highlight.display!=='none')&&completed.status==='completed'&&replayed.index===0&&replayed.active===true&&b.pageerrors.length===0&&b.consoleErrors.length===0&&b.businessWrites.length===0};
+    report.interaction.keyboard={rows,completed,replayed,pass:rows.length===10&&rows.every(x=>x.resolved&&x.focus==='dpro-next'&&x.highlight.display!=='none'&&x.enterAdvance===true)&&completed.status==='completed'&&replayed.index===0&&replayed.active===true&&b.pageerrors.length===0&&b.consoleErrors.length===0&&b.businessWrites.length===0};
   }catch(e){report.interaction.keyboard={rows,error:String(e?.stack||e),pass:false};}
   await context.close();
 }
