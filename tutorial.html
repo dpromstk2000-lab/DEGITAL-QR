@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>DPRO DENTAL｜操作ガイド</title>
+<link rel="stylesheet" href="./dpro-tutorial.css">
+</head>
+<body>
+<iframe id="dpro-product-frame" title="DPRO DENTAL 製品画面" src="./demo-guide.html"></iframe>
+<div id="dpro-highlight" aria-hidden="true"></div>
+<button id="dpro-launcher" type="button">操作ガイドを開始</button>
+<section class="dpro-tutorial-card" id="dpro-card" role="dialog" aria-modal="false" aria-labelledby="dpro-title" hidden>
+  <div class="dpro-drag-handle" id="dpro-drag-handle" tabindex="0" aria-label="操作ガイドカードをドラッグして移動">
+    <span>操作ガイド <span id="dpro-step-badge">1 / 10</span></span><span class="dpro-drag-grip" aria-hidden="true">⋮⋮</span>
+  </div>
+  <div class="dpro-card-body" id="dpro-card-body"></div>
+</section>
+<div class="dpro-screen-reader" id="dpro-live" aria-live="polite"></div>
+<script src="./dpro-tutorial.js"></script>
+</body>
+</html>

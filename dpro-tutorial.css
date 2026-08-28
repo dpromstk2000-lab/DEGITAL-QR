@@ -1,0 +1,35 @@
+:root{--dpro-guide-blue:#2563eb;--dpro-guide-deep:#0f172a;--dpro-guide-soft:#eff6ff;--dpro-guide-line:#bfdbfe;--dpro-guide-muted:#64748b}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;min-width:0;height:100%;overflow:hidden;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",Meiryo,sans-serif}
+#dpro-product-frame{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff;z-index:1}
+#dpro-product-frame.dpro-readonly{pointer-events:none;user-select:none}
+#dpro-highlight{position:fixed;display:none;z-index:2147483000;border:3px solid #22c55e;border-radius:14px;pointer-events:none;box-shadow:0 0 0 9999px rgba(15,23,42,.38),0 0 0 5px rgba(255,255,255,.94),0 16px 46px rgba(15,23,42,.24);transition:left .12s ease,top .12s ease,width .12s ease,height .12s ease}
+#dpro-launcher{position:fixed;right:12px;bottom:12px;z-index:2147483645;min-height:46px;max-width:calc(100vw - 24px);border:0;border-radius:999px;padding:11px 16px;background:#0f172a;color:#fff;font-weight:900;font-size:13px;box-shadow:0 16px 38px rgba(15,23,42,.28);cursor:pointer}
+#dpro-launcher:focus-visible,.dpro-tutorial-card button:focus-visible,.dpro-drag-handle:focus-visible{outline:4px solid #f59e0b;outline-offset:3px}
+.dpro-tutorial-card{position:fixed;z-index:2147483646;width:min(390px,calc(100vw - 16px));max-height:min(620px,calc(100vh - 16px));overflow:auto;left:auto;right:8px;top:8px;background:rgba(255,255,255,.98);color:#0f172a;border:1px solid #cbd5e1;border-radius:20px;box-shadow:0 24px 70px rgba(15,23,42,.32);overscroll-behavior:contain}
+.dpro-tutorial-card[hidden]{display:none!important}
+.dpro-drag-handle{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:46px;padding:10px 12px;background:linear-gradient(135deg,#0f172a,#1d4ed8);color:#fff;border-radius:19px 19px 0 0;cursor:grab;touch-action:none;user-select:none;font-size:12px;font-weight:900;letter-spacing:.03em}
+.dpro-drag-handle[data-dragging="true"]{cursor:grabbing}
+.dpro-drag-grip{font-size:18px;line-height:1;letter-spacing:2px}
+.dpro-card-body{padding:15px}
+.dpro-kicker{color:#2563eb;font-size:11px;font-weight:950;letter-spacing:.08em}
+.dpro-title{margin:5px 0 0;font-size:20px;line-height:1.35;letter-spacing:-.03em}
+.dpro-copy{margin:9px 0 0;color:#475569;font-size:13px;line-height:1.7}
+.dpro-safe{margin-top:10px;padding:9px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:11px;line-height:1.55;font-weight:750}
+.dpro-target-note{margin-top:9px;color:#64748b;font-size:10px;line-height:1.5;word-break:break-word}
+.dpro-progress{height:7px;margin-top:13px;border-radius:999px;background:#e2e8f0;overflow:hidden}
+.dpro-progress>span{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#0f766e);border-radius:999px}
+.dpro-actions{display:grid;grid-template-columns:auto 1fr auto;gap:7px;margin-top:13px}
+.dpro-actions button{min-height:42px;border-radius:12px;border:1px solid #cbd5e1;background:#fff;color:#0f172a;font-size:12px;font-weight:900;padding:8px 11px;cursor:pointer}
+.dpro-actions .primary{border-color:#1d4ed8;background:#2563eb;color:#fff}
+.dpro-actions .dangerless{color:#475569;background:#f8fafc}
+.dpro-secondary-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.dpro-secondary-row button{min-height:36px;border-radius:10px;border:0;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:900;padding:7px 10px;cursor:pointer}
+.dpro-end{text-align:center;padding:8px 3px 3px}
+.dpro-end .icon{font-size:34px}
+.dpro-end h2{margin:8px 0 0;font-size:20px}
+.dpro-end p{margin:8px 0 0;color:#64748b;font-size:12px;line-height:1.6}
+.dpro-end button{margin-top:12px;min-height:44px;border:0;border-radius:12px;background:#2563eb;color:#fff;font-weight:900;padding:10px 16px;cursor:pointer}
+.dpro-screen-reader{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@media(max-width:420px){.dpro-tutorial-card{width:calc(100vw - 12px);max-height:calc(100vh - 12px);right:6px;top:6px;border-radius:16px}.dpro-drag-handle{border-radius:15px 15px 0 0}.dpro-card-body{padding:12px}.dpro-title{font-size:18px}.dpro-copy{font-size:12px}.dpro-actions{grid-template-columns:1fr 1fr}.dpro-actions .primary{grid-column:1/-1;grid-row:1}.dpro-actions .dangerless{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){#dpro-highlight{transition:none}}
