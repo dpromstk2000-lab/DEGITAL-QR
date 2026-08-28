@@ -1,0 +1,55 @@
+name: DENTAL Tutorial R3 Live QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - tutorial.html
+      - dpro-tutorial.js
+      - dpro-tutorial.css
+      - dental-tutorial-r3-live-qa.mjs
+      - .github/workflows/dental-tutorial-r3-live-qa.yml
+
+permissions:
+  contents: read
+
+jobs:
+  live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DPRO_BASE_URL: https://dpromstk2000-lab.github.io/DEGITAL-QR/
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for GitHub Pages to publish R3 runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 48); do
+            if curl -fsS -H 'Cache-Control: no-cache' "${DPRO_BASE_URL}tutorial.html?sha=${GITHUB_SHA}&n=${i}" | grep -q 'DPRO DENTAL｜操作ガイド'; then
+              echo "Pages runtime is available."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "R3 tutorial.html was not observable on GitHub Pages."
+          exit 1
+
+      - name: Install Playwright
+        run: |
+          npm --version
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run exact-width DENTAL R3 LIVE QA
+        run: node dental-tutorial-r3-live-qa.mjs
+
+      - name: Upload R3 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dental-r3-live-qa
+          path: dental-r3-live-qa.json
+          if-no-files-found: warn
