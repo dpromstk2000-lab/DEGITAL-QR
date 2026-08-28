@@ -6125,7 +6125,20 @@
         restoreSalesGuideMode();
         await loadSettings();
         await loadToday();
-        await loadFollowups();
+
+        // DPRO_TUTORIAL_R3_OWNER_READ_GUARD_V1_0
+        if (CONFIG.utils && typeof CONFIG.utils.apiFetch === "function") {
+          await loadFollowups();
+        } else {
+          state.followups = [];
+          renderFollowupsList();
+          updateSummary();
+          showMessage(
+            els.followupsMessage,
+            "info",
+            "フォロー対象は受付・診療状況パネルで確認してください。"
+          );
+        }
       });
     })();
   </script>
