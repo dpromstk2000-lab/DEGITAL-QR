@@ -78,7 +78,7 @@ with sync_playwright() as p:
     if len(runtime)!=10: raise RuntimeError(f'R5 runtime First10 count {len(runtime)} != 10')
     page.evaluate("()=>window.DPRO_TUTORIAL_QA.start()")
     for idx in range(10):
-        page.wait_for_function("i=>window.DPRO_TUTORIAL_QA?.getState().active===true && window.DPRO_TUTORIAL_QA.getState().index===i",idx,timeout=30000)
+        page.wait_for_function("i=>window.DPRO_TUTORIAL_QA?.getState().active===true && window.DPRO_TUTORIAL_QA.getState().index===i",arg=idx,timeout=30000)
         page.wait_for_function("()=>document.getElementById('dpro-product-frame')?.contentDocument?.readyState==='complete'",timeout=30000)
         try:
             page.wait_for_function("()=>!!window.DPRO_TUTORIAL_QA.refreshTarget()?.selector",timeout=15000,polling=200)
