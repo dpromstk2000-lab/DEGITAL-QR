@@ -150,7 +150,12 @@ def draw_text(draw,xy,text,font,fill=INK,maxw=None,spacing=10):
     return y
 
 def fit_img(src,box):
-    x,y,w,h=box
+    if len(box)==2:
+        w,h=box
+    elif len(box)==4:
+        _,_,w,h=box
+    else:
+        raise ValueError(f'fit_img box must be (w,h) or (x,y,w,h): {box!r}')
     im=Image.open(src).convert('RGB')
     im.thumbnail((w,h),Image.Resampling.LANCZOS)
     canvas=Image.new('RGB',(w,h),(238,246,248))
