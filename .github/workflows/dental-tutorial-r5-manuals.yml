@@ -1,0 +1,117 @@
+name: DENTAL Tutorial R5 Print Manuals
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - dental-tutorial-r5-manuals.py
+      - .github/workflows/dental-tutorial-r5-manuals.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DPRO_BASE_URL: https://dpromstk2000-lab.github.io/DEGITAL-QR/
+      R4_ACCEPTED_SHA: 52508b127c9ddeb887cc88eed880ba0257b7c00d
+    steps:
+      - name: Checkout newest main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce forward-only ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor "$R4_ACCEPTED_SHA" HEAD
+          echo "R5_SOURCE_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "R5_SOURCE_TREE=$(git rev-parse HEAD^{tree})" >> "$GITHUB_ENV"
+
+      - name: Install browser, fonts and PDF/QR dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk libzbar0
+          python -m pip install --upgrade pip
+          pip install pillow qrcode pymupdf pyzbar playwright==1.55.0
+          python -m playwright install --with-deps chromium
+
+      - name: Generate current-LIVE manuals and run automated R5 QA
+        run: python dental-tutorial-r5-manuals.py
+
+      - name: Commit R5 manuals only after automated QA passes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            DPRO_TUTORIAL_DENTAL_QUICK_START_V1.0.pdf \
+            DPRO_TUTORIAL_DENTAL_QUICK_START_V1.0.png \
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0.pdf \
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0_P01.png \
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0_P02.png \
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0_P03.png \
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0_P04.png \
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0_P05.png \
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0_P06.png
+          git diff --cached --quiet && { echo "No R5 manual changes to commit"; exit 1; }
+          git commit -m "Add DENTAL R5 current-live print manuals"
+          git push origin HEAD:main
+          echo "R5_MANUAL_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Wait for manuals to publish on GitHub Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in \
+            DPRO_TUTORIAL_DENTAL_QUICK_START_V1.0.pdf \
+            DPRO_TUTORIAL_DENTAL_QUICK_START_V1.0.png \
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0.pdf \
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0_P01.png; do
+            ok=0
+            for i in $(seq 1 48); do
+              code=$(curl -L -sS -o /dev/null -w '%{http_code}' -H 'Cache-Control: no-cache' "${DPRO_BASE_URL}${f}?sha=${R5_MANUAL_COMMIT}&n=${i}" || true)
+              if [ "$code" = "200" ]; then ok=1; break; fi
+              sleep 10
+            done
+            [ "$ok" = "1" ] || { echo "Public manual missing: $f"; exit 1; }
+          done
+
+      - name: Record publish/source metadata
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os
+          p='r5-evidence/dental-r5-manual-qa.json'
+          d=json.load(open(p,encoding='utf-8'))
+          d['source_head']=os.environ['R5_SOURCE_HEAD']
+          d['source_tree']=os.environ['R5_SOURCE_TREE']
+          d['manual_commit']=os.environ['R5_MANUAL_COMMIT']
+          d['public_urls']={
+            'quick_pdf':os.environ['DPRO_BASE_URL']+'DPRO_TUTORIAL_DENTAL_QUICK_START_V1.0.pdf',
+            'quick_png':os.environ['DPRO_BASE_URL']+'DPRO_TUTORIAL_DENTAL_QUICK_START_V1.0.png',
+            'detailed_pdf':os.environ['DPRO_BASE_URL']+'DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0.pdf',
+          }
+          json.dump(d,open(p,'w',encoding='utf-8'),ensure_ascii=False,indent=2)
+          PY
+
+      - name: Upload all R5 manual QA evidence for visual review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dental-r5-manuals-qa
+          path: |
+            DPRO_TUTORIAL_DENTAL_QUICK_START_V1.0.pdf
+            DPRO_TUTORIAL_DENTAL_QUICK_START_V1.0.png
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0.pdf
+            DPRO_TUTORIAL_DENTAL_DETAILED_MANUAL_V1.0_P*.png
+            r5-evidence/
+          if-no-files-found: warn
+          retention-days: 90
