@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="format-detection" content="telephone=no">
+  <title>DPRO 歯科｜Guide Center</title>
+  <style>
+    :root{--bg:#f3f9fb;--card:#fff;--text:#0f2430;--muted:#58707d;--line:#d7e7ec;--main:#087d91;--main2:#075f73;--green:#087a5b;--shadow:0 18px 44px rgba(15,36,48,.10);}
+    *{box-sizing:border-box;min-width:0}
+    html,body{margin:0;padding:0;max-width:100%;overflow-x:hidden}
+    body{min-height:100vh;padding:20px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;color:var(--text);background:linear-gradient(180deg,#edf8fb 0,#f8fcfd 48%,#f2faf7 100%)}
+    button,a{font:inherit} button{cursor:pointer} button:disabled{cursor:not-allowed;opacity:.52} a{color:inherit;text-decoration:none}
+    button:focus,button:focus-visible,a:focus,a:focus-visible{outline:3px solid #e99b16;outline-offset:3px}
+    .shell{width:min(1120px,100%);margin:0 auto}
+    .hero,.panel{background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+    .hero{padding:28px;margin-bottom:18px;display:grid;grid-template-columns:1.35fr .65fr;gap:20px;align-items:center}
+    .eyebrow{margin:0 0 8px;color:var(--main2);font-size:12px;font-weight:950;letter-spacing:.08em}
+    h1{margin:0 0 12px;font-size:clamp(30px,5vw,50px);line-height:1.08;letter-spacing:-.04em;overflow-wrap:anywhere}
+    .lead{margin:0;color:#385463;font-weight:700;line-height:1.8}
+    .hero-meta{display:grid;gap:10px} .meta{border:1px solid #b9dce4;background:#effbfe;border-radius:17px;padding:14px}
+    .meta strong{display:block;font-size:12px;color:var(--main2);margin-bottom:5px} .meta span{display:block;font-size:18px;font-weight:950;overflow-wrap:anywhere}
+    .panel{padding:22px;margin-bottom:18px} .panel h2{margin:0 0 6px;font-size:23px;letter-spacing:-.02em}
+    .panel-note{margin:0 0 16px;color:var(--muted);font-size:13px;font-weight:700;line-height:1.75}
+    .actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .action-btn{appearance:none;border:0;border-radius:16px;min-height:58px;padding:14px 16px;font-weight:950;background:var(--main);color:#fff;box-shadow:0 10px 24px rgba(8,125,145,.18)}
+    .action-btn.secondary{background:#fff;color:var(--text);border:1px solid #b9ccd4;box-shadow:none} .action-btn.green{background:var(--green)}
+    .status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+    .status-item{border:1px solid var(--line);border-radius:16px;background:#f8fbfc;padding:13px} .status-item small{display:block;color:var(--muted);font-size:11px;font-weight:900;margin-bottom:5px}
+    .status-item b{display:block;font-size:14px;overflow-wrap:anywhere}
+    .ready{margin-top:12px;border-radius:14px;padding:11px 13px;font-size:13px;font-weight:850;background:#effbfe;color:#075f73;border:1px solid #b9dce4}
+    .ready.ok{background:#ecfdf5;color:#087a5b;border-color:#b7ead9} .ready.err{background:#fef2f2;color:#b91c1c;border-color:#fecaca}
+    .steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .guide-step{border:1px solid var(--line);border-radius:18px;background:#fff;padding:16px;display:grid;grid-template-columns:auto 1fr;gap:13px;align-items:start}
+    .step-no{width:38px;height:38px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:#dff4f8;color:var(--main2);font-weight:950;flex:0 0 auto}
+    .guide-step h3{margin:0 0 6px;font-size:16px;line-height:1.4;overflow-wrap:anywhere} .guide-step p{margin:0;color:#4b6471;font-size:12px;line-height:1.7;font-weight:700;overflow-wrap:anywhere}
+    .route{display:inline-block;margin-top:8px;border-radius:999px;background:#f1f6f8;padding:5px 8px;font-size:10px;font-weight:900;color:#506974;max-width:100%;overflow-wrap:anywhere}
+    .links{display:flex;gap:9px;flex-wrap:wrap} .link-btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;border-radius:14px;border:1px solid #b9ccd4;background:#fff;padding:10px 13px;font-size:12px;font-weight:900}
+    .safety{border-left:4px solid var(--green);background:#f0fbf7;border-radius:14px;padding:13px 14px;color:#285a4b;font-size:12px;line-height:1.75;font-weight:750}
+    .foot{padding:8px 4px 18px;text-align:center;color:var(--muted);font-size:11px;font-weight:800}
+    .runtime-probe{position:fixed!important;left:-9999px!important;top:0!important;width:1px!important;height:1px!important;border:0!important;opacity:0!important;pointer-events:none!important}
+    @media(max-width:760px){body{padding:12px}.hero{grid-template-columns:1fr;padding:20px}.panel{padding:18px}.actions,.status-grid,.steps{grid-template-columns:1fr}.action-btn{width:100%}}
+    @media(max-width:360px){body{padding:10px}.hero,.panel{border-radius:18px}.hero{padding:17px}.panel{padding:15px}.guide-step{padding:13px;gap:10px}.step-no{width:34px;height:34px}h1{font-size:30px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">DPRO TUTORIAL / DENTAL / GUIDE CENTER / R4</p>
+        <h1>操作ガイドセンター</h1>
+        <p class="lead">歯科デジタルQR診察券のFirst10を、Start・Resume・Replayから安全に確認できます。Guide CenterとTutorialは同じR3状態を使用し、予約・急患受付・来院登録・患者/家族情報・LINE・管理設定を自動変更しません。</p>
+      </div>
+      <div class="hero-meta">
+        <div class="meta"><strong>STANDARD</strong><span>V1.1 LOCKED</span></div>
+        <div class="meta"><strong>FIRST10</strong><span id="first10Meta">10 steps</span></div>
+        <div class="meta"><strong>BUSINESS MUTATION</strong><span>0 required</span></div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="actionsTitle">
+      <h2 id="actionsTitle">Tutorialを開く</h2>
+      <p class="panel-note">StartはStep 1から開始、Resumeは保存済みの続き、ReplayはTutorial専用状態だけをリセットしてStep 1から再開します。</p>
+      <div class="actions">
+        <button class="action-btn" type="button" data-guide-action="start" disabled>Start</button>
+        <button class="action-btn secondary" type="button" data-guide-action="resume" disabled>Resume</button>
+        <button class="action-btn green" type="button" data-guide-action="replay" disabled>Replay</button>
+      </div>
+      <div class="status-grid" aria-live="polite">
+        <div class="status-item"><small>状態</small><b id="guideState">確認中</b></div>
+        <div class="status-item"><small>現在位置</small><b id="guideStep">-</b></div>
+        <div class="status-item"><small>保存キー</small><b id="guideStorage">Tutorial専用</b></div>
+      </div>
+      <div class="ready" id="guideReady" data-guide-ready="false">R3 Tutorial runtimeを照合しています。</div>
+    </section>
+
+    <section class="panel" aria-labelledby="first10Title">
+      <h2 id="first10Title">First10</h2>
+      <p class="panel-note">この10項目は、R3 Tutorial runtimeのroute・title・primary/fallback targetと1対1で照合します。First10の件数は10から増減しません。</p>
+      <div class="steps" id="guideSteps">
+        <article class="guide-step" data-guide-step data-step="1" data-route="demo-guide.html" data-primary="#screenGrid" data-fallback=".section-head||main.page">
+          <span class="step-no">1</span>
+          <div><h3>公開デモの全体像</h3><p>公開デモで確認できる画面と、歯科受付の全体の流れを確認します。</p><span class="route">demo-guide.html</span></div>
+        </article>
+        <article class="guide-step" data-guide-step data-step="2" data-route="hybrid.html?t=demo-dental-patient-001" data-primary="#patientTabs" data-fallback="#patientSummary||.card">
+          <span class="step-no">2</span>
+          <div><h3>受診する家族を選ぶ場所</h3><p>本人・お子さまなど、受診する方を切り替える場所を確認します。</p><span class="route">hybrid.html?t=demo-dental-patient-001</span></div>
+        </article>
+        <article class="guide-step" data-guide-step data-step="3" data-route="hybrid.html?t=demo-dental-patient-001" data-primary="#patientSummary" data-fallback="#patientTabs||#serviceStatus">
+          <span class="step-no">3</span>
+          <div><h3>選択中の診察券を確認</h3><p>選択中の受診者と診察券番号の確認場所を把握します。</p><span class="route">hybrid.html?t=demo-dental-patient-001</span></div>
+        </article>
+        <article class="guide-step" data-guide-step data-step="4" data-route="hybrid.html?t=demo-dental-patient-001" data-primary="#reservationLink" data-fallback=".grid||.action-card">
+          <span class="step-no">4</span>
+          <div><h3>30分予約の入口</h3><p>30分単位の予約へ進む入口だけを確認します。</p><span class="route">hybrid.html?t=demo-dental-patient-001</span></div>
+        </article>
+        <article class="guide-step" data-guide-step data-step="5" data-route="reservation.html?t=demo-dental-patient-001" data-primary="#selectedPatient" data-fallback="#patientTabs||#reservationForm">
+          <span class="step-no">5</span>
+          <div><h3>予約する受診者を確認</h3><p>予約画面へ引き継がれた受診者の確認場所を見ます。</p><span class="route">reservation.html?t=demo-dental-patient-001</span></div>
+        </article>
+        <article class="guide-step" data-guide-step data-step="6" data-route="reservation.html?t=demo-dental-patient-001" data-primary="#menuChoices" data-fallback="#appointmentDate||#slotChoices">
+          <span class="step-no">6</span>
+          <div><h3>診療内容と空き枠の流れ</h3><p>診療内容・日付・30分枠の順序と配置を確認します。</p><span class="route">reservation.html?t=demo-dental-patient-001</span></div>
+        </article>
+        <article class="guide-step" data-guide-step data-step="7" data-route="urgent.html?t=demo-dental-patient-001" data-primary=".danger-notice" data-fallback="#selectedPatient||#symptomChoices">
+          <span class="step-no">7</span>
+          <div><h3>当日急患受付の安全注意</h3><p>急患受付の注意表示と入力領域の位置を確認します。</p><span class="route">urgent.html?t=demo-dental-patient-001</span></div>
+        </article>
+        <article class="guide-step" data-guide-step data-step="8" data-route="member.html?t=demo-dental-patient-001" data-primary="#familyPanel" data-fallback="#patientName||#memberNo||.member-card">
+          <span class="step-no">8</span>
+          <div><h3>家族のデジタル診察券</h3><p>家族の診察券を切り替える領域を確認します。</p><span class="route">member.html?t=demo-dental-patient-001</span></div>
+        </article>
+        <article class="guide-step" data-guide-step data-step="9" data-route="member.html?t=demo-dental-patient-001" data-primary="#qrImage" data-fallback=".qr-card||#memberNo">
+          <span class="step-no">9</span>
+          <div><h3>受付で見せるQR</h3><p>来院時に受付で提示するQRの位置を確認します。</p><span class="route">member.html?t=demo-dental-patient-001</span></div>
+        </article>
+        <article class="guide-step" data-guide-step data-step="10" data-route="owner.html" data-primary=".sales-guide" data-fallback=".owner-left-brand||#ownerLeftApp||#adminCodeInput||.summary-grid||.top-bar||main.page">
+          <span class="step-no">10</span>
+          <div><h3>医院側の受付運用を知る</h3><p>医院側の受付運用を説明する安全な表示領域を確認します。</p><span class="route">owner.html</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="safeTitle">
+      <h2 id="safeTitle">安全ルール</h2>
+      <div class="safety">Guide Center / Tutorialは表示案内専用です。予約の作成・変更・キャンセル、急患申込、チェックイン、待ち状況変更、患者/家族データ変更、LINE連携、管理設定、write-capable system-checkを自動実行しません。管理コードも推測・自動入力しません。</div>
+    </section>
+
+    <section class="panel" aria-labelledby="linksTitle">
+      <h2 id="linksTitle">関連画面</h2>
+      <p class="panel-note">通常の公開画面へ戻るだけのリンクです。リンク移動だけでは業務書込みを行いません。</p>
+      <div class="links">
+        <a class="link-btn" href="./demo-guide.html">公開デモ</a>
+        <a class="link-btn" href="./tutorial.html">Tutorial</a>
+        <a class="link-btn" href="./member.html?t=demo-dental-patient-001">デジタル診察券</a>
+      </div>
+    </section>
+
+    <div class="foot">DPRO TUTORIAL / DENTAL / GUIDE CENTER / R4 / business mutation 0</div>
+  </main>
+
+  <iframe id="tutorialProbe" class="runtime-probe" src="./tutorial.html?guide-center-probe=1" tabindex="-1" aria-hidden="true" title="R3 Tutorial runtime alignment probe"></iframe>
+
+  <script>
+  (()=>{
+    'use strict';
+    const MARKER='DPRO_TUTORIAL_DENTAL_R4_GUIDE_CENTER_V1_0';
+    const probe=document.getElementById('tutorialProbe');
+    const readyEl=document.getElementById('guideReady');
+    const stateEl=document.getElementById('guideState');
+    const stepEl=document.getElementById('guideStep');
+    const storageEl=document.getElementById('guideStorage');
+    const first10Meta=document.getElementById('first10Meta');
+    const buttons=[...document.querySelectorAll('[data-guide-action]')];
+    const rows=[...document.querySelectorAll('[data-guide-step]')];
+
+    window.DPRO_DENTAL_GUIDE_CENTER={marker:MARKER,first10Count:rows.length,ready:false,aligned:false,stateMode:'loading',runtimeCount:0};
+
+    function api(){
+      try{return probe.contentWindow?.DPRO_TUTORIAL_QA||null;}catch(_){return null;}
+    }
+    function modeForState(s){
+      if(!s||s.status==='new')return 'start';
+      if(s.status==='completed'||s.status==='skipped')return 'replay';
+      return 'resume';
+    }
+    function labelForState(s,mode){
+      if(mode==='start')return '未開始 / Start可能';
+      if(s.status==='completed')return '完了 / Replay可能';
+      if(s.status==='skipped')return 'スキップ / Replay可能';
+      if(s.status==='paused')return '中断 / Resume可能';
+      return '進行中 / Resume可能';
+    }
+    function normalizeFallback(v){return Array.isArray(v)?v.join('||'):String(v||'');}
+    function verifyAlignment(runtime){
+      if(!runtime||runtime.steps?.length!==10||rows.length!==10)return false;
+      return rows.every((row,i)=>{
+        const s=runtime.steps[i];
+        return Number(row.dataset.step)===s.step &&
+          row.dataset.route===s.route &&
+          row.dataset.primary===s.primary &&
+          row.dataset.fallback===normalizeFallback(s.fallback) &&
+          row.querySelector('h3')?.textContent?.trim()===s.title;
+      });
+    }
+    function refreshStatus(runtime=api()){
+      if(!runtime)return false;
+      const s=runtime.getState();
+      const mode=modeForState(s);
+      stateEl.textContent=labelForState(s,mode);
+      stepEl.textContent=`Step ${Number(s.index||0)+1} / 10`;
+      storageEl.textContent=runtime.storageKey||'dpro.dental.tutorial.v1.1';
+      first10Meta.textContent=`${runtime.steps.length} steps`;
+      buttons.forEach(b=>b.disabled=b.dataset.guideAction!==mode);
+      Object.assign(window.DPRO_DENTAL_GUIDE_CENTER,{stateMode:mode,runtimeState:s,runtimeCount:runtime.steps.length});
+      return true;
+    }
+    function runAction(action){
+      const runtime=api();
+      if(!runtime||!window.DPRO_DENTAL_GUIDE_CENTER.aligned)return;
+      if(action==='start')runtime.start();
+      else if(action==='resume')runtime.resume();
+      else if(action==='replay')runtime.replay();
+      else return;
+      refreshStatus(runtime);
+      location.assign(`./tutorial.html?from=guide-center&action=${encodeURIComponent(action)}`);
+    }
+    function bind(runtime){
+      if(window.DPRO_DENTAL_GUIDE_CENTER.ready)return;
+      const aligned=verifyAlignment(runtime);
+      Object.assign(window.DPRO_DENTAL_GUIDE_CENTER,{ready:true,aligned,runtimeCount:runtime.steps.length,storageKey:runtime.storageKey||''});
+      readyEl.dataset.guideReady=aligned?'true':'false';
+      readyEl.className='ready '+(aligned?'ok':'err');
+      readyEl.textContent=aligned?'Guide CenterはR3 canonical First10（10件）と一致しています。':'Guide CenterとR3 Tutorial runtimeのFirst10が一致しません。';
+      buttons.forEach(b=>b.addEventListener('click',()=>runAction(b.dataset.guideAction)));
+      refreshStatus(runtime);
+    }
+
+    const started=Date.now();
+    const timer=setInterval(()=>{
+      const runtime=api();
+      if(runtime?.steps?.length===10){clearInterval(timer);bind(runtime);return;}
+      if(Date.now()-started>15000){
+        clearInterval(timer);
+        readyEl.className='ready err';
+        readyEl.textContent='R3 Tutorial runtimeを確認できませんでした。';
+        window.DPRO_DENTAL_GUIDE_CENTER.error='runtime-timeout';
+      }
+    },50);
+    window.addEventListener('pageshow',()=>refreshStatus());
+    window.addEventListener('storage',()=>refreshStatus());
+  })();
+  </script>
+</body>
+</html>
