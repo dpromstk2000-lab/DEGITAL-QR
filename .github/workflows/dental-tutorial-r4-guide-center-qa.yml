@@ -1,0 +1,55 @@
+name: DENTAL Tutorial R4 Guide Center QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - guide-center.html
+      - dental-tutorial-r4-live-qa.mjs
+      - .github/workflows/dental-tutorial-r4-guide-center-qa.yml
+
+permissions:
+  contents: read
+
+jobs:
+  live-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DPRO_BASE_URL: https://dpromstk2000-lab.github.io/DEGITAL-QR/
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for GitHub Pages to publish R4 Guide Center
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 48); do
+            if curl -fsS -H 'Cache-Control: no-cache' \
+              "${DPRO_BASE_URL}guide-center.html?sha=${GITHUB_SHA}&n=${i}" \
+              | grep -q 'DPRO_TUTORIAL_DENTAL_R4_GUIDE_CENTER_V1_0'; then
+              echo "R4 Guide Center is available."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "R4 guide-center.html was not observable on GitHub Pages."
+          exit 1
+
+      - name: Install Playwright
+        run: |
+          npm --version
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run exact-width DENTAL R4 Guide Center QA
+        run: node dental-tutorial-r4-live-qa.mjs
+
+      - name: Upload R4 QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dental-r4-guide-center-qa
+          path: dental-r4-guide-center-qa.json
+          if-no-files-found: warn
